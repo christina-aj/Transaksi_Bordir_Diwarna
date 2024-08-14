@@ -2,7 +2,7 @@
 
 return [
     'class' => 'yii\db\Connection',
-    'dsn' => 'mysql:host=localhost;dbname=inventaris_web',
+    'dsn' => 'mysql:host=localhost;dbname=inventaris',
     'username' => 'root',
     'password' => '',
     'charset' => 'utf8',

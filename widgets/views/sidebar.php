@@ -7,14 +7,13 @@ $roleName = Yii::$app->user->identity->roleName;
 
 $dashboardUrl = Url::to(['site/index']);
 $UserUrl = Url::to(['/user/index']);
-$BarangUrl = Url::to(['/barang/index']);
+$BarangUrl = Url::to(['/item/index']);
 $SupplierUrl = Url::to(['/supplier/index']);
 $UnitUrl = Url::to(['/unit/index']);
 $MesinUrl = Url::to(['/mesin/index']);
 $ReportUrl = Url::to(['/report/index']);
 $StockUrl = Url::to(['/report/stock']);
-$ShifttUrl = Url::to(['/report/shift']);
-
+$ShifttUrl = Url::to(['/shift/index']);
 
 
 

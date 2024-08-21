@@ -54,12 +54,11 @@ class SiteController extends Controller
                             return \Yii::$app->user->identity->roleName === 'Operator';
                         }
                     ],
-
                     [
                         'actions' => ['error'],
                         'allow' => true,
                         'roles' => ["?","@"],
-                   ],
+                    ],
                 ],
             ],
             'verbs' => [

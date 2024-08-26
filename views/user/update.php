@@ -10,9 +10,10 @@ $this->params['breadcrumbs'][] = ['label' => 'Users', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->user_id, 'url' => ['view', 'user_id' => $model->user_id]];
 $this->params['breadcrumbs'][] = 'Update';
 ?>
-<div class="user-update">
+<div class="pc-content">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <h1>Update Akun Pengguna</h1>
+    <!-- <h1><?= Html::encode($this->title) ?></h1> -->
 
     <?= $this->render('_form', [
         'model' => $model,

@@ -3,6 +3,9 @@
 namespace app\models;
 
 use Yii;
+use yii\base\NotSupportedException;
+use yii\behaviors\TimestampBehavior;
+use yii\db\Expression;
 
 /**
  * This is the model class for table "user".
@@ -20,7 +23,8 @@ use Yii;
  * @property Shift $shift
  * @property Stock $stock
  */
-class User extends \yii\db\ActiveRecord
+class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
+
 {
     /**
      * {@inheritdoc}
@@ -67,6 +71,32 @@ class User extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
+
+    public static function findIdentity($id)
+    {
+        return static::findOne($id);
+    }
+
+    public static function findIdentityByAccessToken($token, $type = null)
+    {
+        throw new NotSupportedException;
+    }
+
+    public function getAuthKey()
+    {
+        return null;
+    }
+
+    public function validateAuthKey($authKey)
+    {
+        return true;
+    }
+
+    public function getId()
+    {
+        return $this->user_id;
+    }
+
     public function getPembelian()
     {
         return $this->hasOne(Pembelian::class, ['user_id' => 'user_id']);
@@ -81,6 +111,17 @@ class User extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Role::class, ['id_role' => 'id_role']);
     }
+
+    public function getroleid()
+    {
+        return $this->id_role;
+    }
+
+    public function getRoleName()
+    {
+        return $this->role ? $this->role->nama : 'Guest';
+    }
+
 
     /**
      * Gets query for [[Shift]].
@@ -100,5 +141,16 @@ class User extends \yii\db\ActiveRecord
     public function getStock()
     {
         return $this->hasOne(Stock::class, ['user_id' => 'user_id']);
+    }
+
+
+    public static function findByUsername($nama_pengguna)
+    {
+        return self::findOne(['nama_pengguna' => $nama_pengguna]);
+    }
+
+    public function validatePassword($kata_sandi)
+    {
+        return $this->kata_sandi === $kata_sandi;
     }
 }

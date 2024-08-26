@@ -11,11 +11,25 @@ $this->params['breadcrumbs'][] = ['label' => 'Users', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
-<div class="user-view">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+<div class="pc-content">
 
-    <p>
+
+    <h1>Informasi Akun Pengguna</h1>
+    <!-- <h1> User <?= Html::encode($this->title) ?></h1> -->
+    <?= DetailView::widget([
+        'model' => $model,
+        'attributes' => [
+            'user_id',
+            'id_role',
+            'nama_pengguna',
+            'kata_sandi',
+            'email:email',
+            'dibuat_pada:datetime',
+            'diperbarui_pada:datetime',
+        ],
+    ]) ?>
+    <div>
         <?= Html::a('Update', ['update', 'user_id' => $model->user_id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Delete', ['delete', 'user_id' => $model->user_id], [
             'class' => 'btn btn-danger',
@@ -24,19 +38,6 @@ $this->params['breadcrumbs'][] = $this->title;
                 'method' => 'post',
             ],
         ]) ?>
-    </p>
-
-    <?= DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'user_id',
-            'id_role',
-            'nama_pengguna',
-            'email:email',
-            'kata_sandi',
-            'dibuat_pada',
-            'diperbarui_pada',
-        ],
-    ]) ?>
-
+        <?= Html::a('Back', ['user/index'], ['class' => 'btn btn-secondary']) ?>
+    </div>
 </div>

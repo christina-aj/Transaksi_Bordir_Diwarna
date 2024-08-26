@@ -1,25 +1,24 @@
 <?php
 
-use app\models\User;
+use app\models\Barang;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
 
 /** @var yii\web\View $this */
-/** @var app\models\UserSearch $searchModel */
+/** @var app\models\BarangSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = 'Users';
+$this->title = 'Barang';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-
 <div class="pc-content">
-    <!-- <h1><?= Html::encode($this->title) ?></h1> -->
-    <h1>Akun</h1>
+
+    <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Buat Akun', ['create'], ['class' => 'btn btn-success rounded']) ?>
+        <?= Html::a('Tambah Barang', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
     <?php // echo $this->render('_search', ['model' => $searchModel]); 
@@ -31,20 +30,23 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-            // 'user_id',
-            // 'id_role',
-            'nama_pengguna',
-            'role.nama',
-            'kata_sandi',
-            'email:email',
-            //'dibuat_pada',
-            //'diperbarui_pada',
+            'barang_id',
+            'kode_barang',
+            'nama_barang',
+            'unit_id',
+            'harga',
+            'tipe',
+            'warna',
+            //'created_at',
+            //'updated_at',
             [
                 'class' => ActionColumn::className(),
-                'urlCreator' => function ($action, User $model, $key, $index, $column) {
-                    return Url::toRoute([$action, 'user_id' => $model->user_id]);
+                'urlCreator' => function ($action, Barang $model, $key, $index, $column) {
+                    return Url::toRoute([$action, 'barang_id' => $model->barang_id]);
                 }
             ],
         ],
     ]); ?>
+
+
 </div>

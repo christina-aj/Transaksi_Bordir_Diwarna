@@ -7,12 +7,12 @@ $roleName = Yii::$app->user->identity->roleName;
 
 $dashboardUrl = Url::to(['site/index']);
 $UserUrl = Url::to(['/user/index']);
-$BarangUrl = Url::to(['/item/index']);
+$BarangUrl = Url::to(['/barang/index']);
 $SupplierUrl = Url::to(['/supplier/index']);
 $UnitUrl = Url::to(['/unit/index']);
 $MesinUrl = Url::to(['/mesin/index']);
 $ReportUrl = Url::to(['/report/index']);
-$StockUrl = Url::to(['/report/stock']);
+$StockUrl = Url::to(['/stock/index']);
 $ShifttUrl = Url::to(['/shift/index']);
 
 
@@ -48,7 +48,7 @@ $samplePageUrl = Url::to(['site/sample-page']);
                     <li class="pc-item">
                         <a href="<?= $UserUrl ?>" class="pc-link">
                             <span class="pc-micon"><i class="ph ph-user"></i></span>
-                            <span class="pc-mtext">User</span>
+                            <span class="pc-mtext">Akun</span>
                         </a>
                     </li>
 

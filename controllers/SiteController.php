@@ -57,7 +57,7 @@ class SiteController extends Controller
                     [
                         'actions' => ['error'],
                         'allow' => true,
-                        'roles' => ["?","@"],
+                        'roles' => ["?", "@"],
                     ],
                 ],
             ],

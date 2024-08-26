@@ -24,15 +24,14 @@ CREATE TABLE IF NOT EXISTS `barang` (
   `barang_id` int NOT NULL AUTO_INCREMENT,
   `kode_barang` varchar(255) COLLATE armscii8_bin NOT NULL,
   `nama_barang` varchar(255) COLLATE armscii8_bin NOT NULL,
-  `id` int NOT NULL,
+  `unit_id` int NOT NULL,
   `harga` decimal(10,0) NOT NULL,
   `tipe` varchar(255) COLLATE armscii8_bin NOT NULL,
   `warna` varchar(255) COLLATE armscii8_bin DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`barang_id`),
-  UNIQUE KEY `unit_id` (`id`) USING BTREE,
-  CONSTRAINT `FK_unitid` FOREIGN KEY (`id`) REFERENCES `unit` (`id`)
+  UNIQUE KEY `unit_id` (`unit_id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=armscii8 COLLATE=armscii8_bin;
 
 -- Dumping data for table inventaris.barang: ~0 rows (approximately)
@@ -50,9 +49,7 @@ CREATE TABLE IF NOT EXISTS `item` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `kategori` (`kategori`),
   UNIQUE KEY `unit_id` (`unit_id`),
-  UNIQUE KEY `supplier_id` (`supplier_id`),
-  CONSTRAINT `item_ibfk_1` FOREIGN KEY (`unit_id`) REFERENCES `unit` (`id`),
-  CONSTRAINT `item_ibfk_2` FOREIGN KEY (`supplier_id`) REFERENCES `supplier` (`id`)
+  UNIQUE KEY `supplier_id` (`supplier_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Dumping data for table inventaris.item: ~0 rows (approximately)
@@ -70,9 +67,7 @@ CREATE TABLE IF NOT EXISTS `laporan_produksi` (
   `bs` int NOT NULL,
   PRIMARY KEY (`laporan_id`),
   UNIQUE KEY `mesin_id` (`mesin_id`,`shift_id`),
-  KEY `shift_id` (`shift_id`),
-  CONSTRAINT `laporan_produksi_ibfk_2` FOREIGN KEY (`mesin_id`) REFERENCES `mesin` (`mesin_id`),
-  CONSTRAINT `laporan_produksi_ibfk_3` FOREIGN KEY (`shift_id`) REFERENCES `shift` (`shift_id`)
+  KEY `shift_id` (`shift_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Dumping data for table inventaris.laporan_produksi: ~0 rows (approximately)
@@ -100,9 +95,7 @@ CREATE TABLE IF NOT EXISTS `pembelian` (
   `kode_struk` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`pembelian_id`),
   UNIQUE KEY `user_id` (`user_id`),
-  UNIQUE KEY `supplier_id` (`supplier_id`),
-  CONSTRAINT `FK-suppid` FOREIGN KEY (`supplier_id`) REFERENCES `supplier` (`id`),
-  CONSTRAINT `FK-userid` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`)
+  UNIQUE KEY `supplier_id` (`supplier_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Dumping data for table inventaris.pembelian: ~0 rows (approximately)
@@ -121,9 +114,7 @@ CREATE TABLE IF NOT EXISTS `pembelian_detail` (
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`belidetail_id`),
   UNIQUE KEY `pembelian_id` (`pembelian_id`),
-  UNIQUE KEY `barang_id` (`barang_id`),
-  CONSTRAINT `FK-barangid` FOREIGN KEY (`barang_id`) REFERENCES `barang` (`barang_id`),
-  CONSTRAINT `FK-pembelianid` FOREIGN KEY (`pembelian_id`) REFERENCES `pembelian` (`pembelian_id`)
+  UNIQUE KEY `barang_id` (`barang_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=armscii8 COLLATE=armscii8_bin;
 
 -- Dumping data for table inventaris.pembelian_detail: ~0 rows (approximately)
@@ -135,8 +126,7 @@ CREATE TABLE IF NOT EXISTS `penggunaan` (
   `jumlah_digunakan` int NOT NULL,
   `tanggal_digunakan` date NOT NULL,
   PRIMARY KEY (`penggunaan_id`),
-  UNIQUE KEY `nonconsumable_id` (`nonconsumable_id`),
-  CONSTRAINT `penggunaan_ibfk_1` FOREIGN KEY (`nonconsumable_id`) REFERENCES `non_consumable` (`nonconsumable_id`)
+  UNIQUE KEY `nonconsumable_id` (`nonconsumable_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Dumping data for table inventaris.penggunaan: ~0 rows (approximately)
@@ -195,9 +185,7 @@ CREATE TABLE IF NOT EXISTS `stock` (
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`stock_id`),
   UNIQUE KEY `barang_id` (`barang_id`),
-  UNIQUE KEY `user_id` (`user_id`),
-  CONSTRAINT `FK-barangid-2` FOREIGN KEY (`barang_id`) REFERENCES `barang` (`barang_id`),
-  CONSTRAINT `FK-userid-2` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`)
+  UNIQUE KEY `user_id` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=armscii8 COLLATE=armscii8_bin;
 
 -- Dumping data for table inventaris.stock: ~0 rows (approximately)
@@ -242,8 +230,7 @@ CREATE TABLE IF NOT EXISTS `user` (
   `diperbarui_pada` datetime DEFAULT NULL,
   PRIMARY KEY (`user_id`),
   UNIQUE KEY `id_role` (`id_role`),
-  UNIQUE KEY `nama_pengguna` (`nama_pengguna`),
-  CONSTRAINT `user_ibfk_2` FOREIGN KEY (`id_role`) REFERENCES `role` (`id_role`)
+  UNIQUE KEY `nama_pengguna` (`nama_pengguna`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Dumping data for table inventaris.user: ~3 rows (approximately)

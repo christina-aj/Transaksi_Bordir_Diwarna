@@ -13,16 +13,15 @@ use yii\grid\GridView;
 $this->title = 'Users';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
+<div class="user-index">
 
-<div class="pc-content">
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Create User', ['create'], ['class' => 'btn btn-success rounded']) ?>
+        <?= Html::a('Create User', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
-    <?php // echo $this->render('_search', ['model' => $searchModel]); 
-    ?>
+    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
@@ -30,21 +29,21 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-            // 'user_id',
-            // 'id_role',
+            'user_id',
+            'id_role',
             'nama_pengguna',
-            'role.nama',
-            'kata_sandi',
             'email:email',
-            //'authKey',
+            'kata_sandi',
             //'dibuat_pada',
             //'diperbarui_pada',
             [
                 'class' => ActionColumn::className(),
                 'urlCreator' => function ($action, User $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'user_id' => $model->user_id]);
-                }
+                 }
             ],
         ],
     ]); ?>
+
+
 </div>

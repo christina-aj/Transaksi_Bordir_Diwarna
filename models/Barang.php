@@ -3,6 +3,8 @@
 namespace app\models;
 
 use Yii;
+use yii\behaviors\TimestampBehavior;
+use yii\db\Expression;
 
 /**
  * This is the model class for table "barang".
@@ -17,8 +19,9 @@ use Yii;
  * @property string|null $created_at
  * @property string|null $updated_at
  *
- * @property PembelianDetail $barang
- * @property Item $item
+ * @property PembelianDetail[] $pembelianDetails
+ * @property Stock[] $stocks
+ * @property Unit $unit
  */
 class Barang extends \yii\db\ActiveRecord
 {
@@ -33,6 +36,20 @@ class Barang extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
+
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => TimestampBehavior::className(),
+                'attributes' => [
+                    \yii\db\ActiveRecord::EVENT_BEFORE_INSERT => ['created_at', 'updated_at'],
+                    \yii\db\ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
+                ],
+                'value' => new Expression('NOW()'), // or date('Y-m-d H:i:s')
+            ],
+        ];
+    }
     public function rules()
     {
         return [
@@ -41,8 +58,7 @@ class Barang extends \yii\db\ActiveRecord
             [['harga'], 'number'],
             [['created_at', 'updated_at'], 'safe'],
             [['kode_barang', 'nama_barang', 'tipe', 'warna'], 'string', 'max' => 255],
-            [['unit_id'], 'unique'],
-            [['barang_id'], 'exist', 'skipOnError' => true, 'targetClass' => PembelianDetail::class, 'targetAttribute' => ['barang_id' => 'barang_id']],
+            [['unit_id'], 'exist', 'skipOnError' => true, 'targetClass' => Unit::class, 'targetAttribute' => ['unit_id' => 'unit_id']],
         ];
     }
 
@@ -65,22 +81,32 @@ class Barang extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[Barang]].
+     * Gets query for [[PembelianDetails]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getBarang()
+    public function getPembelianDetails()
     {
-        return $this->hasOne(PembelianDetail::class, ['barang_id' => 'barang_id']);
+        return $this->hasMany(PembelianDetail::class, ['barang_id' => 'barang_id']);
     }
 
     /**
-     * Gets query for [[Item]].
+     * Gets query for [[Stocks]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getItem()
+    public function getStocks()
     {
-        return $this->hasOne(Item::class, ['unit_id' => 'unit_id']);
+        return $this->hasMany(Stock::class, ['barang_id' => 'barang_id']);
+    }
+
+    /**
+     * Gets query for [[Unit]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getUnit()
+    {
+        return $this->hasOne(Unit::class, ['unit_id' => 'unit_id']);
     }
 }

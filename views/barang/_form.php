@@ -1,5 +1,6 @@
 <?php
 
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -12,13 +13,18 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <!-- <?= $form->field($model, 'barang_id')->textInput() ?> -->
-
     <?= $form->field($model, 'kode_barang')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'nama_barang')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'unit_id')->textInput() ?>
+    <?php
+    $dataPost = ArrayHelper::map(\app\models\Unit::find()->asArray()->all(), 'unit_id', 'nama');
+    echo $form->field($model, 'unit_id')
+        ->dropDownList(
+            $dataPost,
+            ['unit_id' => 'nama']
+        );
+    ?>
 
     <?= $form->field($model, 'harga')->textInput(['maxlength' => true]) ?>
 
@@ -32,7 +38,7 @@ use yii\widgets\ActiveForm;
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
-        <?= Html::a('Back', ['barang/index'], ['class' => 'btn btn-secondary']) ?>
+        <?= Html::a('Back', ['user/index'], ['class' => 'btn btn-secondary']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>

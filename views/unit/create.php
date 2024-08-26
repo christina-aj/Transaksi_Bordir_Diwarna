@@ -9,7 +9,7 @@ $this->title = 'Create Unit';
 $this->params['breadcrumbs'][] = ['label' => 'Units', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="pc-content">
+<div class="unit-create">
 
     <h1><?= Html::encode($this->title) ?></h1>
 

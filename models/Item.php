@@ -16,8 +16,8 @@ use Yii;
  * @property string $total
  * @property string $tempat_belanja
  *
- * @property Pembelian $pembelian
- * @property Barang $unit
+ * @property Supplier $supplier
+ * @property Unit $unit
  */
 class Item extends \yii\db\ActiveRecord
 {
@@ -39,10 +39,8 @@ class Item extends \yii\db\ActiveRecord
             [['kategori'], 'string'],
             [['supplier_id', 'unit_id', 'jumlah'], 'integer'],
             [['harga', 'total', 'tempat_belanja'], 'string', 'max' => 200],
-            [['kategori'], 'unique'],
-            [['unit_id'], 'unique'],
-            [['supplier_id'], 'unique'],
-            [['unit_id'], 'exist', 'skipOnError' => true, 'targetClass' => Barang::class, 'targetAttribute' => ['unit_id' => 'unit_id']],
+            [['supplier_id'], 'exist', 'skipOnError' => true, 'targetClass' => Supplier::class, 'targetAttribute' => ['supplier_id' => 'supplier_id']],
+            [['unit_id'], 'exist', 'skipOnError' => true, 'targetClass' => Unit::class, 'targetAttribute' => ['unit_id' => 'unit_id']],
         ];
     }
 
@@ -64,13 +62,13 @@ class Item extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[Pembelian]].
+     * Gets query for [[Supplier]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getPembelian()
+    public function getSupplier()
     {
-        return $this->hasOne(Pembelian::class, ['supplier_id' => 'supplier_id']);
+        return $this->hasOne(Supplier::class, ['supplier_id' => 'supplier_id']);
     }
 
     /**
@@ -80,6 +78,6 @@ class Item extends \yii\db\ActiveRecord
      */
     public function getUnit()
     {
-        return $this->hasOne(Barang::class, ['unit_id' => 'unit_id']);
+        return $this->hasOne(Unit::class, ['unit_id' => 'unit_id']);
     }
 }

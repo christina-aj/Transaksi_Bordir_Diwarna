@@ -10,15 +10,15 @@ use yii\grid\GridView;
 /** @var app\models\BarangSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = 'Barang';
+$this->title = 'Barangs';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="pc-content">
+<div class="barang-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Tambah Barang', ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Create Barang', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
     <?php // echo $this->render('_search', ['model' => $searchModel]); 
@@ -33,10 +33,10 @@ $this->params['breadcrumbs'][] = $this->title;
             'barang_id',
             'kode_barang',
             'nama_barang',
-            'unit_id',
+            'unit.satuan',
             'harga',
-            'tipe',
-            'warna',
+            //'tipe',
+            //'warna',
             //'created_at',
             //'updated_at',
             [

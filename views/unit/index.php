@@ -13,7 +13,7 @@ use yii\grid\GridView;
 $this->title = 'Units';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="pc-content">
+<div class="unit-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
@@ -29,12 +29,12 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-            'id',
-            'nama',
+            'unit_id',
+            'satuan',
             [
                 'class' => ActionColumn::className(),
                 'urlCreator' => function ($action, Unit $model, $key, $index, $column) {
-                    return Url::toRoute([$action, 'id' => $model->id]);
+                    return Url::toRoute([$action, 'unit_id' => $model->unit_id]);
                  }
             ],
         ],

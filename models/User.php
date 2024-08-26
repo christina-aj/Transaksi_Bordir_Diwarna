@@ -37,6 +37,20 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
     /**
      * {@inheritdoc}
      */
+
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => TimestampBehavior::className(),
+                'attributes' => [
+                    \yii\db\ActiveRecord::EVENT_BEFORE_INSERT => ['dibuat_pada', 'diperbarui_pada'],
+                    \yii\db\ActiveRecord::EVENT_BEFORE_UPDATE => ['diperbarui_pada'],
+                ],
+                'value' => new Expression('NOW()'), // or date('Y-m-d H:i:s')
+            ],
+        ];
+    }
     public function rules()
     {
         return [
@@ -44,9 +58,7 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
             [['id_role'], 'integer'],
             [['dibuat_pada', 'diperbarui_pada'], 'safe'],
             [['nama_pengguna', 'email', 'kata_sandi'], 'string', 'max' => 200],
-            [['id_role'], 'unique'],
             [['nama_pengguna'], 'unique'],
-            [['id_role'], 'exist', 'skipOnError' => true, 'targetClass' => Role::class, 'targetAttribute' => ['id_role' => 'id_role']],
         ];
     }
 

@@ -71,7 +71,7 @@ class Barang extends \yii\db\ActiveRecord
             'barang_id' => 'Barang ID',
             'kode_barang' => 'Kode Barang',
             'nama_barang' => 'Nama Barang',
-            'unit_id' => 'Unit ID',
+            'unit_id' => 'Satuan',
             'harga' => 'Harga',
             'tipe' => 'Tipe',
             'warna' => 'Warna',

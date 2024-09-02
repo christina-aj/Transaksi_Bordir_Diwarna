@@ -18,17 +18,26 @@ use yii\widgets\ActiveForm;
     <?= $form->field($model, 'nama_barang')->textInput(['maxlength' => true]) ?>
 
     <?php
-    $dataPost = ArrayHelper::map(\app\models\Unit::find()->asArray()->all(), 'unit_id', 'nama');
+    $dataPost = ArrayHelper::map(\app\models\Unit::find()->asArray()->all(), 'unit_id', function ($model) {
+        return $model['unit_id'] . ' - ' . $model['satuan'];
+    });
     echo $form->field($model, 'unit_id')
         ->dropDownList(
             $dataPost,
-            ['unit_id' => 'nama']
+            ['unit_id' => 'unit_id']
         );
     ?>
 
     <?= $form->field($model, 'harga')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'tipe')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'tipe')->dropDownList(
+        [
+            "Consumable" => 'Consumable',
+            "Non Consumable" => 'Non Consumable',
+        ]
+    ); ?>
+
+    <!-- <?= $form->field($model, 'tipe')->textInput(['maxlength' => true]) ?> -->
 
     <?= $form->field($model, 'warna')->textInput(['maxlength' => true]) ?>
 
@@ -38,7 +47,7 @@ use yii\widgets\ActiveForm;
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
-        <?= Html::a('Back', ['user/index'], ['class' => 'btn btn-secondary']) ?>
+        <?= Html::a('Back', ['barang/index'], ['class' => 'btn btn-secondary']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>

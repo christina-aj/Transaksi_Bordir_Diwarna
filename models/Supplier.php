@@ -46,7 +46,7 @@ class Supplier extends \yii\db\ActiveRecord
     {
         return [
             'supplier_id' => 'Supplier ID',
-            'nama' => 'Nama',
+            'nama' => 'Nama Supplier',
             'notelfon' => 'Notelfon',
             'alamat' => 'Alamat',
             'kota' => 'Kota',

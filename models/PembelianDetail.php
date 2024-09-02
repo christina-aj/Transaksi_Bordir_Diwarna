@@ -3,6 +3,9 @@
 namespace app\models;
 
 use Yii;
+use yii\base\NotSupportedException;
+use yii\behaviors\TimestampBehavior;
+use yii\db\Expression;
 
 /**
  * This is the model class for table "pembelian_detail".
@@ -19,7 +22,6 @@ use Yii;
  * @property string|null $updated_at
  *
  * @property Barang $barang
- * @property Stock $barang0
  * @property Pembelian $pembelian
  */
 class PembelianDetail extends \yii\db\ActiveRecord
@@ -35,6 +37,20 @@ class PembelianDetail extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
+
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => TimestampBehavior::className(),
+                'attributes' => [
+                    \yii\db\ActiveRecord::EVENT_BEFORE_INSERT => ['created_at', 'updated_at'],
+                    \yii\db\ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
+                ],
+                'value' => new Expression('NOW()'), // or date('Y-m-d H:i:s')
+            ],
+        ];
+    }
     public function rules()
     {
         return [
@@ -43,9 +59,7 @@ class PembelianDetail extends \yii\db\ActiveRecord
             [['harga_barang', 'quantity_barang', 'total_biaya'], 'number'],
             [['created_at', 'updated_at'], 'safe'],
             [['catatan'], 'string', 'max' => 255],
-            [['pembelian_id'], 'unique'],
-            [['barang_id'], 'unique'],
-            [['barang_id'], 'exist', 'skipOnError' => true, 'targetClass' => Stock::class, 'targetAttribute' => ['barang_id' => 'barang_id']],
+            [['barang_id'], 'exist', 'skipOnError' => true, 'targetClass' => Barang::class, 'targetAttribute' => ['barang_id' => 'barang_id']],
         ];
     }
 
@@ -63,8 +77,8 @@ class PembelianDetail extends \yii\db\ActiveRecord
             'total_biaya' => 'Total Biaya',
             'catatan' => 'Catatan',
             'langsung_pakai' => 'Langsung Pakai',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
+            'created_at' => 'Dibuat Pada',
+            'updated_at' => 'Diperbarui Pada',
         ];
     }
 
@@ -76,16 +90,6 @@ class PembelianDetail extends \yii\db\ActiveRecord
     public function getBarang()
     {
         return $this->hasOne(Barang::class, ['barang_id' => 'barang_id']);
-    }
-
-    /**
-     * Gets query for [[Barang0]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getBarang0()
-    {
-        return $this->hasOne(Stock::class, ['barang_id' => 'barang_id']);
     }
 
     /**

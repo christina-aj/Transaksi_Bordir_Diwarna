@@ -16,7 +16,7 @@ use Yii;
  * @property string $kode_struk
  *
  * @property PembelianDetail $pembelian
- * @property Item $supplier
+ * @property Supplier $supplier
  * @property User $user
  */
 class Pembelian extends \yii\db\ActiveRecord
@@ -40,11 +40,8 @@ class Pembelian extends \yii\db\ActiveRecord
             [['tanggal'], 'safe'],
             [['total_biaya'], 'string', 'max' => 200],
             [['kode_struk'], 'string', 'max' => 255],
-            [['supplier_id'], 'unique'],
-            [['user_id'], 'unique'],
-            [['supplier_id'], 'exist', 'skipOnError' => true, 'targetClass' => Item::class, 'targetAttribute' => ['supplier_id' => 'supplier_id']],
-            [['pembelian_id'], 'exist', 'skipOnError' => true, 'targetClass' => PembelianDetail::class, 'targetAttribute' => ['pembelian_id' => 'pembelian_id']],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'user_id']],
+            [['supplier_id'], 'exist', 'skipOnError' => true, 'targetClass' => Supplier::class, 'targetAttribute' => ['supplier_id' => 'supplier_id']],
         ];
     }
 
@@ -55,9 +52,9 @@ class Pembelian extends \yii\db\ActiveRecord
     {
         return [
             'pembelian_id' => 'Pembelian ID',
-            'user_id' => 'User ID',
+            'user_id' => 'User',
             'tanggal' => 'Tanggal',
-            'supplier_id' => 'Supplier ID',
+            'supplier_id' => 'Supplier',
             'total_biaya' => 'Total Biaya',
             'langsung_pakai' => 'Langsung Pakai',
             'kode_struk' => 'Kode Struk',
@@ -81,7 +78,7 @@ class Pembelian extends \yii\db\ActiveRecord
      */
     public function getSupplier()
     {
-        return $this->hasOne(Item::class, ['supplier_id' => 'supplier_id']);
+        return $this->hasOne(Supplier::class, ['supplier_id' => 'supplier_id']);
     }
 
     /**

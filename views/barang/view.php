@@ -11,21 +11,9 @@ $this->params['breadcrumbs'][] = ['label' => 'Barangs', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
-<div class="barang-view">
+<div class="pc-content">
 
     <h1><?= Html::encode($this->title) ?></h1>
-
-    <p>
-        <?= Html::a('Update', ['update', 'barang_id' => $model->barang_id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Delete', ['delete', 'barang_id' => $model->barang_id], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => 'Are you sure you want to delete this item?',
-                'method' => 'post',
-            ],
-        ]) ?>
-    </p>
-
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
@@ -40,5 +28,17 @@ $this->params['breadcrumbs'][] = $this->title;
             'updated_at:datetime',
         ],
     ]) ?>
+    <div>
+        <?= Html::a('Update', ['update', 'barang_id' => $model->barang_id], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Delete', ['delete', 'barang_id' => $model->barang_id], [
+            'class' => 'btn btn-danger',
+            'data' => [
+                'confirm' => 'Are you sure you want to delete this item?',
+                'method' => 'post',
+            ],
+
+        ]) ?>
+        <?= Html::a('Back', ['barang/index'], ['class' => 'btn btn-secondary']) ?>
+    </div>
 
 </div>

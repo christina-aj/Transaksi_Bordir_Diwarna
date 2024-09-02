@@ -13,7 +13,7 @@ use yii\grid\GridView;
 $this->title = 'Units';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="unit-index">
+<div class="pc-content">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
@@ -21,7 +21,8 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= Html::a('Create Unit', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+    <?php // echo $this->render('_search', ['model' => $searchModel]); 
+    ?>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
@@ -29,13 +30,13 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-            'unit_id',
+            // 'unit_id',
             'satuan',
             [
                 'class' => ActionColumn::className(),
                 'urlCreator' => function ($action, Unit $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'unit_id' => $model->unit_id]);
-                 }
+                }
             ],
         ],
     ]); ?>

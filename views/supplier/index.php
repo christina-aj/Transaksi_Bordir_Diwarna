@@ -13,7 +13,7 @@ use yii\grid\GridView;
 $this->title = 'Suppliers';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="supplier-index">
+<div class="pc-content">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
@@ -21,7 +21,8 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= Html::a('Create Supplier', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+    <?php // echo $this->render('_search', ['model' => $searchModel]); 
+    ?>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
@@ -39,7 +40,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'class' => ActionColumn::className(),
                 'urlCreator' => function ($action, Supplier $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'supplier_id' => $model->supplier_id]);
-                 }
+                }
             ],
         ],
     ]); ?>

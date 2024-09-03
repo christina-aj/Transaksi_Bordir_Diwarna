@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\widgets\DetailView;
+use kartik\date\DatePicker;
 
 /** @var yii\web\View $this */
 /** @var app\models\Stock $model */
@@ -11,11 +12,30 @@ $this->params['breadcrumbs'][] = ['label' => 'Stocks', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
-<div class="stock-view">
+<div class="pc-content">
 
     <h1><?= Html::encode($this->title) ?></h1>
-
-    <p>
+    <?= DetailView::widget([
+        'model' => $model,
+        'attributes' => [
+            'stock_id',
+            'tambah_stock',
+            'barang_id',
+            'barang.kode_barang',
+            'barang.nama_barang',
+            'quantity_awal',
+            'quantity_masuk',
+            'quantity_keluar',
+            'quantity_akhir',
+            'user_id',
+            'user.nama_pengguna',
+            'is_ready',
+            'is_new',
+            'created_at:datetime',
+            'updated_at:datetime',
+        ],
+    ]) ?>
+    <div class="mb-5">
         <?= Html::a('Update', ['update', 'stock_id' => $model->stock_id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Delete', ['delete', 'stock_id' => $model->stock_id], [
             'class' => 'btn btn-danger',
@@ -24,24 +44,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'method' => 'post',
             ],
         ]) ?>
-    </p>
-
-    <?= DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'stock_id',
-            'tambah_stock',
-            'barang_id',
-            'quantity_awal',
-            'quantity_masuk',
-            'quantity_keluar',
-            'quantity_akhir',
-            'user_id',
-            'is_ready',
-            'is_new',
-            'created_at',
-            'updated_at',
-        ],
-    ]) ?>
+        <?= Html::a('Back', ['stock/index'], ['class' => 'btn btn-secondary']) ?>
+    </div>
 
 </div>

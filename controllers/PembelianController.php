@@ -131,14 +131,4 @@ class PembelianController extends Controller
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
-
-    public function actionGetHarga($id_barang)
-    {
-        $harga = \app\models\Barang::find()
-            ->where(['id_barang' => $id_barang])
-            ->one()
-            ->harga;
-
-        return $this->asJson($harga);
-    }
 }

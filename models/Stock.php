@@ -3,6 +3,9 @@
 namespace app\models;
 
 use Yii;
+use yii\behaviors\TimestampBehavior;
+use yii\db\Expression;
+
 
 /**
  * This is the model class for table "stock".
@@ -36,6 +39,20 @@ class Stock extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
+
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => TimestampBehavior::className(),
+                'attributes' => [
+                    \yii\db\ActiveRecord::EVENT_BEFORE_INSERT => ['created_at', 'updated_at'],
+                    \yii\db\ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
+                ],
+                'value' => new Expression('NOW()'), // or date('Y-m-d H:i:s')
+            ],
+        ];
+    }
     public function rules()
     {
         return [
@@ -43,8 +60,6 @@ class Stock extends \yii\db\ActiveRecord
             [['tambah_stock', 'created_at', 'updated_at'], 'safe'],
             [['barang_id', 'user_id', 'is_ready', 'is_new'], 'integer'],
             [['quantity_awal', 'quantity_masuk', 'quantity_keluar', 'quantity_akhir'], 'number'],
-            [['barang_id'], 'unique'],
-            [['user_id'], 'unique'],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'user_id']],
         ];
     }
@@ -88,5 +103,10 @@ class Stock extends \yii\db\ActiveRecord
     public function getUser()
     {
         return $this->hasOne(User::class, ['user_id' => 'user_id']);
+    }
+
+    public function getBarang()
+    {
+        return $this->hasOne(Barang::class, ['barang_id' => 'barang_id']);
     }
 }

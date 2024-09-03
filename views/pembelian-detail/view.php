@@ -17,6 +17,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
+            'pembelian.tanggal',
             'belidetail_id',
             'pembelian_id',
             'pembelian.kode_struk',

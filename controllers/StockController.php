@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use yii;
 use app\models\Stock;
 use app\models\StockSearch;
 use yii\web\Controller;
@@ -130,5 +131,21 @@ class StockController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    public function actionGetStock()
+    {
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        $barang_id = Yii::$app->request->post('barang_id');
+
+        if (!$barang_id) {
+            throw new \yii\web\BadRequestHttpException('Missing required parameters: barang_id');
+        }
+
+        $lastStock = Stock::find()->where(['barang_id' => $barang_id])->orderBy(['stock_id' => SORT_DESC])->one();
+        $quantity_awal = $lastStock ? $lastStock->quantity_akhir : 0;
+
+        return ['quantity_awal' => $quantity_awal];
     }
 }

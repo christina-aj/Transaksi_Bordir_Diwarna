@@ -17,10 +17,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <p>
-        <?= Html::a('Create Stock', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
-
     <?php // echo $this->render('_search', ['model' => $searchModel]); 
     ?>
 
@@ -52,6 +48,7 @@ $this->params['breadcrumbs'][] = $this->title;
             // 'updated_at',
             [
                 'class' => ActionColumn::className(),
+                'template' => '{view}',
                 'urlCreator' => function ($action, Stock $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'stock_id' => $model->stock_id]);
                 }

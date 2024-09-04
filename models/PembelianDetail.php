@@ -57,6 +57,7 @@ class PembelianDetail extends \yii\db\ActiveRecord
             [['pembelian_id', 'barang_id', 'harga_barang', 'quantity_barang', 'total_biaya', 'langsung_pakai'], 'required'],
             [['pembelian_id', 'barang_id', 'langsung_pakai'], 'integer'],
             [['harga_barang', 'quantity_barang', 'total_biaya'], 'number'],
+            [['total_biaya'], 'default', 'value' => 0],
             [['created_at', 'updated_at'], 'safe'],
             [['catatan'], 'string', 'max' => 255],
             [['barang_id'], 'exist', 'skipOnError' => true, 'targetClass' => Barang::class, 'targetAttribute' => ['barang_id' => 'barang_id']],
@@ -114,7 +115,6 @@ class PembelianDetail extends \yii\db\ActiveRecord
     {
         parent::afterDelete();
         $this->updatePembelianTotalBiaya();
-        $this->updateStock();
     }
 
     protected function updatePembelianTotalBiaya()
@@ -130,37 +130,80 @@ class PembelianDetail extends \yii\db\ActiveRecord
 
     protected function updateStock()
     {
-        // Cek apakah barang_id ada di stok
-        $stock = Stock::findOne(['barang_id' => $this->barang_id]);
+        Yii::info('Updating stock for barang_id: ' . $this->barang_id);
 
-        if ($stock) {
-            if ($this->langsung_pakai == 1) {
-                $stock->quantity_keluar += $this->quantity_barang;
-            } else {
-                $stock->quantity_masuk += $this->quantity_barang;
-                $stock->quantity_akhir += $this->quantity_barang;
-            }
+        // Cek apakah pembelian ini sudah ada atau tidak
+        $pembelian = Pembelian::findOne($this->pembelian_id);
+
+        if ($pembelian) {
+            // Ambil user_id dan tanggal dari pembelian
+            $userId = $pembelian->user_id;
+            $tanggal = $pembelian->tanggal;
         } else {
-            // Jika barang belum ada di stok, buat entri stok baru
-            $stock = new Stock();
-            $stock->barang_id = $this->barang_id;
-            if ($this->langsung_pakai == 1) {
-                $stock->quantity_awal = 0;
-                $stock->quantity_masuk = 0;
-                $stock->quantity_keluar = $this->quantity_barang;
-                $stock->quantity_akhir = 0;
-            } else {
-                $stock->quantity_awal = 0;
-                $stock->quantity_masuk = $this->quantity_barang;
-                $stock->quantity_keluar = 0;
-                $stock->quantity_akhir = $this->quantity_barang;
-            }
+            Yii::error('Pembelian not found for ID: ' . $this->pembelian_id);
+            return;
         }
 
-        if ($stock->save()) {
-            Yii::debug("Stock updated for barang_id: {$this->barang_id}");
+        // Cek apakah stock untuk barang_id ini sudah ada
+        $stock = Stock::find()->where(['barang_id' => $this->barang_id])
+            ->orderBy(['stock_id' => SORT_DESC]) // Mengurutkan berdasarkan ID untuk mendapatkan yang terbaru
+            ->one();
+
+        if (!$stock) {
+            // Jika stock belum ada, buat entri stock baru
+            Yii::info('Creating new stock entry for barang_id: ' . $this->barang_id);
+            $stock = new Stock();
+            $stock->barang_id = $this->barang_id;
+            $stock->tambah_stock = $tanggal;
+            $stock->quantity_awal = 0;
+            if ($this->langsung_pakai == 1) {
+                $stock->quantity_masuk = 0;
+                $stock->quantity_keluar = $this->quantity_barang;
+            } else {
+                $stock->quantity_masuk = $this->quantity_barang;
+                $stock->quantity_keluar = 0;
+            }
+            if ($stock->quantity_keluar == 0) {
+                $stock->quantity_akhir = $stock->quantity_awal + $stock->quantity_masuk - $stock->quantity_keluar;
+            } else {
+                $stock->quantity_akhir = $stock->quantity_awal;
+            }
+            $stock->is_ready = ($stock->quantity_akhir >= 0 && $this->langsung_pakai == 1) ? 1 : 0;
+            $stock->is_new = ($this->langsung_pakai == 0) ? 1 : 0;
+            $stock->user_id = $userId;
+
+
+            if (!$stock->save()) {
+                Yii::error('Failed to save stock: ' . print_r($stock->errors, true));
+            }
         } else {
-            Yii::error("Failed to update stock for barang_id: {$this->barang_id}. Errors: " . json_encode($stock->getErrors()));
+            // Jika stock sudah ada, buat entri stock baru dengan nilai sebelumnya
+            Yii::info('Updating existing stock entry for barang_id: ' . $this->barang_id);
+            $newStock = new Stock();
+            $newStock->barang_id = $this->barang_id;
+            $newStock->tambah_stock = $tanggal;
+            $newStock->quantity_awal = $stock->quantity_akhir;
+
+            if ($this->langsung_pakai == 1) {
+                $newStock->quantity_masuk = 0;
+                $newStock->quantity_keluar = $this->quantity_barang;
+            } else {
+                $newStock->quantity_masuk = $this->quantity_barang;
+                $newStock->quantity_keluar = 0;
+            }
+            if ($newStock->quantity_keluar == 0) {
+                $newStock->quantity_akhir = $newStock->quantity_awal + $newStock->quantity_masuk - $newStock->quantity_keluar;
+            } else {
+                $newStock->quantity_akhir = $newStock->quantity_awal;
+            }
+            $newStock->is_ready = ($newStock->quantity_akhir >= 0 && $this->langsung_pakai == 1) ? 1 : 0;
+            $newStock->is_new = ($this->langsung_pakai == 0) ? 1 : 0;
+            $newStock->user_id = $userId;
+
+            // Simpan data stock
+            if (!$newStock->save()) {
+                Yii::error('Failed to save stock: ' . print_r($newStock->errors, true));
+            }
         }
     }
 }

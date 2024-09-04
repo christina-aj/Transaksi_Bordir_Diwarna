@@ -66,22 +66,6 @@ class StockController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
-    public function actionCreate()
-    {
-        $model = new Stock();
-
-        if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'stock_id' => $model->stock_id]);
-            }
-        } else {
-            $model->loadDefaultValues();
-        }
-
-        return $this->render('create', [
-            'model' => $model,
-        ]);
-    }
 
     /**
      * Updates an existing Stock model.
@@ -90,18 +74,6 @@ class StockController extends Controller
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($stock_id)
-    {
-        $model = $this->findModel($stock_id);
-
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'stock_id' => $model->stock_id]);
-        }
-
-        return $this->render('update', [
-            'model' => $model,
-        ]);
-    }
 
     /**
      * Deletes an existing Stock model.
@@ -110,12 +82,6 @@ class StockController extends Controller
      * @return \yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete($stock_id)
-    {
-        $this->findModel($stock_id)->delete();
-
-        return $this->redirect(['index']);
-    }
 
     /**
      * Finds the Stock model based on its primary key value.
@@ -131,21 +97,5 @@ class StockController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
-    }
-
-    public function actionGetStock()
-    {
-        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-
-        $barang_id = Yii::$app->request->post('barang_id');
-
-        if (!$barang_id) {
-            throw new \yii\web\BadRequestHttpException('Missing required parameters: barang_id');
-        }
-
-        $lastStock = Stock::find()->where(['barang_id' => $barang_id])->orderBy(['stock_id' => SORT_DESC])->one();
-        $quantity_awal = $lastStock ? $lastStock->quantity_akhir : 0;
-
-        return ['quantity_awal' => $quantity_awal];
     }
 }

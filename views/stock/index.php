@@ -30,8 +30,13 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-            'stock_id',
-            'tambah_stock',
+            // 'stock_id',
+            [
+                'attribute' => 'tambah_stock',
+                'format' => ['date', 'php:d-M-Y'], // Mengubah format ke dd-mm-yyyy
+                'label' => 'Tanggal',
+            ],
+            // 'tambah_stock',
             'barang_id',
             'barang.kode_barang',
             'barang.nama_barang',
@@ -41,8 +46,8 @@ $this->params['breadcrumbs'][] = $this->title;
             'quantity_akhir',
             // 'user_id',
             'user.nama_pengguna',
-            // 'is_ready',
-            // 'is_new',
+            'is_ready',
+            'is_new',
             // 'created_at',
             // 'updated_at',
             [

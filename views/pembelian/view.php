@@ -20,7 +20,12 @@ $this->params['breadcrumbs'][] = $this->title;
         'attributes' => [
             'pembelian_id',
             'user_id',
-            'tanggal',
+            [
+                'attribute' => 'tanggal',
+                'format' => ['date', 'php:d-M-Y'], // Mengubah format ke dd-mm-yyyy
+                'label' => 'Tanggal',
+            ],
+            // 'tanggal',
             'supplier_id',
             'total_biaya',
             'langsung_pakai',

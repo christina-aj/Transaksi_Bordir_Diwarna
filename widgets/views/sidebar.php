@@ -16,6 +16,7 @@ $StockUrl = Url::to(['/stock/index']);
 $ShifttUrl = Url::to(['/shift/index']);
 $PembelianUrl = Url::to(['/pembelian/index']);
 $InvoiceUrl = Url::to(['/pembelian-detail/index']);
+$PenggunaanUrl = Url::to(['/penggunaan/index']);
 
 
 
@@ -56,9 +57,8 @@ $samplePageUrl = Url::to(['site/sample-page']);
 
                     <li class="pc-item pc-hasmenu">
                         <a href="#!" class="pc-link"><span class="pc-micon">
-                                <i class="fi fi-ts-dolly-flatbed-alt"></i> </span><span class="pc-mtext">Barang</span><span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
+                                <i class="fi fi-ts-dolly-flatbed-alt"></i> </span><span class="pc-mtext">Pembelian</span><span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
                         <ul class="pc-submenu">
-                            <li class="pc-item"><a class="pc-link" href="<?= $BarangUrl ?>">List Barang</a></li>
                             <li class="pc-item"><a class="pc-link" href="<?= $PembelianUrl ?>">Pembelian</a></li>
                             <li class="pc-item"><a class="pc-link" href="<?= $UnitUrl ?>">Unit</a></li>
                             <li class="pc-item"><a class="pc-link" href="<?= $InvoiceUrl ?>">Invoice</a></li>
@@ -66,12 +66,22 @@ $samplePageUrl = Url::to(['site/sample-page']);
                         </ul>
                     </li>
 
-                    <li class="pc-item">
+                    <li class="pc-item pc-hasmenu">
+                        <a href="#!" class="pc-link"><span class="pc-micon">
+                                <i class="fi fi-ts-box-alt"></i> </span><span class="pc-mtext">Stock</span><span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
+                        <ul class="pc-submenu">
+                            <li class="pc-item"><a class="pc-link" href="<?= $BarangUrl ?>">List Barang</a></li>
+                            <li class="pc-item"><a class="pc-link" href="<?= $PenggunaanUrl ?>">Penggunaan</a></li>
+                            <li class="pc-item"><a class="pc-link" href="<?= $StockUrl ?>">Report Stock</a></li>
+                        </ul>
+                    </li>
+
+                    <!-- <li class="pc-item">
                         <a href="<?= $StockUrl ?>" class="pc-link">
                             <span class="pc-micon"><i class="fi fi-ts-box-alt"></i></i></span>
                             <span class="pc-mtext">Stock</span>
                         </a>
-                    </li>
+                    </li> -->
 
                     <li class="pc-item">
                         <a href="<?= $SupplierUrl ?>" class="pc-link">

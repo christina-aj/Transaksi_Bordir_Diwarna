@@ -50,7 +50,8 @@ $config = [
             'showScriptName' => false,
             'rules' => [
                 'pembelian-detail/get-harga' => 'pembelian-detail/get-harga',
-                'stock/get-stock' => 'stock/get-stock'
+                'stock/get-stock' => 'stock/get-stock',
+                'pembelian/calculate-total' => 'pembelian/calculate-total',
             ],
         ],
 

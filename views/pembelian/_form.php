@@ -14,7 +14,7 @@ use kartik\date\DatePicker;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <!-- <?= $form->field($model, 'pembelian_id')->textInput() ?> -->
+    <!-- <?= $form->field($model, 'pembelian_id')->textInput(['id' => 'pembelian_id']) ?> -->
 
     <?php
     $dataPost = ArrayHelper::map(
@@ -34,7 +34,7 @@ use kartik\date\DatePicker;
         'options' => ['placeholder' => 'yyyy-mm-dd'],
         'pluginOptions' => [
             'autoclose' => true,
-            'format' => 'yyyy-mm-dd',
+            'format' => 'dd-M-yyyy',
         ],
     ]); ?>
     <!-- <?= $form->field($model, 'tanggal')->textInput() ?> -->
@@ -53,7 +53,7 @@ use kartik\date\DatePicker;
 
     <!-- <?= $form->field($model, 'supplier_id')->textInput() ?> -->
 
-    <?= $form->field($model, 'total_biaya')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'total_biaya')->textInput(['id' => 'total_biaya', 'maxlength' => true, 'readonly' => true, 'value' => $model->total_biaya ?? 0]) ?>
 
     <?= $form->field($model, 'kode_struk')->textInput(['maxlength' => true]) ?>
 
@@ -68,5 +68,31 @@ use kartik\date\DatePicker;
     </div>
 
     <?php ActiveForm::end(); ?>
+
+
+    <?php
+    $script = <<< JS
+// Fungsi untuk menghitung total biaya secara dinamis
+function calculateTotalBiaya(pembelianId) {
+    $.ajax({
+        url: 'index.php?r=pembelian/calculate-total-biaya', // URL untuk menghitung total biaya
+        type: 'GET',
+        data: {pembelian_id: pembelianId},
+        success: function(data) {
+            // Update field total biaya di form
+            $('#total-biaya').val(data.total_biaya);
+        }
+    });
+}
+
+// Ketika pengguna menambahkan atau mengedit rincian pembelian
+$('#pembelian-detail-container').on('change', 'input', function() {
+    var pembelianId = $('#pembelian-id').val(); // Ambil pembelian_id dari form
+    calculateTotalBiaya(pembelianId); // Panggil fungsi untuk update total biaya
+});
+JS;
+    $this->registerJs($script);
+    ?>
+
 
 </div>

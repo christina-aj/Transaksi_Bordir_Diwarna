@@ -19,7 +19,12 @@ $this->params['breadcrumbs'][] = $this->title;
         'model' => $model,
         'attributes' => [
             'stock_id',
-            'tambah_stock',
+            [
+                'attribute' => 'tambah_stock',
+                'format' => ['date', 'php:d-M-Y'], // Mengubah format menjadi dd-mm-yyyy
+                'label' => 'Tanggal',
+            ],
+            // 'tambah_stock',
             'barang_id',
             'barang.kode_barang',
             'barang.nama_barang',

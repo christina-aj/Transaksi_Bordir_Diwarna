@@ -40,6 +40,7 @@ class Pembelian extends \yii\db\ActiveRecord
             [['tanggal'], 'safe'],
             [['total_biaya'], 'string', 'max' => 200],
             [['kode_struk'], 'string', 'max' => 255],
+            [['kode_struk'], 'unique'],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'user_id']],
             [['supplier_id'], 'exist', 'skipOnError' => true, 'targetClass' => Supplier::class, 'targetAttribute' => ['supplier_id' => 'supplier_id']],
         ];
@@ -89,5 +90,27 @@ class Pembelian extends \yii\db\ActiveRecord
     public function getUser()
     {
         return $this->hasOne(User::class, ['user_id' => 'user_id']);
+    }
+
+    public function updateTotalBiaya($pembelianId)
+    {
+        // Menghitung total biaya dari semua detail pembelian
+        $totalBiaya = PembelianDetail::find()
+            ->where(['pembelian_id' => $pembelianId])
+            ->sum('total_biaya');
+
+        // Update total biaya pada tabel pembelian
+        Pembelian::updateAll(['total_biaya' => $totalBiaya], ['pembelian_id' => $pembelianId]);
+    }
+
+    public function beforeSave($insert)
+    {
+        if (parent::beforeSave($insert)) {
+            // Mengubah format tanggal dari dd-mm-yyyy ke yyyy-mm-dd sebelum disimpan
+            $this->tanggal = Yii::$app->formatter->asDate($this->tanggal, 'php:Y-m-d');
+            return true;
+        } else {
+            return false;
+        }
     }
 }

@@ -2,18 +2,16 @@
 
 namespace app\controllers;
 
-use app\models\Pembelian;
-use app\models\PembelianDetail;
-use app\models\PembelianSearch;
+use app\models\Penggunaan;
+use app\models\PenggunaanSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-use yii;
 
 /**
- * PembelianController implements the CRUD actions for Pembelian model.
+ * PenggunaanController implements the CRUD actions for Penggunaan model.
  */
-class PembelianController extends Controller
+class PenggunaanController extends Controller
 {
     /**
      * @inheritDoc
@@ -34,13 +32,13 @@ class PembelianController extends Controller
     }
 
     /**
-     * Lists all Pembelian models.
+     * Lists all Penggunaan models.
      *
      * @return string
      */
     public function actionIndex()
     {
-        $searchModel = new PembelianSearch();
+        $searchModel = new PenggunaanSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
@@ -50,30 +48,30 @@ class PembelianController extends Controller
     }
 
     /**
-     * Displays a single Pembelian model.
-     * @param int $pembelian_id Pembelian ID
+     * Displays a single Penggunaan model.
+     * @param int $penggunaan_id Penggunaan ID
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($pembelian_id)
+    public function actionView($penggunaan_id)
     {
         return $this->render('view', [
-            'model' => $this->findModel($pembelian_id),
+            'model' => $this->findModel($penggunaan_id),
         ]);
     }
 
     /**
-     * Creates a new Pembelian model.
+     * Creates a new Penggunaan model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
     public function actionCreate()
     {
-        $model = new Pembelian();
+        $model = new Penggunaan();
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'pembelian_id' => $model->pembelian_id]);
+                return $this->redirect(['view', 'penggunaan_id' => $model->penggunaan_id]);
             }
         } else {
             $model->loadDefaultValues();
@@ -85,18 +83,18 @@ class PembelianController extends Controller
     }
 
     /**
-     * Updates an existing Pembelian model.
+     * Updates an existing Penggunaan model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param int $pembelian_id Pembelian ID
+     * @param int $penggunaan_id Penggunaan ID
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($pembelian_id)
+    public function actionUpdate($penggunaan_id)
     {
-        $model = $this->findModel($pembelian_id);
+        $model = $this->findModel($penggunaan_id);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'pembelian_id' => $model->pembelian_id]);
+            return $this->redirect(['view', 'penggunaan_id' => $model->penggunaan_id]);
         }
 
         return $this->render('update', [
@@ -105,45 +103,32 @@ class PembelianController extends Controller
     }
 
     /**
-     * Deletes an existing Pembelian model.
+     * Deletes an existing Penggunaan model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param int $pembelian_id Pembelian ID
+     * @param int $penggunaan_id Penggunaan ID
      * @return \yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete($pembelian_id)
+    public function actionDelete($penggunaan_id)
     {
-        $this->findModel($pembelian_id)->delete();
+        $this->findModel($penggunaan_id)->delete();
 
         return $this->redirect(['index']);
     }
 
     /**
-     * Finds the Pembelian model based on its primary key value.
+     * Finds the Penggunaan model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param int $pembelian_id Pembelian ID
-     * @return Pembelian the loaded model
+     * @param int $penggunaan_id Penggunaan ID
+     * @return Penggunaan the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($pembelian_id)
+    protected function findModel($penggunaan_id)
     {
-        if (($model = Pembelian::findOne(['pembelian_id' => $pembelian_id])) !== null) {
+        if (($model = Penggunaan::findOne(['penggunaan_id' => $penggunaan_id])) !== null) {
             return $model;
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
-    }
-
-    public function actionCalculateTotalBiaya($pembelian_id)
-    {
-        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-
-        // Hitung total biaya dari semua detail pembelian
-        $totalBiaya = PembelianDetail::find()
-            ->where(['pembelian_id' => $pembelian_id])
-            ->sum('total_biaya');
-
-        // Kembalikan hasil sebagai JSON
-        return ['total_biaya' => $totalBiaya];
     }
 }

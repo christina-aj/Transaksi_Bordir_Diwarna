@@ -15,10 +15,10 @@ use kartik\date\DatePicker;
     <?php $form = ActiveForm::begin(); ?>
 
     <?= $form->field($model, 'tambah_stock')->widget(DatePicker::classname(), [
-        'options' => ['placeholder' => 'yyyy-mm-dd'],
+        'options' => ['placeholder' => 'dd-mm-yyyy'],
         'pluginOptions' => [
             'autoclose' => true,
-            'format' => 'yyyy-mm-dd',
+            'format' => 'dd-mm-yyyy',
         ],
     ]); ?>
 

@@ -16,7 +16,8 @@ use yii\helpers\ArrayHelper;
 
     
     <?= $form->field($model, 'user_id')->hiddenInput(['value' => Yii::$app->user->id])->label(false) ?>
-    <?= $form->field($model, 'tanggal')->textInput(['placeholder' => 'yy-mm-dd']) ?>
+    
+    <?= $form->field($model, 'tanggal')->hiddenInput()->label(false) ?>
 
     <?= $form->field($model, 'shift')->dropDownList([1 => '1', 2 => '2'], ['prompt' => 'Select Shift']) ?>
 

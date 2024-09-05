@@ -3,6 +3,8 @@
 namespace app\models;
 
 use Yii;
+use yii\behaviors\TimestampBehavior;
+use yii\db\Expression;
 
 /**
  * This is the model class for table "shift".
@@ -32,6 +34,19 @@ class Shift extends \yii\db\ActiveRecord
     public $end_time;
 
     public $waktu_kerja_hidden;
+
+    public function behaviors()
+     {
+         return [
+             [
+                 'class' => TimestampBehavior::className(),
+                 'attributes' => [
+                     \yii\db\ActiveRecord::EVENT_BEFORE_INSERT => ['tanggal'],
+                 ],
+                 'value' => new Expression('NOW()'), 
+             ],
+         ];
+     }
  
     public static function tableName()
     {
@@ -44,7 +59,7 @@ class Shift extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['tanggal', 'shift', 'waktu_kerja', 'nama_operator', 'mulai_istirahat', 'selesai_istirahat', 'kendala', 'ganti_benang', 'ganti_kain'], 'required'],
+            [['shift', 'waktu_kerja', 'nama_operator', 'mulai_istirahat', 'selesai_istirahat', 'kendala', 'ganti_benang', 'ganti_kain'], 'required'],
             [['user_id', 'ganti_benang', 'ganti_kain'], 'integer'],
             [['tanggal', 'mulai_istirahat', 'selesai_istirahat', 'start_time', 'end_time'], 'safe'],
             [['shift'], 'integer'],

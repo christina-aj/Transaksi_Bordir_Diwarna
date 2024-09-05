@@ -47,7 +47,7 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
                     \yii\db\ActiveRecord::EVENT_BEFORE_INSERT => ['dibuat_pada', 'diperbarui_pada'],
                     \yii\db\ActiveRecord::EVENT_BEFORE_UPDATE => ['diperbarui_pada'],
                 ],
-                'value' => new Expression('NOW()'), // or date('Y-m-d H:i:s')
+                'value' => new Expression('NOW()'), 
             ],
         ];
     }

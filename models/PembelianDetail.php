@@ -164,7 +164,7 @@ class PembelianDetail extends \yii\db\ActiveRecord
                 $stock->quantity_keluar = 0;
             }
             if ($stock->quantity_keluar == 0) {
-                $stock->quantity_akhir = $stock->quantity_awal + $stock->quantity_masuk - $stock->quantity_keluar;
+                $stock->quantity_akhir = $stock->quantity_awal + $stock->quantity_masuk;
             } else {
                 $stock->quantity_akhir = $stock->quantity_awal;
             }
@@ -192,7 +192,7 @@ class PembelianDetail extends \yii\db\ActiveRecord
                 $newStock->quantity_keluar = 0;
             }
             if ($newStock->quantity_keluar == 0) {
-                $newStock->quantity_akhir = $newStock->quantity_awal + $newStock->quantity_masuk - $newStock->quantity_keluar;
+                $newStock->quantity_akhir = $newStock->quantity_awal + $newStock->quantity_masuk;
             } else {
                 $newStock->quantity_akhir = $newStock->quantity_awal;
             }

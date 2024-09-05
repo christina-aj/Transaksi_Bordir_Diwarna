@@ -1,9 +1,10 @@
 <?php
 
+use yii;
 use yii\helpers\Url;
 use yii\helpers\Html;
 
-$roleName = Yii::$app->user->identity->roleName;
+$roleName = Yii::$app->user->identity->role;
 
 $dashboardUrl = Url::to(['site/index']);
 $UserUrl = Url::to(['/user/index']);

@@ -35,6 +35,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'format' => ['date', 'php:d-M-Y'], // Mengubah format menjadi dd-mm-yyyy
             ],
             // 'barang_id',
+            'user.nama_pengguna',
             'barang.kode_barang',
             'barang.nama_barang',
             'jumlah_digunakan',

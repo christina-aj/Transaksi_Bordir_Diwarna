@@ -34,6 +34,16 @@ use yii\helpers\ArrayHelper;
             ['prompt' => 'Pilih Barang', 'barang_id' => 'nama_barang', 'id' => 'barang_id']
         );
     ?>
+    <?php
+    $dataPost = ArrayHelper::map(\app\models\User::find()->asArray()->all(), 'user_id', function ($model) {
+        return $model['user_id'] . ' - ' . $model['nama_pengguna'];
+    });
+    echo $form->field($model, 'user_id')
+        ->dropDownList(
+            $dataPost,
+            ['prompt' => 'Pilih Pengguna', 'user_id' => 'nama_pengguna', 'id' => 'user_id']
+        );
+    ?>
 
     <?= $form->field($model, 'jumlah_digunakan')->textInput() ?>
 

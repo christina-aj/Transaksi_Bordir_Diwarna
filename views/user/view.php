@@ -25,7 +25,6 @@ $this->params['breadcrumbs'][] = $this->title;
             'nama_pengguna',
             'kata_sandi',
             'email:email',
-            'authKey',
             'dibuat_pada:datetime',
             'diperbarui_pada:datetime',
         ],

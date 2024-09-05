@@ -48,7 +48,10 @@ $config = [
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
-            'rules' => [],
+            'rules' => [
+                'pembelian-detail/get-harga' => 'pembelian-detail/get-harga',
+                'stock/get-stock' => 'stock/get-stock'
+            ],
         ],
 
 

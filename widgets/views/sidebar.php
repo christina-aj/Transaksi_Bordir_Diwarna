@@ -1,21 +1,23 @@
 <?php
 
 use yii\helpers\Url;
-use yii\helpers\Html;
+use yii\helpers\Html;s
 
 $roleName = Yii::$app->user->identity->roleName;
 
 $dashboardUrl = Url::to(['site/index']);
 $UserUrl = Url::to(['/user/index']);
-$BarangUrl = Url::to(['/item/index']);
+$BarangUrl = Url::to(['/barang/index']);
 $SupplierUrl = Url::to(['/supplier/index']);
 $UnitUrl = Url::to(['/unit/index']);
 $MesinUrl = Url::to(['/mesin/index']);
 $ReportUrl = Url::to(['/report/index']);
-$StockUrl = Url::to(['/report/stock']);
+$StockUrl = Url::to(['/stock/index']);
 $ShifttUrl = Url::to(['/shift/index']);
 $laproUrl = Url::to(['/laporan-produksi/index']);
 $lapagreUrl = Url::to(['/laporan-agregat/index']);
+$PembelianUrl = Url::to(['/pembelian/index']);
+$InvoiceUrl = Url::to(['/pembelian-detail/index']);
 
 
 
@@ -50,14 +52,26 @@ $samplePageUrl = Url::to(['site/sample-page']);
                     <li class="pc-item">
                         <a href="<?= $UserUrl ?>" class="pc-link">
                             <span class="pc-micon"><i class="ph ph-user"></i></span>
-                            <span class="pc-mtext">User</span>
+                            <span class="pc-mtext">Akun</span>
                         </a>
                     </li>
 
+                    <li class="pc-item pc-hasmenu">
+                        <a href="#!" class="pc-link"><span class="pc-micon">
+                                <i class="fi fi-ts-dolly-flatbed-alt"></i> </span><span class="pc-mtext">Barang</span><span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
+                        <ul class="pc-submenu">
+                            <li class="pc-item"><a class="pc-link" href="<?= $BarangUrl ?>">List Barang</a></li>
+                            <li class="pc-item"><a class="pc-link" href="<?= $PembelianUrl ?>">Pembelian</a></li>
+                            <li class="pc-item"><a class="pc-link" href="<?= $UnitUrl ?>">Unit</a></li>
+                            <li class="pc-item"><a class="pc-link" href="<?= $InvoiceUrl ?>">Invoice</a></li>
+                            <li class="pc-item"><a class="pc-link" href="">Report Barang</a></li>
+                        </ul>
+                    </li>
+
                     <li class="pc-item">
-                        <a href="<?= $BarangUrl ?>" class="pc-link">
-                            <span class="pc-micon"><i class="fi fi-ts-box-alt"></i></span>
-                            <span class="pc-mtext">Barang</span>
+                        <a href="<?= $StockUrl ?>" class="pc-link">
+                            <span class="pc-micon"><i class="fi fi-ts-box-alt"></i></i></span>
+                            <span class="pc-mtext">Stock</span>
                         </a>
                     </li>
 
@@ -68,17 +82,36 @@ $samplePageUrl = Url::to(['site/sample-page']);
                         </a>
                     </li>
 
-                    <li class="pc-item">
+                    <!-- <li class="pc-item">
                         <a href="<?= $UnitUrl ?>" class="pc-link">
                             <span class="pc-micon"><i class="fi fi-ts-ruler-vertical"></i></span>
                             <span class="pc-mtext">Unit</span>
                         </a>
-                    </li>
+                    </li> -->
 
                     <li class="pc-item">
                         <a href="<?= $MesinUrl ?>" class="pc-link">
                             <span class="pc-micon"><i class="fi fi-ts-conveyor-belt"></i></span>
                             <span class="pc-mtext">Mesin</span>
+                        </a>
+                    </li>
+
+
+                    <!-- <li class="pc-item pc-hasmenu">
+                        <a href="#!" class="pc-link"><span class="pc-micon">
+                                <i class="fi fi-ts-ballot-check"></i> </span><span class="pc-mtext">Report</span><span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
+                        <ul class="pc-submenu">
+                            <li class="pc-item"><a class="pc-link" href="<?= $StockUrl ?>">Stock</a></li>
+                            <li class="pc-item"><a class="pc-link" href="<?= $ShifttUrl ?>">Shift</a></li>
+                        </ul>
+                    </li> -->
+                <?php endif; ?>
+
+                <?php if ($roleName === 'Admin'): ?>
+                    <li class="pc-item">
+                        <a href="<?= $dashboardUrl ?>" class="pc-link">
+                            <span class="pc-micon"><i class="ph ph-gauge"></i></span>
+                            <span class="pc-mtext">Dashboard</span>
                         </a>
                     </li>
 
@@ -93,21 +126,20 @@ $samplePageUrl = Url::to(['site/sample-page']);
                             <li class="pc-item"><a class="pc-link" href="<?= $lapagreUrl ?>">Laporan Agregat</a></li>
                         </ul>
                     </li>
-                <?php endif; ?>
-
-                <?php if ($roleName === 'Admin'): ?>
-                    <li class="pc-item">
-                        <a href="<?= $dashboardUrl ?>" class="pc-link">
-                            <span class="pc-micon"><i class="ph ph-gauge"></i></span>
-                            <span class="pc-mtext">Dashboard</span>
-                        </a>
-                    </li>
 
                     <li class="pc-item">
-                        <a href="<?= $BarangUrl ?>" class="pc-link">
-                            <span class="pc-micon"><i class="fi fi-ts-box-alt"></i></span>
+                        <a href="#!" class="pc-link">
+                            <span class="pc-micon">
+                                <i class="fi fi-ts-ballot-check"></i>
+                            </span>
                             <span class="pc-mtext">Barang</span>
+                            <span class="pc-arrow"><i data-feather="chevron-right"></i>
+                            </span>
                         </a>
+                        <ul class="pc-submenu">
+                            <li class="pc-item"><a class="pc-link" href="<?= $BarangUrl ?>">List Barang</a></li>
+                            <li class="pc-item"><a class="pc-link" href="<?= $ShifttUrl ?>">Shift</a></li>
+                        </ul>
                     </li>
 
                     <li class="pc-item">

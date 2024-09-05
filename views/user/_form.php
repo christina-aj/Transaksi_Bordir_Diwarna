@@ -30,11 +30,10 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'email')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'authKey')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'dibuat_pada')->hiddenInput() ?>
+    <!-- <?= $form->field($model, 'dibuat_pada')->hiddenInput() ?> -->
 
-    <?= $form->field($model, 'diperbarui_pada')->hiddenInput() ?>
+    <!-- <?= $form->field($model, 'diperbarui_pada')->hiddenInput() ?> -->
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>

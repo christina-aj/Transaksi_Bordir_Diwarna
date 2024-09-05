@@ -7,12 +7,15 @@ use Yii;
 /**
  * This is the model class for table "supplier".
  *
- * @property int $id
+ * @property int $supplier_id
  * @property string $nama
- * @property int $notelfon
+ * @property string $notelfon
  * @property string $alamat
  * @property string $kota
  * @property int $kodepos
+ *
+ * @property Item[] $items
+ * @property Pembelian[] $pembelians
  */
 class Supplier extends \yii\db\ActiveRecord
 {
@@ -31,8 +34,8 @@ class Supplier extends \yii\db\ActiveRecord
     {
         return [
             [['nama', 'notelfon', 'alamat', 'kota', 'kodepos'], 'required'],
-            [['notelfon', 'kodepos'], 'integer'],
-            [['nama', 'alamat', 'kota'], 'string', 'max' => 200],
+            [['kodepos'], 'integer'],
+            [['nama', 'notelfon', 'alamat', 'kota'], 'string', 'max' => 200],
         ];
     }
 
@@ -42,12 +45,32 @@ class Supplier extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => 'ID',
-            'nama' => 'Nama',
+            'supplier_id' => 'Supplier ID',
+            'nama' => 'Nama Supplier',
             'notelfon' => 'Notelfon',
             'alamat' => 'Alamat',
             'kota' => 'Kota',
             'kodepos' => 'Kodepos',
         ];
+    }
+
+    /**
+     * Gets query for [[Items]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getItems()
+    {
+        return $this->hasMany(Item::class, ['supplier_id' => 'supplier_id']);
+    }
+
+    /**
+     * Gets query for [[Pembelians]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getPembelians()
+    {
+        return $this->hasMany(Pembelian::class, ['supplier_id' => 'supplier_id']);
     }
 }

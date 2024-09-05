@@ -17,8 +17,8 @@ class UnitSearch extends Unit
     public function rules()
     {
         return [
-            [['id'], 'integer'],
-            [['nama'], 'safe'],
+            [['unit_id'], 'integer'],
+            [['satuan'], 'safe'],
         ];
     }
 
@@ -58,10 +58,10 @@ class UnitSearch extends Unit
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'id' => $this->id,
+            'unit_id' => $this->unit_id,
         ]);
 
-        $query->andFilterWhere(['like', 'nama', $this->nama]);
+        $query->andFilterWhere(['like', 'satuan', $this->satuan]);
 
         return $dataProvider;
     }

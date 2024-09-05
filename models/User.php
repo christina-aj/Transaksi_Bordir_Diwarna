@@ -13,11 +13,15 @@ use yii\db\Expression;
  * @property int $user_id
  * @property int $id_role
  * @property string $nama_pengguna
- * @property string $kata_sandi
  * @property string $email
- * @property string|null $authKey
+ * @property string $kata_sandi
  * @property string $dibuat_pada
- * @property string $diperbarui_pada
+ * @property string|null $diperbarui_pada
+ *
+ * @property Pembelian $pembelian
+ * @property Role $role
+ * @property Shift $shift
+ * @property Stock $stock
  */
 class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
 
@@ -50,12 +54,11 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
     public function rules()
     {
         return [
-            [['id_role', 'nama_pengguna', 'kata_sandi', 'email'], 'required'],
+            [['id_role', 'nama_pengguna', 'email', 'kata_sandi'], 'required'],
             [['id_role'], 'integer'],
             [['dibuat_pada', 'diperbarui_pada'], 'safe'],
-            [['nama_pengguna'], 'string', 'max' => 50],
-            [['kata_sandi', 'authKey'], 'string', 'max' => 255],
-            [['email'], 'string', 'max' => 100],
+            [['nama_pengguna', 'email', 'kata_sandi'], 'string', 'max' => 200],
+            [['nama_pengguna'], 'unique'],
         ];
     }
 
@@ -68,13 +71,18 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
             'user_id' => 'User ID',
             'id_role' => 'Id Role',
             'nama_pengguna' => 'Nama Pengguna',
-            'kata_sandi' => 'Kata Sandi',
             'email' => 'Email',
-            'authKey' => 'Auth Key',
+            'kata_sandi' => 'Kata Sandi',
             'dibuat_pada' => 'Dibuat Pada',
             'diperbarui_pada' => 'Diperbarui Pada',
         ];
     }
+
+    /**
+     * Gets query for [[Pembelian]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
 
     public static function findIdentity($id)
     {
@@ -83,7 +91,17 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
 
     public static function findIdentityByAccessToken($token, $type = null)
     {
-        throw new NotSupportedException();
+        throw new NotSupportedException;
+    }
+
+    public function getAuthKey()
+    {
+        return null;
+    }
+
+    public function validateAuthKey($authKey)
+    {
+        return true;
     }
 
     public function getId()
@@ -91,10 +109,19 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
         return $this->user_id;
     }
 
+    public function getPembelian()
+    {
+        return $this->hasOne(Pembelian::class, ['user_id' => 'user_id']);
+    }
 
+    /**
+     * Gets query for [[Role]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
     public function getRole()
     {
-        return $this->hasOne(Role::className(), ['id_role' => 'id_role']);
+        return $this->hasOne(Role::class, ['id_role' => 'id_role']);
     }
 
     public function getroleid()
@@ -107,15 +134,27 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
         return $this->role ? $this->role->nama : 'Guest';
     }
 
-    public function getAuthKey()
+
+    /**
+     * Gets query for [[Shift]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getShift()
     {
-        return $this->authKey;
+        return $this->hasOne(Shift::class, ['user_id' => 'user_id']);
     }
 
-    public function validateAuthKey($authKey)
+    /**
+     * Gets query for [[Stock]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getStock()
     {
-        return $this->authKey === $authKey;
+        return $this->hasOne(Stock::class, ['user_id' => 'user_id']);
     }
+
 
     public static function findByUsername($nama_pengguna)
     {

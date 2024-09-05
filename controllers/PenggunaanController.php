@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use Yii;
 use app\models\Penggunaan;
 use app\models\PenggunaanSearch;
 use yii\web\Controller;
@@ -130,5 +131,20 @@ class PenggunaanController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    public function actionGetStock()
+    {
+        $postData = Yii::$app->request->post(); // Debug POST data
+        Yii::info('POST Data: ' . print_r($postData, true), __METHOD__);
+
+        $barang_id = Yii::$app->request->post('barang_id');
+        if ($barang_id) {
+            $barang = \app\models\Stock::findOne($barang_id);
+            if ($barang) {
+                return $this->asJson($barang->quantity_awal);
+            }
+        }
+        return $this->asJson(null);
     }
 }

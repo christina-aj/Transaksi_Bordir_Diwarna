@@ -38,7 +38,8 @@ class Pembelian extends \yii\db\ActiveRecord
             [['user_id', 'tanggal', 'supplier_id', 'total_biaya', 'langsung_pakai', 'kode_struk'], 'required'],
             [['user_id', 'supplier_id', 'langsung_pakai'], 'integer'],
             [['tanggal'], 'safe'],
-            [['total_biaya'], 'string', 'max' => 200, 'default', 'value' => 0],
+            [['total_biaya'], 'string', 'max' => 200],  // Adjust if 'total_biaya' should be a string
+            [['total_biaya'], 'default', 'value' => 0],
             [['kode_struk'], 'string', 'max' => 255],
             [['kode_struk'], 'unique'],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'user_id']],

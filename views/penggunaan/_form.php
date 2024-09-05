@@ -45,6 +45,11 @@ use yii\helpers\ArrayHelper;
         );
     ?>
 
+    <!-- <div class="form-group">
+        <label>Stock</label>
+        <p><?= $model->stock->field_from_table_2 ?></p>
+    </div> -->
+
     <?= $form->field($model, 'jumlah_digunakan')->textInput() ?>
 
     <!-- <?= $form->field($model, 'tanggal_digunakan')->textInput() ?> -->

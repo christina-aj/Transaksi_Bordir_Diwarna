@@ -1,10 +1,9 @@
 <?php
 
-use yii;
 use yii\helpers\Url;
-use yii\helpers\Html;s
+use yii\helpers\Html;
 
-$roleName = Yii::$app->user->identity->role;
+$roleName = Yii::$app->user->identity->roleName;
 
 $dashboardUrl = Url::to(['site/index']);
 $UserUrl = Url::to(['/user/index']);
@@ -79,6 +78,8 @@ $samplePageUrl = Url::to(['site/sample-page']);
                         </ul>
                     </li>
 
+
+
                     <!-- <li class="pc-item">
                         <a href="<?= $StockUrl ?>" class="pc-link">
                             <span class="pc-micon"><i class="fi fi-ts-box-alt"></i></i></span>
@@ -107,6 +108,15 @@ $samplePageUrl = Url::to(['site/sample-page']);
                         </a>
                     </li>
 
+                    <li class="pc-item pc-hasmenu">
+                        <a href="#!" class="pc-link"><span class="pc-micon">
+                                <i class="fi fi-ts-calendar-shift-swap"></i> </span><span class="pc-mtext">Shift</span><span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
+                        <ul class="pc-submenu">
+                            <li class="pc-item"><a class="pc-link" href="<?= $laproUrl ?>">Laporan Produksi</a></li>
+                            <li class="pc-item"><a class="pc-link" href="<?= $lapagreUrl ?>">Laporan Agregat</a></li>
+                            <li class="pc-item"><a class="pc-link" href="<?= $ShifttUrl ?>">Shift</a></li>
+                        </ul>
+                    </li>
 
                     <!-- <li class="pc-item pc-hasmenu">
                         <a href="#!" class="pc-link"><span class="pc-micon">

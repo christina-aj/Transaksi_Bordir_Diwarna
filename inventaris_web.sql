@@ -1,227 +1,568 @@
--- --------------------------------------------------------
--- Host:                         127.0.0.1
--- Server version:               8.0.30 - MySQL Community Server - GPL
--- Server OS:                    Win64
--- HeidiSQL Version:             12.1.0.6537
--- --------------------------------------------------------
+-- phpMyAdmin SQL Dump
+-- version 5.2.1
+-- https://www.phpmyadmin.net/
+--
+-- Host: 127.0.0.1
+-- Generation Time: Sep 05, 2024 at 01:53 PM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.1.25
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET NAMES utf8 */;
-/*!50503 SET NAMES utf8mb4 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
 
+--
+-- Database: `inventaris_web`
+--
 
--- Dumping database structure for inventaris_web
-CREATE DATABASE IF NOT EXISTS `inventaris_web` /*!40100 DEFAULT CHARACTER SET armscii8 COLLATE armscii8_bin */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `inventaris_web`;
+-- --------------------------------------------------------
 
--- Dumping structure for table inventaris_web.consumable
-CREATE TABLE IF NOT EXISTS `consumable` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `code` int NOT NULL,
-  `nama` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `warna` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `jenis` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `jumlah` int NOT NULL,
-  `harga` int NOT NULL,
-  `total` int NOT NULL,
-  PRIMARY KEY (`id`)
+--
+-- Table structure for table `barang`
+--
+
+CREATE TABLE `barang` (
+  `barang_id` int(11) NOT NULL,
+  `kode_barang` varchar(255) NOT NULL,
+  `nama_barang` varchar(255) NOT NULL,
+  `unit_id` int(11) NOT NULL,
+  `harga` decimal(10,0) NOT NULL,
+  `tipe` varchar(255) NOT NULL,
+  `warna` varchar(255) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=armscii8 COLLATE=armscii8_bin;
+
+--
+-- Dumping data for table `barang`
+--
+
+INSERT INTO `barang` (`barang_id`, `kode_barang`, `nama_barang`, `unit_id`, `harga`, `tipe`, `warna`, `created_at`, `updated_at`) VALUES
+(1, 'A003', 'Benang', 1, 15000, 'Consumable', 'Oren', NULL, '2024-09-02 17:43:50'),
+(2, 'A009', 'Mesin jahit', 5, 150000, 'Non Consumable', 'Putih', '2024-09-01 16:23:20', '2024-09-01 16:23:20'),
+(3, 'A010', 'Kain', 1, 100000, 'Consumable', 'Hijau', '2024-09-02 16:27:12', '2024-09-02 16:27:12'),
+(4, 'A001', 'Benang', 1, 12000, 'Consumable', 'Merah', '2024-08-26 21:37:26', '2024-09-02 16:28:09'),
+(5, 'A011', 'Kain', 1, 12000, 'Consumable', 'Kuning', '2024-09-02 15:59:24', '2024-09-02 16:28:21'),
+(6, 'A002', 'Mesin', 5, 190000, 'Non Consumable', 'Merah', '2024-09-02 16:22:50', '2024-09-02 16:25:39');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `item`
+--
+
+CREATE TABLE `item` (
+  `id` int(11) NOT NULL,
+  `kategori` enum('consumable','non-consumable') NOT NULL,
+  `supplier_id` int(11) NOT NULL,
+  `unit_id` int(11) NOT NULL,
+  `jumlah` int(11) NOT NULL,
+  `harga` varchar(200) NOT NULL,
+  `total` varchar(200) NOT NULL,
+  `tempat_belanja` varchar(200) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table inventaris_web.consumable: ~0 rows (approximately)
+-- --------------------------------------------------------
 
--- Dumping structure for table inventaris_web.item
-CREATE TABLE IF NOT EXISTS `item` (
-  `items_id` int NOT NULL AUTO_INCREMENT,
-  `kategori` enum('consumable','non-consumable') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `pembelian_id` int NOT NULL,
-  `jumlah` int NOT NULL,
-  `harga` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `total` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `tempat_belanja` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  PRIMARY KEY (`items_id`),
-  UNIQUE KEY `kategori` (`kategori`),
-  UNIQUE KEY `pembelian_id` (`pembelian_id`),
-  UNIQUE KEY `item_id` (`pembelian_id`),
-  CONSTRAINT `item_ibfk_1` FOREIGN KEY (`pembelian_id`) REFERENCES `pembelian` (`pembelian_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+--
+-- Table structure for table `laporanproduksi`
+--
 
--- Dumping data for table inventaris_web.item: ~0 rows (approximately)
-
--- Dumping structure for table inventaris_web.laporan_produksi
-CREATE TABLE IF NOT EXISTS `laporan_produksi` (
-  `laporan_id` int NOT NULL AUTO_INCREMENT,
-  `mesin_id` int NOT NULL,
-  `shift_id` int NOT NULL,
+CREATE TABLE `laporanproduksi` (
+  `laporan_id` int(11) NOT NULL,
+  `mesin_id` int(11) NOT NULL,
+  `shift_id` int(11) NOT NULL,
   `tanggal_kerja` date NOT NULL,
-  `nama_kerjaan` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `vs` int NOT NULL,
-  `stitch` int NOT NULL,
-  `kuantitas` int NOT NULL,
-  `bs` int NOT NULL,
-  PRIMARY KEY (`laporan_id`),
-  UNIQUE KEY `mesin_id` (`mesin_id`,`shift_id`),
-  KEY `shift_id` (`shift_id`),
-  CONSTRAINT `laporan_produksi_ibfk_1` FOREIGN KEY (`shift_id`) REFERENCES `shift` (`shift_id`),
-  CONSTRAINT `laporan_produksi_ibfk_2` FOREIGN KEY (`mesin_id`) REFERENCES `mesin` (`mesin_id`)
+  `nama_kerjaan` varchar(200) NOT NULL,
+  `vs` int(11) NOT NULL,
+  `stitch` int(11) NOT NULL,
+  `kuantitas` int(11) NOT NULL,
+  `bs` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table inventaris_web.laporan_produksi: ~0 rows (approximately)
+--
+-- Dumping data for table `laporanproduksi`
+--
 
--- Dumping structure for table inventaris_web.mesin
-CREATE TABLE IF NOT EXISTS `mesin` (
-  `mesin_id` int NOT NULL AUTO_INCREMENT,
-  `nama` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `deskripsi` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  PRIMARY KEY (`mesin_id`)
+INSERT INTO `laporanproduksi` (`laporan_id`, `mesin_id`, `shift_id`, `tanggal_kerja`, `nama_kerjaan`, `vs`, `stitch`, `kuantitas`, `bs`) VALUES
+(8, 2, 21, '2024-09-02', 'babi', 1, 2, 3, 4),
+(9, 2, 22, '2024-09-03', 'babi', 1, 2, 3, 4),
+(10, 1, 21, '2024-09-04', 'babi12', 1, 2, 24, 2),
+(11, 1, 22, '2024-09-04', 'babi12', 1, 1, 52, 1),
+(12, 2, 22, '2024-09-04', 'babi12', 1, 2, 52, 1),
+(13, 1, 22, '2024-09-05', 'babi12', 1, 2, 55, 2),
+(21, 1, 21, '2021-09-08', 'P12', 2, 2, 1555, 1),
+(22, 1, 21, '2021-09-08', 'P12', 1, 2, 155, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `mesin`
+--
+
+CREATE TABLE `mesin` (
+  `mesin_id` int(11) NOT NULL,
+  `nama` varchar(200) NOT NULL,
+  `deskripsi` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table inventaris_web.mesin: ~0 rows (approximately)
+--
+-- Dumping data for table `mesin`
+--
 
--- Dumping structure for table inventaris_web.migration
-CREATE TABLE IF NOT EXISTS `migration` (
-  `version` varchar(180) NOT NULL,
-  `apply_time` int DEFAULT NULL,
-  PRIMARY KEY (`version`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+INSERT INTO `mesin` (`mesin_id`, `nama`, `deskripsi`) VALUES
+(1, 'Mesin Bordir', 'test'),
+(2, 'Mesin test', 'ada');
 
--- Dumping data for table inventaris_web.migration: ~1 rows (approximately)
-INSERT INTO `migration` (`version`, `apply_time`) VALUES
-	('m000000_000000_base', 1723548587);
+-- --------------------------------------------------------
 
--- Dumping structure for table inventaris_web.non_consumable
-CREATE TABLE IF NOT EXISTS `non_consumable` (
-  `nonconsumable_id` int NOT NULL AUTO_INCREMENT,
-  `nama` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `deskripsi` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `stok` int NOT NULL,
+--
+-- Table structure for table `pembelian`
+--
+
+CREATE TABLE `pembelian` (
+  `pembelian_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `tanggal` date NOT NULL,
+  `supplier_id` int(11) NOT NULL,
+  `total_biaya` varchar(200) NOT NULL,
   `langsung_pakai` tinyint(1) NOT NULL,
-  `kondisi` enum('baru','siap','kosong') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  PRIMARY KEY (`nonconsumable_id`)
+  `kode_struk` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table inventaris_web.non_consumable: ~0 rows (approximately)
+--
+-- Dumping data for table `pembelian`
+--
 
--- Dumping structure for table inventaris_web.pembelian
-CREATE TABLE IF NOT EXISTS `pembelian` (
-  `pembelian_id` int NOT NULL AUTO_INCREMENT,
-  `user_id` int NOT NULL,
-  `tanggal` date NOT NULL,
-  `tempat` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `kategori` enum('consumable','non-consumable') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `total_biaya` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  PRIMARY KEY (`pembelian_id`),
-  UNIQUE KEY `user_id` (`user_id`)
+INSERT INTO `pembelian` (`pembelian_id`, `user_id`, `tanggal`, `supplier_id`, `total_biaya`, `langsung_pakai`, `kode_struk`) VALUES
+(1, 2, '2024-09-02', 1, '120000', 1, '123'),
+(2, 2, '2024-09-01', 1, '120000', 1, 'A123'),
+(3, 5, '2024-09-03', 1, '120000', 0, '412'),
+(4, 2, '2024-08-25', 2, '120000', 0, '612'),
+(5, 5, '2024-09-03', 2, '120000', 0, '615');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pembelian_detail`
+--
+
+CREATE TABLE `pembelian_detail` (
+  `belidetail_id` int(11) NOT NULL,
+  `pembelian_id` int(11) NOT NULL,
+  `barang_id` int(11) NOT NULL,
+  `harga_barang` decimal(10,0) NOT NULL,
+  `quantity_barang` float NOT NULL,
+  `total_biaya` decimal(10,0) NOT NULL,
+  `catatan` varchar(255) DEFAULT NULL,
+  `langsung_pakai` tinyint(1) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=armscii8 COLLATE=armscii8_bin;
+
+--
+-- Dumping data for table `pembelian_detail`
+--
+
+INSERT INTO `pembelian_detail` (`belidetail_id`, `pembelian_id`, `barang_id`, `harga_barang`, `quantity_barang`, `total_biaya`, `catatan`, `langsung_pakai`, `created_at`, `updated_at`) VALUES
+(1, 3, 4, 12000, 12, 144000, '', 0, '2024-09-02 21:14:51', '2024-09-02 21:22:58'),
+(2, 4, 5, 12000, 3, 36000, '', 1, '2024-09-02 21:24:21', '2024-09-02 21:24:21'),
+(3, 3, 3, 100000, 6, 600000, '', 1, '2024-09-02 21:25:24', '2024-09-02 21:25:24');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `penggunaan`
+--
+
+CREATE TABLE `penggunaan` (
+  `penggunaan_id` int(11) NOT NULL,
+  `kategori` enum('consumable','non-consumable') NOT NULL,
+  `jumlah_digunakan` int(11) NOT NULL,
+  `tanggal_digunakan` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table inventaris_web.pembelian: ~0 rows (approximately)
+-- --------------------------------------------------------
 
--- Dumping structure for table inventaris_web.penggunaan
-CREATE TABLE IF NOT EXISTS `penggunaan` (
-  `penggunaan_id` int NOT NULL AUTO_INCREMENT,
-  `nonconsumable_id` int NOT NULL,
-  `jumlah_digunakan` int NOT NULL,
-  `tanggal_digunakan` date NOT NULL,
-  PRIMARY KEY (`penggunaan_id`),
-  UNIQUE KEY `nonconsumable_id` (`nonconsumable_id`),
-  CONSTRAINT `penggunaan_ibfk_1` FOREIGN KEY (`nonconsumable_id`) REFERENCES `non_consumable` (`nonconsumable_id`)
+--
+-- Table structure for table `report`
+--
+
+CREATE TABLE `report` (
+  `report_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table inventaris_web.penggunaan: ~0 rows (approximately)
+-- --------------------------------------------------------
 
--- Dumping structure for table inventaris_web.report
-CREATE TABLE IF NOT EXISTS `report` (
-  `report_id` int NOT NULL
+--
+-- Table structure for table `role`
+--
+
+CREATE TABLE `role` (
+  `id_role` int(11) NOT NULL,
+  `nama` varchar(200) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table inventaris_web.report: ~0 rows (approximately)
+--
+-- Dumping data for table `role`
+--
 
--- Dumping structure for table inventaris_web.role
-CREATE TABLE IF NOT EXISTS `role` (
-  `id_role` int NOT NULL AUTO_INCREMENT,
-  `nama` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  PRIMARY KEY (`id_role`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- Dumping data for table inventaris_web.role: ~3 rows (approximately)
 INSERT INTO `role` (`id_role`, `nama`) VALUES
-	(1, 'Super Admin'),
-	(2, 'Admin'),
-	(3, 'Operator');
+(1, 'Super Admin'),
+(2, 'Admin'),
+(3, 'Operator');
 
--- Dumping structure for table inventaris_web.shift
-CREATE TABLE IF NOT EXISTS `shift` (
-  `shift_id` int NOT NULL AUTO_INCREMENT,
-  `user_id` int NOT NULL,
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `shift`
+--
+
+CREATE TABLE `shift` (
+  `shift_id` int(11) NOT NULL,
   `tanggal` date NOT NULL,
-  `shift` enum('1','2') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `waktu_kerja` enum('1','0.5','2') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `nama_operator` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `shift` enum('1','2') NOT NULL,
+  `waktu_kerja` decimal(4,2) NOT NULL,
+  `nama_operator` varchar(200) NOT NULL,
   `mulai_istirahat` time NOT NULL,
   `selesai_istirahat` time NOT NULL,
-  `kendala` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `ganti_benang` int NOT NULL,
-  `ganti_kain` int NOT NULL,
-  PRIMARY KEY (`shift_id`),
-  UNIQUE KEY `user_id` (`user_id`)
+  `kendala` text NOT NULL,
+  `ganti_benang` int(11) NOT NULL,
+  `ganti_kain` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table inventaris_web.shift: ~0 rows (approximately)
+--
+-- Dumping data for table `shift`
+--
 
--- Dumping structure for table inventaris_web.supplier
-CREATE TABLE IF NOT EXISTS `supplier` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `nama` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `notelfon` int NOT NULL,
-  `alamat` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `kota` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `kodepos` int NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+INSERT INTO `shift` (`shift_id`, `tanggal`, `user_id`, `shift`, `waktu_kerja`, `nama_operator`, `mulai_istirahat`, `selesai_istirahat`, `kendala`, `ganti_benang`, `ganti_kain`) VALUES
+(21, '2024-06-12', 2, '2', 0.44, 'Joni', '12:00:00', '13:00:00', 'tidak ada', 1, 1),
+(22, '2024-06-12', 2, '2', 0.33, 'Joni', '12:00:00', '13:00:00', 'test', 1, 1),
+(23, '2024-09-05', 2, '2', 1.00, 'Koni', '12:00:00', '13:00:00', 'aewe', 1, 1);
 
--- Dumping data for table inventaris_web.supplier: ~2 rows (approximately)
-INSERT INTO `supplier` (`id`, `nama`, `notelfon`, `alamat`, `kota`, `kodepos`) VALUES
-	(2, 'Toko Maju', 876384764, 'Kertajaya', 'Surabaya', 920192),
-	(4, 'Sumber Energi', 815786546, 'Manyar 3', 'Surabaya', 423212);
+-- --------------------------------------------------------
 
--- Dumping structure for table inventaris_web.unit
-CREATE TABLE IF NOT EXISTS `unit` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `nama` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+--
+-- Table structure for table `stock`
+--
 
--- Dumping data for table inventaris_web.unit: ~1 rows (approximately)
-INSERT INTO `unit` (`id`, `nama`) VALUES
-	(1, 'Meter');
+CREATE TABLE `stock` (
+  `stock_id` int(11) NOT NULL,
+  `tambah_stock` date NOT NULL,
+  `barang_id` int(11) NOT NULL,
+  `quantity_awal` float NOT NULL,
+  `quantity_masuk` float NOT NULL,
+  `quantity_keluar` float NOT NULL,
+  `quantity_akhir` float NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `is_ready` tinyint(1) NOT NULL,
+  `is_new` tinyint(1) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=armscii8 COLLATE=armscii8_bin;
 
--- Dumping structure for table inventaris_web.user
-CREATE TABLE IF NOT EXISTS `user` (
-  `user_id` int NOT NULL AUTO_INCREMENT,
-  `id_role` int NOT NULL,
-  `nama_pengguna` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `kata_sandi` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `email` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `authKey` varchar(255) DEFAULT NULL,
-  `dibuat_pada` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `diperbarui_pada` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+-- --------------------------------------------------------
 
--- Dumping data for table inventaris_web.user: ~5 rows (approximately)
-INSERT INTO `user` (`user_id`, `id_role`, `nama_pengguna`, `kata_sandi`, `email`, `authKey`, `dibuat_pada`, `diperbarui_pada`) VALUES
-	(1, 1, 'user1', '123', 'user1@gmail.com', '', '2024-08-04 14:59:38', '2024-08-04 14:59:38'),
-	(2, 2, 'Jojo', '123', 'jojo@gmail.com', '', '2024-08-13 09:40:30', '2024-08-13 09:40:30'),
-	(3, 3, 'Berttt', '123', 'bert@gmail.com', '', '2024-08-13 09:40:58', '2024-08-13 12:47:34'),
-	(4, 3, 'Felix', '123', 'felix@gmail.com', '', '2024-08-13 11:17:26', '2024-08-13 11:17:26'),
-	(5, 1, 'Christina', '123', 'chris@gmail.com', 'chris', '2024-08-13 16:23:41', '2024-08-13 16:23:41');
+--
+-- Table structure for table `supplier`
+--
 
-/*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
-/*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
-/*!40014 SET FOREIGN_KEY_CHECKS=IFNULL(@OLD_FOREIGN_KEY_CHECKS, 1) */;
+CREATE TABLE `supplier` (
+  `supplier_id` int(11) NOT NULL,
+  `nama` varchar(200) NOT NULL,
+  `notelfon` varchar(200) NOT NULL,
+  `alamat` varchar(200) NOT NULL,
+  `kota` varchar(200) NOT NULL,
+  `kodepos` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `supplier`
+--
+
+INSERT INTO `supplier` (`supplier_id`, `nama`, `notelfon`, `alamat`, `kota`, `kodepos`) VALUES
+(1, 'Toko Sumber Jaya', '081252807753', 'Jalan Jaya no 15', 'Surabaya', 22134),
+(2, 'Toko Abadi', '082122224532', 'Jalan Mawar  1/11', 'Jakarta', 60113);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `unit`
+--
+
+CREATE TABLE `unit` (
+  `unit_id` int(11) NOT NULL,
+  `satuan` varchar(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `unit`
+--
+
+INSERT INTO `unit` (`unit_id`, `satuan`) VALUES
+(1, 'Meter'),
+(5, 'Kilo');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `user`
+--
+
+CREATE TABLE `user` (
+  `user_id` int(11) NOT NULL,
+  `id_role` int(11) NOT NULL,
+  `nama_pengguna` varchar(200) NOT NULL,
+  `email` varchar(200) NOT NULL,
+  `kata_sandi` varchar(200) NOT NULL,
+  `dibuat_pada` datetime NOT NULL DEFAULT current_timestamp(),
+  `diperbarui_pada` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `user`
+--
+
+INSERT INTO `user` (`user_id`, `id_role`, `nama_pengguna`, `email`, `kata_sandi`, `dibuat_pada`, `diperbarui_pada`) VALUES
+(1, 1, 'user1', 'user1@gmail.com', '123', '2024-08-04 14:59:38', '2024-08-04 14:59:38'),
+(2, 2, 'Jojo', 'jojo@gmail.com', '123', '2024-08-13 09:40:30', '2024-08-13 09:40:30'),
+(3, 3, 'Berttt', 'bert@gmail.com', '123', '2024-08-13 09:40:58', '2024-08-13 12:47:34'),
+(5, 1, 'Felix', 'felix@gmail.com', '123', '2024-08-27 03:00:27', '2024-08-27 03:03:10');
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `barang`
+--
+ALTER TABLE `barang`
+  ADD PRIMARY KEY (`barang_id`),
+  ADD KEY `unit_id` (`unit_id`);
+
+--
+-- Indexes for table `item`
+--
+ALTER TABLE `item`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `kategori` (`kategori`),
+  ADD KEY `supplier_id` (`supplier_id`) USING BTREE,
+  ADD KEY `unit_id` (`unit_id`) USING BTREE;
+
+--
+-- Indexes for table `laporanproduksi`
+--
+ALTER TABLE `laporanproduksi`
+  ADD PRIMARY KEY (`laporan_id`);
+
+--
+-- Indexes for table `mesin`
+--
+ALTER TABLE `mesin`
+  ADD PRIMARY KEY (`mesin_id`);
+
+--
+-- Indexes for table `pembelian`
+--
+ALTER TABLE `pembelian`
+  ADD PRIMARY KEY (`pembelian_id`),
+  ADD KEY `user_id` (`user_id`) USING BTREE,
+  ADD KEY `supplier_id` (`supplier_id`) USING BTREE;
+
+--
+-- Indexes for table `pembelian_detail`
+--
+ALTER TABLE `pembelian_detail`
+  ADD PRIMARY KEY (`belidetail_id`),
+  ADD KEY `barang_id` (`barang_id`) USING BTREE,
+  ADD KEY `pembelian_id` (`pembelian_id`) USING BTREE;
+
+--
+-- Indexes for table `penggunaan`
+--
+ALTER TABLE `penggunaan`
+  ADD PRIMARY KEY (`penggunaan_id`),
+  ADD KEY `kategori` (`kategori`) USING BTREE;
+
+--
+-- Indexes for table `report`
+--
+ALTER TABLE `report`
+  ADD PRIMARY KEY (`report_id`);
+
+--
+-- Indexes for table `role`
+--
+ALTER TABLE `role`
+  ADD PRIMARY KEY (`id_role`);
+
+--
+-- Indexes for table `shift`
+--
+ALTER TABLE `shift`
+  ADD PRIMARY KEY (`shift_id`);
+
+--
+-- Indexes for table `stock`
+--
+ALTER TABLE `stock`
+  ADD PRIMARY KEY (`stock_id`),
+  ADD KEY `barang_id` (`barang_id`) USING BTREE,
+  ADD KEY `user_id` (`user_id`) USING BTREE;
+
+--
+-- Indexes for table `supplier`
+--
+ALTER TABLE `supplier`
+  ADD PRIMARY KEY (`supplier_id`);
+
+--
+-- Indexes for table `unit`
+--
+ALTER TABLE `unit`
+  ADD PRIMARY KEY (`unit_id`) USING BTREE;
+
+--
+-- Indexes for table `user`
+--
+ALTER TABLE `user`
+  ADD PRIMARY KEY (`user_id`),
+  ADD KEY `id_role` (`id_role`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `barang`
+--
+ALTER TABLE `barang`
+  MODIFY `barang_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT for table `item`
+--
+ALTER TABLE `item`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `laporanproduksi`
+--
+ALTER TABLE `laporanproduksi`
+  MODIFY `laporan_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+
+--
+-- AUTO_INCREMENT for table `mesin`
+--
+ALTER TABLE `mesin`
+  MODIFY `mesin_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `pembelian`
+--
+ALTER TABLE `pembelian`
+  MODIFY `pembelian_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT for table `pembelian_detail`
+--
+ALTER TABLE `pembelian_detail`
+  MODIFY `belidetail_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `penggunaan`
+--
+ALTER TABLE `penggunaan`
+  MODIFY `penggunaan_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `role`
+--
+ALTER TABLE `role`
+  MODIFY `id_role` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `shift`
+--
+ALTER TABLE `shift`
+  MODIFY `shift_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+
+--
+-- AUTO_INCREMENT for table `stock`
+--
+ALTER TABLE `stock`
+  MODIFY `stock_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `supplier`
+--
+ALTER TABLE `supplier`
+  MODIFY `supplier_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `unit`
+--
+ALTER TABLE `unit`
+  MODIFY `unit_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT for table `user`
+--
+ALTER TABLE `user`
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `barang`
+--
+ALTER TABLE `barang`
+  ADD CONSTRAINT `barang_ibfk_1` FOREIGN KEY (`unit_id`) REFERENCES `unit` (`unit_id`);
+
+--
+-- Constraints for table `item`
+--
+ALTER TABLE `item`
+  ADD CONSTRAINT `item_ibfk_1` FOREIGN KEY (`supplier_id`) REFERENCES `supplier` (`supplier_id`),
+  ADD CONSTRAINT `item_ibfk_2` FOREIGN KEY (`unit_id`) REFERENCES `unit` (`unit_id`);
+
+--
+-- Constraints for table `pembelian`
+--
+ALTER TABLE `pembelian`
+  ADD CONSTRAINT `pembelian_ibfk_3` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`),
+  ADD CONSTRAINT `pembelian_ibfk_4` FOREIGN KEY (`supplier_id`) REFERENCES `supplier` (`supplier_id`);
+
+--
+-- Constraints for table `pembelian_detail`
+--
+ALTER TABLE `pembelian_detail`
+  ADD CONSTRAINT `pembelian_detail_ibfk_1` FOREIGN KEY (`barang_id`) REFERENCES `barang` (`barang_id`),
+  ADD CONSTRAINT `pembelian_detail_ibfk_2` FOREIGN KEY (`pembelian_id`) REFERENCES `pembelian` (`pembelian_id`);
+
+--
+-- Constraints for table `stock`
+--
+ALTER TABLE `stock`
+  ADD CONSTRAINT `stock_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`),
+  ADD CONSTRAINT `stock_ibfk_2` FOREIGN KEY (`barang_id`) REFERENCES `barang` (`barang_id`);
+
+--
+-- Constraints for table `user`
+--
+ALTER TABLE `user`
+  ADD CONSTRAINT `user_ibfk_1` FOREIGN KEY (`id_role`) REFERENCES `role` (`id_role`);
+COMMIT;
+
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40111 SET SQL_NOTES=IFNULL(@OLD_SQL_NOTES, 1) */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

@@ -31,7 +31,12 @@ $this->params['breadcrumbs'][] = $this->title;
 
             'shift_id',
             'user_id',
-            'tanggal',
+            [
+                'attribute' => 'tanggal',
+                'value' => function($model) {
+                    return Yii::$app->formatter->asDate($model->tanggal, 'php:d-m-yy');
+                },
+            ],
             'shift',
             'waktu_kerja',
             'nama_operator', 

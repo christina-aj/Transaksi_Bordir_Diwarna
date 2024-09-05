@@ -16,7 +16,6 @@ use app\models\Shift;
     <?php $form = ActiveForm::begin(); ?>
 
     <?php
-    // Fetch the list of machines
     $dataMesin = ArrayHelper::map(\app\models\Mesin::find()->asArray()->all(), 'mesin_id', 'mesin_id');
     echo $form->field($model, 'mesin_id')
         ->dropDownList(

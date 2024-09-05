@@ -2,7 +2,7 @@
 
 use yii;
 use yii\helpers\Url;
-use yii\helpers\Html;
+use yii\helpers\Html;s
 
 $roleName = Yii::$app->user->identity->role;
 
@@ -15,6 +15,8 @@ $MesinUrl = Url::to(['/mesin/index']);
 $ReportUrl = Url::to(['/report/index']);
 $StockUrl = Url::to(['/stock/index']);
 $ShifttUrl = Url::to(['/shift/index']);
+$laproUrl = Url::to(['/laporan-produksi/index']);
+$lapagreUrl = Url::to(['/laporan-agregat/index']);
 $PembelianUrl = Url::to(['/pembelian/index']);
 $InvoiceUrl = Url::to(['/pembelian-detail/index']);
 $PenggunaanUrl = Url::to(['/penggunaan/index']);
@@ -131,6 +133,8 @@ $samplePageUrl = Url::to(['site/sample-page']);
                         <ul class="pc-submenu">
                             <li class="pc-item"><a class="pc-link" href="<?= $StockUrl ?>">Stock</a></li>
                             <li class="pc-item"><a class="pc-link" href="<?= $ShifttUrl ?>">Shift</a></li>
+                            <li class="pc-item"><a class="pc-link" href="<?= $laproUrl ?>">Laporan Produksi</a></li>
+                            <li class="pc-item"><a class="pc-link" href="<?= $lapagreUrl ?>">Laporan Agregat</a></li>
                         </ul>
                     </li>
 
@@ -177,6 +181,8 @@ $samplePageUrl = Url::to(['site/sample-page']);
                         <ul class="pc-submenu">
                             <li class="pc-item"><a class="pc-link" href="<?= $StockUrl ?>">Stock</a></li>
                             <li class="pc-item"><a class="pc-link" href="<?= $ShifttUrl ?>">Shift</a></li>
+                            <li class="pc-item"><a class="pc-link" href="<?= $laproUrl ?>">Laporan Produksi</a></li>
+                            <li class="pc-item"><a class="pc-link" href="<?= $lapagreUrl ?>">Laporan Agregat</a></li>
                         </ul>
                     </li>
                 <?php endif; ?>
@@ -202,105 +208,10 @@ $samplePageUrl = Url::to(['site/sample-page']);
                                 <i class="fi fi-ts-ballot-check"></i> </span><span class="pc-mtext">Report</span><span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
                         <ul class="pc-submenu">
                             <li class="pc-item"><a class="pc-link" href="<?= $ShifttUrl ?>">Shift</a></li>
+                            <li class="pc-item"><a class="pc-link" href="<?= $laproUrl ?>">Laporan Produksi</a></li>
                         </ul>
                     </li>
                 <?php endif; ?>
-
-
-
-
-
-                <!-- <li class="pc-item pc-caption">
-                    <label>UI Components</label>
-                    <i class="ph ph-compass-tool"></i>
-                </li>
-                <li class="pc-item">
-                    <a href="../elements/bc_typography.html" class="pc-link">
-                        <span class="pc-micon"><i class="ph ph-text-aa"></i></span>
-                        <span class="pc-mtext">Typography</span>
-                    </a>
-                </li>
-                <li class="pc-item">
-                    <a href="../elements/bc_color.html" class="pc-link">
-                        <span class="pc-micon"><i class="ph ph-palette"></i></span>
-                        <span class="pc-mtext">Color</span>
-                    </a>
-                </li>
-                <li class="pc-item">
-                    <a href="../elements/icon-feather.html" class="pc-link">
-                        <span class="pc-micon"><i class="ph ph-flower-lotus"></i></span>
-                        <span class="pc-mtext">Icons</span>
-                    </a>
-                </li>
-
-
-                <li class="pc-item pc-caption">
-                    <label>Pages</label>
-                    <i class="ph ph-devices"></i>
-                </li>
-                <li class="pc-item">
-                    <a href="<?= $loginUrl ?>" class="pc-link">
-                        <span class="pc-micon"><i class="ph ph-lock"></i></span>
-                        <span class="pc-mtext">Login</span>
-                    </a>
-                </li>
-                <li class="pc-item">
-                    <a href="../pages/register-v1.html" class="pc-link">
-                        <span class="pc-micon"><i class="ph ph-user-circle-plus"></i></span>
-                        <span class="pc-mtext">Register</span>
-                    </a>
-                </li>
-                <li class="pc-item pc-caption">
-                    <label>Other</label>
-                    <i class="ph ph-suitcase"></i>
-                </li> -->
-
-                <!-- <li class="pc-item pc-hasmenu">
-                    <a href="#!" class="pc-link"><span class="pc-micon">
-                            <i class="ph ph-tree-structure"></i> </span><span class="pc-mtext">Report</span><span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
-                    <ul class="pc-submenu">
-                        <li class="pc-item"><a class="pc-link" href="#!">Stock</a></li>
-                        <li class="pc-item"><a class="pc-link" href="#!">Shift</a></li>
-                        <li class="pc-item pc-hasmenu">
-                            <a href="#!" class="pc-link">Level 2.2<span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
-                            <ul class="pc-submenu">
-                                <li class="pc-item"><a class="pc-link" href="#!">Level 3.1</a></li>
-                                <li class="pc-item"><a class="pc-link" href="#!">Level 3.2</a></li>
-                                <li class="pc-item pc-hasmenu">
-                                    <a href="#!" class="pc-link">Level 3.3<span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
-                                    <ul class="pc-submenu">
-                                        <li class="pc-item"><a class="pc-link" href="#!">Level 4.1</a></li>
-                                        <li class="pc-item"><a class="pc-link" href="#!">Level 4.2</a></li>
-                                    </ul>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="pc-item pc-hasmenu">
-                            <a href="#!" class="pc-link">Level 2.3<span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
-                            <ul class="pc-submenu">
-                                <li class="pc-item"><a class="pc-link" href="#!">Level 3.1</a></li>
-                                <li class="pc-item"><a class="pc-link" href="#!">Level 3.2</a></li>
-                                <li class="pc-item pc-hasmenu">
-                                    <a href="#!" class="pc-link">Level 3.3<span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
-                                    <ul class="pc-submenu">
-                                        <li class="pc-item"><a class="pc-link" href="#!">Level 4.1</a></li>
-                                        <li class="pc-item"><a class="pc-link" href="#!">Level 4.2</a></li>
-                                    </ul>
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
-                </li> -->
-                <!-- <li class="pc-item"><a href="../other/sample-page.html" class="pc-link">
-                        <span class="pc-micon">
-                            <i class="ph ph-desktop"></i>
-                        </span>
-                        <span class="pc-mtext">Sample page
-
-                        </span>
-                    </a>
-                </li> -->
-                <!-- Navigation items here -->
             </ul>
         </div>
     </div>

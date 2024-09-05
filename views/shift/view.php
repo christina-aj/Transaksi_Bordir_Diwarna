@@ -31,7 +31,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'attributes' => [
             'shift_id',
             'user_id',
-            'tanggal',
+            'tanggal:date',
             'shift',
             'waktu_kerja',
             'nama_operator',

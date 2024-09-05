@@ -31,10 +31,15 @@ $this->params['breadcrumbs'][] = $this->title;
 
             'shift_id',
             'user_id',
-            'tanggal',
+            [
+                'attribute' => 'tanggal',
+                'value' => function($model) {
+                    return Yii::$app->formatter->asDate($model->tanggal, 'php:d-m-yy');
+                },
+            ],
             'shift',
             'waktu_kerja',
-            'nama_operator',
+            'nama_operator', 
             'mulai_istirahat',
             'selesai_istirahat',
             'kendala:ntext',
@@ -44,10 +49,9 @@ $this->params['breadcrumbs'][] = $this->title;
                 'class' => ActionColumn::className(),
                 'urlCreator' => function ($action, Shift $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'shift_id' => $model->shift_id]);
-                 }
+                }
             ],
         ],
     ]); ?>
-
 
 </div>

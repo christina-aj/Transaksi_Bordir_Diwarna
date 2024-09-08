@@ -39,6 +39,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'barang.kode_barang',
             'barang.nama_barang',
             'jumlah_digunakan',
+            'catatan',
             // 'tanggal_digunakan',
             [
                 'class' => ActionColumn::className(),

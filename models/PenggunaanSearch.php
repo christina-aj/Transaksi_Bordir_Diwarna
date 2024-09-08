@@ -18,7 +18,7 @@ class PenggunaanSearch extends Penggunaan
     {
         return [
             [['penggunaan_id', 'barang_id', 'jumlah_digunakan'], 'integer'],
-            [['tanggal_digunakan'], 'safe'],
+            [['tanggal_digunakan', 'catatan'], 'safe'],
         ];
     }
 

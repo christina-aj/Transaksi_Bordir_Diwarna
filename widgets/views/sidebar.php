@@ -19,6 +19,7 @@ $lapagreUrl = Url::to(['/laporan-agregat/index']);
 $PembelianUrl = Url::to(['/pembelian/index']);
 $InvoiceUrl = Url::to(['/pembelian-detail/index']);
 $PenggunaanUrl = Url::to(['/penggunaan/index']);
+$SuratJalanUrl = Url::to(['/surat-jalan/index']);
 
 
 
@@ -74,6 +75,7 @@ $samplePageUrl = Url::to(['site/sample-page']);
                         <ul class="pc-submenu">
                             <li class="pc-item"><a class="pc-link" href="<?= $BarangUrl ?>">List Barang</a></li>
                             <li class="pc-item"><a class="pc-link" href="<?= $PenggunaanUrl ?>">Penggunaan</a></li>
+                            <li class="pc-item"><a class="pc-link" href="<?= $SuratJalanUrl ?>">Surat Jalan</a></li>
                             <li class="pc-item"><a class="pc-link" href="<?= $StockUrl ?>">Report Stock</a></li>
                         </ul>
                     </li>

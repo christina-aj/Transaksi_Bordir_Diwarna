@@ -51,7 +51,8 @@ $config = [
             'rules' => [
                 'pembelian-detail/get-harga' => 'pembelian-detail/get-harga',
                 'stock/get-stock' => 'stock/get-stock',
-                'pembelian/calculate-total' => 'pembelian/calculate-total',
+                'pembelian-detail/index' => 'pembelian-detail/index1',
+                'surat-jalan/index' => 'pembelian-detail/index2',
             ],
         ],
 

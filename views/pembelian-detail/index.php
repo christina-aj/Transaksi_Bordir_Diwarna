@@ -9,8 +9,12 @@ use yii\grid\GridView;
 /** @var yii\web\View $this */
 /** @var app\models\PembelianDetailSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
+if ($showFullContent) {
+    $this->title = 'Buku Kas';
+} else {
+    $this->title = 'Surat Jalan';
+}
 
-$this->title = 'Pembelian Details';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="pc-content">
@@ -23,11 +27,12 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?php // echo $this->render('_search', ['model' => $searchModel]); 
     ?>
-
+    <?php if ($showFullContent): ?>
+    <?php endif; ?>
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
-        'columns' => [
+        'columns' => array_filter([
             ['class' => 'yii\grid\SerialColumn'],
 
             // 'belidetail_id',
@@ -37,9 +42,9 @@ $this->params['breadcrumbs'][] = $this->title;
             'barang_id',
             'barang.kode_barang',
             'barang.nama_barang',
-            'harga_barang',
+            $showFullContent ? 'harga_barang' : null,
             'quantity_barang',
-            'total_biaya',
+            $showFullContent ? 'total_biaya' : null,
             //'catatan',
             'langsung_pakai',
             //'created_at',
@@ -50,7 +55,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     return Url::toRoute([$action, 'belidetail_id' => $model->belidetail_id]);
                 }
             ],
-        ],
+        ]),
     ]); ?>
 
 

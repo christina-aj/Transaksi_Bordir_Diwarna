@@ -38,7 +38,7 @@ class Pembelian extends \yii\db\ActiveRecord
             [['user_id', 'tanggal', 'supplier_id', 'total_biaya', 'langsung_pakai', 'kode_struk'], 'required'],
             [['user_id', 'supplier_id', 'langsung_pakai'], 'integer'],
             [['tanggal'], 'safe'],
-            [['total_biaya'], 'string', 'max' => 200],  // Adjust if 'total_biaya' should be a string
+            [['total_biaya'], 'number', 'min' => 0],  // Validasi untuk angka minimal 0
             [['total_biaya'], 'default', 'value' => 0],
             [['kode_struk'], 'string', 'max' => 255],
             [['kode_struk'], 'unique'],
@@ -68,10 +68,11 @@ class Pembelian extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getPembelian()
+    public function getPembelianDetails()
     {
-        return $this->hasOne(PembelianDetail::class, ['pembelian_id' => 'pembelian_id']);
+        return $this->hasMany(PembelianDetail::class, ['pembelian_id' => 'pembelian_id']);
     }
+
 
     /**
      * Gets query for [[Supplier]].
@@ -95,20 +96,24 @@ class Pembelian extends \yii\db\ActiveRecord
 
     public function updateTotalBiaya($pembelianId)
     {
-        // Menghitung total biaya dari semua detail pembelian
-        $totalBiaya = PembelianDetail::find()
+        // Menghitung total biaya dari semua detail pembelian menggunakan relasi
+        $totalBiaya = $this->getPembelianDetails()
             ->where(['pembelian_id' => $pembelianId])
             ->sum('total_biaya');
 
         // Update total biaya pada tabel pembelian
-        Pembelian::updateAll(['total_biaya' => $totalBiaya], ['pembelian_id' => $pembelianId]);
+        $this->total_biaya = $totalBiaya;
+        return $this->save(false); // Save tanpa validasi ulang
     }
+
 
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {
-            // Mengubah format tanggal dari dd-mm-yyyy ke yyyy-mm-dd sebelum disimpan
-            $this->tanggal = Yii::$app->formatter->asDate($this->tanggal, 'php:Y-m-d');
+            // Cek apakah format tanggal perlu diubah, asumsikan input dari form menggunakan format dd-mm-yyyy
+            if (strpos($this->tanggal, '-') === false) { // Jika format tidak menggunakan strip, maka ubah formatnya
+                $this->tanggal = Yii::$app->formatter->asDate($this->tanggal, 'php:Y-m-d');
+            }
             return true;
         } else {
             return false;

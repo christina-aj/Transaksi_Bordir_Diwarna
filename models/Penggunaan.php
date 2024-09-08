@@ -34,6 +34,7 @@ class Penggunaan extends \yii\db\ActiveRecord
             [['barang_id', 'jumlah_digunakan', 'tanggal_digunakan', "user_id"], 'required'],
             [['barang_id', 'jumlah_digunakan', 'user_id'], 'integer'],
             [['tanggal_digunakan'], 'safe'],
+            [['catatan'], 'string', 'max' => 255],
             [['barang_id'], 'exist', 'skipOnError' => true, 'targetClass' => Barang::class, 'targetAttribute' => ['barang_id' => 'barang_id']],
         ];
     }
@@ -47,6 +48,7 @@ class Penggunaan extends \yii\db\ActiveRecord
             'penggunaan_id' => 'Penggunaan ID',
             'barang_id' => 'Barang ID',
             'user_id' => 'User ID',
+            'catatan' => 'Catatan',
             'jumlah_digunakan' => 'Jumlah Digunakan',
             'tanggal_digunakan' => 'Tanggal Digunakan',
         ];

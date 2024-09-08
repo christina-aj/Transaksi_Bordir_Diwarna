@@ -26,6 +26,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             'barang_id',
             'jumlah_digunakan',
+            'catatan',
         ],
     ]) ?>
     <div class="mb-4">

@@ -71,6 +71,9 @@ class BarangSearch extends Barang
             ->andFilterWhere(['like', 'tipe', $this->tipe])
             ->andFilterWhere(['like', 'warna', $this->warna]);
 
+        if (!empty($this->tipe)) {
+            $query->andFilterWhere(['tipe' => $this->tipe]);
+        }
         return $dataProvider;
     }
 }

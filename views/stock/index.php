@@ -33,7 +33,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'label' => 'Tanggal',
             ],
             // 'tambah_stock',
-            'barang_id',
+            // 'barang_id',
             'barang.kode_barang',
             'barang.nama_barang',
             'quantity_awal',

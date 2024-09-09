@@ -112,6 +112,17 @@ $this->params['breadcrumbs'][] = $this->title;
             'langsung_pakai' => [
                 'attribute' => 'langsung_pakai', // Atribut dari tabel supplier
                 'filter' => false,
+                'format' => 'raw', // This allows for raw HTML output (for icons)
+                'value' => function ($model) {
+                    // Check the value of the status field
+                    if ($model->langsung_pakai == 1) {
+                        // Active status (1)
+                        return Html::tag('span', '&#10004;', ['style' => 'color: green; font-size: 20px;']); // Checkmark icon
+                    } else {
+                        // Inactive status (0)
+                        return Html::tag('span', '&#10008;', ['style' => 'color: red; font-size: 20px;']); // Cross icon
+                    }
+                },
             ],
             'catatan' => [
                 'attribute' => 'catatan', // Atribut dari tabel supplier

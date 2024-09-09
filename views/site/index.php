@@ -192,7 +192,7 @@ $this->title = 'Dashboard';
                 <div class="card-header">
                     <h5>Recent Orders</h5>
                 </div>
-                <div class="card-body p-0">
+                <div class="card-body p-3 mx-3">
                     <div class="table-responsive">
                         <table class="table">
                             <tr>

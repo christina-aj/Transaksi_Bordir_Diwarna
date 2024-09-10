@@ -21,11 +21,13 @@ class StockSearch extends Stock
     public $nama_barang;
     public $nama_pengguna;
 
+    public $tanggal;
+
     public function rules()
     {
         return [
             [['stock_id', 'barang_id', 'user_id', 'is_ready', 'is_new'], 'integer'],
-            [['tambah_stock', 'created_at', 'updated_at', 'nama_pengguna', 'nama_barang', 'kode_barang'], 'safe'],
+            [['tambah_stock', 'created_at', 'updated_at', 'nama_pengguna', 'nama_barang', 'kode_barang', 'tanggal'], 'safe'],
             [['quantity_awal', 'quantity_masuk', 'quantity_keluar', 'quantity_akhir'], 'number'],
         ];
     }
@@ -100,18 +102,19 @@ class StockSearch extends Stock
                 if ($startDate && $endDate) {
                     $formattedStartDate = $startDate->format('Y-m-d');
                     $formattedEndDate = $endDate->format('Y-m-d');
-                    $query->andFilterWhere(['between', 'DATE(tanggal)', $formattedStartDate, $formattedEndDate]);
+                    $query->andFilterWhere(['between', 'DATE(tambah_stock)', $formattedStartDate, $formattedEndDate]);
                     Yii::debug('Date filter: ' . $formattedStartDate . ' to ' . $formattedEndDate);
                 }
             }
         }
+
+
         $query->andFilterWhere(['like', 'barang.kode_barang', $this->kode_barang]);
         $query->andFilterWhere(['like', 'barang.nama_barang', $this->nama_barang]);
         $query->andFilterWhere(['like', 'user.nama_pengguna', $this->nama_pengguna]);
         // grid filtering conditions
         $query->andFilterWhere([
             'stock_id' => $this->stock_id,
-            'tambah_stock' => $this->tambah_stock,
             'barang_id' => $this->barang_id,
             'quantity_awal' => $this->quantity_awal,
             'quantity_masuk' => $this->quantity_masuk,

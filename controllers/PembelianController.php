@@ -146,4 +146,19 @@ class PembelianController extends Controller
         // Kembalikan hasil sebagai JSON
         return ['total_biaya' => $totalBiaya];
     }
+
+    public function actionGetUserInfo()
+    {
+        if (Yii::$app->user->isGuest) {
+            return $this->asJson(['success' => false, 'message' => 'User not logged in']);
+        }
+
+        // Mengambil data user yang sedang login
+        $user = Yii::$app->user->identity;
+
+        return $this->asJson([
+            'success' => true,
+            'username' => $user->nama_pengguna,
+        ]);
+    }
 }

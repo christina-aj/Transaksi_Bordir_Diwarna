@@ -30,7 +30,7 @@ use yii\helpers\Url;
         ->dropDownList($dataPost, ['prompt' => 'Pilih Barang', 'id' => 'barang_id']);
     ?>
 
-    <?= $form->field($model, 'harga_barang')->textInput(['id' => 'harga_barang', 'maxlength' => true, 'readonly' => true]) ?>
+    <?= $form->field($model, 'harga_barang')->textInput(['id' => 'harga_barang', 'maxlength' => true]) ?>
 
     <?= $form->field($model, 'quantity_barang')->textInput(['id' => 'quantity_barang']) ?>
 
@@ -64,22 +64,22 @@ use yii\helpers\Url;
     ?>
 
     <?php
-    $urlGetHarga = \yii\helpers\Url::to(['pembelian-detail/get-harga']);
-    $this->registerJs("
-$('#barang_id').change(function() {
-    var barang_id = $(this).val();
-    var url = '$urlGetHarga';
-    console.log('Request URL: ' + url); // Debug URL
-    console.log('Barang ID: ' + barang_id); // Debug parameter
-    
-    $.post(url, { barang_id: barang_id }, function(data) {
-        $('#harga_barang').val(data);
-    }).fail(function(jqXHR, textStatus, errorThrown) {
-        console.error('AJAX error: ', textStatus, errorThrown);
-        console.log(jqXHR.responseText); // Debug response text
-    });
-});
-");
+    //     $urlGetHarga = Url::to(['pembelian-detail/get-harga']);
+    //     $this->registerJs("
+    // $('#barang_id').change(function() {
+    //     var barang_id = $(this).val();
+    //     var url = '$urlGetHarga';
+    //     console.log('Request URL: ' + url); // Debug URL
+    //     console.log('Barang ID: ' + barang_id); // Debug parameter
+
+    //     $.post(url, { barang_id: barang_id }, function(data) {
+    //         $('#harga_barang').val(data);
+    //     }).fail(function(jqXHR, textStatus, errorThrown) {
+    //         console.error('AJAX error: ', textStatus, errorThrown);
+    //         console.log(jqXHR.responseText); // Debug response text
+    //     });
+    // });
+    // ");
     ?>
 
 

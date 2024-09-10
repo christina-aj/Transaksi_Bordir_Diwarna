@@ -90,10 +90,12 @@ $this->params['breadcrumbs'][] = $this->title;
                 'filter' => false,
             ],
             // 'total_biaya',
-            [
-                'attribute' => 'langsung_pakai', // Atribut dari tabel supplier
-                'filter' => false,
-            ],
+
+            // [
+            //     'attribute' => 'langsung_pakai', // Atribut dari tabel supplier
+            //     'filter' => false,
+            // ],
+
             // 'langsung_pakai',
             [
                 'class' => ActionColumn::className(),

@@ -28,12 +28,14 @@ class Penggunaan extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
+
+    public $stock;
     public function rules()
     {
         return [
             [['barang_id', 'jumlah_digunakan', 'tanggal_digunakan', "user_id"], 'required'],
             [['barang_id', 'jumlah_digunakan', 'user_id'], 'integer'],
-            [['tanggal_digunakan'], 'safe'],
+            [['tanggal_digunakan', 'stock'], 'safe'],
             [['catatan'], 'string', 'max' => 255],
             [['barang_id'], 'exist', 'skipOnError' => true, 'targetClass' => Barang::class, 'targetAttribute' => ['barang_id' => 'barang_id']],
         ];

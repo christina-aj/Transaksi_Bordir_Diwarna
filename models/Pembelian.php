@@ -110,10 +110,8 @@ class Pembelian extends \yii\db\ActiveRecord
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {
-            // Cek apakah format tanggal perlu diubah, asumsikan input dari form menggunakan format dd-mm-yyyy
-            if (strpos($this->tanggal, '-') === false) { // Jika format tidak menggunakan strip, maka ubah formatnya
-                $this->tanggal = Yii::$app->formatter->asDate($this->tanggal, 'php:Y-m-d');
-            }
+            // Mengubah format tanggal dari dd-mm-yyyy ke yyyy-mm-dd sebelum disimpan
+            $this->tanggal = Yii::$app->formatter->asDate($this->tanggal, 'php:Y-m-d');
             return true;
         } else {
             return false;

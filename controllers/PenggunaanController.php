@@ -135,16 +135,39 @@ class PenggunaanController extends Controller
 
     public function actionGetStock()
     {
-        $postData = Yii::$app->request->post(); // Debug POST data
-        Yii::info('POST Data: ' . print_r($postData, true), __METHOD__);
-
+        // Mendapatkan data POST dari request
         $barang_id = Yii::$app->request->post('barang_id');
+
+        // Cek apakah barang_id ada dalam request
         if ($barang_id) {
-            $barang = \app\models\Stock::findOne($barang_id);
-            if ($barang) {
-                return $this->asJson($barang->quantity_awal);
+            // Mencari stock terbaru berdasarkan barang_id
+            $stock = \app\models\Stock::find()
+                ->where(['barang_id' => $barang_id])
+                ->orderBy(['stock_id' => SORT_DESC]) // Mengambil stock terbaru
+                ->one(); // Mengambil satu record terbaru
+
+            // Jika ditemukan stock, kirimkan quantity_akhir sebagai respon JSON
+            if ($stock) {
+                return $this->asJson(['quantity_akhir' => $stock->quantity_akhir]);
             }
         }
-        return $this->asJson(null);
+
+        // Jika tidak ditemukan atau barang_id tidak valid, kembalikan null
+        return $this->asJson(['quantity_akhir' => null]);
+    }
+
+    public function actionGetUserInfo()
+    {
+        if (Yii::$app->user->isGuest) {
+            return $this->asJson(['success' => false, 'message' => 'User not logged in']);
+        }
+
+        // Mengambil data user yang sedang login
+        $user = Yii::$app->user->identity;
+
+        return $this->asJson([
+            'success' => true,
+            'username' => $user->nama_pengguna,
+        ]);
     }
 }

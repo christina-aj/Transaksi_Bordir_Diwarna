@@ -23,13 +23,12 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Create Pembelian Detail', ['create'], ['class' => 'btn btn-success']) ?>
+        <?php if ($showFullContent)
+            echo Html::a('Create Pembelian Detail', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
     <?php // echo $this->render('_search', ['model' => $searchModel]); 
     ?>
-    <?php if ($showFullContent): ?>
-    <?php endif; ?>
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,

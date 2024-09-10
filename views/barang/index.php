@@ -50,10 +50,10 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             'unit.satuan',
             // 'harga',
-            [
-                'attribute' => 'harga',
-                'filter' => false
-            ],
+            // [
+            //     'attribute' => 'harga',
+            //     'filter' => false
+            // ],
             [
                 'attribute' => 'tipe',
                 'filter' => [

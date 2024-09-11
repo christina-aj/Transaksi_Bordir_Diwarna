@@ -89,7 +89,7 @@ class PenggunaanSearch extends Penggunaan
                 if ($startDate && $endDate) {
                     $formattedStartDate = $startDate->format('Y-m-d');
                     $formattedEndDate = $endDate->format('Y-m-d');
-                    $query->andFilterWhere(['between', 'DATE(tanggal)', $formattedStartDate, $formattedEndDate]);
+                    $query->andFilterWhere(['between', 'DATE(tanggal_digunakan)', $formattedStartDate, $formattedEndDate]);
                     Yii::debug('Date filter: ' . $formattedStartDate . ' to ' . $formattedEndDate);
                 }
             }
@@ -102,7 +102,6 @@ class PenggunaanSearch extends Penggunaan
             'penggunaan_id' => $this->penggunaan_id,
             'barang_id' => $this->barang_id,
             'jumlah_digunakan' => $this->jumlah_digunakan,
-            'tanggal_digunakan' => $this->tanggal_digunakan,
         ]);
 
         return $dataProvider;

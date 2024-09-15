@@ -20,6 +20,7 @@ $PembelianUrl = Url::to(['/pembelian/index']);
 $InvoiceUrl = Url::to(['/pembelian-detail/index']);
 $PenggunaanUrl = Url::to(['/penggunaan/index']);
 $SuratJalanUrl = Url::to(['/surat-jalan/index']);
+$GudangUrl = Url::to(['/gudang/index']);
 
 
 
@@ -34,8 +35,8 @@ $samplePageUrl = Url::to(['site/sample-page']);
 <nav class="pc-sidebar">
     <div class="navbar-wrapper">
         <div class="m-header">
-            <a href="<?= $dashboardUrl ?>" class="b-brand text-primary">
-                <img src="<?= Yii::getAlias('@web') ?>/assets/images/logo-dark.svg" alt="logo image" class="logo-lg">
+            <a href="<?= $dashboardUrl ?>" class="b-brand text-primary" style="margin-bottom:5px; margin-top:20px;">
+                <img src="<?= Yii::getAlias('@web') ?>/assets/images/diwarna_logo.png" alt="logo image" class="logo-lg d-flex" style="width:90%">
             </a>
         </div>
         <div class="navbar-content">
@@ -75,8 +76,8 @@ $samplePageUrl = Url::to(['site/sample-page']);
                         <ul class="pc-submenu">
                             <li class="pc-item"><a class="pc-link" href="<?= $BarangUrl ?>">List Barang</a></li>
                             <li class="pc-item"><a class="pc-link" href="<?= $PenggunaanUrl ?>">Penggunaan</a></li>
-                            <li class="pc-item"><a class="pc-link" href="<?= $SuratJalanUrl ?>">Surat Jalan</a></li>
-                            <li class="pc-item"><a class="pc-link" href="<?= $StockUrl ?>">Report Stock</a></li>
+                            <li class="pc-item"><a class="pc-link" href="<?= $GudangUrl ?>">Stock Gudang</a></li>
+                            <li class="pc-item"><a class="pc-link" href="<?= $StockUrl ?>">Stock Produksi</a></li>
                         </ul>
                     </li>
 

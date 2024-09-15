@@ -23,7 +23,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= Html::encode($this->title) ?></title>
-    <link rel="icon" href="<?= Yii::getAlias('@web') ?>/assets/images/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="<?= Yii::getAlias('@web') ?>/assets/images/diwarna-logo-png.png" type="image/x-icon">
     <?php $this->head() ?>
 </head>
 
@@ -47,7 +47,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             'action' => ['site/login']
                         ]); ?>
                         <div class="text-center">
-                            <img src="<?= Yii::getAlias('@web') ?>/assets/images/logo-dark.svg" alt="images" class="img-fluid mb-4">
+                            <img src="<?= Yii::getAlias('@web') ?>/assets/images/diwarna_logo.png" alt="images" class="img-fluid mb-4">
                             <h4 class="f-w-500 mb-3">Login</h4>
                         </div>
                         <!-- <div class="form-group mb-3">

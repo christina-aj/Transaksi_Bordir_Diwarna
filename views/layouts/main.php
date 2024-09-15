@@ -24,7 +24,7 @@ AppAsset::register($this);
     <meta name="description" content="Gradient Able is trending dashboard template made using Bootstrap 5 design framework. Gradient Able is available in Bootstrap, React, CodeIgniter, Angular,  and .net Technologies.">
     <meta name="keywords" content="Bootstrap admin template, Dashboard UI Kit, Dashboard Template, Backend Panel, react dashboard, angular dashboard">
     <meta name="author" content="codedthemes">
-    <link rel="icon" href="<?= Yii::getAlias('@web') ?>/assets/images/favicon.svg" type="image/x-icon">
+    <link rel="icon" href="<?= Yii::getAlias('@web') ?>/assets/images/diwarna-logo-png.png" type="image/x-icon">
 
     <?php $this->head() ?>
     <!-- [Meta] -->
@@ -48,7 +48,7 @@ AppAsset::register($this);
         <div class="m-header">
             <a href="<?= Url::to(['site/index']) ?>" class="b-brand text-primary">
                 <!-- ========   Change your logo from here   ============ -->
-                <img src="<?= Yii::getAlias('@web') ?>/assets/images/logo-white.svg" alt="logo image" class="logo-lg">
+                <img src="<?= Yii::getAlias('@web') ?>/assets/images/diwarna_logo.png" alt="logo image" class="logo-lg" style="width:65%">
             </a>
         </div>
         <div class="header-wrapper"> <!-- [Mobile Media Block] start -->

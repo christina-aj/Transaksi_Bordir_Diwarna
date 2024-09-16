@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Sep 08, 2024 at 07:26 PM
+-- Generation Time: Sep 16, 2024 at 11:48 AM
 -- Server version: 8.0.30
 -- PHP Version: 8.3.7
 
@@ -51,6 +51,35 @@ INSERT INTO `barang` (`barang_id`, `kode_barang`, `nama_barang`, `unit_id`, `har
 (5, 'A011', 'Kain Kuning', 1, 12000, 'Consumable', 'Kuning', '2024-09-02 15:59:24', '2024-09-03 12:33:37'),
 (6, 'A002', 'Mesin', 5, 190000, 'Non Consumable', 'Merah', '2024-09-02 16:22:50', '2024-09-02 16:25:39'),
 (7, 'ZZZZ', 'Manik-manik', 1, 15000, 'Consumable', 'Merah', '2024-09-05 17:28:41', '2024-09-05 17:28:41');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `gudang`
+--
+
+CREATE TABLE `gudang` (
+  `id_gudang` int NOT NULL,
+  `tanggal` date NOT NULL,
+  `barang_id` int NOT NULL,
+  `user_id` int NOT NULL,
+  `quantity_awal` float NOT NULL,
+  `quantity_masuk` float NOT NULL,
+  `quantity_keluar` float NOT NULL,
+  `quantity_akhir` float NOT NULL,
+  `catatan` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `update_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `gudang`
+--
+
+INSERT INTO `gudang` (`id_gudang`, `tanggal`, `barang_id`, `user_id`, `quantity_awal`, `quantity_masuk`, `quantity_keluar`, `quantity_akhir`, `catatan`, `created_at`, `update_at`) VALUES
+(1, '2024-09-02', 1, 1, 0, 5, 1, 4, 'test', NULL, '2024-09-13 19:39:44'),
+(2, '2024-09-02', 1, 1, 4, 15, 5, 14, 'test', '2024-09-13 19:44:28', '2024-09-13 19:44:28'),
+(3, '2024-09-01', 3, 1, 0, 15, 5, 10, 'test', '2024-09-13 19:58:00', '2024-09-13 19:58:00');
 
 -- --------------------------------------------------------
 
@@ -130,7 +159,10 @@ INSERT INTO `pembelian` (`pembelian_id`, `user_id`, `tanggal`, `supplier_id`, `t
 (1, 2, '2024-09-02', 1, '1751000', 0, '123'),
 (7, 6, '2024-09-11', 2, '270000', 0, 'CHR0921'),
 (8, 3, '2024-09-03', 2, '1380000', 0, 'APAJA123'),
-(9, 3, '2024-10-01', 2, '0', 0, '4444');
+(9, 3, '2024-10-01', 2, '0', 0, '4444'),
+(10, 5, '2024-09-30', 1, '0', 0, 'STRE123'),
+(11, 5, '2024-10-02', 1, '0', 0, 'STRET123'),
+(12, 5, '2024-08-25', 3, '0', 0, 'ASD123');
 
 -- --------------------------------------------------------
 
@@ -189,7 +221,9 @@ CREATE TABLE `penggunaan` (
 
 INSERT INTO `penggunaan` (`penggunaan_id`, `barang_id`, `user_id`, `jumlah_digunakan`, `catatan`, `tanggal_digunakan`) VALUES
 (5, 3, 3, 4, '4 digunakan', '2024-09-10'),
-(6, 1, 6, 6, 'Digunakan untuk jahit', '2024-09-19');
+(6, 1, 6, 6, 'Digunakan untuk jahit', '2024-09-19'),
+(7, 3, 5, 4, '4 item Digunakan dari stock', '2024-09-23'),
+(8, 3, 1, 4, '4 digunakan', '2024-09-01');
 
 -- --------------------------------------------------------
 
@@ -290,7 +324,9 @@ INSERT INTO `stock` (`stock_id`, `tambah_stock`, `barang_id`, `quantity_awal`, `
 (27, '2024-09-03', 3, 4, 12, 0, 16, 3, 0, 1, '2024-09-05 17:27:18', '2024-09-05 17:27:18'),
 (28, '2024-09-03', 7, 0, 12, 0, 12, 3, 0, 1, '2024-09-05 17:29:00', '2024-09-05 17:29:00'),
 (29, '2024-09-10', 3, 16, 0, 4, 12, 3, 1, 0, '2024-09-07 11:58:18', '2024-09-07 11:58:18'),
-(30, '2024-09-19', 1, 9, 0, 6, 3, 6, 1, 0, '2024-09-07 11:58:36', '2024-09-07 11:58:36');
+(30, '2024-09-19', 1, 9, 0, 6, 3, 6, 1, 0, '2024-09-07 11:58:36', '2024-09-07 11:58:36'),
+(31, '2024-09-23', 3, 12, 0, 4, 8, 5, 1, 0, '2024-09-10 16:22:13', '2024-09-10 16:22:13'),
+(32, '2024-09-01', 3, 8, 0, 4, 4, 1, 1, 0, '2024-09-13 19:28:06', '2024-09-13 19:28:06');
 
 -- --------------------------------------------------------
 
@@ -313,7 +349,8 @@ CREATE TABLE `supplier` (
 
 INSERT INTO `supplier` (`supplier_id`, `nama`, `notelfon`, `alamat`, `kota`, `kodepos`) VALUES
 (1, 'Toko Sumber Jaya', '081252807753', 'Jalan Jaya no 15', 'Surabaya', 22134),
-(2, 'Toko Abadi', '082122224532', 'Jalan Mawar  1/11', 'Jakarta', 60113);
+(2, 'Toko Abadi', '082122224532', 'Jalan Mawar  1/11', 'Jakarta', 60113),
+(3, 'Toko Bahagia Kasih', '098741365897', 'Jl. Krembangan 123', 'Surabaya', 94123);
 
 -- --------------------------------------------------------
 
@@ -372,6 +409,14 @@ INSERT INTO `user` (`user_id`, `id_role`, `nama_pengguna`, `email`, `kata_sandi`
 ALTER TABLE `barang`
   ADD PRIMARY KEY (`barang_id`),
   ADD KEY `unit_id` (`unit_id`);
+
+--
+-- Indexes for table `gudang`
+--
+ALTER TABLE `gudang`
+  ADD PRIMARY KEY (`id_gudang`),
+  ADD KEY `barang_id` (`barang_id`),
+  ADD KEY `user_id` (`user_id`);
 
 --
 -- Indexes for table `laporanproduksi`
@@ -466,6 +511,12 @@ ALTER TABLE `barang`
   MODIFY `barang_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
+-- AUTO_INCREMENT for table `gudang`
+--
+ALTER TABLE `gudang`
+  MODIFY `id_gudang` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
 -- AUTO_INCREMENT for table `laporanproduksi`
 --
 ALTER TABLE `laporanproduksi`
@@ -481,7 +532,7 @@ ALTER TABLE `mesin`
 -- AUTO_INCREMENT for table `pembelian`
 --
 ALTER TABLE `pembelian`
-  MODIFY `pembelian_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `pembelian_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `pembelian_detail`
@@ -493,7 +544,7 @@ ALTER TABLE `pembelian_detail`
 -- AUTO_INCREMENT for table `penggunaan`
 --
 ALTER TABLE `penggunaan`
-  MODIFY `penggunaan_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `penggunaan_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `role`
@@ -511,13 +562,13 @@ ALTER TABLE `shift`
 -- AUTO_INCREMENT for table `stock`
 --
 ALTER TABLE `stock`
-  MODIFY `stock_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `stock_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
 
 --
 -- AUTO_INCREMENT for table `supplier`
 --
 ALTER TABLE `supplier`
-  MODIFY `supplier_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `supplier_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `unit`
@@ -540,6 +591,13 @@ ALTER TABLE `user`
 --
 ALTER TABLE `barang`
   ADD CONSTRAINT `barang_ibfk_1` FOREIGN KEY (`unit_id`) REFERENCES `unit` (`unit_id`);
+
+--
+-- Constraints for table `gudang`
+--
+ALTER TABLE `gudang`
+  ADD CONSTRAINT `gudang_ibfk_1` FOREIGN KEY (`barang_id`) REFERENCES `barang` (`barang_id`),
+  ADD CONSTRAINT `gudang_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`);
 
 --
 -- Constraints for table `pembelian`

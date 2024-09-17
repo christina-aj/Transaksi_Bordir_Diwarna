@@ -13,7 +13,9 @@ use yii\db\Expression;
  * @property string $kode_barang
  * @property string $nama_barang
  * @property int $unit_id
+ * @property int $supplier_id
  * @property float $harga
+ * @property float $angka
  * @property string $tipe
  * @property string|null $warna
  * @property string|null $created_at
@@ -54,10 +56,11 @@ class Barang extends \yii\db\ActiveRecord
     {
         return [
             [['kode_barang', 'nama_barang', 'unit_id', 'harga', 'tipe'], 'required'],
-            [['unit_id'], 'integer'],
-            [['harga'], 'number'],
+            [['unit_id', 'supplier_id'], 'integer'],
+            [['harga', 'angka'], 'number'],
             [['created_at', 'updated_at'], 'safe'],
             [['kode_barang', 'nama_barang', 'tipe', 'warna'], 'string', 'max' => 255],
+            [['kode_barang'], 'unique'],
             [['unit_id'], 'exist', 'skipOnError' => true, 'targetClass' => Unit::class, 'targetAttribute' => ['unit_id' => 'unit_id']],
         ];
     }
@@ -71,10 +74,12 @@ class Barang extends \yii\db\ActiveRecord
             'barang_id' => 'Barang ID',
             'kode_barang' => 'Kode Barang',
             'nama_barang' => 'Nama Barang',
+            'angka' => 'Angka',
             'unit_id' => 'Satuan',
             'harga' => 'Harga',
             'tipe' => 'Tipe',
             'warna' => 'Warna',
+            'supplier_id' => 'Supplier Id',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
         ];
@@ -98,6 +103,11 @@ class Barang extends \yii\db\ActiveRecord
     public function getStocks()
     {
         return $this->hasMany(Stock::class, ['barang_id' => 'barang_id']);
+    }
+
+    public function getSupplier()
+    {
+        return $this->hasOne(Supplier::class, ['supplier_id' => 'supplier_id']);
     }
 
     /**

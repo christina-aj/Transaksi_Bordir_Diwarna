@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Sep 16, 2024 at 11:48 AM
+-- Generation Time: Sep 17, 2024 at 07:07 PM
 -- Server version: 8.0.30
 -- PHP Version: 8.3.7
 
@@ -30,11 +30,13 @@ SET time_zone = "+00:00";
 CREATE TABLE `barang` (
   `barang_id` int NOT NULL,
   `kode_barang` varchar(255) CHARACTER SET armscii8 COLLATE armscii8_bin NOT NULL,
-  `nama_barang` varchar(255) CHARACTER SET armscii8 COLLATE armscii8_bin NOT NULL,
+  `nama_barang` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
+  `angka` float NOT NULL,
   `unit_id` int NOT NULL,
   `harga` decimal(10,0) NOT NULL,
   `tipe` varchar(255) CHARACTER SET armscii8 COLLATE armscii8_bin NOT NULL,
   `warna` varchar(255) CHARACTER SET armscii8 COLLATE armscii8_bin DEFAULT NULL,
+  `supplier_id` int NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=armscii8 COLLATE=armscii8_bin;
@@ -43,14 +45,18 @@ CREATE TABLE `barang` (
 -- Dumping data for table `barang`
 --
 
-INSERT INTO `barang` (`barang_id`, `kode_barang`, `nama_barang`, `unit_id`, `harga`, `tipe`, `warna`, `created_at`, `updated_at`) VALUES
-(1, 'A003', 'Benang Oren', 1, 15000, 'Consumable', 'Oren', NULL, '2024-09-03 12:33:02'),
-(2, 'A009', 'Mesin jahit', 5, 150000, 'Non Consumable', 'Putih', '2024-09-01 16:23:20', '2024-09-01 16:23:20'),
-(3, 'A010', 'Kain Hijau', 1, 100000, 'Consumable', 'Hijau', '2024-09-02 16:27:12', '2024-09-03 12:33:12'),
-(4, 'A001', 'Benang Merah', 1, 12000, 'Consumable', 'Merah', '2024-08-26 21:37:26', '2024-09-03 12:33:26'),
-(5, 'A011', 'Kain Kuning', 1, 12000, 'Consumable', 'Kuning', '2024-09-02 15:59:24', '2024-09-03 12:33:37'),
-(6, 'A002', 'Mesin', 5, 190000, 'Non Consumable', 'Merah', '2024-09-02 16:22:50', '2024-09-02 16:25:39'),
-(7, 'ZZZZ', 'Manik-manik', 1, 15000, 'Consumable', 'Merah', '2024-09-05 17:28:41', '2024-09-05 17:28:41');
+INSERT INTO `barang` (`barang_id`, `kode_barang`, `nama_barang`, `angka`, `unit_id`, `harga`, `tipe`, `warna`, `supplier_id`, `created_at`, `updated_at`) VALUES
+(1, 'A003', 'Benang Oren', 5, 1, 15000, 'Consumable', 'Oren', 1, NULL, '2024-09-17 15:45:51'),
+(3, 'B001', 'Kain Hijau', 6, 1, 100000, 'Consumable', 'Hijau', 2, '2024-09-02 16:27:12', '2024-09-17 16:23:19'),
+(4, 'A001', 'Benang Merah', 3000, 7, 12000, 'Consumable', 'Merah', 3, '2024-08-26 21:37:26', '2024-09-17 15:46:50'),
+(5, 'B002', 'Kain Kuning', 3, 1, 12000, 'Consumable', 'Kuning', 2, '2024-09-02 15:59:24', '2024-09-17 16:23:29'),
+(7, 'ZZZZ', 'Manik-manik', 2, 1, 15000, 'Consumable', 'Merah', 3, '2024-09-05 17:28:41', '2024-09-17 15:47:36'),
+(9, 'A004', 'Benang Polyester', 1000, 8, 50000, 'Consumable', 'Putih', 1, '2024-09-17 16:20:33', '2024-09-17 16:20:33'),
+(10, 'A005', 'Benang Polyester', 500, 8, 50000, 'Consumable', 'Putih', 3, '2024-09-17 16:21:33', '2024-09-17 16:21:33'),
+(11, 'A002', 'Benang Rayon', 500, 8, 100000, 'Consumable', 'Merah', 2, '2024-09-17 16:22:51', '2024-09-17 16:22:51'),
+(12, 'M001', 'Mesin Bordir', 1, 9, 50000000, 'Non Consumable', 'Silver', 1, '2024-09-17 16:25:12', '2024-09-17 16:25:12'),
+(13, 'M002', 'Rangka Bordir', 5, 9, 2000000, 'Non Consumable', 'Hitam', 3, '2024-09-17 16:25:55', '2024-09-17 16:25:55'),
+(14, 'A006', 'Benang Merah', 250, 8, 190000, 'Consumable', 'Merah', 1, '2024-09-17 16:34:07', '2024-09-17 16:34:07');
 
 -- --------------------------------------------------------
 
@@ -370,7 +376,10 @@ CREATE TABLE `unit` (
 INSERT INTO `unit` (`unit_id`, `satuan`) VALUES
 (1, 'Meter'),
 (5, 'Kilo'),
-(6, 'Centimeter');
+(6, 'Centimeter'),
+(7, 'Yard'),
+(8, 'Gulung'),
+(9, 'Unit');
 
 -- --------------------------------------------------------
 
@@ -408,7 +417,8 @@ INSERT INTO `user` (`user_id`, `id_role`, `nama_pengguna`, `email`, `kata_sandi`
 --
 ALTER TABLE `barang`
   ADD PRIMARY KEY (`barang_id`),
-  ADD KEY `unit_id` (`unit_id`);
+  ADD KEY `unit_id` (`unit_id`),
+  ADD KEY `supplier_id` (`supplier_id`);
 
 --
 -- Indexes for table `gudang`
@@ -508,7 +518,7 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT for table `barang`
 --
 ALTER TABLE `barang`
-  MODIFY `barang_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `barang_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `gudang`
@@ -574,7 +584,7 @@ ALTER TABLE `supplier`
 -- AUTO_INCREMENT for table `unit`
 --
 ALTER TABLE `unit`
-  MODIFY `unit_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `unit_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `user`

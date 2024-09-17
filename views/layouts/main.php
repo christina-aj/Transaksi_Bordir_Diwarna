@@ -44,7 +44,7 @@ AppAsset::register($this);
     <?= SidebarWidget::widget() ?>
 
     <!-- Header -->
-    <header class="pc-header">
+    <header class="pc-header" style="background-color:#eeeeee;">
         <div class="m-header">
             <a href="<?= Url::to(['site/index']) ?>" class="b-brand text-primary">
                 <!-- ========   Change your logo from here   ============ -->

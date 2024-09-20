@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Sep 17, 2024 at 07:07 PM
+-- Generation Time: Sep 20, 2024 at 05:11 PM
 -- Server version: 8.0.30
 -- PHP Version: 8.3.7
 
@@ -205,6 +205,31 @@ INSERT INTO `pembelian_detail` (`belidetail_id`, `pembelian_id`, `barang_id`, `h
 (36, 7, 1, 15000, 12, 180000, '', 1, '2024-09-05 14:25:18', '2024-09-05 14:25:18'),
 (37, 8, 3, 100000, 12, 1200000, '', 0, '2024-09-05 17:27:18', '2024-09-05 17:27:18'),
 (38, 8, 7, 15000, 12, 180000, '', 0, '2024-09-05 17:29:00', '2024-09-05 17:29:00');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pemesanan`
+--
+
+CREATE TABLE `pemesanan` (
+  `pemesanan_id` int NOT NULL,
+  `barang_id` int NOT NULL,
+  `user_id` int NOT NULL,
+  `tanggal` date NOT NULL,
+  `qty` float NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `pemesanan`
+--
+
+INSERT INTO `pemesanan` (`pemesanan_id`, `barang_id`, `user_id`, `tanggal`, `qty`, `created_at`, `updated_at`) VALUES
+(1, 1, 5, '2024-09-01', 12, '2024-09-18 18:44:35', '2024-09-18 18:44:35'),
+(2, 4, 1, '2024-09-30', 3, '2024-09-18 19:05:38', '2024-09-18 19:05:38'),
+(3, 4, 1, '2024-09-03', 12, '2024-09-18 20:45:57', '2024-09-18 20:45:57');
 
 -- --------------------------------------------------------
 
@@ -457,6 +482,14 @@ ALTER TABLE `pembelian_detail`
   ADD KEY `pembelian_id` (`pembelian_id`) USING BTREE;
 
 --
+-- Indexes for table `pemesanan`
+--
+ALTER TABLE `pemesanan`
+  ADD PRIMARY KEY (`pemesanan_id`),
+  ADD KEY `barang_id` (`barang_id`),
+  ADD KEY `user_id` (`user_id`);
+
+--
 -- Indexes for table `penggunaan`
 --
 ALTER TABLE `penggunaan`
@@ -551,6 +584,12 @@ ALTER TABLE `pembelian_detail`
   MODIFY `belidetail_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
 
 --
+-- AUTO_INCREMENT for table `pemesanan`
+--
+ALTER TABLE `pemesanan`
+  MODIFY `pemesanan_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
 -- AUTO_INCREMENT for table `penggunaan`
 --
 ALTER TABLE `penggunaan`
@@ -622,6 +661,13 @@ ALTER TABLE `pembelian`
 ALTER TABLE `pembelian_detail`
   ADD CONSTRAINT `pembelian_detail_ibfk_1` FOREIGN KEY (`barang_id`) REFERENCES `barang` (`barang_id`),
   ADD CONSTRAINT `pembelian_detail_ibfk_2` FOREIGN KEY (`pembelian_id`) REFERENCES `pembelian` (`pembelian_id`);
+
+--
+-- Constraints for table `pemesanan`
+--
+ALTER TABLE `pemesanan`
+  ADD CONSTRAINT `pemesanan_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`),
+  ADD CONSTRAINT `pemesanan_ibfk_2` FOREIGN KEY (`barang_id`) REFERENCES `barang` (`barang_id`);
 
 --
 -- Constraints for table `penggunaan`

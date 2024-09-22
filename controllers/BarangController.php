@@ -7,6 +7,7 @@ use app\models\BarangSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use Yii;
 
 /**
  * BarangController implements the CRUD actions for Barang model.
@@ -115,6 +116,9 @@ class BarangController extends Controller
 
         return $this->redirect(['index']);
     }
+
+
+
 
     /**
      * Finds the Barang model based on its primary key value.

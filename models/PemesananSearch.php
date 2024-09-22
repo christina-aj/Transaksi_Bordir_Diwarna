@@ -17,9 +17,9 @@ class PemesananSearch extends Pemesanan
     public function rules()
     {
         return [
-            [['pemesanan_id', 'barang_id', 'user_id'], 'integer'],
+            [['pemesanan_id', 'user_id'], 'integer'],
             [['tanggal', 'created_at', 'updated_at'], 'safe'],
-            [['qty'], 'number'],
+            [['total_item'], 'number'],
         ];
     }
 
@@ -60,10 +60,9 @@ class PemesananSearch extends Pemesanan
         // grid filtering conditions
         $query->andFilterWhere([
             'pemesanan_id' => $this->pemesanan_id,
-            'barang_id' => $this->barang_id,
             'user_id' => $this->user_id,
             'tanggal' => $this->tanggal,
-            'qty' => $this->qty,
+            'total_item' => $this->total_item,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ]);

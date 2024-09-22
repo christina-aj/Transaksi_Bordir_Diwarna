@@ -15,24 +15,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <?= DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'pembelian_id',
-            'user_id',
-            [
-                'attribute' => 'tanggal',
-                'format' => ['date', 'php:d-M-Y'], // Mengubah format ke dd-mm-yyyy
-                'label' => 'Tanggal',
-            ],
-            // 'tanggal',
-            'supplier_id',
-            'total_biaya',
-            'langsung_pakai',
-            'kode_struk',
-        ],
-    ]) ?>
-    <div>
+    <p>
         <?= Html::a('Update', ['update', 'pembelian_id' => $model->pembelian_id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Delete', ['delete', 'pembelian_id' => $model->pembelian_id], [
             'class' => 'btn btn-danger',
@@ -41,6 +24,16 @@ $this->params['breadcrumbs'][] = $this->title;
                 'method' => 'post',
             ],
         ]) ?>
-        <?= Html::a('Back', ['pembelian/index'], ['class' => 'btn btn-secondary']) ?>
-    </div>
+    </p>
+
+    <?= DetailView::widget([
+        'model' => $model,
+        'attributes' => [
+            'pembelian_id',
+            'pemesanan_id',
+            'user_id',
+            'total_biaya',
+        ],
+    ]) ?>
+
 </div>

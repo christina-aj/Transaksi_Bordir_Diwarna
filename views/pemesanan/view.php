@@ -15,34 +15,23 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <p>
 
-    </p>
 
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
             'pemesanan_id',
-            // 'barang_id',
-            // 'user_id',
-            'barang.nama_barang' => [
-                'attribute' => 'barang_id', // Bisa menggunakan attribute lain sesuai kebutuhan
-                'label' => 'Detail Barang',
-                'value' => function ($model) {
-                    $barang = $model->barang;
-                    $unit = $barang->unit;
-                    return $barang->kode_barang . ' - ' . $barang->nama_barang . ' - ' . $barang->angka . ' ' . ($unit ? $unit->satuan : 'Satuan tidak ditemukan') . ' - ' . $barang->warna;
-                }
+            'user_id',
+            'tanggal' => [
+                'attribute' => 'tanggal',
+                'format' => ['date', 'php:d-M-Y'], // Mengubah format menjadi dd-mm-yyyy
             ],
-            // 'user_id',
-            'user.nama_pengguna',
-            'tanggal',
-            'qty',
-            'created_at',
-            'updated_at',
+            'total_item',
+            'created_at:datetime',
+            'updated_at:datetime',
         ],
     ]) ?>
-    <div>
+    <div className="form-group">
         <?= Html::a('Update', ['update', 'pemesanan_id' => $model->pemesanan_id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Delete', ['delete', 'pemesanan_id' => $model->pemesanan_id], [
             'class' => 'btn btn-danger',

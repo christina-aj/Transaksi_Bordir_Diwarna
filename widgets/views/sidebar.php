@@ -22,6 +22,7 @@ $PenggunaanUrl = Url::to(['/penggunaan/index']);
 $SuratJalanUrl = Url::to(['/surat-jalan/index']);
 $GudangUrl = Url::to(['/gudang/index']);
 $PemesananUrl = Url::to(['/pemesanan/index']);
+$PesanDetailUrl = Url::to(['/pesan-detail/index']);
 
 
 
@@ -77,9 +78,17 @@ $samplePageUrl = Url::to(['site/sample-page']);
                         <ul class="pc-submenu">
                             <li class="pc-item"><a class="pc-link" href="<?= $BarangUrl ?>">List Barang</a></li>
                             <li class="pc-item"><a class="pc-link" href="<?= $PenggunaanUrl ?>">Penggunaan</a></li>
-                            <li class="pc-item"><a class="pc-link" href="<?= $PemesananUrl ?>">Pemesanan Barang Baku</a></li>
-                            <li class="pc-item"><a class="pc-link" href="<?= $GudangUrl ?>">Stock Gudang</a></li>
                             <li class="pc-item"><a class="pc-link" href="<?= $StockUrl ?>">Stock Produksi</a></li>
+                        </ul>
+                    </li>
+                    <li class="pc-item pc-hasmenu">
+                        <a href="#!" class="pc-link"><span class="pc-micon">
+                                <i class="fi fi-ts-box-alt"></i> </span><span class="pc-mtext">Gudang</span><span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
+                        <ul class="pc-submenu">
+                            <li class="pc-item"><a class="pc-link" href="<?= $PemesananUrl ?>">Riwayat Pemesanan</a></li>
+                            <li class="pc-item"><a class="pc-link" href="<?= $PesanDetailUrl ?>">Detail Pemesanan Barang</a></li>
+                            <li class="pc-item"><a class="pc-link" href="<?= $GudangUrl ?>">Stock Gudang</a></li>
+
                         </ul>
                     </li>
 

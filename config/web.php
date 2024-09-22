@@ -56,6 +56,7 @@ $config = [
                 'surat-jalan/index' => 'pembelian-detail/index2',
                 'penggunaan/get-user-info' => 'penggunaan/get-user-info',
                 'gudang/get-stock' => 'gudang/get-stock',
+                'pemesanan/get-user-info' => 'pemesanan/get-user-info',
             ],
         ],
 

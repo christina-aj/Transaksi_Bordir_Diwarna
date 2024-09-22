@@ -17,15 +17,13 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'pemesanan_id') ?>
 
-    <?= $form->field($model, 'barang_id') ?>
-
     <?= $form->field($model, 'user_id') ?>
 
     <?= $form->field($model, 'tanggal') ?>
 
-    <?= $form->field($model, 'qty') ?>
+    <?= $form->field($model, 'total_item') ?>
 
-    <?php // echo $form->field($model, 'created_at') ?>
+    <?= $form->field($model, 'created_at') ?>
 
     <?php // echo $form->field($model, 'updated_at') ?>
 

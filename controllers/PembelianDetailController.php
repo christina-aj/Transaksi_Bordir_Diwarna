@@ -7,7 +7,6 @@ use app\models\PembelianDetailSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-use Yii;
 
 /**
  * PembelianDetailController implements the CRUD actions for PembelianDetail model.
@@ -37,24 +36,12 @@ class PembelianDetailController extends Controller
      *
      * @return string
      */
-    public function actionIndex1()
+    public function actionIndex()
     {
         $searchModel = new PembelianDetailSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
-            'showFullContent' => true,
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-        ]);
-    }
-    public function actionIndex2()
-    {
-        $searchModel = new PembelianDetailSearch();
-        $dataProvider = $searchModel->search($this->request->queryParams);
-
-        return $this->render('index', [
-            'showFullContent' => false,
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
@@ -143,20 +130,5 @@ class PembelianDetailController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
-    }
-
-    public function actionGetHarga()
-    {
-        $postData = Yii::$app->request->post(); // Debug POST data
-        Yii::info('POST Data: ' . print_r($postData, true), __METHOD__);
-
-        $barang_id = Yii::$app->request->post('barang_id');
-        if ($barang_id) {
-            $barang = \app\models\Barang::findOne($barang_id);
-            if ($barang) {
-                return $this->asJson($barang->harga);
-            }
-        }
-        return $this->asJson(null);
     }
 }

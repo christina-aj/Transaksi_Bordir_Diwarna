@@ -3,12 +3,10 @@
 namespace app\controllers;
 
 use app\models\Pembelian;
-use app\models\PembelianDetail;
 use app\models\PembelianSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-use yii;
 
 /**
  * PembelianController implements the CRUD actions for Pembelian model.
@@ -132,33 +130,5 @@ class PembelianController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
-    }
-
-    public function actionCalculateTotalBiaya($pembelian_id)
-    {
-        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-
-        // Hitung total biaya dari semua detail pembelian
-        $totalBiaya = PembelianDetail::find()
-            ->where(['pembelian_id' => $pembelian_id])
-            ->sum('total_biaya');
-
-        // Kembalikan hasil sebagai JSON
-        return ['total_biaya' => $totalBiaya];
-    }
-
-    public function actionGetUserInfo()
-    {
-        if (Yii::$app->user->isGuest) {
-            return $this->asJson(['success' => false, 'message' => 'User not logged in']);
-        }
-
-        // Mengambil data user yang sedang login
-        $user = Yii::$app->user->identity;
-
-        return $this->asJson([
-            'success' => true,
-            'username' => $user->nama_pengguna,
-        ]);
     }
 }

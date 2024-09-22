@@ -4,12 +4,12 @@ namespace app\models;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\Pembelian;
+use app\models\PesanDetail;
 
 /**
- * PembelianSearch represents the model behind the search form of `app\models\Pembelian`.
+ * PesanDetailSearch represents the model behind the search form of `app\models\PesanDetail`.
  */
-class PembelianSearch extends Pembelian
+class PesanDetailSearch extends PesanDetail
 {
     /**
      * {@inheritdoc}
@@ -17,8 +17,9 @@ class PembelianSearch extends Pembelian
     public function rules()
     {
         return [
-            [['pembelian_id', 'pemesanan_id', 'user_id'], 'integer'],
-            [['total_biaya'], 'number'],
+            [['pesandetail_id', 'pemesanan_id', 'barang_id', 'is_correct'], 'integer'],
+            [['qty', 'qty_terima'], 'number'],
+            [['catatan', 'created_at', 'update_at'], 'safe'],
         ];
     }
 
@@ -40,7 +41,7 @@ class PembelianSearch extends Pembelian
      */
     public function search($params)
     {
-        $query = Pembelian::find();
+        $query = PesanDetail::find();
 
         // add conditions that should always apply here
 
@@ -58,11 +59,17 @@ class PembelianSearch extends Pembelian
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'pembelian_id' => $this->pembelian_id,
+            'pesandetail_id' => $this->pesandetail_id,
             'pemesanan_id' => $this->pemesanan_id,
-            'user_id' => $this->user_id,
-            'total_biaya' => $this->total_biaya,
+            'barang_id' => $this->barang_id,
+            'qty' => $this->qty,
+            'qty_terima' => $this->qty_terima,
+            'is_correct' => $this->is_correct,
+            'created_at' => $this->created_at,
+            'update_at' => $this->update_at,
         ]);
+
+        $query->andFilterWhere(['like', 'catatan', $this->catatan]);
 
         return $dataProvider;
     }

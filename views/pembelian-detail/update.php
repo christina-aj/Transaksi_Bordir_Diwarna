@@ -5,12 +5,12 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var app\models\PembelianDetail $model */
 
-$this->title = 'Update Buku Kas: ' . $model->belidetail_id;
+$this->title = 'Update Pembelian Detail: ' . $model->belidetail_id;
 $this->params['breadcrumbs'][] = ['label' => 'Pembelian Details', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->belidetail_id, 'url' => ['view', 'belidetail_id' => $model->belidetail_id]];
 $this->params['breadcrumbs'][] = 'Update';
 ?>
-<div class="pc-content">
+<div class="pembelian-detail-update">
 
     <h1><?= Html::encode($this->title) ?></h1>
 

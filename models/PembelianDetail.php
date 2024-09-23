@@ -18,6 +18,7 @@ use Yii;
  * @property string|null $updated_at
  *
  * @property Pembelian $pembelian
+ * @property PesanDetail $pesandetail
  */
 class PembelianDetail extends \yii\db\ActiveRecord
 {
@@ -70,5 +71,14 @@ class PembelianDetail extends \yii\db\ActiveRecord
     public function getPembelian()
     {
         return $this->hasOne(Pembelian::class, ['pembelian_id' => 'pembelian_id']);
+    }
+
+    public function getPesanDetail()
+    {
+        return $this->hasOne(PesanDetail::class, ['pesandetail_id' => 'pesandetail_id']);
+    }
+    public function getBarang()
+    {
+        return $this->hasOne(Barang::class, ['barang_id' => 'barang_id']);
     }
 }

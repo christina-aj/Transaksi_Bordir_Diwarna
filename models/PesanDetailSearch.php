@@ -17,7 +17,7 @@ class PesanDetailSearch extends PesanDetail
     public function rules()
     {
         return [
-            [['pesandetail_id', 'pemesanan_id', 'barang_id', 'is_correct'], 'integer'],
+            [['pesandetail_id', 'pemesanan_id', 'barang_id', 'is_correct', 'langsung_pakai'], 'integer'],
             [['qty', 'qty_terima'], 'number'],
             [['catatan', 'created_at', 'update_at'], 'safe'],
         ];
@@ -57,6 +57,8 @@ class PesanDetailSearch extends PesanDetail
             return $dataProvider;
         }
 
+
+
         // grid filtering conditions
         $query->andFilterWhere([
             'pesandetail_id' => $this->pesandetail_id,
@@ -64,6 +66,7 @@ class PesanDetailSearch extends PesanDetail
             'barang_id' => $this->barang_id,
             'qty' => $this->qty,
             'qty_terima' => $this->qty_terima,
+            'langsung_pakai' => $this->langsung_pakai,
             'is_correct' => $this->is_correct,
             'created_at' => $this->created_at,
             'update_at' => $this->update_at,

@@ -46,6 +46,21 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             'qty_terima',
             'catatan',
+            'langsung_pakai' => [
+                'label' => 'langsung Pakai',
+                'attribute' => 'langsung_pakai',
+                'format' => 'raw', // This allows for raw HTML output (for icons)
+                'value' => function ($model) {
+                    // Check the value of the status field
+                    if ($model->langsung_pakai == 1) {
+                        // Active status (1)
+                        return Html::tag('span', '&#10004;', ['style' => 'color: green; font-size: 20px;']); // Checkmark icon
+                    } else {
+                        // Inactive status (0)
+                        return Html::tag('span', '&#10008;', ['style' => 'color: red; font-size: 20px;']); // Cross icon
+                    }
+                },
+            ],
             'is_correct' => [
                 'label' => 'Barang Lengkap',
                 'attribute' => 'is_correct',

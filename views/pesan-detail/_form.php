@@ -9,6 +9,7 @@ use yii\widgets\ActiveForm;
 /** @var yii\web\View $this */
 /** @var app\models\PesanDetail $model */
 /** @var yii\widgets\ActiveForm $form */
+/** @var int $pemesananId */
 
 $data = \app\models\Barang::find()->select(['barang_id'])->column();
 ?>
@@ -17,19 +18,8 @@ $data = \app\models\Barang::find()->select(['barang_id'])->column();
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?php
-    $dataPost = ArrayHelper::map(\app\models\Pemesanan::find()->all(), 'pemesanan_id', function ($model) {
-        return $model->getFormattedOrderId(); // Call method on model object
-    });
-    echo $form->field($model, 'pemesanan_id')
-        ->dropDownList(
-            $dataPost,
-            ['prompt' => 'Select Pemesanan']
-        );
-    ?>
-    <!-- <?= $form->field($model, 'pemesanan_id')->textInput() ?> -->
-
-    <!-- <?= $form->field($model, 'barang_id')->textInput() ?> -->
+    <?= Html::activeHiddenInput($model, 'pemesanan_id', ['value' => Yii::$app->session->get('temporaryOrderId')]) ?>
+    <?= $form->field($model, 'pemesanan_id')->textInput(['readonly' => true, 'value' => Yii::$app->session->get('temporaryOrderId')]) ?>
 
     <?= $form->field($model, 'barang_id')->widget(Typeahead::classname(), [
         'options' => ['placeholder' => 'Cari Nama Barang...'],
@@ -65,6 +55,7 @@ $data = \app\models\Barang::find()->select(['barang_id'])->column();
 
     <?= $form->field($model, 'catatan')->textInput(['maxlength' => true]) ?>
 
+    <?= $form->field($model, 'langsung_pakai')->checkbox(['label' => 'Langsung Pakai'], true); ?>
     <?= $form->field($model, 'is_correct')->checkbox(['label' => 'Barang Sesuai'], true); ?>
 
     <!-- <?= $form->field($model, 'created_at')->textInput() ?> -->

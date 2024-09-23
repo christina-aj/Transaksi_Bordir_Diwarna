@@ -31,7 +31,7 @@ class Pembelian extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['pemesanan_id', 'user_id', 'total_biaya'], 'required'],
+            [['pemesanan_id', 'total_biaya'], 'required'],
             [['pemesanan_id', 'user_id'], 'integer'],
             [['total_biaya'], 'number'],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'user_id']],
@@ -69,5 +69,10 @@ class Pembelian extends \yii\db\ActiveRecord
     public function getUser()
     {
         return $this->hasOne(User::class, ['user_id' => 'user_id']);
+    }
+
+    public function getPemesanan()
+    {
+        return $this->hasOne(Pemesanan::class, ['pemesanan_id' => 'pemesanan_id']);
     }
 }

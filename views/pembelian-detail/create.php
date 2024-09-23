@@ -9,7 +9,7 @@ $this->title = 'Create Pembelian Detail';
 $this->params['breadcrumbs'][] = ['label' => 'Pembelian Details', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="pembelian-detail-create">
+<div class="pc-content">
 
     <h1><?= Html::encode($this->title) ?></h1>
 

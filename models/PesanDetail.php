@@ -16,6 +16,7 @@ use yii\behaviors\TimestampBehavior;
  * @property float|null $qty_terima
  * @property string|null $catatan
  * @property int $is_correct
+ * @property int $langsung_pakai
  * @property string $created_at
  * @property string $update_at
  *
@@ -52,8 +53,8 @@ class PesanDetail extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['pemesanan_id', 'barang_id', 'qty', 'is_correct'], 'required'],
-            [['pemesanan_id', 'barang_id', 'is_correct'], 'integer'],
+            [['pemesanan_id', 'barang_id', 'qty', 'is_correct', 'langsung_pakai'], 'required'],
+            [['pemesanan_id', 'barang_id', 'is_correct', 'langsung_pakai'], 'integer'],
             [['qty', 'qty_terima'], 'number'],
             [['qty_terima'], 'default', 'value' => 0],
             [['created_at', 'update_at'], 'safe'],
@@ -74,6 +75,7 @@ class PesanDetail extends \yii\db\ActiveRecord
             'barang_id' => 'Barang ID',
             'qty' => 'Qty',
             'qty_terima' => 'Qty Terima',
+            'langsung_pakai' => 'Langsung Pakai',
             'catatan' => 'Catatan',
             'is_correct' => 'Is Correct',
             'created_at' => 'Created At',
@@ -115,14 +117,14 @@ class PesanDetail extends \yii\db\ActiveRecord
         }
     }
 
-    public function afterDelete()
-    {
-        parent::afterDelete();
+    // public function afterDelete()
+    // {
+    //     parent::afterDelete();
 
-        // Panggil fungsi updateTotalItem dari model Pemesanan saat detail dihapus
-        $pemesanan = Pemesanan::findOne($this->pemesanan_id);
-        if ($pemesanan) {
-            $pemesanan->updateTotalItem($this->pemesanan_id);
-        }
-    }
+    //     // Panggil fungsi updateTotalItem dari model Pemesanan saat detail dihapus
+    //     $pemesanan = Pemesanan::findOne($this->pemesanan_id);
+    //     if ($pemesanan) {
+    //         $pemesanan->updateTotalItem($this->pemesanan_id);
+    //     }
+    // }
 }

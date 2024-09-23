@@ -3,6 +3,9 @@
 namespace app\controllers;
 
 use app\models\Barang;
+use app\models\Pemesanan;
+use app\models\Pembelian;
+use app\models\PembelianDetail;
 use app\models\PesanDetail;
 use app\models\PesanDetailSearch;
 use Yii;
@@ -69,20 +72,114 @@ class PesanDetailController extends Controller
      */
     public function actionCreate()
     {
-        $model = new PesanDetail();
+        // Cek apakah pemesanan sudah ada di sesi
+        $pemesananId = Yii::$app->session->get('temporaryOrderId');
 
-        if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'pesandetail_id' => $model->pesandetail_id]);
-            }
-        } else {
-            $model->loadDefaultValues();
+        // Jika tidak ada pemesanan_id, buat pemesanan baru
+        if (!$pemesananId) {
+            return $this->actionCreatePemesanan();
         }
 
+        // Model untuk detail pemesanan
+        $modelDetail = new PesanDetail();
+
+        // Cek jika form detail disubmit
+        if ($modelDetail->load(Yii::$app->request->post())) {
+            // Mengaitkan detail dengan pemesanan
+            $modelDetail->pemesanan_id = $pemesananId; // Mengaitkan detail dengan pemesanan
+            $modelDetail->created_at = date('Y-m-d H:i:s');
+
+            // Simpan detail pemesanan
+            if ($modelDetail->save()) {
+                // Panggil fungsi untuk membuat pembelian dan pembelian detail
+                return $this->actionCreatePembelian($pemesananId, $modelDetail->pesandetail_id);
+            } else {
+                Yii::$app->session->setFlash('error', 'Gagal menyimpan detail pemesanan: ' . json_encode($modelDetail->getErrors()));
+            }
+        }
+
+        // Render view untuk form detail
         return $this->render('create', [
-            'model' => $model,
+            'model' => $modelDetail,
         ]);
     }
+
+    // Fungsi untuk membuat pemesanan
+    public function actionCreatePemesanan()
+    {
+        // Buat pemesanan baru
+        $pemesanan = new Pemesanan();
+        $pemesanan->user_id = Yii::$app->user->id; // Ambil ID pengguna
+        $pemesanan->tanggal = date('Y-m-d H:i:s');
+        $pemesanan->total_item = 0; // Set awal total item
+
+        // Simpan pemesanan dan cek apakah berhasil
+        if ($pemesanan->save()) {
+            // Simpan pemesanan_id di sesi untuk digunakan pada detail
+            Yii::$app->session->set('temporaryOrderId', $pemesanan->pemesanan_id);
+            Yii::debug("Pemesanan berhasil dibuat dengan ID: " . $pemesanan->pemesanan_id, __METHOD__);
+
+            // Redirect ke create untuk membuat detail pemesanan
+            return $this->redirect(['create']);
+        } else {
+            // Log kesalahan
+            Yii::error("Gagal membuat pemesanan: " . json_encode($pemesanan->getErrors()), __METHOD__);
+            Yii::$app->session->setFlash('error', 'Gagal membuat pemesanan.');
+            return $this->redirect(['index']); // Redirect ke halaman lain jika gagal
+        }
+    }
+
+    // Fungsi untuk membuat pembelian dan pembelian detail
+    public function actionCreatePembelian($pemesananId, $pesandetail_id)
+    {
+        // Buat pembelian baru
+        $pembelian = new Pembelian();
+        $pembelian->pemesanan_id = $pemesananId; // Mengaitkan dengan pemesanan
+        $pembelian->user_id = null;
+        $pembelian->total_biaya = 0; // Set total biaya ke 0
+
+        // Simpan pembelian dan cek apakah berhasil
+        if ($pembelian->save()) {
+            Yii::debug("Pembelian berhasil dibuat dengan ID: " . $pembelian->pembelian_id, __METHOD__);
+
+            // Setelah pembelian dibuat, buat juga pembelian detail
+            return $this->actionCreatePembelianDetail($pembelian->pembelian_id, $pesandetail_id);
+        } else {
+            // Log kesalahan
+            Yii::error("Gagal membuat pembelian: " . json_encode($pembelian->getErrors()), __METHOD__);
+            Yii::$app->session->setFlash('error', 'Gagal membuat pembelian.');
+            return $this->redirect(['index']); // Redirect ke halaman lain jika gagal
+        }
+    }
+
+    // Fungsi untuk membuat pembelian detail
+    public function actionCreatePembelianDetail($pembelianId, $pesandetailId)
+    {
+        // Buat pembelian detail baru
+        $pembelianDetail = new PembelianDetail();
+        $pembelianDetail->pembelian_id = $pembelianId; // Mengaitkan dengan ID pembelian
+        $pembelianDetail->pesandetail_id = $pesandetailId; // Mengaitkan dengan detail pemesanan
+        $pembelianDetail->cek_barang = 0; // Atur cek_barang ke 0
+        $pembelianDetail->total_biaya = 0; // Set total biaya ke 0
+        $pembelianDetail->is_correct = 0; // Set is_correct ke 0
+        $pembelianDetail->created_at = date('Y-m-d H:i:s'); // Atur waktu pembuatan
+
+        // Simpan pembelian detail dan cek apakah berhasil
+        if ($pembelianDetail->save()) {
+            Yii::debug("Pembelian detail berhasil dibuat dengan ID: " . $pembelianDetail->belidetail_id, __METHOD__);
+
+            // Redirect ke tampilan pembelian detail
+            return $this->redirect(['view', 'pesandetail_id' => $pesandetailId]); // Pastikan parameter yang benar di sini
+        } else {
+            // Log kesalahan
+            Yii::error("Gagal membuat pembelian detail: " . json_encode($pembelianDetail->getErrors()), __METHOD__);
+            Yii::$app->session->setFlash('error', 'Gagal membuat pembelian detail.');
+            return $this->redirect(['index']); // Redirect ke halaman lain jika gagal
+        }
+    }
+
+
+
 
     /**
      * Updates an existing PesanDetail model.

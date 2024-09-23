@@ -11,7 +11,7 @@ $this->params['breadcrumbs'][] = ['label' => 'Pembelian Details', 'url' => ['ind
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
-<div class="pembelian-detail-view">
+<div class="pc-content">
 
     <h1><?= Html::encode($this->title) ?></h1>
 

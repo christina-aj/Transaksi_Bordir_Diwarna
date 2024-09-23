@@ -10,7 +10,7 @@ use yii\grid\GridView;
 /** @var app\models\PembelianSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = 'Pembelians';
+$this->title = 'Pembelian';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="pc-content">
@@ -31,7 +31,11 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\SerialColumn'],
 
             'pembelian_id',
-            'pemesanan_id',
+            // 'pemesanan_id',
+            'pemesanan.pemesanan_id',
+            'pemesanan.user_id',
+            'pemesanan.tanggal',
+            'pemesanan.total_item',
             'user_id',
             'total_biaya',
             [

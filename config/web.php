@@ -52,11 +52,10 @@ $config = [
                 'pembelian-detail/get-harga' => 'pembelian-detail/get-harga',
                 'penggunaan/get-stock' => 'penggunaan/get-stock',
                 'stock/get-stock' => 'stock/get-stock',
-                'pembelian-detail/index' => 'pembelian-detail/index1',
-                'surat-jalan/index' => 'pembelian-detail/index2',
                 'penggunaan/get-user-info' => 'penggunaan/get-user-info',
                 'gudang/get-stock' => 'gudang/get-stock',
                 'pemesanan/get-user-info' => 'pemesanan/get-user-info',
+                'pemesanan/create-pemesanan' => 'pemesanan/create-pemesanan',
             ],
         ],
 

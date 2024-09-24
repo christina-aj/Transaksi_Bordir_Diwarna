@@ -17,8 +17,10 @@ class AppAsset extends AssetBundle
         "assets/fonts/fontawesome.css",
         "assets/fonts/material.css",
         "assets/css/style.css",
+        "assets/css/pagination.css",
         "assets/css/style-preset.css",
         'https://cdn-uicons.flaticon.com/2.5.1/uicons-thin-straight/css/uicons-thin-straight.css',
+        'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css',
 
     ];
     public $js = [

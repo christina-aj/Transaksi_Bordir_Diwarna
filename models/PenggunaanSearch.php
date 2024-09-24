@@ -55,16 +55,16 @@ class PenggunaanSearch extends Penggunaan
                     'penggunaan_id', // Aktifkan sorting untuk kolom tanggal
                     'tanggal_digunakan', // Aktifkan sorting untuk kolom pembelian_id
                     'nama_pengguna' => [
-                        'asc' => ['supplier.nama' => SORT_ASC],  // Kolom supplier_name diurutkan berdasarkan nama di tabel supplier
-                        'desc' => ['supplier.nama' => SORT_DESC],
+                        'asc' => ['nama_pengguna' => SORT_ASC],  // Kolom user_name diurutkan berdasarkan nama di tabel user
+                        'desc' => ['nama_pengguna' => SORT_DESC],
                     ],
                     'kode_barang' => [
-                        'asc' => ['supplier.nama' => SORT_ASC],  // Kolom supplier_name diurutkan berdasarkan nama di tabel supplier
-                        'desc' => ['supplier.nama' => SORT_DESC],
+                        'asc' => ['kode_barang' => SORT_ASC],  // Kolom supplier_name diurutkan berdasarkan nama di tabel supplier
+                        'desc' => ['kode_barang' => SORT_DESC],
                     ],
                     'nama_barang' => [
-                        'asc' => ['supplier.nama' => SORT_ASC],  // Kolom supplier_name diurutkan berdasarkan nama di tabel supplier
-                        'desc' => ['supplier.nama' => SORT_DESC],
+                        'asc' => ['nama_barang' => SORT_ASC],  // Kolom supplier_name diurutkan berdasarkan nama di tabel supplier
+                        'desc' => ['nama_barang' => SORT_DESC],
                     ],
                     'jumlah_digunakan', // Aktifkan sorting untuk kolom kode_struk
                     'catatan',

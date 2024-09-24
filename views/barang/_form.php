@@ -17,6 +17,8 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'nama_barang')->textInput(['maxlength' => true]) ?>
 
+    <?= $form->field($model, 'angka')->textInput(['maxlength' => true]) ?>
+
     <?php
     $dataPost = ArrayHelper::map(\app\models\Unit::find()->asArray()->all(), 'unit_id', function ($model) {
         return $model['unit_id'] . ' - ' . $model['satuan'];
@@ -24,7 +26,7 @@ use yii\widgets\ActiveForm;
     echo $form->field($model, 'unit_id')
         ->dropDownList(
             $dataPost,
-            ['unit_id' => 'unit_id']
+            ['prompt' => 'Satuan', 'unit_id' => 'unit_id']
         );
     ?>
 
@@ -32,6 +34,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'tipe')->dropDownList(
         [
+            'prompt' => 'Pilih Tipe',
             "Consumable" => 'Consumable',
             "Non Consumable" => 'Non Consumable',
         ]
@@ -40,6 +43,17 @@ use yii\widgets\ActiveForm;
     <!-- <?= $form->field($model, 'tipe')->textInput(['maxlength' => true]) ?> -->
 
     <?= $form->field($model, 'warna')->textInput(['maxlength' => true]) ?>
+
+    <?php
+    $dataPost = ArrayHelper::map(\app\models\Supplier::find()->asArray()->all(), 'supplier_id', function ($model) {
+        return $model['supplier_id'] . ' - ' . $model['nama'];
+    });
+    echo $form->field($model, 'supplier_id')
+        ->dropDownList(
+            $dataPost,
+            ['prompt' => 'Pilih Supplier', 'supplier_id' => 'supplier_id']
+        );
+    ?>
 
     <!-- <?= $form->field($model, 'created_at')->textInput() ?> -->
 

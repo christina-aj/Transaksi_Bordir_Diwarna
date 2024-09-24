@@ -162,7 +162,7 @@ class PenggunaanController extends Controller
             return $this->asJson(['success' => false, 'message' => 'User not logged in']);
         }
 
-        // Mengambil data user yang sedang login
+        // Mengambil data user yang sedang login    
         $user = Yii::$app->user->identity;
 
         return $this->asJson([

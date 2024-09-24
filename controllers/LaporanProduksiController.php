@@ -3,7 +3,7 @@
 namespace app\controllers;
 
 use app\models\LaporanProduksi;
-use app\models\LaporanProduksiSearch;
+use app\models\LaporanProduksisearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -38,7 +38,7 @@ class LaporanProduksiController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new LaporanProduksiSearch();
+        $searchModel = new LaporanProduksisearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [

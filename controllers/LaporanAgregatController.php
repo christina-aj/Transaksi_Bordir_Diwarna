@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use Yii;
 use app\models\LaporanAgregat;
 use app\models\LaporanAgregatsearch;
 use yii\web\Controller;
@@ -41,7 +42,16 @@ class LaporanAgregatController extends Controller
     {
         $searchModel = new LaporanAgregatsearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
-        $aggregatedData = LaporanAgregat::getMonthlyAggregatedData();
+        $year = Yii::$app->request->get('year');
+        $month = Yii::$app->request->get('month');
+        $nama_kerjaan = Yii::$app->request->get('nama_kerjaan');
+        if ($year || $month || $nama_kerjaan) {
+            $aggregatedData = LaporanAgregat::getFilterAggregatedData($year, $month, $nama_kerjaan);
+        } else {
+            
+            $aggregatedData = LaporanAgregat::getMonthlyAggregatedData();
+        }
+
 
         return $this->render('index', [
             'searchModel' => $searchModel,

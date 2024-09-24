@@ -81,4 +81,29 @@ class LaporanAgregat extends \yii\db\ActiveRecord
             ->all();
         
     }
+
+    public static function getFilterAggregatedData($year = null, $month = null, $nama_kerjaan = null)
+    {
+    $query = self::find()
+        ->select([
+            'MONTH(tanggal_kerja) AS month',
+            'YEAR(tanggal_kerja) AS year',
+            'nama_kerjaan',
+            'SUM(kuantitas) AS total_kuantitas'
+        ])
+        ->groupBy(['MONTH(tanggal_kerja)', 'YEAR(tanggal_kerja)', 'nama_kerjaan']);
+
+    // Apply filters
+    if ($year) {
+        $query->andWhere(['YEAR(tanggal_kerja)' => $year]);
+    }
+    if ($month) {
+        $query->andWhere(['MONTH(tanggal_kerja)' => $month]);
+    }
+    if ($nama_kerjaan) {
+        $query->andWhere(['like', 'nama_kerjaan', $nama_kerjaan]);
+    }
+
+    return $query->asArray()->all();
+    }
 }

@@ -73,7 +73,7 @@ class Penggunaan extends \yii\db\ActiveRecord
     {
         if (parent::beforeSave($insert)) {
             // Mengubah format tanggal dari dd-mm-yyyy ke yyyy-mm-dd sebelum disimpan
-            $this->tambah_stock = Yii::$app->formatter->asDate($this->tanggal_digunakan, 'php:Y-m-d');
+            $this->tanggal_digunakan = Yii::$app->formatter->asDate($this->tanggal_digunakan, 'php:Y-m-d');
             return true;
         } else {
             return false;

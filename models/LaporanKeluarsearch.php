@@ -4,12 +4,12 @@ namespace app\models;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\Barang;
+use app\models\LaporanKeluar;
 
 /**
- * BarangSearch represents the model behind the search form of `app\models\Barang`.
+ * LaporanKeluarsearch represents the model behind the search form of `app\models\LaporanKeluar`.
  */
-class BarangSearch extends Barang
+class LaporanKeluarsearch extends LaporanKeluar
 {
     /**
      * {@inheritdoc}
@@ -17,9 +17,8 @@ class BarangSearch extends Barang
     public function rules()
     {
         return [
-            [['barang_id', 'unit_id'], 'integer'],
-            [['kode_barang', 'nama_barang', 'tipe', 'warna', 'created_at', 'updated_at'], 'safe'],
-            [['harga'], 'number'],
+            [['id', 'qty'], 'integer'],
+            [['nama', 'tanggal', 'catatan'], 'safe'],
         ];
     }
 
@@ -41,7 +40,7 @@ class BarangSearch extends Barang
      */
     public function search($params)
     {
-        $query = Barang::find();
+        $query = LaporanKeluar::find();
 
         // add conditions that should always apply here
 
@@ -59,21 +58,14 @@ class BarangSearch extends Barang
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'barang_id' => $this->barang_id,
-            'unit_id' => $this->unit_id,
-            'harga' => $this->harga,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'id' => $this->id,
+            'qty' => $this->qty,
+            'tanggal' => $this->tanggal,
         ]);
 
-        $query->andFilterWhere(['like', 'kode_barang', $this->kode_barang])
-            ->andFilterWhere(['like', 'nama_barang', $this->nama_barang])
-            ->andFilterWhere(['like', 'tipe', $this->tipe])
-            ->andFilterWhere(['like', 'warna', $this->warna]);
+        $query->andFilterWhere(['like', 'nama', $this->nama])
+            ->andFilterWhere(['like', 'catatan', $this->catatan]);
 
-        if (!empty($this->tipe)) {
-            $query->andFilterWhere(['tipe' => $this->tipe]);
-        }
         return $dataProvider;
     }
 }

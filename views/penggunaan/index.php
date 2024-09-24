@@ -1,6 +1,6 @@
 <?php
 
-use app\models\PembelianDetail;
+use app\models\Penggunaan;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
@@ -8,14 +8,10 @@ use yii\grid\GridView;
 use kartik\daterange\DateRangePicker;
 
 /** @var yii\web\View $this */
-/** @var app\models\PembelianDetailSearch $searchModel */
+/** @var app\models\PenggunaanSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
-if ($showFullContent) {
-    $this->title = 'Buku Kas';
-} else {
-    $this->title = 'Surat Jalan';
-}
 
+$this->title = 'Penggunaan';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="pc-content">
@@ -23,27 +19,28 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?php if ($showFullContent)
-            echo Html::a('Create Pembelian Detail', ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Create Penggunaan', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
     <?php // echo $this->render('_search', ['model' => $searchModel]); 
     ?>
+
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
-        'columns' => array_filter([
+        'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-
-            // 'belidetail_id',
-            // 'pembelian_id',
-            'pembelian.tanggal' =>
+            // 'penggunaan_id',
+            // [
+            //     'attribute' => 'tanggal_digunakan',
+            //     'format' => ['date', 'php:d-M-Y'], // Mengubah format menjadi dd-mm-yyyy
+            // ],
             [
-                'attribute' => 'tanggal',
-                'value' => 'pembelian.tanggal', // Menampilkan kolom tanggal
+                'attribute' => 'tanggal_digunakan',
+                'value' => 'tanggal_digunakan', // Menampilkan kolom tanggal
                 'filter' => DateRangePicker::widget([
                     'model' => $searchModel,
-                    'attribute' => 'tanggal',
+                    'attribute' => 'tanggal_digunakan',
                     'convertFormat' => true,
                     'pluginOptions' => [
                         'locale' => [
@@ -62,26 +59,27 @@ $this->params['breadcrumbs'][] = $this->title;
                 'headerOptions' => ['style' => 'width:250px'], // Tambahkan lebar jika diperlukan
                 'enableSorting' => true, // Mengaktifkan sorting untuk kolom tanggal
             ],
-
-
-            'pembelian.kode_struk' => [
-                'attribute' => 'kode_struk', // Atribut dari tabel supplier
-                'value' => 'pembelian.kode_struk', // Mengakses nama supplier melalui relasi
-                'label' => 'Kode Struk',
+            // 'barang_id',
+            'user.nama_pengguna' =>
+            [
+                'attribute' => 'nama_pengguna', // Atribut dari tabel supplier
+                'value' => 'user.nama_pengguna', // Mengakses nama supplier melalui relasi
+                'label' => 'Nama Pengguna',
                 'filterInputOptions' => [            // Menambahkan placeholder pada input filter
                     'class' => 'form-control',       // Tambahkan class jika perlu
-                    'placeholder' => 'Cari kode struk', // Placeholder yang ingin ditampilkan
+                    'placeholder' => 'Cari nama', // Placeholder yang ingin ditampilkan
                 ],
+
             ],
-            // 'barang_id',
             'barang.kode_barang' => [
                 'attribute' => 'kode_barang', // Atribut dari tabel supplier
                 'value' => 'barang.kode_barang', // Mengakses nama supplier melalui relasi
-                'label' => 'Kode barang',
+                'label' => 'kode Barang',
                 'filterInputOptions' => [            // Menambahkan placeholder pada input filter
                     'class' => 'form-control',       // Tambahkan class jika perlu
                     'placeholder' => 'Cari kode barang', // Placeholder yang ingin ditampilkan
                 ],
+
             ],
             'barang.nama_barang' => [
                 'attribute' => 'nama_barang', // Atribut dari tabel supplier
@@ -91,51 +89,24 @@ $this->params['breadcrumbs'][] = $this->title;
                     'class' => 'form-control',       // Tambahkan class jika perlu
                     'placeholder' => 'Cari Barang', // Placeholder yang ingin ditampilkan
                 ],
+
             ],
-
-            $showFullContent ? [
-                'attribute' => 'harga_barang', // Atribut dari tabel supplier
+            'jumlah_digunakan' => [
+                'attribute' => 'jumlah_digunakan',
                 'filter' => false,
-            ] : null,
-
-            'quantity_barang' => [
-                'attribute' => 'quantity_barang', // Atribut dari tabel supplier
-                'filter' => false,
-            ],
-
-            $showFullContent ? [
-                'attribute' => 'total_biaya', // Atribut dari tabel supplier
-                'filter' => false,
-            ] : null,
-
-            'langsung_pakai' => [
-                'attribute' => 'langsung_pakai', // Atribut dari tabel supplier
-                'filter' => false,
-                'format' => 'raw', // This allows for raw HTML output (for icons)
-                'value' => function ($model) {
-                    // Check the value of the status field
-                    if ($model->langsung_pakai == 1) {
-                        // Active status (1)
-                        return Html::tag('span', '&#10004;', ['style' => 'color: green; font-size: 20px;']); // Checkmark icon
-                    } else {
-                        // Inactive status (0)
-                        return Html::tag('span', '&#10008;', ['style' => 'color: red; font-size: 20px;']); // Cross icon
-                    }
-                },
             ],
             'catatan' => [
-                'attribute' => 'catatan', // Atribut dari tabel supplier
+                'attribute' => 'catatan',
                 'filter' => false,
             ],
-            //'created_at',
-            //'updated_at',
+            // 'tanggal_digunakan',
             [
                 'class' => ActionColumn::className(),
-                'urlCreator' => function ($action, PembelianDetail $model, $key, $index, $column) {
-                    return Url::toRoute([$action, 'belidetail_id' => $model->belidetail_id]);
+                'urlCreator' => function ($action, Penggunaan $model, $key, $index, $column) {
+                    return Url::toRoute([$action, 'penggunaan_id' => $model->penggunaan_id]);
                 }
             ],
-        ]),
+        ],
     ]); ?>
 
 

@@ -59,16 +59,26 @@ class LaporanAgregat extends \yii\db\ActiveRecord
 
     public static function getMonthlyAggregatedData()
     {
+        $subquery = (new \yii\db\Query())
+        ->select([
+            'nama',
+            'SUM(qty) AS total_keluar_qty'
+        ])
+        ->from('laporan_keluar')
+        ->groupBy(['nama']);
+
+ 
         return self::find()
             ->select([
                 'MONTH(tanggal_kerja) AS month',
                 'YEAR(tanggal_kerja) AS year',
                 'nama_kerjaan',
-                'SUM(kuantitas) AS total_kuantitas'
+                'SUM(kuantitas) - COALESCE(lk.total_keluar_qty, 0) AS total_kuantitas'
             ])
+            ->leftJoin(['lk' => $subquery], 'lk.nama = laporanproduksi.nama_kerjaan')
             ->groupBy(['MONTH(tanggal_kerja)', 'YEAR(tanggal_kerja)', 'nama_kerjaan'])
             ->asArray()
             ->all();
+        
     }
-
 }

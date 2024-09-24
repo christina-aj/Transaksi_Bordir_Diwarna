@@ -32,12 +32,46 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\SerialColumn'],
 
             // 'barang_id',
-            'kode_barang',
-            'nama_barang',
+            // 'kode_barang',
+            [
+                'attribute' => 'kode_barang',
+                'filterInputOptions' => [
+                    'class' => 'form-control',
+                    'placeholder' => 'Cari Kode Barang',
+                ],
+            ],
+            // 'nama_barang',
+            [
+                'attribute' => 'nama_barang',
+                'filterInputOptions' => [
+                    'class' => 'form-control',
+                    'placeholder' => 'Cari Nama Barang',
+                ],
+            ],
             'unit.satuan',
-            'harga',
-            'tipe',
-            'warna',
+            // 'harga',
+            // [
+            //     'attribute' => 'harga',
+            //     'filter' => false
+            // ],
+            [
+                'attribute' => 'tipe',
+                'filter' => [
+                    'Consumable' => 'Consumable',
+                    'Non Consumable' => 'Non Consumable',
+                ],
+                'filterInputOptions' => [
+                    'class' => 'form-control',
+                    'prompt' => 'Pilih Tipe',
+                ],
+            ],
+
+            // 'tipe',
+            // 'warna',
+            [
+                'attribute' => 'warna',
+                'filter' => false
+            ],
             //'created_at',
             //'updated_at',
             [

@@ -2,16 +2,16 @@
 
 namespace app\controllers;
 
-use app\models\LaporanProduksi;
-use app\models\LaporanProduksiSearch;
+use app\models\LaporanKeluar;
+use app\models\LaporanKeluarsearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * LaporanProduksiController implements the CRUD actions for LaporanProduksi model.
+ * LaporanKeluarController implements the CRUD actions for LaporanKeluar model.
  */
-class LaporanProduksiController extends Controller
+class LaporanKeluarController extends Controller
 {
     /**
      * @inheritDoc
@@ -32,13 +32,13 @@ class LaporanProduksiController extends Controller
     }
 
     /**
-     * Lists all LaporanProduksi models.
+     * Lists all LaporanKeluar models.
      *
      * @return string
      */
     public function actionIndex()
     {
-        $searchModel = new LaporanProduksiSearch();
+        $searchModel = new LaporanKeluarsearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
@@ -48,30 +48,30 @@ class LaporanProduksiController extends Controller
     }
 
     /**
-     * Displays a single LaporanProduksi model.
-     * @param int $laporan_id Laporan ID
+     * Displays a single LaporanKeluar model.
+     * @param int $id ID
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($laporan_id)
+    public function actionView($id)
     {
         return $this->render('view', [
-            'model' => $this->findModel($laporan_id),
+            'model' => $this->findModel($id),
         ]);
     }
 
     /**
-     * Creates a new LaporanProduksi model.
+     * Creates a new LaporanKeluar model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
     public function actionCreate()
     {
-        $model = new LaporanProduksi();
+        $model = new LaporanKeluar();
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'laporan_id' => $model->laporan_id]);
+                return $this->redirect(['view', 'id' => $model->id]);
             }
         } else {
             $model->loadDefaultValues();
@@ -83,53 +83,52 @@ class LaporanProduksiController extends Controller
     }
 
     /**
-     * Updates an existing LaporanProduksi model.
+     * Updates an existing LaporanKeluar model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param int $laporan_id Laporan ID
+     * @param int $id ID
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($laporan_id)
+    public function actionUpdate($id)
     {
-        $model = $this->findModel($laporan_id);
+        $model = $this->findModel($id);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'laporan_id' => $model->laporan_id]);
+            return $this->redirect(['view', 'id' => $model->id]);
         }
-    
+
         return $this->render('update', [
             'model' => $model,
         ]);
     }
 
     /**
-     * Deletes an existing LaporanProduksi model.
+     * Deletes an existing LaporanKeluar model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param int $laporan_id Laporan ID
+     * @param int $id ID
      * @return \yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete($laporan_id)
+    public function actionDelete($id)
     {
-        $this->findModel($laporan_id)->delete();
+        $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
     }
 
     /**
-     * Finds the LaporanProduksi model based on its primary key value.
+     * Finds the LaporanKeluar model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param int $laporan_id Laporan ID
-     * @return LaporanProduksi the loaded model
+     * @param int $id ID
+     * @return LaporanKeluar the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($laporan_id)
+    protected function findModel($id)
     {
-        if (($model = LaporanProduksi::findOne(['laporan_id' => $laporan_id])) !== null) {
+        if (($model = LaporanKeluar::findOne(['id' => $id])) !== null) {
             return $model;
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
-
 }

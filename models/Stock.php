@@ -109,4 +109,19 @@ class Stock extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Barang::class, ['barang_id' => 'barang_id']);
     }
+    public function getPembelian()
+    {
+        return $this->hasOne(Pembelian::class, ['pembelian_id' => 'pembelian_id']);
+    }
+
+    public function beforeSave($insert)
+    {
+        if (parent::beforeSave($insert)) {
+            // Mengubah format tanggal dari dd-mm-yyyy ke yyyy-mm-dd sebelum disimpan
+            $this->tambah_stock = Yii::$app->formatter->asDate($this->tambah_stock, 'php:Y-m-d');
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

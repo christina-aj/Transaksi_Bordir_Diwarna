@@ -5,21 +5,20 @@ namespace app\models;
 use Yii;
 
 /**
- * This is the model class for table "barangproduksi".
+ * This is the model class for table "jenis".
  *
- * @property int $barang_id
- * @property string $nama
+ * @property int $id
  * @property string $nama_jenis
  * @property string $deskripsi
  */
-class Barangproduksi extends \yii\db\ActiveRecord
+class Jenis extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
-        return 'barangproduksi';
+        return 'jenis';
     }
 
     /**
@@ -28,9 +27,9 @@ class Barangproduksi extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['nama', 'nama_jenis', 'deskripsi'], 'required'],
+            [['nama_jenis', 'deskripsi'], 'required'],
             [['deskripsi'], 'string'],
-            [['nama', 'nama_jenis'], 'string', 'max' => 200],
+            [['nama_jenis'], 'string', 'max' => 200],
         ];
     }
 
@@ -40,9 +39,8 @@ class Barangproduksi extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'barang_id' => 'Barang ID',
-            'nama' => 'Nama',
-            'nama_jenis' => 'Jenis',
+            'id' => 'ID',
+            'nama_jenis' => 'Nama Jenis',
             'deskripsi' => 'Deskripsi',
         ];
     }

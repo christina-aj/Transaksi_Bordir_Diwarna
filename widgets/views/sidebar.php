@@ -23,6 +23,8 @@ $PenggunaanUrl = Url::to(['/penggunaan/index']);
 $SuratJalanUrl = Url::to(['/surat-jalan/index']);
 $GudangUrl = Url::to(['/gudang/index']);
 $PemesananUrl = Url::to(['/pemesanan/index']);
+$JenisUrl = Url::to(['/jenis/index']);
+$BarangProUrl = Url::to(['/barangproduksi/index']);
 
 
 
@@ -122,6 +124,8 @@ $samplePageUrl = Url::to(['site/sample-page']);
                             <li class="pc-item"><a class="pc-link" href="<?= $lapagreUrl ?>">Laporan Agregat</a></li>
                             <li class="pc-item"><a class="pc-link" href="<?= $lapkelUrl ?>">Laporan Keluar</a></li>
                             <li class="pc-item"><a class="pc-link" href="<?= $ShifttUrl ?>">Shift</a></li>
+                            <li class="pc-item"><a class="pc-link" href="<?= $JenisUrl ?>">Jenis</a></li>
+                            <li class="pc-item"><a class="pc-link" href="<?= $BarangProUrl ?>">BarangProduksi</a></li>
                         </ul>
                     </li>
 

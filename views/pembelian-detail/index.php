@@ -44,6 +44,8 @@ $this->params['breadcrumbs'][] = $this->title;
                     return $barang->kode_barang . ' - ' . $barang->nama_barang . ' - ' . $barang->angka . ' ' . ($unit ? $unit->satuan : 'Satuan tidak ditemukan') . ' - ' . $barang->warna;
                 }
             ],
+            'pesanDetail.barang.harga',
+            'pesanDetail.barang.tipe',
             'cek_barang',
             'total_biaya',
             //'catatan',

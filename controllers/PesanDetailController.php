@@ -70,7 +70,7 @@ class PesanDetailController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
-    public function actionCreate()
+    public function actionCreate($pembelianId)
     {
         // Cek apakah pemesanan sudah ada di sesi
         $pemesananId = Yii::$app->session->get('temporaryOrderId');
@@ -92,7 +92,7 @@ class PesanDetailController extends Controller
             // Simpan detail pemesanan
             if ($modelDetail->save()) {
                 // Panggil fungsi untuk membuat pembelian dan pembelian detail
-                return $this->actionCreatePembelian($pemesananId, $modelDetail->pesandetail_id);
+                return $this->actionCreatePembelianDetail($pembelianId, $modelDetail->pesandetail_id);
             } else {
                 Yii::$app->session->setFlash('error', 'Gagal menyimpan detail pemesanan: ' . json_encode($modelDetail->getErrors()));
             }
@@ -120,7 +120,7 @@ class PesanDetailController extends Controller
             Yii::debug("Pemesanan berhasil dibuat dengan ID: " . $pemesanan->pemesanan_id, __METHOD__);
 
             // Redirect ke create untuk membuat detail pemesanan
-            return $this->redirect(['create']);
+            return $this->actionCreatePembelian();
         } else {
             // Log kesalahan
             Yii::error("Gagal membuat pemesanan: " . json_encode($pemesanan->getErrors()), __METHOD__);
@@ -130,8 +130,9 @@ class PesanDetailController extends Controller
     }
 
     // Fungsi untuk membuat pembelian dan pembelian detail
-    public function actionCreatePembelian($pemesananId, $pesandetail_id)
+    public function actionCreatePembelian()
     {
+        $pemesananId = Yii::$app->session->get('temporaryOrderId');
         // Buat pembelian baru
         $pembelian = new Pembelian();
         $pembelian->pemesanan_id = $pemesananId; // Mengaitkan dengan pemesanan
@@ -143,7 +144,7 @@ class PesanDetailController extends Controller
             Yii::debug("Pembelian berhasil dibuat dengan ID: " . $pembelian->pembelian_id, __METHOD__);
 
             // Setelah pembelian dibuat, buat juga pembelian detail
-            return $this->actionCreatePembelianDetail($pembelian->pembelian_id, $pesandetail_id);
+            return $this->redirect(['create', 'pembelianId' => $pembelian->pembelian_id]);
         } else {
             // Log kesalahan
             Yii::error("Gagal membuat pembelian: " . json_encode($pembelian->getErrors()), __METHOD__);

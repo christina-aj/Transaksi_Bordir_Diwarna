@@ -16,7 +16,7 @@ $data = \app\models\Barang::find()->select(['barang_id'])->column();
 
 <div class="pesan-detail-form">
 
-    <?php $form = ActiveForm::begin(); ?>
+    <?php $form = ActiveForm::begin(['id' => 'dynamic-form']); ?>
 
     <?= Html::activeHiddenInput($model, 'pemesanan_id', ['value' => Yii::$app->session->get('temporaryOrderId')]) ?>
     <?= $form->field($model, 'pemesanan_id')->textInput(['readonly' => true, 'value' => Yii::$app->session->get('temporaryOrderId')]) ?>
@@ -63,6 +63,10 @@ $data = \app\models\Barang::find()->select(['barang_id'])->column();
     <!-- <?= $form->field($model, 'update_at')->textInput() ?> -->
 
     <div class="form-group">
+        <button type="button" id="add-more" class="btn btn-success">Tambah Data Lain</button>
+    </div>
+
+    <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
         <?= Html::a('Back', ['pesan-detail/index'], ['class' => 'btn btn-secondary']) ?>
     </div>
@@ -70,3 +74,24 @@ $data = \app\models\Barang::find()->select(['barang_id'])->column();
     <?php ActiveForm::end(); ?>
 
 </div>
+<!-- JavaScript untuk menambah form dinamis -->
+<script>
+    let index = 1; // Mulai dengan indeks 1 untuk form berikutnya
+
+    $('#add-more').click(function() {
+        let newForm = `
+        <div class="pemesanan-item">
+            <div class="form-group">
+                <label for="pesandetail-${index}-item_name">Item Name</label>
+                <input type="text" id="pesandetail-${index}-item_name" class="form-control" name="PesanDetail[${index}][item_name]" maxlength="255">
+            </div>
+            <div class="form-group">
+                <label for="pesandetail-${index}-quantity">Quantity</label>
+                <input type="number" id="pesandetail-${index}-quantity" class="form-control" name="PesanDetail[${index}][quantity]">
+            </div>
+        </div>
+    `;
+        $('#new-form-container').append(newForm); // Tambah form baru ke container
+        index++; // Naikkan indeks untuk form berikutnya
+    });
+</script>

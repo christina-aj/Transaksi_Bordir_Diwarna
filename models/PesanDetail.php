@@ -57,6 +57,8 @@ class PesanDetail extends \yii\db\ActiveRecord
             [['pemesanan_id', 'barang_id', 'is_correct', 'langsung_pakai'], 'integer'],
             [['qty', 'qty_terima'], 'number'],
             [['qty_terima'], 'default', 'value' => 0],
+            [['is_correct'], 'default', 'value' => 0],
+            [['langsung_pakai'], 'default', 'value' => 0],
             [['created_at', 'update_at'], 'safe'],
             [['catatan'], 'string', 'max' => 255],
             [['pemesanan_id'], 'exist', 'skipOnError' => true, 'targetClass' => Pemesanan::class, 'targetAttribute' => ['pemesanan_id' => 'pemesanan_id']],

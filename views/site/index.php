@@ -11,7 +11,7 @@ $this->title = 'Dashboard';
         <div class="col-md-6 col-xl-3">
             <div class="card bg-grd-primary order-card">
                 <div class="card-body">
-                    <h6 class="text-white">Orders Received</h6>
+                    <h6 class="text-white">Stock Gudang</h6>
                     <h2 class="text-end text-white"><i class="feather icon-shopping-cart float-start"></i><span>486</span>
                     </h2>
                     <p class="m-b-0">Completed Orders<span class="float-end">351</span></p>
@@ -21,7 +21,7 @@ $this->title = 'Dashboard';
         <div class="col-md-6 col-xl-3">
             <div class="card bg-grd-success order-card">
                 <div class="card-body">
-                    <h6 class="text-white">Total Sales</h6>
+                    <h6 class="text-white">Stock Produksi</h6>
                     <h2 class="text-end text-white"><i class="feather icon-tag float-start"></i><span>1641</span>
                     </h2>
                     <p class="m-b-0">This Month<span class="float-end">213</span></p>
@@ -50,7 +50,7 @@ $this->title = 'Dashboard';
         <div class="col-md-6 col-xl-7">
             <div class="card">
                 <div class="card-header">
-                    <h5>New Order From United States</h5>
+                    <h5>Wilayah yang pernah Order di Diwarna</h5>
                 </div>
                 <div class="card-body">
                     <div id="world-map-markers" class="set-map" style="height:365px;"></div>
@@ -60,7 +60,7 @@ $this->title = 'Dashboard';
         <div class="col-md-6 col-xl-5">
             <div class="card">
                 <div class="card-header d-flex align-items-center justify-content-between py-3">
-                    <h5>New Order From United States</h5>
+                    <h5>Agregat Produksi</h5>
                     <div class="dropdown">
                         <a class="avtar avtar-xs btn-link-secondary dropdown-toggle arrow-none" href="#" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="material-icons-two-tone f-18">more_vert</i></a>
                         <div class="dropdown-menu dropdown-menu-end">
@@ -75,8 +75,8 @@ $this->title = 'Dashboard';
                             <i class="ph ph-money f-20"></i>
                         </div>
                         <div class="media-body ms-3">
-                            <p class="mb-0 text-muted">Total Earnings</p>
-                            <h5 class="mb-0">$249.95</h5>
+                            <p class="mb-0 text-muted">Total Produksi</p>
+                            <h5 class="mb-0">556</h5>
                         </div>
                     </div>
                     <div id="earnings-users-chart"></div>
@@ -91,8 +91,8 @@ $this->title = 'Dashboard';
                                     <i class="ph ph-money f-20 text-white"></i>
                                 </div>
                                 <div class="media-body ms-2">
-                                    <p class="mb-0 text-muted">Total Profit</p>
-                                    <h6 class="mb-0">$1,783</h6>
+                                    <p class="mb-0 text-muted">Total Produksi</p>
+                                    <h6 class="mb-0">556</h6>
                                 </div>
                             </div>
                         </div>
@@ -112,7 +112,7 @@ $this->title = 'Dashboard';
             </div>
         </div>
 
-        <div class="col-md-4 col-sm-6">
+        <!-- <div class="col-md-4 col-sm-6">
             <div class="card statistics-card-1">
                 <div class="card-body">
                     <img src="<?= Yii::getAlias('@web') ?>/assets/images/widget/img-status-4.svg" alt="img" class="img-fluid img-bg">
@@ -185,54 +185,44 @@ $this->title = 'Dashboard';
                     </div>
                 </div>
             </div>
-        </div>
+        </div> -->
         <!-- Recent Orders start -->
         <div class="col-sm-12">
             <div class="card table-card">
                 <div class="card-header">
-                    <h5>Recent Orders</h5>
+                    <h5>Recent Add</h5>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
                         <table class="table">
                             <tr>
-                                <th>Image</th>
                                 <th>Product Code</th>
                                 <th>Customer</th>
                                 <th>Purchased On</th>
-                                <th>Status</th>
                                 <th>Transaction ID</th>
                             </tr>
                             <tr>
-                                <td><img src="<?= Yii::getAlias('@web') ?>/assets/images/widget/p1.jpg" alt="prod img" class="img-fluid"></td>
                                 <td>PNG002413</td>
                                 <td>Jane Elliott</td>
                                 <td>06-01-2017</td>
-                                <td><span class="badge bg-primary">Shipping</span></td>
                                 <td>#7234421</td>
                             </tr>
                             <tr>
-                                <td><img src="<?= Yii::getAlias('@web') ?>/assets/images/widget/p2.jpg" alt="prod img" class="img-fluid"></td>
                                 <td>PNG002344</td>
                                 <td>John Deo</td>
                                 <td>05-01-2017</td>
-                                <td><span class="badge bg-danger">Failed</span></td>
                                 <td>#7234486</td>
                             </tr>
                             <tr>
-                                <td><img src="<?= Yii::getAlias('@web') ?>/assets/images/widget/p3.jpg" alt="prod img" class="img-fluid"></td>
                                 <td>PNG002653</td>
                                 <td>Eugine Turner</td>
                                 <td>04-01-2017</td>
-                                <td><span class="badge bg-success">Delivered</span></td>
                                 <td>#7234417</td>
                             </tr>
                             <tr>
-                                <td><img src="<?= Yii::getAlias('@web') ?>/assets/images/widget/p4.jpg" alt="prod img" class="img-fluid"></td>
                                 <td>PNG002156</td>
                                 <td>Jacqueline Howell</td>
                                 <td>03-01-2017</td>
-                                <td><span class="badge bg-warning">Pending</span></td>
                                 <td>#7234454</td>
                             </tr>
                         </table>

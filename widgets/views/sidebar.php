@@ -65,8 +65,8 @@ $samplePageUrl = Url::to(['site/sample-page']);
                         <a href="#!" class="pc-link"><span class="pc-micon">
                                 <i class="fi fi-ts-dolly-flatbed-alt"></i> </span><span class="pc-mtext">Pembelian</span><span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
                         <ul class="pc-submenu">
+                            <li class="pc-item"><a class="pc-link" href="<?= $BarangUrl ?>">List Barang</a></li>
                             <li class="pc-item"><a class="pc-link" href="<?= $PembelianUrl ?>">Pembelian</a></li>
-                            <li class="pc-item"><a class="pc-link" href="<?= $UnitUrl ?>">Unit</a></li>
                             <li class="pc-item"><a class="pc-link" href="<?= $InvoiceUrl ?>">Invoice</a></li>
                             <!-- <li class="pc-item"><a class="pc-link" href="">Report Barang</a></li> -->
                         </ul>
@@ -74,9 +74,9 @@ $samplePageUrl = Url::to(['site/sample-page']);
 
                     <li class="pc-item pc-hasmenu">
                         <a href="#!" class="pc-link"><span class="pc-micon">
-                                <i class="fi fi-ts-box-alt"></i> </span><span class="pc-mtext">Stock</span><span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
+                                <i class="fi fi-ts-box-alt"></i> </span><span class="pc-mtext">Produksi</span><span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
                         <ul class="pc-submenu">
-                            <li class="pc-item"><a class="pc-link" href="<?= $BarangUrl ?>">List Barang</a></li>
+                            <li class="pc-item"><a class="pc-link" href="<?= $UnitUrl ?>">Unit</a></li>
                             <li class="pc-item"><a class="pc-link" href="<?= $PenggunaanUrl ?>">Penggunaan</a></li>
                             <li class="pc-item"><a class="pc-link" href="<?= $StockUrl ?>">Stock Produksi</a></li>
                         </ul>
@@ -121,25 +121,22 @@ $samplePageUrl = Url::to(['site/sample-page']);
                             <span class="pc-mtext">Mesin</span>
                         </a>
                     </li>
+                    <li class="pc-item">
+                        <a href="<?= $ShifttUrl ?>" class="pc-link">
+                            <span class="pc-micon"><i class="fi fi-ts-calendar-shift-swap"></i></span>
+                            <span class="pc-mtext">Shift</span>
+                        </a>
+                    </li>
+
 
                     <li class="pc-item pc-hasmenu">
                         <a href="#!" class="pc-link"><span class="pc-micon">
-                                <i class="fi fi-ts-calendar-shift-swap"></i> </span><span class="pc-mtext">Shift</span><span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
+                                <i class="fi fi-ts-ballot-check"></i> </span><span class="pc-mtext">Report</span><span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
                         <ul class="pc-submenu">
                             <li class="pc-item"><a class="pc-link" href="<?= $laproUrl ?>">Laporan Produksi</a></li>
                             <li class="pc-item"><a class="pc-link" href="<?= $lapagreUrl ?>">Laporan Agregat</a></li>
-                            <li class="pc-item"><a class="pc-link" href="<?= $ShifttUrl ?>">Shift</a></li>
                         </ul>
                     </li>
-
-                    <!-- <li class="pc-item pc-hasmenu">
-                        <a href="#!" class="pc-link"><span class="pc-micon">
-                                <i class="fi fi-ts-ballot-check"></i> </span><span class="pc-mtext">Report</span><span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
-                        <ul class="pc-submenu">
-                            <li class="pc-item"><a class="pc-link" href="<?= $StockUrl ?>">Stock</a></li>
-                            <li class="pc-item"><a class="pc-link" href="<?= $ShifttUrl ?>">Shift</a></li>
-                        </ul>
-                    </li> -->
                 <?php endif; ?>
 
                 <?php if ($roleName === 'Admin'): ?>
@@ -153,61 +150,19 @@ $samplePageUrl = Url::to(['site/sample-page']);
 
                     <li class="pc-item pc-hasmenu">
                         <a href="#!" class="pc-link"><span class="pc-micon">
-                                <i class="fi fi-ts-ballot-check"></i> </span><span class="pc-mtext">Report</span><span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
-                        <ul class="pc-submenu">
-                            <li class="pc-item"><a class="pc-link" href="<?= $StockUrl ?>">Stock</a></li>
-                            <li class="pc-item"><a class="pc-link" href="<?= $ShifttUrl ?>">Shift</a></li>
-                            <li class="pc-item"><a class="pc-link" href="<?= $laproUrl ?>">Laporan Produksi</a></li>
-                            <li class="pc-item"><a class="pc-link" href="<?= $lapagreUrl ?>">Laporan Agregat</a></li>
-                        </ul>
-                    </li>
-
-                    <li class="pc-item">
-                        <a href="#!" class="pc-link">
-                            <span class="pc-micon">
-                                <i class="fi fi-ts-ballot-check"></i>
-                            </span>
-                            <span class="pc-mtext">Barang</span>
-                            <span class="pc-arrow"><i data-feather="chevron-right"></i>
-                            </span>
-                        </a>
+                                <i class="fi fi-ts-dolly-flatbed-alt"></i> </span><span class="pc-mtext">Pembelian</span><span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
                         <ul class="pc-submenu">
                             <li class="pc-item"><a class="pc-link" href="<?= $BarangUrl ?>">List Barang</a></li>
-                            <li class="pc-item"><a class="pc-link" href="<?= $ShifttUrl ?>">Shift</a></li>
+                            <li class="pc-item"><a class="pc-link" href="<?= $PembelianUrl ?>">Pembelian</a></li>
+                            <li class="pc-item"><a class="pc-link" href="<?= $InvoiceUrl ?>">Invoice</a></li>
+                            <!-- <li class="pc-item"><a class="pc-link" href="">Report Barang</a></li> -->
                         </ul>
                     </li>
-
                     <li class="pc-item">
                         <a href="<?= $SupplierUrl ?>" class="pc-link">
                             <span class="pc-micon"><i class="fi fi-ts-supplier-alt"></i></i></span>
                             <span class="pc-mtext">Supplier</span>
                         </a>
-                    </li>
-
-                    <li class="pc-item">
-                        <a href="<?= $UnitUrl ?>" class="pc-link">
-                            <span class="pc-micon"><i class="fi fi-ts-ruler-vertical"></i></span>
-                            <span class="pc-mtext">Unit</span>
-                        </a>
-                    </li>
-
-                    <li class="pc-item">
-                        <a href="<?= $MesinUrl ?>" class="pc-link">
-                            <span class="pc-micon"><i class="fi fi-ts-conveyor-belt"></i></span>
-                            <span class="pc-mtext">Mesin</span>
-                        </a>
-                    </li>
-
-
-                    <li class="pc-item pc-hasmenu">
-                        <a href="#!" class="pc-link"><span class="pc-micon">
-                                <i class="fi fi-ts-ballot-check"></i> </span><span class="pc-mtext">Report</span><span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
-                        <ul class="pc-submenu">
-                            <li class="pc-item"><a class="pc-link" href="<?= $StockUrl ?>">Stock</a></li>
-                            <li class="pc-item"><a class="pc-link" href="<?= $ShifttUrl ?>">Shift</a></li>
-                            <li class="pc-item"><a class="pc-link" href="<?= $laproUrl ?>">Laporan Produksi</a></li>
-                            <li class="pc-item"><a class="pc-link" href="<?= $lapagreUrl ?>">Laporan Agregat</a></li>
-                        </ul>
                     </li>
                 <?php endif; ?>
 
@@ -220,20 +175,27 @@ $samplePageUrl = Url::to(['site/sample-page']);
                         </a>
                     </li>
 
+                    <li class="pc-item pc-hasmenu">
+                        <a href="#!" class="pc-link"><span class="pc-micon">
+                                <i class="fi fi-ts-box-alt"></i> </span><span class="pc-mtext">Gudang</span><span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
+                        <ul class="pc-submenu">
+                            <li class="pc-item"><a class="pc-link" href="<?= $PemesananUrl ?>">Riwayat Pemesanan</a></li>
+                            <li class="pc-item"><a class="pc-link" href="<?= $PesanDetailUrl ?>">Detail Pemesanan Barang</a></li>
+                            <li class="pc-item"><a class="pc-link" href="<?= $GudangUrl ?>">Stock Gudang</a></li>
+
+                        </ul>
+                    </li>
                     <li class="pc-item">
                         <a href="<?= $MesinUrl ?>" class="pc-link">
                             <span class="pc-micon"><i class="fi fi-ts-conveyor-belt"></i></span>
                             <span class="pc-mtext">Mesin</span>
                         </a>
                     </li>
-
-                    <li class="pc-item pc-hasmenu">
-                        <a href="#!" class="pc-link"><span class="pc-micon">
-                                <i class="fi fi-ts-ballot-check"></i> </span><span class="pc-mtext">Report</span><span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
-                        <ul class="pc-submenu">
-                            <li class="pc-item"><a class="pc-link" href="<?= $ShifttUrl ?>">Shift</a></li>
-                            <li class="pc-item"><a class="pc-link" href="<?= $laproUrl ?>">Laporan Produksi</a></li>
-                        </ul>
+                    <li class="pc-item">
+                        <a href="<?= $ShifttUrl ?>" class="pc-link">
+                            <span class="pc-micon"><i class="fi fi-ts-calendar-shift-swap"></i></span>
+                            <span class="pc-mtext">Shift</span>
+                        </a>
                     </li>
                 <?php endif; ?>
             </ul>

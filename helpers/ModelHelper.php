@@ -5,7 +5,6 @@ namespace app\helpers;
 use Yii;
 use yii\helpers\ArrayHelper;
 
-
 class ModelHelper
 {
     public static function createMultiple($modelClass, $multipleModels = [])

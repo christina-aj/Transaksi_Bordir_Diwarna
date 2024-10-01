@@ -12,6 +12,8 @@ use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use app\helpers\ModelHelper;
+use yii\base\Model;
 
 /**
  * PesanDetailController implements the CRUD actions for PesanDetail model.
@@ -80,29 +82,71 @@ class PesanDetailController extends Controller
             return $this->actionCreatePemesanan();
         }
 
-        // Model untuk detail pemesanan
-        $modelDetail = new PesanDetail();
+        // Inisialisasi array untuk beberapa model PesanDetail
+        $modelDetails = [new PesanDetail()]; // Awal dengan satu instance
 
-        // Cek jika form detail disubmit
-        if ($modelDetail->load(Yii::$app->request->post())) {
-            // Mengaitkan detail dengan pemesanan
-            $modelDetail->pemesanan_id = $pemesananId; // Mengaitkan detail dengan pemesanan
-            $modelDetail->created_at = date('Y-m-d H:i:s');
+        // Jika form di-submit
+        if (Yii::$app->request->post()) {
+            // Menggunakan loadMultiple untuk memuat beberapa model dari data POST
+            $modelDetails = ModelHelper::createMultiple(PesanDetail::classname());
 
-            // Simpan detail pemesanan
-            if ($modelDetail->save()) {
-                // Panggil fungsi untuk membuat pembelian dan pembelian detail
-                return $this->actionCreatePembelianDetail($pembelianId, $modelDetail->pesandetail_id);
+            // Load multiple data dari form ke dalam array model
+            if (Model::loadMultiple($modelDetails, Yii::$app->request->post())) {
+                // Lakukan validasi pada semua model dalam array
+                if (Model::validateMultiple($modelDetails)) {
+                    // Mulai transaksi untuk memastikan semua model disimpan atau tidak sama sekali
+                    $transaction = Yii::$app->db->beginTransaction();
+                    try {
+                        foreach ($modelDetails as $index => $model) {
+                            $model->pemesanan_id = $pemesananId; // Kaitkan dengan pemesanan
+                            $model->created_at = date('Y-m-d H:i:s');
+                            $model->langsung_pakai = !empty(Yii::$app->request->post('PesanDetail')[$index]['langsung_pakai']) ? 1 : 0;
+                            $model->is_correct = !empty(Yii::$app->request->post('PesanDetail')[$index]['is_correct']) ? 1 : 0;
+
+                            // Jika penyimpanan gagal, lemparkan Exception
+                            if (!$model->save()) {
+                                // Set error dan keluarkan exception untuk rollback
+                                Yii::$app->session->setFlash('error', 'Penyimpanan gagal untuk model ke-' . $index);
+                                throw new \Exception('Gagal menyimpan detail pemesanan: ' . json_encode($model->getErrors()));
+                            }
+                        }
+                        // Commit transaksi jika semuanya berhasil disimpan
+                        $transaction->commit();
+
+                        // Berikan pesan success dan redirect
+                        Yii::$app->session->setFlash('success', 'Semua data berhasil disimpan.');
+                        return $this->actionCreatePembelianDetail($pembelianId, $modelDetails[0]->pesandetail_id);
+                    } catch (\Exception $e) {
+                        // Rollback transaksi jika ada kegagalan
+                        $transaction->rollBack();
+                        Yii::$app->session->setFlash('error', 'Error: ' . $e->getMessage());
+                        Yii::debug($e->getMessage(), __METHOD__);
+                    }
+                } else {
+                    // Jika validasi gagal, tampilkan pesan error
+                    Yii::$app->session->setFlash('error', 'Validasi gagal, periksa input Anda.');
+
+                    // Debugging untuk menampilkan semua error dari model
+                    foreach ($modelDetails as $index => $model) {
+                        if ($model->hasErrors()) {
+                            Yii::debug("Model ke-{$index} gagal divalidasi: " . json_encode($model->getErrors()), __METHOD__);
+                        }
+                    }
+                }
             } else {
-                Yii::$app->session->setFlash('error', 'Gagal menyimpan detail pemesanan: ' . json_encode($modelDetail->getErrors()));
+                Yii::$app->session->setFlash('error', 'Data gagal dimuat, silakan coba lagi.');
+                Yii::debug("Data POST gagal dimuat: " . json_encode(Yii::$app->request->post()), __METHOD__);
             }
         }
 
         // Render view untuk form detail
         return $this->render('create', [
-            'model' => $modelDetail,
+            'modelDetail' => $modelDetails,
         ]);
     }
+
+
+
 
     // Fungsi untuk membuat pemesanan
     public function actionCreatePemesanan()
@@ -233,6 +277,9 @@ class PesanDetailController extends Controller
     }
     public function actionSearch($q = null)
     {
+        // Set the response format to JSON
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
         try {
             // Make sure you receive the query parameter
             if (empty($q)) {
@@ -255,7 +302,7 @@ class PesanDetailController extends Controller
 
             // Check if any items were found
             if (empty($items)) {
-                throw new NotFoundHttpException('No items found');
+                throw new \yii\web\NotFoundHttpException('No items found');
             }
 
             // Prepare the response array
@@ -269,16 +316,19 @@ class PesanDetailController extends Controller
                     'angka' => $item['angka'],
                     'satuan' => $item['satuan'],
                     'warna' => $item['warna'],
-                    'value' => $item['barang_id']
+                    'value' => $item['barang_id'] // 'value' adalah atribut yang diharapkan oleh Typeahead.js
                 ];
             }
 
-            return json_encode($result);
+            // Return the result as JSON
+            return $result;
+        } catch (\yii\web\HttpException $e) {
+            // Return an HTTP exception with the message
+            return ['error' => $e->getMessage()];
         } catch (\Exception $e) {
             // Log the error and return a 500 response with an error message
             Yii::error("Error in search: " . $e->getMessage());
-            Yii::$app->response->statusCode = 500;
-            return json_encode(['error' => $e->getMessage()]);
+            throw new \yii\web\ServerErrorHttpException('Internal server error');
         }
     }
 }

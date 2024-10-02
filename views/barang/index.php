@@ -87,10 +87,10 @@ $this->params['breadcrumbs'][] = $this->title;
 
                         // 'tipe',
                         // 'warna',
-                        [
-                            'attribute' => 'warna',
-                            'filter' => false
-                        ],
+                        // [
+                        //     'attribute' => 'warna',
+                        //     'filter' => false
+                        // ],
                         'supplier.nama' => [
                             'attribute' => 'nama_supplier', // Atribut dari tabel supplier
                             'value' => 'supplier.nama', // Mengakses nama supplier melalui relasi

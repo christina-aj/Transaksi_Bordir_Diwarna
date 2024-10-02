@@ -10,7 +10,7 @@ use yii\grid\GridView;
 /** @var app\models\PemesananSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = 'Pemesanan';
+$this->title = 'Pemesanan Bahan Produksi';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="pc-content">

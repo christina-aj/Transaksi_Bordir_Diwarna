@@ -14,12 +14,14 @@ class PesanDetailSearch extends PesanDetail
     /**
      * {@inheritdoc}
      */
+    public $nama_barang;
+
     public function rules()
     {
         return [
             [['pesandetail_id', 'pemesanan_id', 'barang_id', 'is_correct', 'langsung_pakai'], 'integer'],
             [['qty', 'qty_terima'], 'number'],
-            [['catatan', 'created_at', 'update_at'], 'safe'],
+            [['catatan', 'created_at', 'update_at', 'nama_barang'], 'safe'],
         ];
     }
 
@@ -41,12 +43,27 @@ class PesanDetailSearch extends PesanDetail
      */
     public function search($params)
     {
-        $query = PesanDetail::find();
+        $query = PesanDetail::find()->joinWith(['barang']);
 
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort' => [
+                'attributes' => [
+                    'pemesanan_id',
+                    'nama_barang' => [
+                        'asc' => ['barang.nama_barang' => SORT_ASC],
+                        'dsc' => ['barang.nama_barang' => SORT_DESC],
+                    ],
+                    'qty',
+                    'qty_terima',
+                    'catatan',
+                    'langsung_pakai',
+                    'is_correct',
+                ]
+            ]
+
         ]);
 
         $this->load($params);
@@ -58,7 +75,7 @@ class PesanDetailSearch extends PesanDetail
         }
 
 
-
+        $query->andFilterWhere(['like', 'barang.nama_barang', $this->nama_barang]);
         // grid filtering conditions
         $query->andFilterWhere([
             'pesandetail_id' => $this->pesandetail_id,

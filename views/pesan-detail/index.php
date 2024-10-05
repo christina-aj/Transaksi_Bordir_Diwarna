@@ -1,6 +1,7 @@
 <?php
 
 use app\models\PesanDetail;
+use kartik\typeahead\Typeahead;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
@@ -30,38 +31,68 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-            'pesandetail_id',
-            'pemesanan_id' =>
-            [
+            // 'pesandetail_id',
+            'pemesanan_id' => [
                 'label' => 'Kode Pemesanan',
                 'attribute' => 'pemesanan_id',
                 'value' => function ($model) {
+
                     return $model->getFormattedOrderId(); // Call the method to get the formatted ID
                 },
             ],
-            // 'barang_id',
             'barang.nama_barang' => [
                 'label' => 'Nama barang',
-                'attribute' => 'barang_id',
+                'attribute' => 'nama_barang',
                 'value' => function ($model) {
                     $barang = $model->barang;
                     $unit = $barang->unit;
                     return $barang->kode_barang . ' - ' . $barang->nama_barang . ' - ' . $barang->angka . ' ' . ($unit ? $unit->satuan : 'Satuan tidak ditemukan') . ' - ' . $barang->warna;
-                }
+                },
+                'filter' => Typeahead::widget([
+                    'name' => 'PesanDetailSearch[nama_barang]',
+                    'pluginOptions' => ['highlight' => true],
+                    'scrollable' => true,
+                    'dataset' => [
+                        [
+                            'datumTokenizer' => "Bloodhound.tokenizers.obj.whitespace('value')",
+                            'display' => 'value',
+                            'templates' => [
+                                'notFound' => "<div class='text-danger'>Tidak ada hasil</div>",
+                                'suggestion' => new \yii\web\JsExpression('function(data) {
+                                    return "<div>"  + data.kode_barang + " - " + data.nama_barang + " - " + data.angka + " " + data.satuan + " - " + data.warna + "</div>";
+                                }'),
+                            ],
+                            'remote' =>
+                            [
+                                'url' => Url::to(['pesan-detail/search']) . '?q=%QUERY&is_search_form=true', // URL ke action yang digunakan untuk pencarian data
+                                'wildcard' => '%QUERY',
+                            ],
+                        ],
+                    ],
+                    'options' => ['placeholder' => 'Cari barang...', 'class' => 'form-control'],
+                ])
             ],
+
             'qty' => [
-                'label' => 'Quantity pesan',
+                'label' => 'Quantity Pesan',
                 'attribute' => 'qty',
-                'filter' => false
+                'filter' => false,
             ],
+
             'qty_terima' => [
-                'label' => 'Quantity terima',
+                'label' => 'Quantity Terima',
                 'attribute' => 'qty_terima',
-                'filter' => false
+                'filter' => false,
             ],
-            'catatan',
+
+            'catatan' => [
+                'label' => 'Catatan',
+                'attribute' => 'catatan',
+                'filter' => false,
+            ],
+
             'langsung_pakai' => [
-                'label' => 'langsung Pakai',
+                'label' => 'Langsung Pakai',
                 'attribute' => 'langsung_pakai',
                 'filter' => [
                     1 => 'Langsung Pakai',
@@ -71,44 +102,36 @@ $this->params['breadcrumbs'][] = $this->title;
                     'class' => 'form-control',
                     'prompt' => 'Pilih Pemakaian',
                 ],
-                'format' => 'raw', // This allows for raw HTML output (for icons)
+                'format' => 'raw',
                 'value' => function ($model) {
-                    // Check the value of the status field
-                    if ($model->langsung_pakai == 1) {
-                        // Active status (1)
-                        return Html::tag('span', '&#10004;', ['style' => 'color: green; font-size: 20px;']); // Checkmark icon
-                    } else {
-                        // Inactive status (0)
-                        return Html::tag('span', '&#10008;', ['style' => 'color: red; font-size: 20px;']); // Cross icon
-                    }
+                    return $model->langsung_pakai == 1
+                        ? Html::tag('span', '&#10004;', ['style' => 'color: green; font-size: 20px;'])
+                        : Html::tag('span', '&#10008;', ['style' => 'color: red; font-size: 20px;']);
                 },
             ],
+
             'is_correct' => [
                 'label' => 'Barang Lengkap',
                 'attribute' => 'is_correct',
                 'filter' => false,
-                'format' => 'raw', // This allows for raw HTML output (for icons)
+                'format' => 'raw',
                 'value' => function ($model) {
-                    // Check the value of the status field
-                    if ($model->is_correct == 1) {
-                        // Active status (1)
-                        return Html::tag('span', '&#10004;', ['style' => 'color: green; font-size: 20px;']); // Checkmark icon
-                    } else {
-                        // Inactive status (0)
-                        return Html::tag('span', '&#10008;', ['style' => 'color: red; font-size: 20px;']); // Cross icon
-                    }
+                    return $model->is_correct == 1
+                        ? Html::tag('span', '&#10004;', ['style' => 'color: green; font-size: 20px;'])
+                        : Html::tag('span', '&#10008;', ['style' => 'color: red; font-size: 20px;']);
                 },
             ],
-            //'created_at',
-            //'update_at',
+
             [
-                'class' => ActionColumn::className(),
+                'class' => ActionColumn::class,
+                'template' => '{update}',
                 'urlCreator' => function ($action, PesanDetail $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'pesandetail_id' => $model->pesandetail_id]);
                 }
             ],
         ],
     ]); ?>
+
 
 
 </div>

@@ -56,8 +56,16 @@ class PemesananController extends Controller
      */
     public function actionView($pemesanan_id)
     {
+        // Temukan model Pemesanan berdasarkan pemesanan_id
+        $model = $this->findModel($pemesanan_id);
+
+        // Mengambil semua PesanDetail yang terkait dengan pemesanan ini
+        $pesanDetails = $model->pesanDetails;
+
+        // Mengirim model dan pesanDetails ke view
         return $this->render('view', [
-            'model' => $this->findModel($pemesanan_id),
+            'model' => $model,
+            'pesanDetails' => $pesanDetails, // Pastikan $pesanDetails diteruskan
         ]);
     }
 

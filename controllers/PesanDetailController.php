@@ -14,6 +14,7 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use app\helpers\ModelHelper;
 use yii\base\Model;
+use yii\web\ServerErrorHttpException;
 
 /**
  * PesanDetailController implements the CRUD actions for PesanDetail model.
@@ -115,7 +116,7 @@ class PesanDetailController extends Controller
 
                         // Berikan pesan success dan redirect
                         Yii::$app->session->setFlash('success', 'Semua data berhasil disimpan.');
-                        return $this->actionCreatePembelianDetail($pembelianId, $modelDetails[0]->pesandetail_id);
+                        return $this->actionCreatePembelianDetail($pembelianId, $modelDetails[0]->pesandetail_id, $pemesananId);
                     } catch (\Exception $e) {
                         // Rollback transaksi jika ada kegagalan
                         $transaction->rollBack();
@@ -198,7 +199,7 @@ class PesanDetailController extends Controller
     }
 
     // Fungsi untuk membuat pembelian detail
-    public function actionCreatePembelianDetail($pembelianId, $pesandetailId)
+    public function actionCreatePembelianDetail($pembelianId, $pesandetailId, $pemesanan_id)
     {
         // Buat pembelian detail baru
         $pembelianDetail = new PembelianDetail();
@@ -214,7 +215,7 @@ class PesanDetailController extends Controller
             Yii::debug("Pembelian detail berhasil dibuat dengan ID: " . $pembelianDetail->belidetail_id, __METHOD__);
 
             // Redirect ke tampilan pembelian detail
-            return $this->redirect(['view', 'pesandetail_id' => $pesandetailId]); // Pastikan parameter yang benar di sini
+            return $this->redirect(['view-by-order', 'pemesanan_id' => $pemesanan_id]); // Pastikan parameter yang benar di sini
         } else {
             // Log kesalahan
             Yii::error("Gagal membuat pembelian detail: " . json_encode($pembelianDetail->getErrors()), __METHOD__);
@@ -302,7 +303,7 @@ class PesanDetailController extends Controller
 
             // Check if any items were found
             if (empty($items)) {
-                throw new \yii\web\NotFoundHttpException('No items found');
+                throw new NotFoundHttpException('No items found');
             }
 
             // Prepare the response array
@@ -328,7 +329,18 @@ class PesanDetailController extends Controller
         } catch (\Exception $e) {
             // Log the error and return a 500 response with an error message
             Yii::error("Error in search: " . $e->getMessage());
-            throw new \yii\web\ServerErrorHttpException('Internal server error');
+            throw new ServerErrorHttpException('Internal server error');
         }
+    }
+
+    public function actionViewByOrder($pemesanan_id)
+    {
+        // Dapatkan semua pesan detail berdasarkan pemesanan_id
+        $models = PesanDetail::find()->where(['pemesanan_id' => $pemesanan_id])->all();
+
+        return $this->render('view_by_order', [
+            'models' => $models,
+            'pemesanan_id' => $pemesanan_id,
+        ]);
     }
 }

@@ -12,8 +12,8 @@ use yii\widgets\ActiveForm;
 /** @var int $pemesananId */
 
 $pemesananId = Yii::$app->session->get('temporaryOrderId'); // Ambil pemesanan_id dari session
-Yii::debug("Pemesanan ID yang digunakan: " . $pemesananId, __METHOD__); // Debugging pemesanan_id
-
+Yii::debug("Pemesanan ID yang digunakan: " . $pemesananId, __METHOD__);
+$isCreate = Yii::$app->controller->action->id === 'create';
 ?>
 
 <div class="pesan-detail-form">
@@ -22,8 +22,8 @@ Yii::debug("Pemesanan ID yang digunakan: " . $pemesananId, __METHOD__); // Debug
 
     <!-- Hidden Field for pemesanan_id -->
     <?= Html::activeHiddenInput($modelDetail[0], '[0]pemesanan_id', ['value' => $pemesananId]) ?>
-    <?= $form->field($modelDetail[0], '[0]pemesanan_id')->textInput(['readonly' => true, 'value' => $pemesananId]) ?>
-
+    <?= $form->field($modelDetail[0], '[0]pemesanan_id')->textInput(['value' => $pemesananId, 'readonly' => 'true']) ?>
+    <!-- Barang ID Field -->
     <?= $form->field($modelDetail[0], '[0]barang_id')->widget(Typeahead::classname(), [
         'options' => ['placeholder' => 'Cari Nama Barang...', 'id' => 'pesandetail-0-barang_id'],
         'pluginOptions' => ['highlight' => true],
@@ -35,8 +35,8 @@ Yii::debug("Pemesanan ID yang digunakan: " . $pemesananId, __METHOD__); // Debug
                 'templates' => [
                     'notFound' => "<div class='text-danger'>Tidak ada hasil</div>",
                     'suggestion' => new \yii\web\JsExpression('function(data) {
-                return "<div>" + data.barang_id +  " - " + data.kode_barang + " - " + data.nama_barang + " - " + data.angka + " " + data.satuan + " - " + data.warna + "</div>";
-            }'),
+                        return "<div>" + data.barang_id +  " - " + data.kode_barang + " - " + data.nama_barang + " - " + data.angka + " " + data.satuan + " - " + data.warna + "</div>";
+                    }'),
                 ],
                 'remote' => [
                     'url' => Url::to(['pesan-detail/search']) . '?q=%QUERY',
@@ -46,23 +46,35 @@ Yii::debug("Pemesanan ID yang digunakan: " . $pemesananId, __METHOD__); // Debug
         ],
         'pluginEvents' => [
             "typeahead:select" => new \yii\web\JsExpression('function(event, suggestion) {
-        $("#pesandetail-0-barang_id").val(suggestion.id);
-    }')
+                $("#pesandetail-0-barang_id").val(suggestion.id);
+            }')
         ]
     ]); ?>
 
+    <!-- Qty Field -->
     <?= $form->field($modelDetail[0], '[0]qty')->textInput(['id' => 'pesandetail-0-qty']) ?>
-    <?= $form->field($modelDetail[0], '[0]qty_terima')->textInput(['id' => 'pesandetail-0-qty_terima']) ?>
-    <?= $form->field($modelDetail[0], '[0]catatan')->textInput(['maxlength' => true, 'id' => 'pesandetail-0-catatan']) ?>
-    <?= $form->field($modelDetail[0], '[0]langsung_pakai')->checkbox(['id' => 'pesandetail-0-langsung_pakai']) ?>
-    <?= $form->field($modelDetail[0], '[0]is_correct')->checkbox(['id' => 'pesandetail-0-is_correct']) ?>
 
+    <?= Html::activeHiddenInput($modelDetail[0], '[0]qty_terima', ['value' => '0']) ?>
+    <!-- Catatan Field -->
+    <?= $form->field($modelDetail[0], '[0]catatan')->textInput(['maxlength' => true, 'id' => 'pesandetail-0-catatan']) ?>
+
+    <!-- Langsung Pakai Checkbox -->
+    <?= $form->field($modelDetail[0], '[0]langsung_pakai')->checkbox(['id' => 'pesandetail-0-langsung_pakai']) ?>
+
+    <?= Html::activeHiddenInput($modelDetail[0], '[0]is_correct', ['value' => '0']) ?>
+
+    <?php if (!$isCreate): ?>
+        <!-- Qty Terima Field (hidden in create mode) -->
+        <?= $form->field($modelDetail[0], '[0]qty_terima')->textInput(['id' => 'pesandetail-0-qty_terima']) ?>
+
+        <!-- Is Correct Checkbox (hidden in create mode) -->
+        <?= $form->field($modelDetail[0], '[0]is_correct')->checkbox(['id' => 'pesandetail-0-is_correct']) ?>
+    <?php endif; ?>
 
     <div id="new-form-container"></div>
 
     <div class="form-group">
         <?= Html::button('Tambah Data Lain', ['class' => 'btn btn-success', 'id' => 'add-more']) ?>
-        <!-- <button type="button" id="add-more" class="btn btn-success">Tambah Data Lain</button> -->
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
         <?= Html::a('Back', ['pesan-detail/index'], ['class' => 'btn btn-secondary']) ?>
     </div>
@@ -75,10 +87,13 @@ Yii::debug("Pemesanan ID yang digunakan: " . $pemesananId, __METHOD__); // Debug
 // Variabel PHP untuk URL
 $urlSearch = Url::to(['pesan-detail/search']);
 
+
 $js = <<<JS
 $(document).ready(function() {
     let index = 1; // Mulai dengan indeks 1 untuk form berikutnya
     const pemesananId = '{$pemesananId}'; // Menyimpan pemesanan_id dari session
+    const isCreate = '{$isCreate}';
+
 
     // Event listener untuk tombol tambah data
     $('#add-more').click(function() {
@@ -96,10 +111,11 @@ $(document).ready(function() {
                 <label for="pesandetail-\${index}-qty">Qty</label>
                 <input type="number" id="pesandetail-\${index}-qty" class="form-control" name="PesanDetail[\${index}][qty]" required>
             </div>
+
             <div class="form-group">
-                <label for="pesandetail-\${index}-qty_terima">Qty Terima</label>
-                <input type="number" id="pesandetail-\${index}-qty_terima" class="form-control" name="PesanDetail[\${index}][qty_terima]" required>
+                <input type="hidden" id="pesandetail-\${index}-qty_terima" class="form-control" name="PesanDetail[\${index}][qty_terima]" value="0">
             </div>
+
             <div class="form-group">
                 <label for="pesandetail-\${index}-catatan">Catatan</label>
                 <input type="text" id="pesandetail-\${index}-catatan" class="form-control" name="PesanDetail[\${index}][catatan]">
@@ -113,14 +129,27 @@ $(document).ready(function() {
                 </div>
             </div>
             <div class="form-group">
+                <input type="hidden" id="pesandetail-\${index}-is_correct" class="form-control" name="PesanDetail[\${index}][is_correct]" value="0">
+            </div>
+        `;
+
+        if (!isCreate){
+            newForm += `
+            <div class="form-group">
+                <label for="pesandetail-\${index}-qty_terima">Qty Terima</label>
+                <input type="number" id="pesandetail-\${index}-qty_terima" class="form-control" name="PesanDetail[\${index}][qty_terima]" required>
+            </div>
+            <div class="form-group">
                 <div class="checkbox">
                 <input type="hidden" name="PesanDetail[\${index}][is_correct]" value="0">
-                    <label for="pesandetail-\${index}-is_correct">
-                        <input type="checkbox" id="pesandetail-\${index}-is_correct" name="PesanDetail[\${index}][is_correct]" value="1"> Barang Sesuai
-                    </label>
+                <label for="pesandetail-\${index}-is_correct">
+                    <input type="checkbox" id="pesandetail-\${index}-is_correct" name="PesanDetail[\${index}][is_correct]" value="1"> Barang Sesuai
+                </label>
                 </div>
             </div>
-
+                `;
+        }
+        newForm += `
             <div class="form-group">
                 <button type="button" class="btn btn-danger remove-item" data-id="\${index}">Remove Data Lain</button>
             </div>

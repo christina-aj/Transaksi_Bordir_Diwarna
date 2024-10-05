@@ -47,6 +47,9 @@ class PemesananSearch extends Pemesanan
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'pagination' => [
+                'pageSize' => 15,
+            ],
         ]);
 
         $this->load($params);

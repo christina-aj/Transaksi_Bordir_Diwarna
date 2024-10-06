@@ -31,12 +31,12 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-            'pesandetail_id',
+            // 'pesandetail_id',
             'kode_pemesanan' => [
                 'label' => 'Kode Pemesanan',
                 'attribute' => 'kode_pemesanan',
                 'value' => function ($model) {
-                    return $model->getFormattedOrderId(); // Call the method to get the formatted ID
+                    return $model->getFormattedOrderId($this); // Call the method to get the formatted ID
                 },
                 'filterInputOptions' => [
                     'class' => 'form-control',

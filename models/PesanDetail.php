@@ -28,6 +28,8 @@ class PesanDetail extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
+    public $nama_barang;
+    public $kode_pemesanan;
     public static function tableName()
     {
         return 'pesan_detail';
@@ -53,7 +55,7 @@ class PesanDetail extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['pemesanan_id', 'barang_id', 'qty', 'is_correct', 'langsung_pakai'], 'required'],
+            [['pemesanan_id', 'barang_id', 'qty', 'is_correct', 'langsung_pakai', 'nama_barang', 'kode_pemesanan'], 'required'],
             [['pemesanan_id', 'barang_id', 'is_correct', 'langsung_pakai'], 'integer'],
             [['qty', 'qty_terima'], 'number'],
             [['qty_terima'], 'default', 'value' => 0],
@@ -72,6 +74,8 @@ class PesanDetail extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
+            'kode_pemesanan' => 'Kode Pemesanan',
+            'nama_barang' => 'Nama Barang',
             'pesandetail_id' => 'Pesandetail ID',
             'pemesanan_id' => 'Pemesanan ID',
             'barang_id' => 'Barang ID',
@@ -106,7 +110,12 @@ class PesanDetail extends \yii\db\ActiveRecord
     }
     public function getFormattedOrderId()
     {
-        return 'FPB-' . str_pad($this->pemesanan_id, 3, '0', STR_PAD_LEFT);
+        return 'FPB-' . str_pad((string) $this->pemesanan_id, 3, '0', STR_PAD_LEFT);
+    }
+
+    public function getFormattedOrderIdProperty($pemesanan_id)
+    {
+        return 'FPB-' . str_pad((string) $pemesanan_id, 3, '0', STR_PAD_LEFT);
     }
     public function afterSave($insert, $changedAttributes)
     {

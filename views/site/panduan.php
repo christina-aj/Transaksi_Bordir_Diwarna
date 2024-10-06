@@ -13,7 +13,23 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
         <div class="card-body mx-4">
             <p>
-                Pada website ini terdapat beberapa icon di sidebar yang terdiri dari
+                Pada website ini terdapat beberapa icon di sidebar yang terdiri dari <br>
+                untuk alur penggunaan web ini sebagai berikut : <br>
+                1. Dimulai dari "Menu gudang->Detail Pemesanan Bahan produksi", disinilah pemesanan barang terjadi. <br>
+                2. Data secara otomatis akan muncul di pihak keuangan yang berada pada "Menu pembelian -> Detail Pembelian Bahan Produksi", pada menu ini pihak keuangan akan mengecek apakah harga sudah sesuai dengan supplier<br>
+                3. Jika sudah benar maka terjadilah transaksi dan lognya akan tersimpan di "Menu pembelian -> Riwayat Pembelian Bahan Produksi"<br>
+                4. Setelah barang sudah sampai digudang, maka pihak gudang akan memvalidasi barang yang datang tersebut di "Menu gudang->Riwayat Pemesanan->Tombol mata->muncul rincian detail yang telah dipesan->update Pesanan" pada mode update ini form yang bisa disinya hanyalah qty terima dan status barang sesuai atau tidak. <br>
+                5. Kondisi barang masuk stock terdiri dari 2 kondisi :
+            <ul>
+                1. Jika pada pemesanan detail tercentang kondisi langsung pakai, maka qty terima yang tercatat akan masuk ke stock produksi<br>
+                Misalkan saja qty terima = 10 <br>
+                Checkbox langsung pakai tercentang<br>
+                Maka barang yang sudah diterima akan tercatat pada quantity masuk pada kartu stock produksi.<br><br>
+                2. Jika pada pemesanan detail tidak tercentang kondisi langsung pakai, maka qty terima yang tercatat akan masuk ke stock gudang<br>
+                Misalkan saja qty terima = 10 <br>
+                Checkbox langsung pakai tidak tercentang<br>
+                Maka barang yang sudah diterima akan tercatat pada quantity masuk pada kartu stock gudang.
+            </ul>
             </p>
             <div class="navbar-content">
                 <ul class="pc-navbar">
@@ -110,6 +126,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 </p>
                             </li>
                         </ul>
+                        <h5>--Note-- Fitur pada menu ini masih dalam pengembangan sehingga fungsi penggunaannya masih belum terlihat. --Note-- </h5>
                         </p>
                     </li>
                     <li class="pc-item pc-hasmenu">
@@ -145,6 +162,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 </p>
                             </li>
                         </ul>
+                        <h5>--Note-- Pada Menu ini hanya fitur Stock Gudang saja yang masih dalam pengembangan sehingga masih belum kelihatan jelas penggunaannya --Note-- </h5>
                         </p>
                     </li>
 

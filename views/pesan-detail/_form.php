@@ -14,6 +14,7 @@ use yii\widgets\ActiveForm;
 $pemesananId = Yii::$app->session->get('temporaryOrderId'); // Ambil pemesanan_id dari session
 Yii::debug("Pemesanan ID yang digunakan: " . $pemesananId, __METHOD__);
 $isCreate = Yii::$app->controller->action->id === 'create';
+$formattedOrderId = $modelDetail[0]->getFormattedOrderIdProperty($pemesananId);
 ?>
 
 <div class="pesan-detail-form">
@@ -22,10 +23,15 @@ $isCreate = Yii::$app->controller->action->id === 'create';
     <?php if ($isCreate): ?>
         <!-- Hidden Field for pemesanan_id -->
         <?= Html::activeHiddenInput($modelDetail[0], '[0]pemesanan_id', ['value' => $pemesananId]) ?>
-        <?= $form->field($modelDetail[0], '[0]pemesanan_id')->textInput(['value' => $pemesananId, 'readonly' => 'true']) ?>
+        <!-- <?= $form->field($modelDetail[0], '[0]pemesanan_id')->textInput(['value' => $pemesananId, 'readonly' => 'true']) ?> -->
+        <?= $form->field($modelDetail[0], '[0]kode_pemesanan')->textInput([
+            'value' => $modelDetail[0]->getFormattedOrderIdProperty($pemesananId),
+            'readonly' => 'true'
+        ]) ?>
+        <?= Html::activeHiddenInput($modelDetail[0], '[0]barang_id') ?>
         <!-- Barang ID Field -->
-        <?= $form->field($modelDetail[0], '[0]barang_id')->widget(Typeahead::classname(), [
-            'options' => ['placeholder' => 'Cari Nama Barang...', 'id' => 'pesandetail-0-barang_id'],
+        <?= $form->field($modelDetail[0], '[0]nama_barang')->widget(Typeahead::classname(), [
+            'options' => ['placeholder' => 'Cari Nama Barang...', 'id' => 'pesandetail-0-nama_barang'],
             'pluginOptions' => ['highlight' => true],
             'scrollable' => true,
             'dataset' => [
@@ -109,6 +115,7 @@ $(document).ready(function() {
     let index = 1; // Mulai dengan indeks 1 untuk form berikutnya
     const pemesananId = '{$pemesananId}'; // Menyimpan pemesanan_id dari session
     const isCreate = '{$isCreate}';
+    const kodePemesanan = '{$formattedOrderId}'
 
 
     // Event listener untuk tombol tambah data
@@ -116,12 +123,18 @@ $(document).ready(function() {
         let newForm = `
         <div class="pemesanan-item" id="pemesanan-item-\${index}">
             <div class="form-group">
-                <label for="pesandetail-\${index}-pemesanan_id">Pemesanan ID</label>
-                <input type="text" id="pesandetail-\${index}-pemesanan_id" class="form-control" name="PesanDetail[\${index}][pemesanan_id]" value="\${pemesananId}" readonly>
+                <input type="hidden" id="pesandetail-\${index}-pemesanan_id" class="form-control" name="PesanDetail[\${index}][pemesanan_id]" value="\${pemesananId}" readonly>
             </div>
             <div class="form-group">
-                <label for="pesandetail-\${index}-barang_id">Barang ID</label>
-                <input type="text" id="pesandetail-\${index}-barang_id" class="form-control" name="PesanDetail[\${index}][barang_id]" required>
+                <label for="pesandetail-\${index}-kode_pemesanan">Kode Pemesanan</label>
+                <input type="text" id="pesandetail-\${index}-kode_pemesanan" class="form-control" name="PesanDetail[\${index}][kode_pemesanan]" value="\${kodePemesanan}" readonly>
+            </div>
+            <div class="form-group">
+                <input type="hidden" id="pesandetail-\${index}-barang_id" class="form-control" name="PesanDetail[\${index}][barang_id]">
+            </div>
+            <div class="form-group">
+                <label for="pesandetail-\${index}-nama_barang">Nama Barang</label>
+                <input type="text" id="pesandetail-\${index}-nama_barang" class="form-control" name="PesanDetail[\${index}][nama_barang]" required>
             </div>
             <div class="form-group">
                 <label for="pesandetail-\${index}-qty">Qty</label>
@@ -218,24 +231,27 @@ $(document).ready(function() {
 
     // Fungsi untuk menginisialisasi Typeahead pada elemen dinamis
     function initializeTypeahead(index) {
-        $('#pesandetail-' + index + '-barang_id').typeahead({
-            highlight: true,
-            minLength: 1
-        }, {
-            name: 'barang',
-            display: 'value',
-            source: function(query, syncResults, asyncResults) {
-                $.get('{$urlSearch}?q=' + query, function(data) {
-                    if (Array.isArray(data)) {
-                        asyncResults(data);
-                    }
-                });
-            },
-            templates: {
-                suggestion: function(data) {
-                    return "<div>" + data.barang_id + " - " + data.kode_barang + " - " + data.nama_barang + " - " + data.angka + " " + data.satuan + " - " + data.warna + "</div>";
+    $('#pesandetail-' + index + '-nama_barang').typeahead({
+        highlight: true,
+        minLength: 1
+    }, {
+        name: 'barang',
+        display: 'value',  // Tampilkan nama_barang sebagai hasil
+        source: function(query, syncResults, asyncResults) {
+            $.get('{$urlSearch}?q=' + query, function(data) {
+                if (Array.isArray(data)) {
+                    asyncResults(data);
                 }
+            });
+        },
+        templates: {
+            suggestion: function(data) {
+                return "<div>" + data.barang_id + " - " + data.kode_barang + " - " + data.nama_barang + " - " + data.angka + " " + data.satuan + " - " + data.warna + "</div>";
             }
+        }
+    }).bind('typeahead:select', function(ev, suggestion) {
+        // Isi otomatis field barang_id berdasarkan pilihan
+        $('#pesandetail-' + index + '-barang_id').val(suggestion.barang_id);
         });
     }
 });

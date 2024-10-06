@@ -445,7 +445,7 @@ class PesanDetailController extends Controller
                     'satuan' => $item['satuan'],
                     'warna' => $item['warna'],
                     // Conditional value based on whether it's a search form or not
-                    'value' => $is_search_form ? $item['nama_barang'] : $item['barang_id']
+                    'value' => $is_search_form ? $item['nama_barang'] : $item['kode_barang'] . " - " . $item['nama_barang'] . " - " . $item['angka'] . " - " . $item['satuan']
                 ];
             }
 

@@ -9,7 +9,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
 \yii\web\YiiAsset::register($this);
 ?>
-<div class="nota-view">
+<div class="pc-content">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
@@ -24,8 +24,9 @@ $this->params['breadcrumbs'][] = $this->title;
         ]) ?>
         <?= Html::a('Print', ['print', 'nota_id' => $model->nota_id], [
         'class' => 'btn btn-info',
-        'target' => '_blank', // Open in a new tab
+        'target' => '_blank', 
         ]) ?>>
+        <?= Html::a('Back', ['nota/index'], ['class' => 'btn btn-secondary']) ?>
     </p>
 
     <?= DetailView::widget([

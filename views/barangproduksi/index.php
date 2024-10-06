@@ -10,7 +10,7 @@ use yii\grid\GridView;
 /** @var app\models\Barangproduksisearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = 'Barangproduksi';
+$this->title = 'Barang Produksi';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="pc-content">
@@ -32,6 +32,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'barang_id',
             'nama',
             'nama_jenis',
+            'ukuran',
             'deskripsi:ntext',
             [
                 'class' => ActionColumn::className(),

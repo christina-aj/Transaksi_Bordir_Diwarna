@@ -26,6 +26,8 @@ use yii\helpers\ArrayHelper;
 
     <?= $form->field($model, 'deskripsi')->textarea(['rows' => 6]) ?>
 
+    <?= $form->field($model, 'ukuran')->textInput(['maxlength' => true]) ?>
+
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
         <?= Html::a('Back', ['barangproduksi/index'], ['class' => 'btn btn-secondary']) ?>

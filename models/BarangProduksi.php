@@ -28,7 +28,7 @@ class Barangproduksi extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['nama', 'nama_jenis', 'deskripsi'], 'required'],
+            [['nama', 'nama_jenis', 'deskripsi','ukuran'], 'required'],
             [['deskripsi'], 'string'],
             [['nama', 'nama_jenis'], 'string', 'max' => 200],
         ];
@@ -43,6 +43,7 @@ class Barangproduksi extends \yii\db\ActiveRecord
             'barang_id' => 'Barang ID',
             'nama' => 'Nama',
             'nama_jenis' => 'Jenis',
+            'ukuran' => 'Ukuran',
             'deskripsi' => 'Deskripsi',
         ];
     }

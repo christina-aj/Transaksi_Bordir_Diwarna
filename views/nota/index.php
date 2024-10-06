@@ -10,7 +10,7 @@ use yii\grid\GridView;
 /** @var app\models\Notasearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = 'Notas';
+$this->title = 'Nota';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="pc-content">

@@ -127,7 +127,7 @@ $samplePageUrl = Url::to(['site/sample-page']);
                             <li class="pc-item"><a class="pc-link" href="<?= $lapkelUrl ?>">Laporan Keluar</a></li>
                             <li class="pc-item"><a class="pc-link" href="<?= $ShifttUrl ?>">Shift</a></li>
                             <li class="pc-item"><a class="pc-link" href="<?= $JenisUrl ?>">Jenis</a></li>
-                            <li class="pc-item"><a class="pc-link" href="<?= $BarangProUrl ?>">BarangProduksi</a></li>
+                            <li class="pc-item"><a class="pc-link" href="<?= $BarangProUrl ?>">Barang Produksi</a></li>
                             <li class="pc-item"><a class="pc-link" href="<?= $NotaUrl ?>">Nota</a></li>
                         </ul>
                     </li>

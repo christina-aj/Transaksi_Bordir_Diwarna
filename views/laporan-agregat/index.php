@@ -62,6 +62,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\SerialColumn'],
             ['attribute' => 'year', 'label' => 'Tahun'],
             ['attribute' => 'month', 'label' => 'Bulan'],
+            ['attribute' => 'nama_barang', 'label' => 'Nama Barang'],
             ['attribute' => 'nama_kerjaan', 'label' => 'Job Name'],
             ['attribute' => 'total_kuantitas', 'label' => 'Qty', 'format' => ['integer']],
         ],

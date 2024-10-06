@@ -11,7 +11,7 @@ use app\models\Shift;
 /** @var yii\widgets\ActiveForm $form */
 ?>
 
-<div class="laporan-produksi-form">
+<div class="pc-content">
 
     <?php $form = ActiveForm::begin(); ?>
 
@@ -38,6 +38,15 @@ use app\models\Shift;
     <?= $form->field($model, 'tanggal_kerja')->hiddenInput()->label(false) ?>
 
     <?= $form->field($model, 'nama_kerjaan')->textInput(['maxlength' => true]) ?>
+
+    <?php
+    $dataBarang = ArrayHelper::map(\app\models\Barangproduksi::find()->asArray()->all(), 'nama', 'nama');
+    echo $form->field($model, 'nama_barang')
+        ->dropDownList(
+            $dataBarang,
+            ['prompt'=>'Pilih Barang']
+        );
+    ?>
 
     <?= $form->field($model, 'vs')->textInput() ?>
 

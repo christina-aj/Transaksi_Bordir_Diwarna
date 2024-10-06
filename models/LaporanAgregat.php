@@ -72,6 +72,7 @@ class LaporanAgregat extends \yii\db\ActiveRecord
             ->select([
                 'MONTH(tanggal_kerja) AS month',
                 'YEAR(tanggal_kerja) AS year',
+                'nama_barang',
                 'nama_kerjaan',
                 'SUM(kuantitas) - COALESCE(lk.total_keluar_qty, 0) AS total_kuantitas'
             ])
@@ -89,6 +90,7 @@ class LaporanAgregat extends \yii\db\ActiveRecord
             'MONTH(tanggal_kerja) AS month',
             'YEAR(tanggal_kerja) AS year',
             'nama_kerjaan',
+            'nama_barang',
             'SUM(kuantitas) AS total_kuantitas'
         ])
         ->groupBy(['MONTH(tanggal_kerja)', 'YEAR(tanggal_kerja)', 'nama_kerjaan']);

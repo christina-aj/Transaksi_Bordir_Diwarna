@@ -35,6 +35,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'shift_id',
             'tanggal_kerja:date',
             'nama_kerjaan',
+            'nama_barang',
             'vs',
             'stitch',
             'kuantitas',

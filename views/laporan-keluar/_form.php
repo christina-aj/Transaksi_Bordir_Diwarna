@@ -27,7 +27,24 @@ use app\models\laporanproduksi;
     echo $form->field($model, 'nama')
         ->dropDownList(
             $uniqueNama,
-            ['prompt'=>'Select Nama']
+            ['prompt'=>'Select Nama Kerjaan']
+        );
+    ?>
+    
+    <?php
+
+    $dataBarang = LaporanProduksi::find()
+    ->select(['nama_barang'])
+    ->distinct()
+    ->asArray()
+    ->all();
+
+    $uniqueBarang = ArrayHelper::map($dataBarang, 'nama_barang', 'nama_barang');
+
+    echo $form->field($model, 'barang')
+        ->dropDownList(
+            $uniqueBarang,
+            ['prompt'=>'Select Nama Barang']
         );
     ?>
 
@@ -39,6 +56,7 @@ use app\models\laporanproduksi;
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Back', ['laporan-keluar/index'], ['class' => 'btn btn-secondary']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>

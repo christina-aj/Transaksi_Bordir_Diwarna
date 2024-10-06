@@ -11,7 +11,7 @@ $this->params['breadcrumbs'][] = ['label' => 'Jenis', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
-<div class="jenis-view">
+<div class="pc-content">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
@@ -34,5 +34,5 @@ $this->params['breadcrumbs'][] = $this->title;
             'deskripsi:ntext',
         ],
     ]) ?>
-
+    <?= Html::a('Back', ['jenis/index'], ['class' => 'btn btn-secondary']) ?>
 </div>

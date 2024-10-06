@@ -17,5 +17,6 @@ $this->params['breadcrumbs'][] = 'Update';
     <?= $this->render('_form', [
         'model' => $model,
     ]) ?>
-
+    
+    <?= Html::a('Back', ['laporan-keluar/index'], ['class' => 'btn btn-secondary']) ?>
 </div>

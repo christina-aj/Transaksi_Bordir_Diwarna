@@ -30,6 +30,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'model' => $model,
         'attributes' => [
             'tanggal_kerja',
+            'nama_barang',
             'nama_kerjaan',
             'kuantitas',
 

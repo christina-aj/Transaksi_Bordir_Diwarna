@@ -9,7 +9,7 @@ use yii\helpers\ArrayHelper;
 /** @var yii\widgets\ActiveForm $form */
 ?>
 
-<div class="barangproduksi-form">
+<div class="pc-content">
 
     <?php $form = ActiveForm::begin(); ?>
 
@@ -28,6 +28,7 @@ use yii\helpers\ArrayHelper;
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Back', ['barangproduksi/index'], ['class' => 'btn btn-secondary']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>

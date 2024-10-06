@@ -5,13 +5,13 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
-use kartik\daterange\DateRangePicker;
+
 
 /** @var yii\web\View $this */
 /** @var app\models\LaporanKeluarsearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = 'Laporan Keluars';
+$this->title = 'Laporan Keluar';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="pc-content">
@@ -32,6 +32,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
             'id',
             'nama',
+            'barang',
             'qty',
             [
                 'attribute' => 'tanggal',

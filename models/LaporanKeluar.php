@@ -44,7 +44,7 @@ class LaporanKeluar extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['nama', 'qty', 'catatan'], 'required'],
+            [['nama', 'qty', 'catatan','barang'], 'required'],
             [['qty'], 'integer'],
             [['tanggal'], 'safe'],
             [['catatan'], 'string'],
@@ -59,7 +59,8 @@ class LaporanKeluar extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'nama' => 'Nama',
+            'barang' => 'Nama Barang',
+            'nama' => 'Nama Kerjaan',
             'qty' => 'Qty',
             'tanggal' => 'Tanggal',
             'catatan' => 'Catatan',

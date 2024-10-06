@@ -42,6 +42,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 },
             ],
             'nama_kerjaan',
+            'nama_barang',
             'vs',
             'stitch',
             'kuantitas',

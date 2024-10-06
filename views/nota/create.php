@@ -3,10 +3,10 @@
 use yii\helpers\Html;
 
 /** @var yii\web\View $this */
-/** @var app\models\Jenis $model */
+/** @var app\models\Nota $model */
 
-$this->title = 'Create Jenis';
-$this->params['breadcrumbs'][] = ['label' => 'Jenis', 'url' => ['index']];
+$this->title = 'Create Nota';
+$this->params['breadcrumbs'][] = ['label' => 'Notas', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="pc-content">

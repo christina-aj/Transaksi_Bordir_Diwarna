@@ -52,9 +52,9 @@ class laporanproduksi extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['mesin_id', 'shift_id', 'nama_kerjaan', 'vs', 'stitch', 'kuantitas', 'bs'], 'required'],
+            [['mesin_id', 'shift_id', 'nama_kerjaan', 'vs', 'stitch', 'kuantitas', 'bs','nama_barang'], 'required'],
             [['mesin_id', 'shift_id', 'vs', 'stitch', 'kuantitas', 'bs'], 'integer'],
-            [['tanggal_kerja'], 'safe'],
+            [['tanggal_kerja',], 'safe'],
             [['nama_kerjaan'], 'string', 'max' => 200],
             [['mesin_id'], 'exist', 'skipOnError' => true, 'targetClass' => Mesin::class, 'targetAttribute' => ['mesin_id' => 'mesin_id']],
             [['shift_id'], 'exist', 'skipOnError' => true, 'targetClass' => Shift::class, 'targetAttribute' => ['shift_id' => 'shift_id']],
@@ -71,6 +71,7 @@ class laporanproduksi extends \yii\db\ActiveRecord
             'mesin_id' => 'Mesin ID',
             'shift_id' => 'Shift ID',
             'tanggal_kerja' => 'Tanggal Kerja',
+            'nama_barang' => 'Nama Barang',
             'nama_kerjaan' => 'Nama Kerjaan',
             'vs' => 'Vs',
             'stitch' => 'Stitch',

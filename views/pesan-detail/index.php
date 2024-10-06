@@ -31,14 +31,17 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-            // 'pesandetail_id',
-            'pemesanan_id' => [
+            'pesandetail_id',
+            'kode_pemesanan' => [
                 'label' => 'Kode Pemesanan',
-                'attribute' => 'pemesanan_id',
+                'attribute' => 'kode_pemesanan',
                 'value' => function ($model) {
-
                     return $model->getFormattedOrderId(); // Call the method to get the formatted ID
                 },
+                'filterInputOptions' => [
+                    'class' => 'form-control',
+                    'placeholder' => 'Cari kode Pemesanan',
+                ],
             ],
             'barang.nama_barang' => [
                 'label' => 'Nama barang',
@@ -125,8 +128,8 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'class' => ActionColumn::class,
                 'template' => '{update}',
-                'urlCreator' => function ($action, PesanDetail $model, $key, $index, $column) {
-                    return Url::toRoute([$action, 'pesandetail_id' => $model->pesandetail_id]);
+                'urlCreator' => function ($action, PesanDetail $modelDetail, $key, $index, $column) {
+                    return Url::toRoute([$action, 'pesandetail_id' => $modelDetail->pesandetail_id]);
                 }
             ],
         ],

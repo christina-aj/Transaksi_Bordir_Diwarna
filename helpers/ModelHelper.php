@@ -7,7 +7,7 @@ use yii\helpers\ArrayHelper;
 
 class ModelHelper
 {
-    public static function createMultiple($modelClass, $multipleModels = [])
+    public static function createMultiple($modelClass, $multipleModels = [], $indexKey = 'id')
     {
         $model = new $modelClass;
         $formName = $model->formName();
@@ -15,15 +15,17 @@ class ModelHelper
         $models = [];
 
         if (!empty($multipleModels)) {
-            $keys = array_keys(ArrayHelper::map($multipleModels, 'id', 'id'));
+            $keys = array_keys(ArrayHelper::map($multipleModels, $indexKey, $indexKey));
             $multipleModels = array_combine($keys, $multipleModels);
         }
 
         if ($post && is_array($post)) {
             foreach ($post as $i => $item) {
-                if (isset($item['id']) && !empty($item['id']) && isset($multipleModels[$item['id']])) {
-                    $models[] = $multipleModels[$item['id']];
+                if (isset($item[$indexKey]) && !empty($item[$indexKey]) && isset($multipleModels[$item[$indexKey]])) {
+                    // Load model yang ada dari multipleModels
+                    $models[] = $multipleModels[$item[$indexKey]];
                 } else {
+                    // Buat model baru jika id tidak ada
                     $models[] = new $modelClass;
                 }
             }

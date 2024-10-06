@@ -24,8 +24,15 @@ $this->params['breadcrumbs'][] = $this->title;
                 <?= DetailView::widget([
                     'model' => $model,
                     'attributes' => [
-                        'pemesanan_id',
-                        'user_id',
+                        'kode_pemesanan' => [
+                            'label' => 'Kode Pemesanan',
+                            'atttribute' => 'kode_pemesanan',
+                            'value' => function ($model) {
+                                return $model->getFormattedOrderId(); // Call the method to get the formatted ID
+                            },
+                        ],
+                        // 'user_id',
+                        'user.nama_pengguna',
                         [
                             'attribute' => 'tanggal',
                             'format' => ['date', 'php:d-M-Y'], // Format tanggal menjadi dd-MMM-yyyy
@@ -104,7 +111,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 'label' => 'Dibuat Pada',
                             ],
                             [
-                                'attribute' => 'updated_at',
+                                'attribute' => 'update_at',
                                 'format' => 'datetime',
                                 'label' => 'Diperbarui Pada',
                             ],
@@ -114,7 +121,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <?php endforeach; ?>
                 <div class="form-group mb-4">
                     <?= Html::a('Tambah Pesan Detail', ['pesan-detail/create', 'pemesanan_id' => $model->pemesanan_id], ['class' => 'btn btn-success']) ?>
-                    <?= Html::a('Update Item', ['pesan-detail/update', 'pesandetail_id' => $detail->pesandetail_id], ['class' => 'btn btn-primary']) ?>
+                    <?= Html::a('Update Item', ['pesan-detail/update-multiple', 'pemesanan_id' => $detail->pemesanan_id], ['class' => 'btn btn-primary']) ?>
                     <?= Html::a('Delete Item', ['pesan-detail/delete', 'pesandetail_id' => $detail->pesandetail_id], [
                         'class' => 'btn btn-danger',
                         'data' => [

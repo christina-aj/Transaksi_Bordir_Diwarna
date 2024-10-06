@@ -19,62 +19,78 @@ $isCreate = Yii::$app->controller->action->id === 'create';
 <div class="pesan-detail-form">
 
     <?php $form = ActiveForm::begin(['id' => 'dynamic-form', 'method' => 'post']); ?>
-
-    <!-- Hidden Field for pemesanan_id -->
-    <?= Html::activeHiddenInput($modelDetail[0], '[0]pemesanan_id', ['value' => $pemesananId]) ?>
-    <?= $form->field($modelDetail[0], '[0]pemesanan_id')->textInput(['value' => $pemesananId, 'readonly' => 'true']) ?>
-    <!-- Barang ID Field -->
-    <?= $form->field($modelDetail[0], '[0]barang_id')->widget(Typeahead::classname(), [
-        'options' => ['placeholder' => 'Cari Nama Barang...', 'id' => 'pesandetail-0-barang_id'],
-        'pluginOptions' => ['highlight' => true],
-        'scrollable' => true,
-        'dataset' => [
-            [
-                'datumTokenizer' => "Bloodhound.tokenizers.obj.whitespace('value')",
-                'display' => 'value',
-                'templates' => [
-                    'notFound' => "<div class='text-danger'>Tidak ada hasil</div>",
-                    'suggestion' => new \yii\web\JsExpression('function(data) {
-                        return "<div>" + data.barang_id +  " - " + data.kode_barang + " - " + data.nama_barang + " - " + data.angka + " " + data.satuan + " - " + data.warna + "</div>";
-                    }'),
-                ],
-                'remote' => [
-                    'url' => Url::to(['pesan-detail/search']) . '?q=%QUERY',
-                    'wildcard' => '%QUERY',
-                ],
-            ]
-        ],
-        'pluginEvents' => [
-            "typeahead:select" => new \yii\web\JsExpression('function(event, suggestion) {
+    <?php if ($isCreate): ?>
+        <!-- Hidden Field for pemesanan_id -->
+        <?= Html::activeHiddenInput($modelDetail[0], '[0]pemesanan_id', ['value' => $pemesananId]) ?>
+        <?= $form->field($modelDetail[0], '[0]pemesanan_id')->textInput(['value' => $pemesananId, 'readonly' => 'true']) ?>
+        <!-- Barang ID Field -->
+        <?= $form->field($modelDetail[0], '[0]barang_id')->widget(Typeahead::classname(), [
+            'options' => ['placeholder' => 'Cari Nama Barang...', 'id' => 'pesandetail-0-barang_id'],
+            'pluginOptions' => ['highlight' => true],
+            'scrollable' => true,
+            'dataset' => [
+                [
+                    'datumTokenizer' => "Bloodhound.tokenizers.obj.whitespace('value')",
+                    'display' => 'value',
+                    'templates' => [
+                        'notFound' => "<div class='text-danger'>Tidak ada hasil</div>",
+                        'suggestion' => new \yii\web\JsExpression('function(data) {
+                        if (data.barang_id && data.kode_barang && data.nama_barang) {
+                            return "<div>" + data.barang_id +  " - " + data.kode_barang + " - " + data.nama_barang + " - " + data.angka + " " + data.satuan + " - " + data.warna + "</div>";
+                        } else {
+                            return "<div>Barang tidak ditemukan</div>";
+                        }
+                    }')
+                    ],
+                    'remote' => [
+                        'url' => Url::to(['pesan-detail/search']) . '?q=%QUERY',
+                        'wildcard' => '%QUERY',
+                    ],
+                ]
+            ],
+            'pluginEvents' => [
+                "typeahead:select" => new \yii\web\JsExpression('function(event, suggestion) {
                 $("#pesandetail-0-barang_id").val(suggestion.id);
             }')
-        ]
-    ]); ?>
+            ]
+        ]); ?>
 
-    <!-- Qty Field -->
-    <?= $form->field($modelDetail[0], '[0]qty')->textInput(['id' => 'pesandetail-0-qty']) ?>
+        <!-- Qty Field -->
+        <?= $form->field($modelDetail[0], '[0]qty')->textInput(['id' => 'pesandetail-0-qty']) ?>
 
-    <?= Html::activeHiddenInput($modelDetail[0], '[0]qty_terima', ['value' => '0']) ?>
-    <!-- Catatan Field -->
-    <?= $form->field($modelDetail[0], '[0]catatan')->textInput(['maxlength' => true, 'id' => 'pesandetail-0-catatan']) ?>
+        <?= Html::activeHiddenInput($modelDetail[0], '[0]qty_terima', ['value' => '0']) ?>
+        <!-- Catatan Field -->
+        <?= $form->field($modelDetail[0], '[0]catatan')->textInput(['maxlength' => true, 'id' => 'pesandetail-0-catatan']) ?>
 
-    <!-- Langsung Pakai Checkbox -->
-    <?= $form->field($modelDetail[0], '[0]langsung_pakai')->checkbox(['id' => 'pesandetail-0-langsung_pakai']) ?>
+        <!-- Langsung Pakai Checkbox -->
+        <?= $form->field($modelDetail[0], '[0]langsung_pakai')->checkbox(['id' => 'pesandetail-0-langsung_pakai']) ?>
 
-    <?= Html::activeHiddenInput($modelDetail[0], '[0]is_correct', ['value' => '0']) ?>
+        <?= Html::activeHiddenInput($modelDetail[0], '[0]is_correct', ['value' => '0']) ?>
+    <?php endif; ?>
 
     <?php if (!$isCreate): ?>
+        <?= Html::activeHiddenInput($modelDetail[0], "[0]pesandetail_id") ?>
+        <?= $form->field($modelDetail[0], '[0]pemesanan_id')->textInput(['readonly' => true]) ?>
+        <?= $form->field($modelDetail[0], '[0]barang_id')->textInput(['id' => 'pesandetail-0-barang_id', 'readonly' => true,]) ?>
+
+        <?= $form->field($modelDetail[0], '[0]qty')->textInput(['id' => 'pesandetail-0-qty', 'readonly' => true]) ?>
+
         <!-- Qty Terima Field (hidden in create mode) -->
         <?= $form->field($modelDetail[0], '[0]qty_terima')->textInput(['id' => 'pesandetail-0-qty_terima']) ?>
+        <?= $form->field($modelDetail[0], '[0]catatan')->textInput(['maxlength' => true, 'id' => 'pesandetail-0-catatan']) ?>
 
+        <?= $form->field($modelDetail[0], '[0]langsung_pakai')->checkbox(['id' => 'pesandetail-0-langsung_pakai', 'disabled' => true]) ?>
+        <?= Html::activeHiddenInput($modelDetail[0], '[0]langsung_pakai') ?>
         <!-- Is Correct Checkbox (hidden in create mode) -->
-        <?= $form->field($modelDetail[0], '[0]is_correct')->checkbox(['id' => 'pesandetail-0-is_correct']) ?>
+        <?= $form->field($modelDetail[0], '[0]is_correct')->checkbox(['id' => 'pesandetail-0-is_correct', 'label' => 'Barang Sesuai']) ?>
     <?php endif; ?>
 
     <div id="new-form-container"></div>
 
     <div class="form-group">
-        <?= Html::button('Tambah Data Lain', ['class' => 'btn btn-success', 'id' => 'add-more']) ?>
+        <?php if ($isCreate): ?>
+            <?= Html::button('Tambah Data Lain', ['class' => 'btn btn-success', 'id' => 'add-more']) ?>
+        <?php endif; ?>
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
         <?= Html::a('Back', ['pesan-detail/index'], ['class' => 'btn btn-secondary']) ?>
     </div>

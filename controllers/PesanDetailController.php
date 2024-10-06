@@ -14,7 +14,6 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use app\helpers\ModelHelper;
 use yii\base\Model;
-use yii\web\ServerErrorHttpException;
 
 /**
  * PesanDetailController implements the CRUD actions for PesanDetail model.
@@ -212,7 +211,7 @@ class PesanDetailController extends Controller
 
         // Simpan pembelian detail dan cek apakah berhasil
         if ($pembelianDetail->save()) {
-            Yii::debug("Pembelian detail berhasil dibuat dengan ID: " . $pembelianDetail->belidetail_id, __METHOD__);
+            Yii::debug("Pembelian detail berhasil dibuat dengan ID: " . $pembelianDetail->pesandetail_id, __METHOD__);
 
             // Redirect ke tampilan pembelian detail
             return $this->redirect(['view-by-order', 'pemesanan_id' => $pemesanan_id]); // Pastikan parameter yang benar di sini
@@ -224,28 +223,136 @@ class PesanDetailController extends Controller
         }
     }
 
-
-
-
-    /**
-     * Updates an existing PesanDetail model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param int $pesandetail_id Pesandetail ID
-     * @return string|\yii\web\Response
-     * @throws NotFoundHttpException if the model cannot be found
-     */
     public function actionUpdate($pesandetail_id)
     {
-        $model = $this->findModel($pesandetail_id);
+        // Ambil semua PesanDetail terkait berdasarkan pesandetail_id
+        $modelsDetail = PesanDetail::findAll(['pesandetail_id' => $pesandetail_id]);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'pesandetail_id' => $model->pesandetail_id]);
+        if (empty($modelsDetail)) {
+            Yii::$app->session->setFlash('error', 'Data tidak ditemukan.');
+            return $this->redirect(['index']);
         }
 
+        // Ambil pemesanan_id dari salah satu model PesanDetail, misalnya model pertama
+        $pemesananId = $modelsDetail[0]->pemesanan_id;
+
+        // Jika form di-submit
+        if (Yii::$app->request->post()) {
+            // Buat array model baru untuk menangani form dinamis
+            $modelsDetail = ModelHelper::createMultiple(PesanDetail::classname(), $modelsDetail, 'pesandetail_id');
+
+            // Load multiple data dari form ke dalam array model
+            if (Model::loadMultiple($modelsDetail, Yii::$app->request->post()) && Model::validateMultiple($modelsDetail)) {
+                // Mulai transaksi untuk memastikan semua model disimpan atau tidak sama sekali
+                $transaction = Yii::$app->db->beginTransaction();
+                try {
+                    foreach ($modelsDetail as $index => $model) {
+                        // Set nilai yang diperlukan (misal: pemesanan_id dan lainnya)
+                        $model->update_at = date('Y-m-d H:i:s'); // Set waktu update
+
+                        // Jika penyimpanan gagal, rollback transaksi
+                        if (!$model->save()) {
+                            Yii::$app->session->setFlash('error', 'Gagal memperbarui data untuk model ke-' . $index);
+                            throw new \Exception('Gagal menyimpan detail pemesanan: ' . json_encode($model->getErrors()));
+                        }
+                    }
+
+                    // Jika semua penyimpanan berhasil, commit transaksi
+                    $transaction->commit();
+
+                    // Hapus session temporaryOrderId setelah update
+                    Yii::$app->session->remove('temporaryOrderId');
+
+                    // Berikan pesan sukses dan redirect ke view atau index
+                    Yii::$app->session->setFlash('success', 'Semua data berhasil diperbarui.');
+                    return $this->redirect(['view', 'pesandetail_id' => $pesandetail_id]);
+                } catch (\Exception $e) {
+                    // Jika ada kesalahan, rollback transaksi dan tampilkan pesan error
+                    $transaction->rollBack();
+                    Yii::$app->session->setFlash('error', 'Error: ' . $e->getMessage());
+                    Yii::debug($e->getMessage(), __METHOD__);
+                }
+            } else {
+                // Jika validasi gagal, tampilkan pesan error dan debug log
+                Yii::$app->session->setFlash('error', 'Validasi gagal, periksa input Anda.');
+
+                // Debugging untuk menampilkan semua error dari model
+                foreach ($modelsDetail as $index => $model) {
+                    if ($model->hasErrors()) {
+                        Yii::debug("Model ke-{$index} gagal divalidasi: " . json_encode($model->getErrors()), __METHOD__);
+                    }
+                }
+            }
+        }
+
+        // Render view dengan array modelDetail
         return $this->render('update', [
+            'modelDetail' => $modelsDetail,  // Array model PesanDetail
+            'pemesananId' => $pemesananId,   // Kirim pemesanan_id ke view jika diperlukan
+        ]);
+    }
+
+    public function actionUpdateMultiple($pemesanan_id)
+    {
+        // Ambil semua PesanDetail terkait berdasarkan pemesanan_id
+        $model = Pemesanan::findOne(['pemesanan_id' => $pemesanan_id]);
+        $modelsDetail = PesanDetail::findAll(['pemesanan_id' => $pemesanan_id]);
+
+        if (empty($modelsDetail)) {
+            Yii::$app->session->setFlash('error', 'Data tidak ditemukan.');
+            return $this->redirect(['index']);
+        }
+
+        // Jika form di-submit
+        if (Yii::$app->request->post()) {
+            // Buat array model baru untuk menangani form dinamis
+            $modelsDetail = ModelHelper::createMultiple(PesanDetail::classname(), $modelsDetail, 'pesandetail_id');
+
+            // Load multiple data dari form ke dalam array model
+            if (Model::loadMultiple($modelsDetail, Yii::$app->request->post()) && Model::validateMultiple($modelsDetail)) {
+                // Mulai transaksi
+                $transaction = Yii::$app->db->beginTransaction();
+                try {
+                    foreach ($modelsDetail as $model) {
+                        $model->update_at = date('Y-m-d H:i:s'); // Set waktu update
+
+                        if (!$model->save(false)) {
+                            Yii::$app->session->setFlash('error', 'Gagal memperbarui data untuk beberapa model.');
+                            throw new \Exception('Gagal menyimpan detail pemesanan: ' . json_encode($model->getErrors()));
+                        }
+                    }
+
+                    // Jika semua penyimpanan berhasil, commit transaksi
+                    $transaction->commit();
+                    Yii::$app->session->setFlash('success', 'Semua data berhasil diperbarui.');
+                    return $this->redirect(['pemesanan/view', 'pemesanan_id' => $pemesanan_id]);
+                } catch (\Exception $e) {
+                    $transaction->rollBack();
+                    Yii::$app->session->setFlash('error', 'Error: ' . $e->getMessage());
+                    Yii::debug($e->getMessage(), __METHOD__);
+                }
+            } else {
+                // Jika validasi gagal, tampilkan pesan error dan debug log
+                Yii::$app->session->setFlash('error', 'Validasi gagal, periksa input Anda.');
+            }
+        }
+
+        // Render view untuk multiple update
+        return $this->render('update-multiple', [
+            'modelsDetail' => $modelsDetail,
+            'pemesananId' => $pemesanan_id,
             'model' => $model,
         ]);
     }
+
+
+
+
+
+
+
+
+
 
     /**
      * Deletes an existing PesanDetail model.
@@ -276,18 +383,23 @@ class PesanDetailController extends Controller
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
-    public function actionSearch($q = null)
+    public function actionSearch($q = null, $is_search_form = false)
     {
         // Set the response format to JSON
         Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
         try {
+            // Log the incoming query parameter
+            Yii::debug("Search initiated with query parameter: " . $q);
+
             // Make sure you receive the query parameter
             if (empty($q)) {
+                Yii::warning("Query parameter is missing.");
                 throw new \yii\web\BadRequestHttpException('Query parameter is missing');
             }
 
             // Perform the query
+            Yii::debug("Performing search query for: " . $q);
             $items = Barang::find()
                 ->select(['barang_id', 'kode_barang', 'nama_barang', 'angka', 'warna', 'unit.satuan'])
                 ->leftJoin('unit', 'barang.unit_id = unit.unit_id')
@@ -301,9 +413,24 @@ class PesanDetailController extends Controller
                 ->asArray()
                 ->all();
 
+            // Log the result of the query
+            Yii::debug("Query result: " . json_encode($items));
+
             // Check if any items were found
             if (empty($items)) {
-                throw new NotFoundHttpException('No items found');
+                // Return a list with one item to avoid 'undefined' in typeahead
+                return [
+                    [
+                        'id' => null,
+                        'barang_id' => null,
+                        'kode_barang' => null,
+                        'nama_barang' => 'Barang tidak ditemukan',
+                        'angka' => null,
+                        'satuan' => null,
+                        'warna' => null,
+                        'value' => 'Barang tidak ditemukan'
+                    ]
+                ];
             }
 
             // Prepare the response array
@@ -317,21 +444,31 @@ class PesanDetailController extends Controller
                     'angka' => $item['angka'],
                     'satuan' => $item['satuan'],
                     'warna' => $item['warna'],
-                    'value' => $item['barang_id'] // 'value' adalah atribut yang diharapkan oleh Typeahead.js
+                    // Conditional value based on whether it's a search form or not
+                    'value' => $is_search_form ? $item['nama_barang'] : $item['barang_id']
                 ];
             }
+
+            // Log the final result to be returned
+            Yii::debug("Final search result: " . json_encode($result));
 
             // Return the result as JSON
             return $result;
         } catch (\yii\web\HttpException $e) {
+            // Log the HttpException
+            Yii::error("HttpException occurred: " . $e->getMessage());
             // Return an HTTP exception with the message
             return ['error' => $e->getMessage()];
         } catch (\Exception $e) {
-            // Log the error and return a 500 response with an error message
+            // Log the general exception
             Yii::error("Error in search: " . $e->getMessage());
-            throw new ServerErrorHttpException('Internal server error');
+            throw new \yii\web\ServerErrorHttpException('Internal server error');
         }
     }
+
+
+
+
 
     public function actionViewByOrder($pemesanan_id)
     {

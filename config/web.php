@@ -58,6 +58,7 @@ $config = [
                 'pemesanan/get-user-info' => 'pemesanan/get-user-info',
                 'pemesanan/create-pemesanan' => 'pemesanan/create-pemesanan',
                 'pesan-detail/search' => 'pesan-detail/search',
+                'pesan-detail/update-multiple' => 'pesan-detail/update-multiple',
             ],
         ],
 

@@ -29,7 +29,7 @@ class SiteController extends Controller
                         'roles' => ['?'],
                     ],
                     [
-                        'actions' => ['index', 'logout'],
+                        'actions' => ['index', 'logout', 'panduan'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -95,6 +95,11 @@ class SiteController extends Controller
     {
         // kode lain untuk halaman index
         return $this->render('index');
+    }
+    public function actionPanduan()
+    {
+        // kode lain untuk halaman index
+        return $this->render('panduan');
     }
 
     public function actionAdmin()

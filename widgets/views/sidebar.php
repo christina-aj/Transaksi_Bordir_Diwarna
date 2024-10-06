@@ -23,6 +23,7 @@ $SuratJalanUrl = Url::to(['/surat-jalan/index']);
 $GudangUrl = Url::to(['/gudang/index']);
 $PemesananUrl = Url::to(['/pemesanan/index']);
 $PesanDetailUrl = Url::to(['/pesan-detail/index']);
+$PanduanUrl = Url::to(['/site/panduan']);
 
 
 
@@ -136,6 +137,13 @@ $samplePageUrl = Url::to(['site/sample-page']);
                             <li class="pc-item"><a class="pc-link" href="<?= $laproUrl ?>">Laporan Produksi</a></li>
                             <li class="pc-item"><a class="pc-link" href="<?= $lapagreUrl ?>">Laporan Agregat</a></li>
                         </ul>
+                    </li>
+
+                    <li class="pc-item">
+                        <a href="<?= $PanduanUrl ?>" class="pc-link">
+                            <span class="pc-micon"><i class="fi fi-ts-book"></i></span>
+                            <span class="pc-mtext">Panduan</span>
+                        </a>
                     </li>
                 <?php endif; ?>
 

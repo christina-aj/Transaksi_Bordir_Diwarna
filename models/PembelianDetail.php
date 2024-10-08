@@ -3,26 +3,22 @@
 namespace app\models;
 
 use Yii;
-use yii\base\NotSupportedException;
-use yii\behaviors\TimestampBehavior;
-use yii\db\Expression;
 
 /**
  * This is the model class for table "pembelian_detail".
  *
  * @property int $belidetail_id
  * @property int $pembelian_id
- * @property int $barang_id
- * @property float $harga_barang
- * @property float $quantity_barang
+ * @property int $pesandetail_id
+ * @property float $cek_barang
  * @property float $total_biaya
  * @property string|null $catatan
- * @property int $langsung_pakai
+ * @property int $is_correct
  * @property string|null $created_at
  * @property string|null $updated_at
  *
- * @property Barang $barang
  * @property Pembelian $pembelian
+ * @property PesanDetail $pesandetail
  */
 class PembelianDetail extends \yii\db\ActiveRecord
 {
@@ -37,20 +33,6 @@ class PembelianDetail extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-
-    public function behaviors()
-    {
-        return [
-            [
-                'class' => TimestampBehavior::className(),
-                'attributes' => [
-                    \yii\db\ActiveRecord::EVENT_BEFORE_INSERT => ['created_at', 'updated_at'],
-                    \yii\db\ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
-                ],
-                'value' => new Expression('NOW()'), // or date('Y-m-d H:i:s')
-            ],
-        ];
-    }
     public function rules()
     {
         return [
@@ -60,7 +42,7 @@ class PembelianDetail extends \yii\db\ActiveRecord
             [['total_biaya'], 'default', 'value' => 0],
             [['created_at', 'updated_at'], 'safe'],
             [['catatan'], 'string', 'max' => 255],
-            [['barang_id'], 'exist', 'skipOnError' => true, 'targetClass' => Barang::class, 'targetAttribute' => ['barang_id' => 'barang_id']],
+            [['pembelian_id'], 'exist', 'skipOnError' => true, 'targetClass' => Pembelian::class, 'targetAttribute' => ['pembelian_id' => 'pembelian_id']],
         ];
     }
 
@@ -72,25 +54,14 @@ class PembelianDetail extends \yii\db\ActiveRecord
         return [
             'belidetail_id' => 'Belidetail ID',
             'pembelian_id' => 'Pembelian ID',
-            'barang_id' => 'Barang ID',
-            'harga_barang' => 'Harga Barang',
-            'quantity_barang' => 'Quantity Barang',
+            'pesandetail_id' => 'Pesandetail ID',
+            'cek_barang' => 'Cek Barang',
             'total_biaya' => 'Total Biaya',
             'catatan' => 'Catatan',
-            'langsung_pakai' => 'Langsung Pakai',
-            'created_at' => 'Dibuat Pada',
-            'updated_at' => 'Diperbarui Pada',
+            'is_correct' => 'Is Correct',
+            'created_at' => 'Created At',
+            'updated_at' => 'Updated At',
         ];
-    }
-
-    /**
-     * Gets query for [[Barang]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getBarang()
-    {
-        return $this->hasOne(Barang::class, ['barang_id' => 'barang_id']);
     }
 
     /**

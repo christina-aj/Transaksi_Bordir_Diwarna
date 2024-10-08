@@ -19,6 +19,8 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="pc-content">
     <div class="card table-card">
         <div class="card-header">
+    <div class="card table-card">
+        <div class="card-header">
 
             <!-- <h1><?= Html::encode($this->title) ?></h1> -->
             <h1>List Barang</h1>
@@ -87,10 +89,10 @@ $this->params['breadcrumbs'][] = $this->title;
 
                         // 'tipe',
                         // 'warna',
-                        [
-                            'attribute' => 'warna',
-                            'filter' => false
-                        ],
+                        // [
+                        //     'attribute' => 'warna',
+                        //     'filter' => false
+                        // ],
                         'supplier.nama' => [
                             'attribute' => 'nama_supplier', // Atribut dari tabel supplier
                             'value' => 'supplier.nama', // Mengakses nama supplier melalui relasi

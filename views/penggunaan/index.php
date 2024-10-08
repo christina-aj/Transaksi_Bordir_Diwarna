@@ -11,7 +11,7 @@ use kartik\daterange\DateRangePicker;
 /** @var app\models\PenggunaanSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = 'Penggunaan';
+$this->title = 'Penggunaan Bahan Produksi';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="pc-content">

@@ -8,6 +8,7 @@ use app\widgets\SidebarWidget;
 use yii\helpers\Url;
 use yii\bootstrap5\Html;
 
+
 AppAsset::register($this);
 
 ?>

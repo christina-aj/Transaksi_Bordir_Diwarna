@@ -12,7 +12,7 @@ use kartik\daterange\DateRangePicker;
 /** @var app\models\PembelianSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = 'Pembelian';
+$this->title = 'Pembelian Barang Produksi';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="pc-content">
@@ -32,71 +32,14 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-            // 'pembelian_id',
-            [
-                'attribute' => 'kode_struk', // Atribut dari tabel supplier
-                'filterInputOptions' => [            // Menambahkan placeholder pada input filter
-                    'class' => 'form-control',       // Tambahkan class jika perlu
-                    'placeholder' => 'Cari Kode Struk', // Placeholder yang ingin ditampilkan
-                ],
-            ],
-            [
-                'attribute' => 'nama_pengguna', // Atribut dari tabel supplier
-                'value' => 'user.nama_pengguna', // Mengakses nama supplier melalui relasi
-                'label' => 'Nama Pengguna',
-                'filterInputOptions' => [            // Menambahkan placeholder pada input filter
-                    'class' => 'form-control',       // Tambahkan class jika perlu
-                    'placeholder' => 'Cari Nama', // Placeholder yang ingin ditampilkan
-                ],
-            ],
-            'tanggal' =>
-            [
-                'attribute' => 'tanggal',
-                'value' => 'tanggal', // Menampilkan kolom tanggal
-                'filter' => DateRangePicker::widget([
-                    'model' => $searchModel,
-                    'attribute' => 'tanggal',
-                    'convertFormat' => true,
-                    'pluginOptions' => [
-                        'locale' => [
-                            'format' => 'd-m-Y',
-                            'separator' => ' - ',
-                        ],
-                        'autoUpdateInput' => false,
-                        'opens' => 'left',
-                    ],
-                    'options' => [
-                        'class' => 'form-control',
-                        'placeholder' => 'Pilih rentang tanggal'
-                    ]
-                ]),
-                'format' => ['date', 'php:d-M-Y'], // Format tampilan kolom tanggal
-                'headerOptions' => ['style' => 'width:250px'], // Tambahkan lebar jika diperlukan
-                'enableSorting' => true, // Mengaktifkan sorting untuk kolom tanggal
-            ],
-            // 'tanggal',
-            [
-                'attribute' => 'nama_supplier', // Atribut dari tabel supplier
-                'value' => 'supplier.nama', // Mengakses nama supplier melalui relasi
-                'label' => 'Supplier',
-                'filterInputOptions' => [            // Menambahkan placeholder pada input filter
-                    'class' => 'form-control',       // Tambahkan class jika perlu
-                    'placeholder' => 'Cari Supplier', // Placeholder yang ingin ditampilkan
-                ],
-
-            ],
-            [
-                'attribute' => 'total_biaya', // Atribut dari tabel supplier
-                'filter' => false,
-            ],
-            // 'total_biaya',
-
-            // [
-            //     'attribute' => 'langsung_pakai', // Atribut dari tabel supplier
-            //     'filter' => false,
-            // ],
-
-            // 'langsung_pakai',
+            'pembelian_id',
+            // 'pemesanan_id',
+            'pemesanan.pemesanan_id',
+            'pemesanan.user_id',
+            'pemesanan.tanggal',
+            'pemesanan.total_item',
+            'user_id',
+            'total_biaya',
             [
                 'class' => ActionColumn::className(),
                 'urlCreator' => function ($action, Pembelian $model, $key, $index, $column) {

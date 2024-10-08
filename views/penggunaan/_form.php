@@ -7,6 +7,7 @@ use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 use app\models\Barang;
 use app\models\Stock;
+use app\models\User;
 
 /** @var yii\web\View $this */
 /** @var app\models\Penggunaan $model */
@@ -57,8 +58,20 @@ use app\models\Stock;
 
 
     <?php // Menampilkan user_id dan username di satu text field (readonly)
-    $user_info = Yii::$app->user->id . ' - ' . Yii::$app->user->identity->nama_pengguna;
-    echo $form->field($model, 'user_info')->textInput(['value' => $user_info, 'readonly' => true, 'label' => 'user']) ?>
+    // $user_info = Yii::$app->user->id . ' - ' . Yii::$app->user->identity->nama_pengguna;
+    $users = User::find()->all();
+
+    // Buat array untuk dropdown (key = id, value = username)
+    $userList = ArrayHelper::map($users, 'id', function ($model) {
+        return $model['user_id'] . ' - ' . $model['nama_pengguna']; // Menampilkan user_id dan username
+    });
+
+    // Buat dropdown list untuk memilih user
+    echo $form->field($model, 'user_id', ['labelOptions' => ['label' => 'Pilih Karyawan']])->dropDownList(
+        $userList,  // Data user untuk dropdown
+        ['prompt' => 'Pilih User', 'id' => 'user_id']  // Placeholder dan opsi lain
+    ); ?>
+
 
 
     <?= $form->field($model, 'jumlah_digunakan')->textInput() ?>

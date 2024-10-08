@@ -8,15 +8,11 @@ use Yii;
  * This is the model class for table "pembelian".
  *
  * @property int $pembelian_id
+ * @property int $pemesanan_id
  * @property int $user_id
- * @property string $tanggal
- * @property int $supplier_id
- * @property string $total_biaya
- * @property int $langsung_pakai
- * @property string $kode_struk
+ * @property float $total_biaya
  *
- * @property PembelianDetail $pembelian
- * @property Supplier $supplier
+ * @property PembelianDetail[] $pembelianDetails
  * @property User $user
  */
 class Pembelian extends \yii\db\ActiveRecord
@@ -43,7 +39,6 @@ class Pembelian extends \yii\db\ActiveRecord
             [['kode_struk'], 'string', 'max' => 255],
             [['kode_struk'], 'unique'],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'user_id']],
-            [['supplier_id'], 'exist', 'skipOnError' => true, 'targetClass' => Supplier::class, 'targetAttribute' => ['supplier_id' => 'supplier_id']],
         ];
     }
 
@@ -54,17 +49,14 @@ class Pembelian extends \yii\db\ActiveRecord
     {
         return [
             'pembelian_id' => 'Pembelian ID',
-            'user_id' => 'User',
-            'tanggal' => 'Tanggal',
-            'supplier_id' => 'Supplier',
+            'pemesanan_id' => 'Pemesanan ID',
+            'user_id' => 'User ID',
             'total_biaya' => 'Total Biaya',
-            'langsung_pakai' => 'Langsung Pakai',
-            'kode_struk' => 'Kode Struk',
         ];
     }
 
     /**
-     * Gets query for [[Pembelian]].
+     * Gets query for [[PembelianDetails]].
      *
      * @return \yii\db\ActiveQuery
      */

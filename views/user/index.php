@@ -16,7 +16,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <div class="pc-content">
     <!-- <h1><?= Html::encode($this->title) ?></h1> -->
-    <h1>Akun</h1>
+    <h1>Karyawan</h1>
 
     <p>
         <?= Html::a('Buat Akun', ['create'], ['class' => 'btn btn-success rounded']) ?>

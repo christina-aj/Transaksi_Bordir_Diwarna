@@ -23,6 +23,8 @@ class PembelianSearch extends Pembelian
         return [
             [['pembelian_id', 'user_id', 'supplier_id', 'langsung_pakai'], 'integer'],
             [['total_biaya', 'kode_struk', 'tanggal', 'nama_supplier', 'nama_pengguna'], 'safe'],
+            [['pembelian_id', 'pemesanan_id', 'user_id'], 'integer'],
+            [['total_biaya'], 'number'],
         ];
     }
 
@@ -108,9 +110,11 @@ class PembelianSearch extends Pembelian
         // grid filtering conditions tanpa filter tanggal yang duplikat
         $query->andFilterWhere([
             'pembelian_id' => $this->pembelian_id,
+            'pemesanan_id' => $this->pemesanan_id,
             'user_id' => $this->user_id,
             'supplier_id' => $this->supplier_id,
             'langsung_pakai' => $this->langsung_pakai,
+            'total_biaya' => $this->total_biaya,
         ]);
         Yii::debug('Final query: ' . $query->createCommand()->rawSql);
 

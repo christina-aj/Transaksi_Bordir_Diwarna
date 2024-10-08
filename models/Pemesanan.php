@@ -10,14 +10,14 @@ use yii\db\Expression;
  * This is the model class for table "pemesanan".
  *
  * @property int $pemesanan_id
- * @property int $barang_id
  * @property int $user_id
  * @property string $tanggal
- * @property float $qty
+ * @property float $total_item
  * @property string|null $created_at
  * @property string|null $updated_at
- * 
- * @property Barang $barang
+ *
+ * @property PesanDetail[] $pesanDetails
+ * @property User $user
  */
 class Pemesanan extends \yii\db\ActiveRecord
 {
@@ -32,7 +32,6 @@ class Pemesanan extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-
     public function behaviors()
     {
         return [
@@ -49,10 +48,11 @@ class Pemesanan extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['barang_id', 'user_id', 'tanggal', 'qty'], 'required'],
-            [['barang_id', 'user_id'], 'integer'],
+            [['user_id', 'tanggal', 'total_item'], 'required'],
+            [['user_id'], 'integer'],
             [['tanggal', 'created_at', 'updated_at'], 'safe'],
-            [['qty'], 'number'],
+            [['total_item'], 'number'],
+            [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'user_id']],
         ];
     }
 
@@ -63,29 +63,37 @@ class Pemesanan extends \yii\db\ActiveRecord
     {
         return [
             'pemesanan_id' => 'Pemesanan ID',
-            'barang_id' => 'Barang ID',
             'user_id' => 'User ID',
             'tanggal' => 'Tanggal',
-            'qty' => 'Qty',
+            'total_item' => 'Total Item',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
         ];
     }
+
     /**
-     * Gets query for [[Barang]].
+     * Gets query for [[PesanDetails]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getBarang()
+    public function getPesanDetails()
     {
-        return $this->hasOne(Barang::class, ['barang_id' => 'barang_id']);
+        return $this->hasMany(PesanDetail::class, ['pemesanan_id' => 'pemesanan_id']);
     }
 
+    /**
+     * Gets query for [[User]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
     public function getUser()
     {
         return $this->hasOne(User::class, ['user_id' => 'user_id']);
     }
-
+    public function getFormattedOrderId()
+    {
+        return 'FPB-' . str_pad($this->pemesanan_id, 3, '0', STR_PAD_LEFT);
+    }
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {
@@ -95,5 +103,17 @@ class Pemesanan extends \yii\db\ActiveRecord
         } else {
             return false;
         }
+    }
+
+    public function updateTotalItem($pemesanan_id)
+    {
+        // Menghitung total item dari semua detail pembelian menggunakan relasi
+        $totalItem = $this->getPesanDetails()
+            ->where(['pemesanan_id' => $pemesanan_id])
+            ->count();
+
+        // Update total item pada tabel pembelian
+        $this->total_item = $totalItem;
+        return $this->save();
     }
 }

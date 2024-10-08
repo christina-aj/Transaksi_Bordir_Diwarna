@@ -17,17 +17,11 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'pembelian_id') ?>
 
+    <?= $form->field($model, 'pemesanan_id') ?>
+
     <?= $form->field($model, 'user_id') ?>
 
-    <?= $form->field($model, 'tanggal') ?>
-
-    <?= $form->field($model, 'supplier_id') ?>
-
     <?= $form->field($model, 'total_biaya') ?>
-
-    <?php // echo $form->field($model, 'langsung_pakai') ?>
-
-    <?php // echo $form->field($model, 'kode_struk') ?>
 
     <div class="form-group">
         <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>

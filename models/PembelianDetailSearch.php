@@ -116,11 +116,10 @@ class PembelianDetailSearch extends PembelianDetail
         $query->andFilterWhere([
             'belidetail_id' => $this->belidetail_id,
             'pembelian_id' => $this->pembelian_id,
-            'barang_id' => $this->barang_id,
-            'harga_barang' => $this->harga_barang,
-            'quantity_barang' => $this->quantity_barang,
+            'pesandetail_id' => $this->pesandetail_id,
+            'cek_barang' => $this->cek_barang,
             'total_biaya' => $this->total_biaya,
-            'langsung_pakai' => $this->langsung_pakai,
+            'is_correct' => $this->is_correct,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ]);

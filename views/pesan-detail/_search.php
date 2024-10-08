@@ -4,26 +4,26 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /** @var yii\web\View $this */
-/** @var app\models\PembelianDetailSearch $model */
+/** @var app\models\PesanDetailSearch $model */
 /** @var yii\widgets\ActiveForm $form */
 ?>
 
-<div class="pembelian-detail-search">
+<div class="pesan-detail-search">
 
     <?php $form = ActiveForm::begin([
         'action' => ['index'],
         'method' => 'get',
     ]); ?>
 
-    <?= $form->field($model, 'belidetail_id') ?>
-
-    <?= $form->field($model, 'pembelian_id') ?>
-
     <?= $form->field($model, 'pesandetail_id') ?>
 
-    <?= $form->field($model, 'cek_barang') ?>
+    <?= $form->field($model, 'pemesanan_id') ?>
 
-    <?= $form->field($model, 'total_biaya') ?>
+    <?= $form->field($model, 'barang_id') ?>
+
+    <?= $form->field($model, 'qty') ?>
+
+    <?= $form->field($model, 'qty_terima') ?>
 
     <?php // echo $form->field($model, 'catatan') ?>
 
@@ -31,7 +31,7 @@ use yii\widgets\ActiveForm;
 
     <?php // echo $form->field($model, 'created_at') ?>
 
-    <?php // echo $form->field($model, 'updated_at') ?>
+    <?php // echo $form->field($model, 'update_at') ?>
 
     <div class="form-group">
         <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>

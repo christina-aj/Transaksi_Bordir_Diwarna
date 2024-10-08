@@ -14,8 +14,8 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="card-body mx-4">
             <h5>Alur</h5>
             <p>
-
-                untuk alur penggunaan web ini sebagai berikut : <br>
+                Sebelum Memulai alurnya diharuskan mengisi data barang-barang yang diperlukan terlebih dahulu di list barang, baru akan masuk ke alur pemesanan barang bahan produksi <br>
+                Untuk alur penggunaan web ini sebagai berikut : <br>
                 1. Dimulai dari "Menu gudang->Detail Pemesanan Bahan produksi", disinilah pemesanan barang terjadi. <br>
                 2. Data secara otomatis akan muncul di pihak keuangan yang berada pada "Menu pembelian -> Detail Pembelian Bahan Produksi", pada menu ini pihak keuangan akan mengecek apakah harga sudah sesuai dengan supplier<br>
                 3. Jika sudah benar maka terjadilah transaksi dan lognya akan tersimpan di "Menu pembelian -> Riwayat Pembelian Bahan Produksi"<br>
@@ -71,9 +71,24 @@ $this->params['breadcrumbs'][] = $this->title;
                                 <i class="fi fi-ts-dolly-flatbed-alt"></i> </span><span class="pc-mtext">Pembelian</span><span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
 
                         <ul class="pc-submenu">
-                            <li class="pc-item"><a class="pc-link" href="#">List Barang Produksi</a></li>
-                            <li class="pc-item"><a class="pc-link" href="#">Riwayat Pembelian Bahan Produksi</a></li>
-                            <li class="pc-item"><a class="pc-link" href="#">Detail Pembelian Bahan Produksi</a></li>
+                            <li class="pc-item"><a class="pc-link" href="#">List Barang Produksi</a>
+                                <p>
+                                    pada menu ini merukan sebuah list dari barang yang didaftarkan (hanya daftar saja)
+                                    Tujuan pembuatan ini agar jika pihak gudang ingin memesan bahan produksinya bisa langsung terhubung dan jika di pihak keuangan bisa langsung mengetahui dan memudahkan untuk validasi mengenai harga dari barang tersebut.
+                                    <br>
+                                    <strong>--Note-- Pada menu ini revisi belom sepenuhnya di perbaiki --Note--</strong>
+                                </p>
+                            </li>
+                            <li class="pc-item"><a class="pc-link" href="#">Riwayat Pembelian Bahan Produksi</a><strong> (Fungsi belum terimplementasi dan tersinkronisasi, masih dalam pengembangan. Hanya bisa melihat view table saja.)</strong>
+                                <p>
+                                    pada menu ini merupakan sebuah Log dari transaksi sebuah barang produksi yang berfungsi untuk kelancaran pencatatan keuangannya.
+                                </p>
+                            </li>
+                            <li class="pc-item"><a class="pc-link" href="#">Detail Pembelian Bahan Produksi</a><strong>(Fungsi belum terimplementasi dan tersinkronisasi, masih dalam pengembangan. Hanya bisa melihat view table saja.)</strong>
+                                <p>
+                                    pada menu ini merupakan sebuah detil dari log transaksinya
+                                </p>
+                            </li>
                             <!-- <li class="pc-item"><a class="pc-link" href="">Report Barang</a></li> -->
                         </ul>
                         <p>
@@ -81,24 +96,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             pada menu ini akan mengecek apakah harga dari sebuah barang produksi sama dengan harga yang sudah tercantum pada list barang.
                             Tujuan ini agar pada saat pembuatan laporan keuangan menjadi transparansi dan jelas.
                             pada table ini hanya bisa memuat edit dan view detail, karena untuk pembuatan datanya berawal dari menu gudang (Detil pemesanan bahan Produksi)
-                        <ul>
-                            <li>List Barang Produksi <p>
-                                    pada menu ini merukan sebuah list dari barang yang didaftarkan (hanya daftar saja)
-                                    Tujuan pembuatan ini agar jika pihak gudang ingin memesan bahan produksinya bisa langsung terhubung dan jika di pihak keuangan bisa langsung mengetahui dan memudahkan untuk validasi mengenai harga dari barang tersebut.
-                                </p>
-                            </li>
-                            <li>Riwayat Pembelian Bahan Produksi <strong>(Fungsi belum terimplementasi dan tersinkronisasi, masih dalam pengembangan. Hanya bisa melihat view table saja.)</strong>
-                                <p>
-                                    pada menu ini merupakan sebuah Log dari transaksi sebuah barang produksi yang berfungsi untuk kelancaran pencatatan keuangannya.
-                                </p>
-                            </li>
-                            <li>Detail Pembelian Bahan Produksi <strong>(Fungsi belum terimplementasi dan tersinkronisasi, masih dalam pengembangan. Hanya bisa melihat view table saja.)</strong>
-                                <p>
-                                    pada menu ini merupakan sebuah detil dari log transaksinya
-                                </p>
-                            </li>
-                        </ul>
-                        <strong>--Note-- Fitur pada menu ini masih dalam pengembangan sehingga tampilan tablenya masih berupa tampilan seperti table database saja. --Note-- </strong>
+                            <br><strong>--Note-- Fitur pada menu ini masih dalam pengembangan sehingga tampilan tablenya masih berupa tampilan seperti table database saja. --Note-- </strong>
                         </p>
                     </li>
 
@@ -106,68 +104,52 @@ $this->params['breadcrumbs'][] = $this->title;
                         <a href="#!" class="pc-link"><span class="pc-micon">
                                 <i class="fi fi-ts-box-alt"></i> </span><span class="pc-mtext">Produksi</span><span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
                         <ul class="pc-submenu">
-                            <li class="pc-item"><a class="pc-link" href="#">Unit</a></li>
-                            <li class="pc-item"><a class="pc-link" href="#">Penggunaan Bahan Produksi</a></li>
-                            <li class="pc-item"><a class="pc-link" href="#">Stock Produksi</a></li>
-                        </ul>
-                        <p>
-                            pada menu ini merupakan menu mengenai produksi dari stock produksi, penggunaan barang produksi, dan list dari unit
-                        <ul>
-                            <li>
-                                Unit
+                            <li class="pc-item"><a class="pc-link" href="#">Unit</a>
                                 <p>
                                     merupakan sebuah list dari satuan barang produksi
                                 </p>
                             </li>
-                            <li>
-                                Penggunaan Bahan Produksi <strong>(Fungsi belum terimplementasi dan tersinkronisasi, masih dalam pengembangan. Hanya bisa melihat view table saja.)</strong>
+                            <li class="pc-item"><a class="pc-link" href="#">Penggunaan Bahan Produksi</a><strong>(Fungsi belum terimplementasi dan tersinkronisasi, masih dalam pengembangan. Hanya bisa melihat view table saja.)</strong>
                                 <p>Pada menu ini merupakan sebuah menu yang berguna untuk mengalihkan barang dari stock gudang ke stock produksi. Dalam artian barang ini akan dipakai dalam sebuah produksi</p>
                             </li>
-                            <li>
-                                Stock Produksi <strong>(Fungsi belum terimplementasi dan tersinkronisasi, masih dalam pengembangan. Hanya bisa melihat view table saja.)</strong>
+                            <li class="pc-item"><a class="pc-link" href="#">Stock Produksi</a> <strong>(Fungsi belum terimplementasi dan tersinkronisasi, masih dalam pengembangan. Hanya bisa melihat view table saja.)</strong>
                                 <p>
                                     Merupakan kartu stock yang berhubungan dengan produksi, stock ini akan mengambil dari stock gudang jika tidak memenuhi kondisi "langsung pakai".
                                     Jika memenuhi kondisi "langsung pakai" maka stock barang yang selesai dibeli akan masuk langsung ke Stock Produksi
                                 </p>
                             </li>
                         </ul>
-                        <strong>--Note-- Fitur pada menu ini masih dalam pengembangan sehingga fungsi penggunaannya masih belum terlihat. --Note-- </strong>
+                        <p>
+                            pada menu ini merupakan menu mengenai produksi dari stock produksi, penggunaan barang produksi, dan list dari unit
+                            <br><strong>--Note-- Fitur pada menu ini masih dalam pengembangan sehingga fungsi penggunaannya masih belum terlihat. --Note-- </strong>
                         </p>
                     </li>
                     <li class="pc-item pc-hasmenu">
                         <a href="#!" class="pc-link"><span class="pc-micon">
                                 <i class="fi fi-ts-box-alt"></i> </span><span class="pc-mtext">Gudang</span><span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
                         <ul class="pc-submenu">
-                            <li class="pc-item"><a class="pc-link" href="#">Riwayat Pemesanan Bahan Produksi</a></li>
-                            <li class="pc-item"><a class="pc-link" href="#">Detail Pemesanan Bahan Produksi</a></li>
-                            <li class="pc-item"><a class="pc-link" href="#">Stock Gudang</a></li>
-
-                        </ul>
-                        <p>
-                            Merupakan menu yang berhubungan dengan barang gudang, dimana barang yang selesai dibeli dan tidak langsung pakai maka datanya akan masuk di menu ini
-                        <ul>
-                            <li>
-                                Riwayat Pemesanan Bahan Produksi
+                            <li class="pc-item"><a class="pc-link" href="#">Riwayat Pemesanan Bahan Produksi</a>
                                 <p>
                                     Merupakan log dari pemesanan barang tidak tercantum keuangan hanya tercantum log pemesanan barang saja.
                                     pada menu ini data secara otomatis dibuat jika menekan tombol "create pesan detail" bisa di edit dan diliat secara detail.
                                     Validasi kelengkapan barang yang sudah datang juga dilakukan disini. pada menu ini juga untuk validasi barang per kode pemesanan, jadi bisa validasi banyak barang per kode pemesanan
                                 </p>
                             </li>
-                            <li>
-                                Detail Pemesanan Bahan Produksi
+                            <li class="pc-item"><a class="pc-link" href="#">Detail Pemesanan Bahan Produksi</a>
                                 <p>Merupakan menu untuk menampilkan detil dari log pemesanan tersebut dan untuk pembuatan sebuah pesanan barang produksi berada di menu ini.
                                     Validasi kelengkapan barang yang sudah datang juga dilakukan disini. pada menu ini juga untuk validasi barang tetapi hanya bisa di validasi per item saja
                                 </p>
                             </li>
-                            <li>
-                                Stock Gudang <strong>(Fungsi belum terimplementasi dan tersinkronisasi, masih dalam pengembangan. Hanya bisa melihat view table saja.)</strong>
+                            <li class="pc-item"><a class="pc-link" href="#">Stock Gudang</a><strong>(Fungsi belum terimplementasi dan tersinkronisasi, masih dalam pengembangan. Hanya bisa melihat view table saja.)</strong>
                                 <p>
                                     Kartu stock yang berhubungan dengan penyimpanan barang. Barang akan tercatat secara otomatis disini setelah barang sudah tervalidasi
                                 </p>
                             </li>
+
                         </ul>
-                        <strong>--Note-- Pada Menu ini hanya fitur Stock Gudang saja yang masih dalam pengembangan sehingga masih belum kelihatan jelas penggunaannya --Note-- </strong>
+                        <p>
+                            Merupakan menu yang berhubungan dengan barang gudang, dimana barang yang selesai dibeli dan tidak langsung pakai maka datanya akan masuk di menu ini
+                            <br><strong>--Note-- Pada Menu ini hanya fitur Stock Gudang saja yang masih dalam pengembangan sehingga masih belum kelihatan jelas penggunaannya --Note-- </strong>
                         </p>
                     </li>
 

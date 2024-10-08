@@ -179,21 +179,60 @@ $this->params['breadcrumbs'][] = $this->title;
                             <span class="pc-micon"><i class="fi fi-ts-conveyor-belt"></i></span>
                             <span class="pc-mtext">Mesin</span>
                         </a>
+                        <p>Merupakan menu yang memuat data mesin data yang dimasukan seperti nama dan deskripsi mesin</p>
                     </li>
                     <li class="pc-item">
                         <a href="#" class="pc-link">
                             <span class="pc-micon"><i class="fi fi-ts-calendar-shift-swap"></i></span>
                             <span class="pc-mtext">Shift</span>
                         </a>
+                        <p>Merupakan menu yang memuat data shift dengan variabel waktu dan juga nama operator dll</p>
                     </li>
+
+                    <li class="pc-item">
+                        <a href="#" class="pc-link">
+                            <span class="pc-micon"><i class="fi fi-ts-supplier-alt"></i></i></span>
+                            <span class="pc-mtext">Barang Produksi</span>
+                        </a>
+                        <p>Merupakan menu yang memuat data Barang yang sudah di produksi bukan barang mentah/ bahan mentah produksi</p>
+                    </li>
+
+                    <li class="pc-item">
+                        <a href="#" class="pc-link">
+                            <span class="pc-micon"><i class="fi fi-ts-supplier-alt"></i></i></span>
+                            <span class="pc-mtext">Jenis</span>
+                        </a>
+                        <p>Merupakan menu yang memuat data Jenis barang yang di buat untuk komplemen data barang produksi</p>
+                    </li>
+
 
 
                     <li class="pc-item pc-hasmenu">
                         <a href="#!" class="pc-link"><span class="pc-micon">
                                 <i class="fi fi-ts-ballot-check"></i> </span><span class="pc-mtext">Report</span><span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
                         <ul class="pc-submenu">
-                            <li class="pc-item"><a class="pc-link" href="#">Laporan Produksi</a></li>
-                            <li class="pc-item"><a class="pc-link" href="#">Laporan Agregat</a></li>
+                            <li class="pc-item"><a class="pc-link" href="#">Laporan Produksi</a>
+                            <p>Merupakan menu yang memuat data laporan produksi yang bertujuan untuk melaporkan barang apa dan milik siapa di produksi dan oleh siapa berdasarkan shift
+                                untuk isian dapat menggunakan tombol create.
+                            </p>
+                        </li>
+                            <li class="pc-item"><a class="pc-link" href="#">Laporan Agregat</a>
+                            <p>Merupakan menu yang memuat kumpulan data dari laporan produksi dan di agregatkan menjadi satu dengan jangka waktu 1 bulan ada juga tombol untuk melakukan filter
+                                data dengan user memasukan bulan tahun dan nama kerjaan nya user dapat memfilter data yang ingin dilihat (fitur Print data menyusul)
+                            </p>
+                        </li>
+                        </li>
+                            <li class="pc-item"><a class="pc-link" href="#">Laporan Keluar</a>
+                            <p>Merupakan menu yang dapat di gunakan untuk melakukan pengurangan stok barang jika terjadi hal yang tidak dinginkan atau semisal ada kesalahan kesalahan lain di luar barang
+                                dikirim untuk di jual
+                            </p>
+                        </li>
+                        </li>
+                            <li class="pc-item"><a class="pc-link" href="#">Nota</a>
+                            <p>Merupakan menu yang dapat di gunakan untuk membuat faktur penjualan di mana juga ada menu untuk melakukan print faktur tersebut (ada fitur dimana jika barang sudah masuk di bagian faktur maka 
+                                barang yang ada di stok akan otomatis berkurang fitur ini masih menyusul)
+                            </p>
+                        </li>   
                         </ul>
                     </li>
                 </ul>

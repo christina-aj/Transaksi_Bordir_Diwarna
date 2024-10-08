@@ -16,6 +16,7 @@ $StockUrl = Url::to(['/stock/index']);
 $ShifttUrl = Url::to(['/shift/index']);
 $laproUrl = Url::to(['/laporan-produksi/index']);
 $lapagreUrl = Url::to(['/laporan-agregat/index']);
+$lapkelUrl = Url::to(['/laporan-keluar/index']);
 $PembelianUrl = Url::to(['/pembelian/index']);
 $InvoiceUrl = Url::to(['/pembelian-detail/index']);
 $PenggunaanUrl = Url::to(['/penggunaan/index']);
@@ -24,6 +25,13 @@ $GudangUrl = Url::to(['/gudang/index']);
 $PemesananUrl = Url::to(['/pemesanan/index']);
 $PesanDetailUrl = Url::to(['/pesan-detail/index']);
 $PanduanUrl = Url::to(['/site/panduan']);
+$PenggunaanUrl = Url::to(['/penggunaan/index']);
+$SuratJalanUrl = Url::to(['/surat-jalan/index']);
+$GudangUrl = Url::to(['/gudang/index']);
+$PemesananUrl = Url::to(['/pemesanan/index']);
+$JenisUrl = Url::to(['/jenis/index']);
+$BarangProUrl = Url::to(['/barangproduksi/index']);
+$NotaUrl = Url::to(['/nota/index']);
 
 
 
@@ -136,6 +144,10 @@ $samplePageUrl = Url::to(['site/sample-page']);
                         <ul class="pc-submenu">
                             <li class="pc-item"><a class="pc-link" href="<?= $laproUrl ?>">Laporan Produksi</a></li>
                             <li class="pc-item"><a class="pc-link" href="<?= $lapagreUrl ?>">Laporan Agregat</a></li>
+                            <li class="pc-item"><a class="pc-link" href="<?= $lapkelUrl ?>">Laporan Keluar</a></li>
+                            <li class="pc-item"><a class="pc-link" href="<?= $JenisUrl ?>">Jenis</a></li>
+                            <li class="pc-item"><a class="pc-link" href="<?= $BarangProUrl ?>">Barang Produksi</a></li>
+                            <li class="pc-item"><a class="pc-link" href="<?= $NotaUrl ?>">Nota</a></li>
                         </ul>
                     </li>
 

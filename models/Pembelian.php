@@ -20,6 +20,9 @@ class Pembelian extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
+
+    public $kode_pemesanan;
+    public $kode_pembelian;
     public static function tableName()
     {
         return 'pembelian';
@@ -34,6 +37,7 @@ class Pembelian extends \yii\db\ActiveRecord
             [['pemesanan_id', 'total_biaya'], 'required'],
             [['pemesanan_id', 'user_id'], 'integer'],
             [['total_biaya'], 'number'],
+            [['kode_pemesanan', 'kode_pembelian'], 'safe'],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'user_id']],
         ];
     }
@@ -44,6 +48,8 @@ class Pembelian extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
+            'kode_pemesanan' => 'Kode Pemesanan',
+            'kode_pembelian' => 'Kode Pembelian',
             'pembelian_id' => 'Pembelian ID',
             'pemesanan_id' => 'Pemesanan ID',
             'user_id' => 'User ID',
@@ -74,5 +80,9 @@ class Pembelian extends \yii\db\ActiveRecord
     public function getPemesanan()
     {
         return $this->hasOne(Pemesanan::class, ['pemesanan_id' => 'pemesanan_id']);
+    }
+    public function getFormattedBuyOrderId()
+    {
+        return 'FPP-' . str_pad((string) $this->pembelian_id, 3, '0', STR_PAD_LEFT);
     }
 }

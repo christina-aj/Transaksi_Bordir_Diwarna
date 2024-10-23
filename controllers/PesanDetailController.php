@@ -13,6 +13,8 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use app\helpers\ModelHelper;
+use app\models\Gudang;
+use app\models\Stock;
 use yii\base\Model;
 
 /**
@@ -74,59 +76,50 @@ class PesanDetailController extends Controller
      */
     public function actionCreate($pembelianId)
     {
-        // Cek apakah pemesanan sudah ada di sesi
         $pemesananId = Yii::$app->session->get('temporaryOrderId');
-
-        // Jika tidak ada pemesanan_id, buat pemesanan baru
         if (!$pemesananId) {
             return $this->actionCreatePemesanan();
         }
 
-        // Inisialisasi array untuk beberapa model PesanDetail
         $modelDetails = [new PesanDetail()]; // Awal dengan satu instance
 
-        // Jika form di-submit
         if (Yii::$app->request->post()) {
-            // Menggunakan loadMultiple untuk memuat beberapa model dari data POST
             $modelDetails = ModelHelper::createMultiple(PesanDetail::classname());
+            Yii::debug("Hasil createMultiple: " . json_encode($modelDetails), __METHOD__);
 
-            // Load multiple data dari form ke dalam array model
             if (Model::loadMultiple($modelDetails, Yii::$app->request->post())) {
-                // Lakukan validasi pada semua model dalam array
                 if (Model::validateMultiple($modelDetails)) {
-                    // Mulai transaksi untuk memastikan semua model disimpan atau tidak sama sekali
                     $transaction = Yii::$app->db->beginTransaction();
                     try {
                         foreach ($modelDetails as $index => $model) {
-                            $model->pemesanan_id = $pemesananId; // Kaitkan dengan pemesanan
+                            if (!$model instanceof PesanDetail) {
+                                throw new \Exception("Elemen {$index} bukan instance dari PesanDetail.");
+                            }
+                            $model->pemesanan_id = $pemesananId;
                             $model->created_at = date('Y-m-d H:i:s');
                             $model->langsung_pakai = !empty(Yii::$app->request->post('PesanDetail')[$index]['langsung_pakai']) ? 1 : 0;
                             $model->is_correct = !empty(Yii::$app->request->post('PesanDetail')[$index]['is_correct']) ? 1 : 0;
 
-                            // Jika penyimpanan gagal, lemparkan Exception
                             if (!$model->save()) {
-                                // Set error dan keluarkan exception untuk rollback
                                 Yii::$app->session->setFlash('error', 'Penyimpanan gagal untuk model ke-' . $index);
                                 throw new \Exception('Gagal menyimpan detail pemesanan: ' . json_encode($model->getErrors()));
                             }
                         }
-                        // Commit transaksi jika semuanya berhasil disimpan
                         $transaction->commit();
-
-                        // Berikan pesan success dan redirect
                         Yii::$app->session->setFlash('success', 'Semua data berhasil disimpan.');
-                        return $this->actionCreatePembelianDetail($pembelianId, $modelDetails[0]->pesandetail_id, $pemesananId);
+
+                        if (!empty($modelDetails) && isset($modelDetails[0]->pesandetail_id)) {
+                            return $this->actionCreatePembelianDetail($pembelianId, $modelDetails, $pemesananId);
+                        } else {
+                            throw new \Exception('Tidak ada data di modelDetails.');
+                        }
                     } catch (\Exception $e) {
-                        // Rollback transaksi jika ada kegagalan
                         $transaction->rollBack();
                         Yii::$app->session->setFlash('error', 'Error: ' . $e->getMessage());
                         Yii::debug($e->getMessage(), __METHOD__);
                     }
                 } else {
-                    // Jika validasi gagal, tampilkan pesan error
                     Yii::$app->session->setFlash('error', 'Validasi gagal, periksa input Anda.');
-
-                    // Debugging untuk menampilkan semua error dari model
                     foreach ($modelDetails as $index => $model) {
                         if ($model->hasErrors()) {
                             Yii::debug("Model ke-{$index} gagal divalidasi: " . json_encode($model->getErrors()), __METHOD__);
@@ -139,7 +132,6 @@ class PesanDetailController extends Controller
             }
         }
 
-        // Render view untuk form detail
         return $this->render('create', [
             'modelDetail' => $modelDetails,
         ]);
@@ -198,98 +190,220 @@ class PesanDetailController extends Controller
     }
 
     // Fungsi untuk membuat pembelian detail
-    public function actionCreatePembelianDetail($pembelianId, $pesandetailId, $pemesanan_id)
+    public function actionCreatePembelianDetail($pembelianId, $modelDetails, $pemesananId)
     {
-        // Buat pembelian detail baru
-        $pembelianDetail = new PembelianDetail();
-        $pembelianDetail->pembelian_id = $pembelianId; // Mengaitkan dengan ID pembelian
-        $pembelianDetail->pesandetail_id = $pesandetailId; // Mengaitkan dengan detail pemesanan
-        $pembelianDetail->cek_barang = 0; // Atur cek_barang ke 0
-        $pembelianDetail->total_biaya = 0; // Set total biaya ke 0
-        $pembelianDetail->is_correct = 0; // Set is_correct ke 0
-        $pembelianDetail->created_at = date('Y-m-d H:i:s'); // Atur waktu pembuatan
+        // Pastikan bahwa $modelDetails adalah array
+        if (!is_array($modelDetails)) {
+            Yii::$app->session->setFlash('error', 'Parameter modelDetails tidak valid.');
+            return $this->redirect(['index']);
+        }
 
-        // Simpan pembelian detail dan cek apakah berhasil
-        if ($pembelianDetail->save()) {
-            Yii::debug("Pembelian detail berhasil dibuat dengan ID: " . $pembelianDetail->pesandetail_id, __METHOD__);
+        $transaction = Yii::$app->db->beginTransaction();
+        try {
+            foreach ($modelDetails as $pesanDetail) {
+                // Periksa apakah $pesanDetail adalah instance dari PesanDetail
+                if (!$pesanDetail instanceof PesanDetail) {
+                    Yii::$app->session->setFlash('error', 'Objek pesan detail tidak valid.');
+                    throw new \Exception('Objek dalam modelDetails bukan instance dari PesanDetail.');
+                }
+
+                // Buat pembelian detail baru untuk setiap pesan detail
+                $pembelianDetail = new PembelianDetail();
+                $pembelianDetail->pembelian_id = $pembelianId;
+
+                // Gunakan nama properti yang sesuai (ganti 'id' dengan 'pesandetail_id')
+                $pembelianDetail->pesandetail_id = $pesanDetail->pesandetail_id; // Asosiasi dengan ID pesan detail
+
+                $pembelianDetail->cek_barang = 0;
+                $pembelianDetail->total_biaya = 0;
+                $pembelianDetail->is_correct = 0;
+                $pembelianDetail->created_at = date('Y-m-d H:i:s');
+
+                // Simpan pembelian detail dan cek hasilnya
+                if (!$pembelianDetail->save()) {
+                    Yii::$app->session->setFlash('error', 'Gagal membuat pembelian detail.');
+                    throw new \Exception('Gagal menyimpan pembelian detail: ' . json_encode($pembelianDetail->getErrors()));
+                }
+
+                Yii::debug("Pembelian detail berhasil dibuat dengan ID: " . $pembelianDetail->pesandetail_id, __METHOD__);
+            }
+
+            // Commit transaksi jika semua data berhasil disimpan
+            $transaction->commit();
+            Yii::$app->session->setFlash('success', 'Semua pembelian detail berhasil disimpan.');
 
             // Redirect ke tampilan pembelian detail
-            return $this->redirect(['view-by-order', 'pemesanan_id' => $pemesanan_id]); // Pastikan parameter yang benar di sini
-        } else {
-            // Log kesalahan
-            Yii::error("Gagal membuat pembelian detail: " . json_encode($pembelianDetail->getErrors()), __METHOD__);
-            Yii::$app->session->setFlash('error', 'Gagal membuat pembelian detail.');
-            return $this->redirect(['index']); // Redirect ke halaman lain jika gagal
+            return $this->redirect(['view-by-order', 'pemesanan_id' => $pemesananId]);
+        } catch (\Exception $e) {
+            $transaction->rollBack();
+            Yii::$app->session->setFlash('error', 'Error: ' . $e->getMessage());
+            Yii::debug($e->getMessage(), __METHOD__);
+
+            return $this->redirect(['index']);
         }
     }
 
+
     public function actionUpdate($pesandetail_id)
     {
-        // Ambil semua PesanDetail terkait berdasarkan pesandetail_id
-        $modelsDetail = PesanDetail::findAll(['pesandetail_id' => $pesandetail_id]);
+        // Fetch the PesanDetail model along with its 'barang' relation
+        $modelDetail = PesanDetail::find()->joinWith(['barang', 'pemesanan'])->where(['pesandetail_id' => $pesandetail_id])->one();
 
-        if (empty($modelsDetail)) {
+        if (!$modelDetail) {
             Yii::$app->session->setFlash('error', 'Data tidak ditemukan.');
             return $this->redirect(['index']);
         }
 
-        // Ambil pemesanan_id dari salah satu model PesanDetail, misalnya model pertama
-        $pemesananId = $modelsDetail[0]->pemesanan_id;
+        // Store pemesanan_id for use in the view
+        $pemesananId = $modelDetail->pemesanan_id;
 
-        // Jika form di-submit
+        // Handle form submission
         if (Yii::$app->request->post()) {
-            // Buat array model baru untuk menangani form dinamis
-            $modelsDetail = ModelHelper::createMultiple(PesanDetail::classname(), $modelsDetail, 'pesandetail_id');
+            // Create multiple models dynamically using a helper function
+            $modelsDetail = ModelHelper::createMultiple(PesanDetail::classname(), [$modelDetail], 'pesandetail_id');
 
-            // Load multiple data dari form ke dalam array model
+            // Load and validate multiple models
             if (Model::loadMultiple($modelsDetail, Yii::$app->request->post()) && Model::validateMultiple($modelsDetail)) {
-                // Mulai transaksi untuk memastikan semua model disimpan atau tidak sama sekali
                 $transaction = Yii::$app->db->beginTransaction();
                 try {
                     foreach ($modelsDetail as $index => $model) {
-                        // Set nilai yang diperlukan (misal: pemesanan_id dan lainnya)
-                        $model->update_at = date('Y-m-d H:i:s'); // Set waktu update
+                        // Set required values like update_at timestamp
+                        $model->update_at = date('Y-m-d H:i:s');
 
-                        // Jika penyimpanan gagal, rollback transaksi
+                        // Update nama_barang if barang_id is set
+                        if ($model->barang_id) {
+                            $barang = Barang::findOne($model->barang_id);
+                            if ($barang) {
+                                $model->nama_barang = $barang->nama_barang;
+                            }
+                        }
+
+                        // Save the model and handle errors
                         if (!$model->save()) {
+                            $errorDetails = json_encode($model->getErrors());
                             Yii::$app->session->setFlash('error', 'Gagal memperbarui data untuk model ke-' . $index);
-                            throw new \Exception('Gagal menyimpan detail pemesanan: ' . json_encode($model->getErrors()));
+                            Yii::error("Gagal menyimpan detail pemesanan untuk model ke-{$index}: {$errorDetails}", __METHOD__);
+                            throw new \Exception('Gagal menyimpan detail pemesanan: ' . $errorDetails);
+                        }
+
+                        if ($model->barang_id) {
+                            if ($model->langsung_pakai == 0) {
+                                $gudang = Gudang::find()->where(['barang_id' => $model->barang_id])
+                                    ->orderBy(['barang_id' => SORT_DESC]) // Asumsi id berurutan sebagai acuan data terakhir
+                                    ->one();
+                                if ($gudang) {
+                                    $gudang->tanggal = date('Y-m-d');
+                                    $gudang->user_id = 1;
+                                    $gudang->quantity_awal = $gudang->quantity_akhir;
+                                    if (empty($model->qty_terima)) {
+                                        $gudang->quantity_masuk += $model->qty_terima;
+                                    } else {
+                                        $gudang->quantity_masuk += $model->qty_terima;
+                                    }
+
+                                    $gudang->quantity_keluar = 0;
+                                    $gudang->quantity_akhir = $gudang->quantity_awal + $gudang->quantity_masuk;
+                                } else {
+                                    $gudang = new Gudang();
+                                    $gudang->barang_id = $model->barang_id;
+                                    $gudang->tanggal = date('Y-m-d');
+                                    $gudang->user_id = 1;
+                                    $gudang->quantity_awal = 0;
+                                    $gudang->quantity_masuk += $model->qty_terima;
+                                    $gudang->quantity_keluar = 0;
+                                    $gudang->quantity_akhir = $gudang->quantity_awal;
+                                }
+                                if (!$gudang->save()) {
+                                    $errorDetails = json_encode($gudang->getErrors());
+                                    Yii::$app->session->setFlash('error', 'Gagal memperbarui stok Gudang untuk barang.');
+                                    Yii::error("Gagal menyimpan stok Gudang: {$errorDetails}", __METHOD__);
+                                    throw new \Exception('Gagal menyimpan stok Gudang: ' . $errorDetails);
+                                }
+                            } elseif ($model->langsung_pakai == 1) {
+
+                                $qty_minta = $model->qty;
+                                $qty_terima = $model->qty_terima;
+                                // Cari data terakhir berdasarkan barang_id untuk mendapatkan quantity_awal
+                                $lastStock = Stock::find()->joinWith('pesan_detail')
+                                    ->where(['barang_id' => $model->barang_id, 'pesandetail_id' => $model->pesandetail_id])
+                                    ->orderBy(['barang_id' => SORT_DESC, 'pesandetail_id' => SORT_DESC]) // Asumsi id berurutan sebagai acuan data terakhir
+                                    ->one();
+
+                                // Jika ada data sebelumnya, gunakan quantity_akhir sebagai quantity_awal baru
+                                $quantityAwal = $lastStock ? $lastStock->quantity_akhir : 0;
+                                $previousQtyTerima = $lastStock ? ($lastStock->quantity_masuk + $lastStock->quantity_keluar) : 0;
+
+                                if ($qty_terima >= $qty_minta) {
+                                    // Jika barang diterima sepenuhnya dalam satu kali penerimaan
+                                    $quantityMasuk = $qty_minta;
+                                } else {
+                                    // Jika barang diterima sebagian dan ada tambahan penerimaan
+                                    $quantityMasuk = $qty_terima - $previousQtyTerima;
+                                }
+
+                                $quantityMasuk = max($quantityMasuk, 0);
+                                // Buat instance Stock baru
+                                $stock = new Stock();
+                                $stock->barang_id = $model->barang_id;
+                                $stock->tambah_stock = date('Y-m-d');
+                                $stock->user_id = 1;
+                                $stock->quantity_awal = $quantityAwal;
+                                $stock->quantity_masuk = $quantityMasuk;
+                                $stock->quantity_keluar = 0;
+                                $stock->quantity_akhir = $quantityAwal + $quantityMasuk;
+                                $stock->is_ready = 1;
+                                $stock->is_new = 0;
+                                $stock->created_at = date('Y-m-d');
+                                $stock->updated_at = date('Y-m-d');
+                                if (!$stock->save()) {
+                                    $errorDetails = json_encode($stock->getErrors());
+                                    Yii::$app->session->setFlash('error', 'Gagal memperbarui stok produksi untuk barang.');
+                                    Yii::error("Gagal menyimpan stok produksi: {$errorDetails}", __METHOD__);
+                                    throw new \Exception('Gagal menyimpan stok produksi: ' . $errorDetails);
+                                }
+                            }
                         }
                     }
 
-                    // Jika semua penyimpanan berhasil, commit transaksi
+                    // Commit transaction if all saves are successful
                     $transaction->commit();
 
-                    // Hapus session temporaryOrderId setelah update
+                    // Clear temporary order ID and show success message
                     Yii::$app->session->remove('temporaryOrderId');
-
-                    // Berikan pesan sukses dan redirect ke view atau index
-                    Yii::$app->session->setFlash('success', 'Semua data berhasil diperbarui.');
+                    Yii::$app->session->setFlash('success', 'Data berhasil diperbarui.');
                     return $this->redirect(['view', 'pesandetail_id' => $pesandetail_id]);
                 } catch (\Exception $e) {
-                    // Jika ada kesalahan, rollback transaksi dan tampilkan pesan error
                     $transaction->rollBack();
                     Yii::$app->session->setFlash('error', 'Error: ' . $e->getMessage());
-                    Yii::debug($e->getMessage(), __METHOD__);
+                    Yii::error('Transaksi gagal: ' . $e->getMessage(), __METHOD__);
                 }
             } else {
-                // Jika validasi gagal, tampilkan pesan error dan debug log
+                // Handle validation failure
                 Yii::$app->session->setFlash('error', 'Validasi gagal, periksa input Anda.');
-
-                // Debugging untuk menampilkan semua error dari model
-                foreach ($modelsDetail as $index => $model) {
-                    if ($model->hasErrors()) {
-                        Yii::debug("Model ke-{$index} gagal divalidasi: " . json_encode($model->getErrors()), __METHOD__);
-                    }
-                }
+                $this->logValidationErrors($modelsDetail);
             }
         }
 
-        // Render view dengan array modelDetail
+        // Render view with model details
         return $this->render('update', [
-            'modelDetail' => $modelsDetail,  // Array model PesanDetail
-            'pemesananId' => $pemesananId,   // Kirim pemesanan_id ke view jika diperlukan
+            'modelDetail' => [$modelDetail],
+            'pemesananId' => $pemesananId,
         ]);
+    }
+
+    /**
+     * Logs validation errors for models.
+     * 
+     * @param array $models Array of models with potential validation errors.
+     */
+    private function logValidationErrors($models)
+    {
+        foreach ($models as $index => $model) {
+            if ($model->hasErrors()) {
+                $errorDetails = json_encode($model->getErrors());
+                Yii::error("Model ke-{$index} gagal divalidasi: {$errorDetails}", __METHOD__);
+            }
+        }
     }
 
     public function actionUpdateMultiple($pemesanan_id)

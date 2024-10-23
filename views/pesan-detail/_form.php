@@ -14,6 +14,11 @@ use yii\widgets\ActiveForm;
 $pemesananId = Yii::$app->session->get('temporaryOrderId'); // Ambil pemesanan_id dari session
 Yii::debug("Pemesanan ID yang digunakan: " . $pemesananId, __METHOD__);
 $isCreate = Yii::$app->controller->action->id === 'create';
+if ($isCreate) {
+    $pemesananId = Yii::$app->session->get('temporaryOrderId');
+} else {
+    $pemesananId = $modelDetail[0]->pemesanan_id;
+}
 $formattedOrderId = $modelDetail[0]->getFormattedOrderIdProperty($pemesananId);
 ?>
 
@@ -28,7 +33,8 @@ $formattedOrderId = $modelDetail[0]->getFormattedOrderIdProperty($pemesananId);
             'value' => $modelDetail[0]->getFormattedOrderIdProperty($pemesananId),
             'readonly' => 'true'
         ]) ?>
-        <?= Html::activeHiddenInput($modelDetail[0], '[0]barang_id') ?>
+        <?= $form->field($modelDetail[0], '[0]barang_id')->textInput(['id' => 'pesandetail-0-barang_id', 'readonly' => 'true']) ?>
+        <?= Html::activeHiddenInput($modelDetail[0], '[0]barang_id', ['id' => 'hidden-pesandetail-0-barang_id']) ?>
         <!-- Barang ID Field -->
         <?= $form->field($modelDetail[0], '[0]nama_barang')->widget(Typeahead::classname(), [
             'options' => ['placeholder' => 'Cari Nama Barang...', 'id' => 'pesandetail-0-nama_barang'],
@@ -56,6 +62,7 @@ $formattedOrderId = $modelDetail[0]->getFormattedOrderIdProperty($pemesananId);
             ],
             'pluginEvents' => [
                 "typeahead:select" => new \yii\web\JsExpression('function(event, suggestion) {
+                $("#hidden-pesandetail-0-barang_id").val(suggestion.barang_id);
                 $("#pesandetail-0-barang_id").val(suggestion.id);
             }')
             ]
@@ -75,20 +82,32 @@ $formattedOrderId = $modelDetail[0]->getFormattedOrderIdProperty($pemesananId);
     <?php endif; ?>
 
     <?php if (!$isCreate): ?>
-        <?= Html::activeHiddenInput($modelDetail[0], "[0]pesandetail_id") ?>
-        <?= $form->field($modelDetail[0], '[0]pemesanan_id')->textInput(['readonly' => true]) ?>
-        <?= $form->field($modelDetail[0], '[0]barang_id')->textInput(['id' => 'pesandetail-0-barang_id', 'readonly' => true,]) ?>
+        <?php foreach ($modelDetail as $index => $model): ?>
+            <?= Html::activeHiddenInput($model, "[$index]pesandetail_id") ?>
+            <?= Html::activeHiddenInput($model, "[$index]pemesanan_id") ?>
 
-        <?= $form->field($modelDetail[0], '[0]qty')->textInput(['id' => 'pesandetail-0-qty', 'readonly' => true]) ?>
+            <?= $form->field($model, "[$index]kode_pemesanan")->textInput(
+                [
+                    'value' => $formattedOrderId,
+                    'id' => "pesandetail-{$index}-kode_pemesanan",
+                    'readonly' => true
+                ]
+            ) ?>
+            <?= Html::activeHiddenInput($model, "[$index]barang_id") ?>
+            <?= $form->field($model, "[$index]barang_id")->textInput(['id' => "pesandetail-{$index}-barang_id", 'readonly' => true,]) ?>
+            <?= $form->field($model, "[$index]nama_barang")->textInput(['id' => "pesandetail-{$index}-nama_barang", 'readonly' => true, 'value' => $model->NamaBarang]) ?>
 
-        <!-- Qty Terima Field (hidden in create mode) -->
-        <?= $form->field($modelDetail[0], '[0]qty_terima')->textInput(['id' => 'pesandetail-0-qty_terima']) ?>
-        <?= $form->field($modelDetail[0], '[0]catatan')->textInput(['maxlength' => true, 'id' => 'pesandetail-0-catatan']) ?>
+            <?= $form->field($model, "[$index]qty")->textInput(['id' => "pesandetail-{$index}-qty", 'readonly' => true]) ?>
 
-        <?= $form->field($modelDetail[0], '[0]langsung_pakai')->checkbox(['id' => 'pesandetail-0-langsung_pakai', 'disabled' => true]) ?>
-        <?= Html::activeHiddenInput($modelDetail[0], '[0]langsung_pakai') ?>
-        <!-- Is Correct Checkbox (hidden in create mode) -->
-        <?= $form->field($modelDetail[0], '[0]is_correct')->checkbox(['id' => 'pesandetail-0-is_correct', 'label' => 'Barang Sesuai']) ?>
+            <!-- Qty Terima Field (hidden in create mode) -->
+            <?= $form->field($model, "[$index]qty_terima")->textInput(['id' => "pesandetail-{$index}-qty_terima"]) ?>
+            <?= $form->field($model, "[$index]catatan")->textInput(['maxlength' => true, 'id' => "pesandetail-{$index}-catatan"]) ?>
+
+            <?= $form->field($model, "[$index]langsung_pakai")->checkbox(['id' => "pesandetail-{$index}-langsung_pakai", 'disabled' => true]) ?>
+            <?= Html::activeHiddenInput($model, "[$index]langsung_pakai") ?>
+            <!-- Is Correct Checkbox (hidden in create mode) -->
+            <?= $form->field($model, "[$index]is_correct")->checkbox(['id' => "pesandetail-{$index}-is_correct", 'label' => 'Barang Sesuai']) ?>
+        <?php endforeach; ?>
     <?php endif; ?>
 
     <div id="new-form-container"></div>
@@ -185,6 +204,8 @@ $(document).ready(function() {
         </div>
         `;
         $('#new-form-container').append(newForm); // Tambah form baru ke container
+
+        // Set nilai kode_pemesanan sama dengan pemesanan_id
 
         // Inisialisasi Typeahead untuk elemen yang baru saja ditambahkan
         initializeTypeahead(index);

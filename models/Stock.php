@@ -31,6 +31,8 @@ class Stock extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
+
+    public $pesandetail_id;
     public static function tableName()
     {
         return 'stock';
@@ -57,7 +59,7 @@ class Stock extends \yii\db\ActiveRecord
     {
         return [
             [['tambah_stock', 'barang_id', 'quantity_awal', 'quantity_masuk', 'quantity_keluar', 'quantity_akhir', 'user_id', 'is_ready', 'is_new'], 'required'],
-            [['tambah_stock', 'created_at', 'updated_at'], 'safe'],
+            [['tambah_stock', 'created_at', 'updated_at', 'pesandetail_id'], 'safe'],
             [['barang_id', 'user_id', 'is_ready', 'is_new'], 'integer'],
             [['quantity_awal', 'quantity_masuk', 'quantity_keluar', 'quantity_akhir'], 'number'],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'user_id']],
@@ -71,6 +73,7 @@ class Stock extends \yii\db\ActiveRecord
     {
         return [
             'stock_id' => 'Stock ID',
+            'pesandetail_id' => 'pesandetail_id',
             'tambah_stock' => 'Tambah Stock',
             'barang_id' => 'Barang ID',
             'quantity_awal' => 'Quantity Awal',
@@ -112,6 +115,10 @@ class Stock extends \yii\db\ActiveRecord
     public function getPembelian()
     {
         return $this->hasOne(Pembelian::class, ['pembelian_id' => 'pembelian_id']);
+    }
+    public function getPesanDetail()
+    {
+        return $this->hasOne(PesanDetail::class, ['pesandetail_id' => 'pesandetail_id']);
     }
 
     public function beforeSave($insert)

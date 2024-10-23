@@ -24,6 +24,9 @@ class Pemesanan extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
+
+    public $kode_pemesanan;
+    public $nama_pemesan;
     public static function tableName()
     {
         return 'pemesanan';
@@ -50,7 +53,7 @@ class Pemesanan extends \yii\db\ActiveRecord
         return [
             [['user_id', 'tanggal', 'total_item'], 'required'],
             [['user_id'], 'integer'],
-            [['tanggal', 'created_at', 'updated_at'], 'safe'],
+            [['tanggal', 'created_at', 'updated_at', 'kode_pemesanan', 'nama_pemesan'], 'safe'],
             [['total_item'], 'number'],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'user_id']],
         ];
@@ -63,6 +66,8 @@ class Pemesanan extends \yii\db\ActiveRecord
     {
         return [
             'pemesanan_id' => 'Pemesanan ID',
+            'kode_pemesanan' => 'Kode Pemesanan',
+            'nama_pemesan' => 'Nama Pemesan',
             'user_id' => 'User ID',
             'tanggal' => 'Tanggal',
             'total_item' => 'Total Item',

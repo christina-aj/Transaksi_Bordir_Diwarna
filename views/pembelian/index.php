@@ -30,13 +30,37 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-            'pembelian_id',
+            // 'pembelian_id',
+            'kode_pembelian' => [
+                'label' => 'Kode pembelian',
+                'attribute' => 'kode_pembelian',
+                'value' => function ($model) {
+                    return $model->getFormattedBuyOrderId(); // Call the method to get the formatted ID
+                },
+                'filterInputOptions' => [
+                    'class' => 'form-control',
+                    'placeholder' => 'Cari Kode Pembelian',
+                ],
+            ],
+            'kode_pemesanan' => [
+                'label' => 'Kode pemesanan',
+                'attribute' => 'kode_pemesanan',
+                'value' => function ($model) {
+                    $pemesanan = $model->pemesanan;
+                    return $pemesanan->getFormattedOrderId(); // Call the method to get the formatted ID
+                },
+                'filterInputOptions' => [
+                    'class' => 'form-control',
+                    'placeholder' => 'Cari Kode Pembelian',
+                ],
+            ],
             // 'pemesanan_id',
-            'pemesanan.pemesanan_id',
-            'pemesanan.user_id',
+            // 'pemesanan.pemesanan_id',
+            // 'pemesanan.user_id',
+            'pemesanan.user.nama_pengguna',
             'pemesanan.tanggal',
             'pemesanan.total_item',
-            'user_id',
+            // 'user_id',
             'total_biaya',
             [
                 'class' => ActionColumn::className(),

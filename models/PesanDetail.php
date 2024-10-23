@@ -61,7 +61,7 @@ class PesanDetail extends \yii\db\ActiveRecord
             [['qty_terima'], 'default', 'value' => 0],
             [['is_correct'], 'default', 'value' => 0],
             [['langsung_pakai'], 'default', 'value' => 0],
-            [['created_at', 'update_at'], 'safe'],
+            [['created_at', 'update_at', 'nama_barang', 'kode_pemesanan'], 'safe'],
             [['catatan'], 'string', 'max' => 255],
             [['pemesanan_id'], 'exist', 'skipOnError' => true, 'targetClass' => Pemesanan::class, 'targetAttribute' => ['pemesanan_id' => 'pemesanan_id']],
             [['barang_id'], 'exist', 'skipOnError' => true, 'targetClass' => Barang::class, 'targetAttribute' => ['barang_id' => 'barang_id']],
@@ -99,6 +99,15 @@ class PesanDetail extends \yii\db\ActiveRecord
         return $this->hasOne(Barang::class, ['barang_id' => 'barang_id']);
     }
 
+    public function getNamaBarang()
+    {
+        if ($this->barang) {
+            return $this->barang->kode_barang . ' - ' . $this->barang->nama_barang;
+        }
+
+        return null;
+    }
+
     /**
      * Gets query for [[Pemesanan]].
      *
@@ -127,6 +136,7 @@ class PesanDetail extends \yii\db\ActiveRecord
             $pemesanan->updateTotalItem($this->pemesanan_id);
         }
     }
+
 
     // public function afterDelete()
     // {

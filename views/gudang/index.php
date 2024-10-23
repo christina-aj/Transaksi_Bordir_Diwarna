@@ -18,9 +18,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <p>
-        <?= Html::a('Create Gudang', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
 
     <?php // echo $this->render('_search', ['model' => $searchModel]); 
     ?>
@@ -57,6 +54,15 @@ $this->params['breadcrumbs'][] = $this->title;
                 'format' => ['date', 'php:d-M-Y'], // Format tampilan kolom tanggal
                 'headerOptions' => ['style' => 'width:250px'], // Tambahkan lebar jika diperlukan
                 'enableSorting' => true, // Mengaktifkan sorting untuk kolom tanggal
+            ],
+            'barang.kode_barang' => [
+                'attribute' => 'kode_barang', // Atribut dari tabel supplier
+                'value' => 'barang.kode_barang', // Mengakses nama supplier melalui relasi
+                'label' => 'Kode Barang',
+                'filterInputOptions' => [            // Menambahkan placeholder pada input filter
+                    'class' => 'form-control',       // Tambahkan class jika perlu
+                    'placeholder' => 'Cari Barang', // Placeholder yang ingin ditampilkan
+                ],
             ],
             // 'barang_id',
             'barang.nama_barang' => [

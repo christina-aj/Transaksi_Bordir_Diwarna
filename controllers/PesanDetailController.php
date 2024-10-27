@@ -80,6 +80,7 @@ class PesanDetailController extends Controller
         if (!$pemesananId) {
             return $this->actionCreatePemesanan();
         }
+        $pemesanan = Pemesanan::findOne(['pemesanan_id' => $pemesananId]);
 
         $modelDetails = [new PesanDetail()]; // Awal dengan satu instance
 
@@ -134,6 +135,7 @@ class PesanDetailController extends Controller
 
         return $this->render('create', [
             'modelDetail' => $modelDetails,
+            'pemesanan' => $pemesanan,
         ]);
     }
 

@@ -2,9 +2,13 @@
 
 namespace app\controllers;
 
+use app\helpers\ModelHelper;
 use app\models\Pemesanan;
 use app\models\PemesananSearch;
+use app\models\PesanDetail;
+use app\models\User;
 use Yii;
+use yii\base\Model;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -76,20 +80,79 @@ class PemesananController extends Controller
      */
     public function actionCreate()
     {
-        $model = new Pemesanan();
+        $modelPemesanan = new Pemesanan();
+        $modelPemesanan->tanggal = date('Y-m-d');
+        $modelPemesanan->user_id = Yii::$app->user->identity->user_id;
+        $modelPemesanan->total_item = 0;
 
-        if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'pemesanan_id' => $model->pemesanan_id]);
-            }
+        // Retrieve the user's name
+        $user = User::findOne($modelPemesanan->user_id);
+        $modelPemesanan->nama_pemesan = $user->nama_pengguna;
+
+        // Generate a temporary order code
+        $kodeSementara = Pemesanan::find()->max('pemesanan_id') + 1;
+        $modelPemesanan->kode_pemesanan = 'FPB-' . str_pad($kodeSementara, 3, '0', STR_PAD_LEFT);
+
+        if ($modelPemesanan->save()) {
+            // Redirect to the add details page, passing the pemesanan_id
+            return $this->redirect(['add-details', 'pemesanan_id' => $modelPemesanan->pemesanan_id]);
         } else {
-            $model->loadDefaultValues();
+            Yii::$app->session->setFlash('error', 'Gagal membuat pemesanan.');
+            return $this->redirect(['create']);
+        }
+    }
+
+    public function actionAddDetails($pemesanan_id)
+    {
+        $modelPemesanan = Pemesanan::findOne($pemesanan_id);
+        if (!$modelPemesanan) {
+            throw new NotFoundHttpException("Data pemesanan tidak ditemukan.");
+        }
+
+        // Initialize an empty PesanDetail model
+        $modelDetails = [new PesanDetail()];
+
+        if (Yii::$app->request->isPost) {
+            $modelDetails = ModelHelper::createMultiple(PesanDetail::classname());
+            Model::loadMultiple($modelDetails, Yii::$app->request->post());
+
+            if (Model::validateMultiple($modelDetails)) {
+                $transaction = Yii::$app->db->beginTransaction();
+                try {
+                    foreach ($modelDetails as $index => $modelDetail) {
+                        $modelDetail->pemesanan_id = $pemesanan_id;
+                        $modelDetail->created_at = date('Y-m-d H:i:s');
+                        $modelDetail->langsung_pakai = !empty(Yii::$app->request->post('PesanDetail')[$index]['langsung_pakai']) ? 1 : 0;
+                        $modelDetail->is_correct = !empty(Yii::$app->request->post('PesanDetail')[$index]['is_correct']) ? 1 : 0;
+
+                        if (!$modelDetail->save()) {
+                            Yii::$app->session->setFlash('error', "Gagal menyimpan detail pemesanan ke-{$index}");
+                            throw new \Exception('Gagal menyimpan detail pemesanan: ' . json_encode($modelDetail->getErrors()));
+                        }
+                    }
+
+                    $transaction->commit();
+                    Yii::$app->session->setFlash('success', 'Semua detail berhasil disimpan.');
+                    return $this->redirect(['view', 'pemesanan_id' => $pemesanan_id]);
+                } catch (\Exception $e) {
+                    $transaction->rollBack();
+                    Yii::$app->session->setFlash('error', 'Terjadi kesalahan: ' . $e->getMessage());
+                }
+            } else {
+                Yii::$app->session->setFlash('error', 'Validasi gagal, periksa input Anda.');
+            }
         }
 
         return $this->render('create', [
-            'model' => $model,
+            'modelPemesanan' => $modelPemesanan,
+            'modelDetails' => $modelDetails,
+            'isReadonly' => true,
         ]);
     }
+
+    public function actionCreateDetail() {}
+
+
 
     /**
      * Updates an existing Pemesanan model.

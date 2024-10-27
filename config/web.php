@@ -4,6 +4,12 @@ $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
 
 $config = [
+    'modules' => [
+        'gridview' => [
+            'class' => '\kartik\grid\Module',
+            // Anda bisa menambahkan konfigurasi opsional di sini
+        ],
+    ],
     'defaultRoute' => 'site/login',
     'id' => 'basic',
     'basePath' => dirname(__DIR__),

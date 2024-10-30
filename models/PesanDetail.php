@@ -55,7 +55,7 @@ class PesanDetail extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['pemesanan_id', 'barang_id', 'qty', 'is_correct', 'langsung_pakai', 'nama_barang', 'kode_pemesanan'], 'required'],
+            [['pemesanan_id', 'barang_id', 'qty', 'is_correct', 'langsung_pakai', 'nama_barang'], 'required'],
             [['pemesanan_id', 'barang_id', 'is_correct', 'langsung_pakai'], 'integer'],
             [['qty', 'qty_terima'], 'number'],
             [['qty_terima'], 'default', 'value' => 0],

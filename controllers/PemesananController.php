@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use app\helpers\ModelHelper;
+use app\models\Barang;
 use app\models\Pemesanan;
 use app\models\PemesananSearch;
 use app\models\PesanDetail;
@@ -81,24 +82,31 @@ class PemesananController extends Controller
     public function actionCreate()
     {
         $modelPemesanan = new Pemesanan();
+
+        // Set default data
         $modelPemesanan->tanggal = date('Y-m-d');
         $modelPemesanan->user_id = Yii::$app->user->identity->user_id;
         $modelPemesanan->total_item = 0;
+        $modelPemesanan->created_at = date('Y-m-d H:i:s');
+        $modelPemesanan->updated_at = date('Y-m-d H:i:s');
 
         // Retrieve the user's name
         $user = User::findOne($modelPemesanan->user_id);
         $modelPemesanan->nama_pemesan = $user->nama_pengguna;
 
+
+
         // Generate a temporary order code
         $kodeSementara = Pemesanan::find()->max('pemesanan_id') + 1;
         $modelPemesanan->kode_pemesanan = 'FPB-' . str_pad($kodeSementara, 3, '0', STR_PAD_LEFT);
 
+        // Simpan data `Pemesanan` secara otomatis
         if ($modelPemesanan->save()) {
-            // Redirect to the add details page, passing the pemesanan_id
+            // Redirect ke halaman untuk menambahkan detail
             return $this->redirect(['add-details', 'pemesanan_id' => $modelPemesanan->pemesanan_id]);
         } else {
             Yii::$app->session->setFlash('error', 'Gagal membuat pemesanan.');
-            return $this->redirect(['create']);
+            return $this->redirect(['index']);
         }
     }
 
@@ -109,8 +117,9 @@ class PemesananController extends Controller
             throw new NotFoundHttpException("Data pemesanan tidak ditemukan.");
         }
 
-        // Initialize an empty PesanDetail model
+        // Inisialisasi model detail
         $modelDetails = [new PesanDetail()];
+
 
         if (Yii::$app->request->isPost) {
             $modelDetails = ModelHelper::createMultiple(PesanDetail::classname());
@@ -120,14 +129,16 @@ class PemesananController extends Controller
                 $transaction = Yii::$app->db->beginTransaction();
                 try {
                     foreach ($modelDetails as $index => $modelDetail) {
+                        $barang = Barang::findOne($modelDetail->barang_id);
+                        $modelDetail->kode_pemesanan = $barang->kode_barang;
                         $modelDetail->pemesanan_id = $pemesanan_id;
                         $modelDetail->created_at = date('Y-m-d H:i:s');
                         $modelDetail->langsung_pakai = !empty(Yii::$app->request->post('PesanDetail')[$index]['langsung_pakai']) ? 1 : 0;
                         $modelDetail->is_correct = !empty(Yii::$app->request->post('PesanDetail')[$index]['is_correct']) ? 1 : 0;
 
                         if (!$modelDetail->save()) {
-                            Yii::$app->session->setFlash('error', "Gagal menyimpan detail pemesanan ke-{$index}");
-                            throw new \Exception('Gagal menyimpan detail pemesanan: ' . json_encode($modelDetail->getErrors()));
+                            Yii::$app->session->setFlash('error', "Gagal menyimpan detail pemesanan ke-{$index}: " . json_encode($modelDetail->getErrors()));
+                            throw new \Exception('Gagal menyimpan detail pemesanan.');
                         }
                     }
 
@@ -139,7 +150,7 @@ class PemesananController extends Controller
                     Yii::$app->session->setFlash('error', 'Terjadi kesalahan: ' . $e->getMessage());
                 }
             } else {
-                Yii::$app->session->setFlash('error', 'Validasi gagal, periksa input Anda.');
+                Yii::$app->session->setFlash('error', 'Validasi gagal: ' . json_encode($modelDetails[0]->getErrors()));
             }
         }
 
@@ -150,7 +161,6 @@ class PemesananController extends Controller
         ]);
     }
 
-    public function actionCreateDetail() {}
 
 
 
@@ -181,6 +191,27 @@ class PemesananController extends Controller
      * @return \yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
+
+    public function actionCancel($pemesanan_id)
+    {
+        // Temukan data pemesanan yang sesuai
+        $modelPemesanan = Pemesanan::findOne($pemesanan_id);
+
+        if ($modelPemesanan) {
+            // Hapus semua detail terkait jika ada
+            PesanDetail::deleteAll(['pemesanan_id' => $pemesanan_id]);
+
+            // Hapus data pemesanan
+            $modelPemesanan->delete();
+
+            Yii::$app->session->setFlash('success', 'Pemesanan telah dibatalkan.');
+        } else {
+            Yii::$app->session->setFlash('error', 'Data pemesanan tidak ditemukan.');
+        }
+
+        // Redirect ke halaman utama atau halaman sebelumnya
+        return $this->redirect(['index']);
+    }
     public function actionDelete($pemesanan_id)
     {
         $this->findModel($pemesanan_id)->delete();

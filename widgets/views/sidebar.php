@@ -95,7 +95,7 @@ $samplePageUrl = Url::to(['site/sample-page']);
                                 <i class="fi fi-ts-box-alt"></i> </span><span class="pc-mtext">Gudang</span><span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
                         <ul class="pc-submenu">
                             <li class="pc-item"><a class="pc-link" href="<?= $PemesananUrl ?>">Riwayat Pemesanan Bahan Produksi</a></li>
-                            <li class="pc-item"><a class="pc-link" href="<?= $PesanDetailUrl ?>">Detail Pemesanan Bahan Produksi</a></li>
+                            <!-- <li class="pc-item"><a class="pc-link" href="<?= $PesanDetailUrl ?>">Detail Pemesanan Bahan Produksi</a></li> -->
                             <li class="pc-item"><a class="pc-link" href="<?= $GudangUrl ?>">Stock Gudang</a></li>
 
                         </ul>

@@ -84,6 +84,13 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' => 'total_item',
                 'filter' => false
             ],
+            'status' => [
+                'label' => 'Status Pemesanan',
+                'attribute' => 'status',
+                'value' => function ($model) {
+                    return $model->getStatusLabel();
+                },
+            ],
             // 'created_at',
             //'updated_at',
             [

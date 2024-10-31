@@ -76,7 +76,7 @@ $samplePageUrl = Url::to(['site/sample-page']);
                         <ul class="pc-submenu">
                             <li class="pc-item"><a class="pc-link" href="<?= $BarangUrl ?>">List Barang Produksi</a></li>
                             <li class="pc-item"><a class="pc-link" href="<?= $PembelianUrl ?>">Riwayat Pembelian Bahan Produksi</a></li>
-                            <li class="pc-item"><a class="pc-link" href="<?= $InvoiceUrl ?>">Detail Pembelian Bahan Produksi</a></li>
+                            <!-- <li class="pc-item"><a class="pc-link" href="<?= $InvoiceUrl ?>">Detail Pembelian Bahan Produksi</a></li> -->
                             <!-- <li class="pc-item"><a class="pc-link" href="">Report Barang</a></li> -->
                         </ul>
                     </li>
@@ -174,7 +174,7 @@ $samplePageUrl = Url::to(['site/sample-page']);
                         <ul class="pc-submenu">
                             <li class="pc-item"><a class="pc-link" href="<?= $BarangUrl ?>">List Barang</a></li>
                             <li class="pc-item"><a class="pc-link" href="<?= $PembelianUrl ?>">Riwayat Pembelian Bahan Produksi</a></li>
-                            <li class="pc-item"><a class="pc-link" href="<?= $InvoiceUrl ?>">Detail Pembelian Bahan Produksi</a></li>
+                            <!-- <li class="pc-item"><a class="pc-link" href="<?= $InvoiceUrl ?>">Detail Pembelian Bahan Produksi</a></li> -->
                             <!-- <li class="pc-item"><a class="pc-link" href="">Report Barang</a></li> -->
                         </ul>
                     </li>

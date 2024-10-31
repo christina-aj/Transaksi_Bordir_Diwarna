@@ -57,13 +57,26 @@ $this->params['breadcrumbs'][] = $this->title;
             // 'pemesanan_id',
             // 'pemesanan.pemesanan_id',
             // 'pemesanan.user_id',
-            'pemesanan.user.nama_pengguna',
-            'pemesanan.tanggal',
-            'pemesanan.total_item',
+            'pemesanan.user.nama_pengguna' => [
+                'label' => 'Nama Pemesan',
+                'attribute' => 'nama_pemesan',
+                'value' => 'pemesanan.user.nama_pengguna',
+            ],
+            'pemesanan.tanggal' => [
+                'label' => 'Tanggal Pemesanan',
+                'attribute' => 'tanggal',
+                'value' => 'pemesanan.tanggal',
+            ],
+            'pemesanan.total_item' => [
+                'label' => 'Total Item',
+                'attribute' => 'total_item',
+                'value' => 'pemesanan.total_item'
+            ],
             // 'user_id',
             'total_biaya',
             [
                 'class' => ActionColumn::className(),
+                'template' => '{view}',
                 'urlCreator' => function ($action, Pembelian $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'pembelian_id' => $model->pembelian_id]);
                 }

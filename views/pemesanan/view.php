@@ -1,5 +1,6 @@
 <?php
 
+use app\models\Pemesanan;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 use yii\grid\GridView;
@@ -18,117 +19,117 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="card-header">
             <h1><?= Html::encode($this->title) ?></h1>
         </div>
-        <div class="card-body mx-4">
+        <div class="row mx-3">
+            <!-- Kolom Kiri -->
+            <div class="col-md-4">
+                <p><strong>Kode Pemesanan:</strong> <?= $model->getFormattedOrderId() ?></p>
+                <p><strong>Nama Pemesan:</strong> <?= $model->user ? $model->user->nama_pengguna : '-' ?></p>
+            </div>
+
+            <!-- Kolom Kanan -->
+            <div class="col-md-4">
+                <p><strong>Tanggal:</strong> <?= Yii::$app->formatter->asDate($model->tanggal) ?></p>
+                <p><strong>Total Item:</strong> <?= $model->total_item ?></p>
+            </div>
+            <div class="col-md-4">
+                <?php
+                // Tentukan warna berdasarkan status
+                $statusColor = '';
+                switch ($model->status) {
+                    case Pemesanan::STATUS_PENDING:
+                        $statusColor = 'color: orange;';
+                        break;
+                    case Pemesanan::STATUS_VERIFIED:
+                        $statusColor = 'color: blue;';
+                        break;
+                    case Pemesanan::STATUS_COMPLETE:
+                        $statusColor = 'color: green;';
+                        break;
+                }
+                ?>
+                <p><strong>Status:</strong><span style="<?= $statusColor ?>"> <?= $model->getStatusLabel() ?></span> </p>
+            </div>
+        </div>
+        <br>
+        <hr>
+
+
+        <div class=" card-body mx-4">
             <div class="table-responsive">
-                <!-- DetailView for Pemesanan -->
-                <?= DetailView::widget([
-                    'model' => $model,
-                    'attributes' => [
-                        'kode_pemesanan' => [
-                            'label' => 'Kode Pemesanan',
-                            'atttribute' => 'kode_pemesanan',
+                <!-- GridView for PesanDetail -->
+                <?= GridView::widget([
+                    'dataProvider' => new \yii\data\ArrayDataProvider([
+                        'allModels' => $pesanDetails,
+                        'pagination' => false, // Sesuaikan jika tidak menggunakan pagination
+                    ]),
+                    'columns' => [
+                        ['class' => 'yii\grid\SerialColumn', 'header' => 'No'],
+                        [
+                            'attribute' => 'kode_barang',
+                            'label' => 'Kode Barang',
                             'value' => function ($model) {
-                                return $model->getFormattedOrderId(); // Call the method to get the formatted ID
+                                if ($model->barang) {
+                                    return $model->barang->kode_barang;
+                                }
+                                return 'Barang tidak ditemukan';
                             },
                         ],
-                        // 'user_id',
-                        'user.nama_pengguna',
                         [
-                            'attribute' => 'tanggal',
-                            'format' => ['date', 'php:d-M-Y'], // Format tanggal menjadi dd-MMM-yyyy
-                            'label' => 'Tanggal Pemesanan',
+                            'attribute' => 'barang_id',
+                            'label' => 'Nama Barang',
+                            'value' => function ($model) {
+                                if ($model->barang) {
+                                    return $model->barang->nama_barang;
+                                }
+                                return 'Barang tidak ditemukan';
+                            },
                         ],
                         [
-                            'attribute' => 'total_item',
-                            'label' => 'Total Item',
+                            'attribute' => 'qty',
+                            'label' => 'Quantity Pesan',
                         ],
                         [
-                            'attribute' => 'created_at',
-                            'format' => 'datetime',
-                            'label' => 'Dibuat Pada',
+                            'attribute' => 'qty_terima',
+                            'label' => 'Quantity Terima',
                         ],
                         [
-                            'attribute' => 'updated_at',
-                            'format' => 'datetime',
-                            'label' => 'Diperbarui Pada',
+                            'attribute' => 'catatan',
+                            'label' => 'Catatan',
                         ],
+                        [
+                            'attribute' => 'langsung_pakai',
+                            'label' => 'Langsung Pakai',
+                            'format' => 'raw',
+                            'value' => function ($model) {
+                                return $model->langsung_pakai == 1
+                                    ? Html::tag('span', '&#10004;', ['style' => 'color: green; font-size: 20px;'])
+                                    : Html::tag('span', '&#10008;', ['style' => 'color: red; font-size: 20px;']);
+                            },
+                        ],
+                        [
+                            'attribute' => 'is_correct',
+                            'label' => 'Barang Sesuai',
+                            'format' => 'raw',
+                            'value' => function ($model) {
+                                return $model->is_correct == 1
+                                    ? Html::tag('span', '&#10004;', ['style' => 'color: green; font-size: 20px;'])
+                                    : Html::tag('span', '&#10008;', ['style' => 'color: red; font-size: 20px;']);
+                            },
+                        ],
+                        // [
+                        //     'attribute' => 'created_at',
+                        //     'format' => 'datetime',
+                        //     'label' => 'Dibuat Pada',
+                        // ],
+                        // [
+                        //     'attribute' => 'update_at',
+                        //     'format' => 'datetime',
+                        //     'label' => 'Diperbarui Pada',
+                        // ],
                     ],
-                ]) ?>
-                <hr>
+                ]); ?>
 
-                <!-- GridView for PesanDetail -->
-                <!-- DetailView for each PesanDetail -->
-                <?php foreach ($pesanDetails as $index => $detail): ?>
-                    <h3>Item #<?= $index + 1 ?></h3>
-                    <?= DetailView::widget([
-                        'model' => $detail,
-                        'attributes' => [
-                            [
-                                'attribute' => 'barang_id',
-                                'label' => 'Nama Barang',
-                                'value' => function ($model) {
-                                    if ($model->barang) {
-                                        return $model->barang->kode_barang . ' - ' . $model->barang->nama_barang;
-                                    }
-                                    return 'Barang tidak ditemukan';
-                                },
-                            ],
-                            [
-                                'attribute' => 'qty',
-                                'label' => 'Quantity Pesan',
-                            ],
-                            [
-                                'attribute' => 'qty_terima',
-                                'label' => 'Quantity Terima',
-                            ],
-                            [
-                                'attribute' => 'catatan',
-                                'label' => 'Catatan',
-                            ],
-                            [
-                                'attribute' => 'langsung_pakai',
-                                'label' => 'Langsung Pakai',
-                                'format' => 'raw',
-                                'value' => function ($model) {
-                                    return $model->langsung_pakai == 1
-                                        ? Html::tag('span', '&#10004;', ['style' => 'color: green; font-size: 20px;'])
-                                        : Html::tag('span', '&#10008;', ['style' => 'color: red; font-size: 20px;']);
-                                },
-                            ],
-                            [
-                                'attribute' => 'is_correct',
-                                'label' => 'Barang Sesuai',
-                                'format' => 'raw',
-                                'value' => function ($model) {
-                                    return $model->is_correct == 1
-                                        ? Html::tag('span', '&#10004;', ['style' => 'color: green; font-size: 20px;'])
-                                        : Html::tag('span', '&#10008;', ['style' => 'color: red; font-size: 20px;']);
-                                },
-                            ],
-                            [
-                                'attribute' => 'created_at',
-                                'format' => 'datetime',
-                                'label' => 'Dibuat Pada',
-                            ],
-                            [
-                                'attribute' => 'update_at',
-                                'format' => 'datetime',
-                                'label' => 'Diperbarui Pada',
-                            ],
-                        ],
-                    ]) ?>
-                    <hr>
-                <?php endforeach; ?>
                 <div class="form-group mb-4">
-                    <?= Html::a('Tambah Pesan Detail', ['pesan-detail/create', 'pemesanan_id' => $model->pemesanan_id], ['class' => 'btn btn-success']) ?>
-                    <?= Html::a('Update Item', ['pesan-detail/update-multiple', 'pemesanan_id' => $detail->pemesanan_id], ['class' => 'btn btn-primary']) ?>
-                    <?= Html::a('Delete Item', ['pesan-detail/delete', 'pesandetail_id' => $detail->pesandetail_id], [
-                        'class' => 'btn btn-danger',
-                        'data' => [
-                            'confirm' => 'Apakah Anda yakin ingin menghapus item ini?',
-                            'method' => 'post',
-                        ],
-                    ]) ?>
                     <?= Html::a('Back', ['index'], ['class' => 'btn btn-secondary']) ?>
                 </div>
             </div>

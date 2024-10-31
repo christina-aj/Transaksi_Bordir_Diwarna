@@ -23,7 +23,7 @@ class PemesananSearch extends Pemesanan
     public function rules()
     {
         return [
-            [['pemesanan_id', 'user_id'], 'integer'],
+            [['pemesanan_id', 'user_id', 'status'], 'integer'],
             [['tanggal', 'created_at', 'updated_at', 'kode_pemesanan', 'nama_pemesan'], 'safe'],
             [['total_item'], 'number'],
         ];
@@ -64,7 +64,8 @@ class PemesananSearch extends Pemesanan
                         'desc' => ['user.nama_pengguna' => SORT_DESC],
                     ],
                     'tanggal',
-                    'total_item'
+                    'total_item',
+                    'status',
                 ]
             ],
             'pagination' => [
@@ -101,6 +102,7 @@ class PemesananSearch extends Pemesanan
             'pemesanan_id' => $this->pemesanan_id,
             'user_id' => $this->user_id,
             'total_item' => $this->total_item,
+            'status' => $this->status,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ]);

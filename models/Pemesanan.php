@@ -13,6 +13,7 @@ use yii\db\Expression;
  * @property int $user_id
  * @property string $tanggal
  * @property float $total_item
+ * @property int $status
  * @property string|null $created_at
  * @property string|null $updated_at
  *
@@ -27,6 +28,11 @@ class Pemesanan extends \yii\db\ActiveRecord
 
     public $kode_pemesanan;
     public $nama_pemesan;
+
+    const STATUS_PENDING = 0;
+    const STATUS_VERIFIED = 1;
+    const STATUS_COMPLETE = 2;
+
     public static function tableName()
     {
         return 'pemesanan';
@@ -35,6 +41,22 @@ class Pemesanan extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
+
+    public static function getStatusLabels()
+    {
+        return [
+            self::STATUS_PENDING => 'Pending',
+            self::STATUS_VERIFIED => 'Verified',
+            self::STATUS_COMPLETE => 'Complete',
+        ];
+    }
+
+    // Metode untuk mendapatkan label status berdasarkan nilai
+    public function getStatusLabel()
+    {
+        $statusLabels = self::getStatusLabels();
+        return $statusLabels[$this->status] ?? 'Unknown';
+    }
     public function behaviors()
     {
         return [
@@ -52,7 +74,7 @@ class Pemesanan extends \yii\db\ActiveRecord
     {
         return [
             [['user_id', 'tanggal', 'total_item'], 'required'],
-            [['user_id'], 'integer'],
+            [['user_id', 'status'], 'integer'],
             [['tanggal', 'created_at', 'updated_at', 'kode_pemesanan', 'nama_pemesan'], 'safe'],
             [['total_item'], 'number'],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'user_id']],

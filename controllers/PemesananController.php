@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use app\helpers\ModelHelper;
 use app\models\Barang;
+use app\models\Pembelian;
 use app\models\Pemesanan;
 use app\models\PemesananSearch;
 use app\models\PesanDetail;
@@ -87,6 +88,7 @@ class PemesananController extends Controller
         $modelPemesanan->tanggal = date('Y-m-d');
         $modelPemesanan->user_id = Yii::$app->user->identity->user_id;
         $modelPemesanan->total_item = 0;
+        $modelPemesanan->status = Pemesanan::STATUS_PENDING;
         $modelPemesanan->created_at = date('Y-m-d H:i:s');
         $modelPemesanan->updated_at = date('Y-m-d H:i:s');
 
@@ -94,19 +96,48 @@ class PemesananController extends Controller
         $user = User::findOne($modelPemesanan->user_id);
         $modelPemesanan->nama_pemesan = $user->nama_pengguna;
 
-
-
         // Generate a temporary order code
         $kodeSementara = Pemesanan::find()->max('pemesanan_id') + 1;
         $modelPemesanan->kode_pemesanan = 'FPB-' . str_pad($kodeSementara, 3, '0', STR_PAD_LEFT);
 
-        // Simpan data `Pemesanan` secara otomatis
+        // Simpan data `Pemesanan` dan lanjutkan ke pembuatan pembelian
         if ($modelPemesanan->save()) {
-            // Redirect ke halaman untuk menambahkan detail
-            return $this->redirect(['add-details', 'pemesanan_id' => $modelPemesanan->pemesanan_id]);
+            // Set session untuk ID Pemesanan agar bisa digunakan di `actionCreatePembelian`
+            Yii::$app->session->set('temporaryOrderId', $modelPemesanan->pemesanan_id);
+
+            // Redirect ke `CreatePembelian`
+            return $this->redirect(['create-pembelian']);
         } else {
             Yii::$app->session->setFlash('error', 'Gagal membuat pemesanan.');
             return $this->redirect(['index']);
+        }
+    }
+
+    public function actionCreatePembelian()
+    {
+        // Ambil ID Pemesanan dari session
+        $pemesananId = Yii::$app->session->get('temporaryOrderId');
+        if (!$pemesananId) {
+            Yii::$app->session->setFlash('error', 'ID pemesanan tidak ditemukan.');
+            return $this->redirect(['index']);
+        }
+
+        // Buat pembelian baru
+        $pembelian = new Pembelian();
+        $pembelian->pemesanan_id = $pemesananId; // Mengaitkan dengan pemesanan
+        $pembelian->user_id = Yii::$app->user->identity->user_id;
+        $pembelian->total_biaya = 0; // Set total biaya ke 0
+
+        // Simpan pembelian dan cek apakah berhasil
+        if ($pembelian->save()) {
+            Yii::debug("Pembelian berhasil dibuat dengan ID: " . $pembelian->pembelian_id, __METHOD__);
+
+            // Redirect ke `AddDetails` untuk menambahkan detail pesanan
+            return $this->redirect(['add-details', 'pemesanan_id' => $pemesananId]);
+        } else {
+            Yii::error("Gagal membuat pembelian: " . json_encode($pembelian->getErrors()), __METHOD__);
+            Yii::$app->session->setFlash('error', 'Gagal membuat pembelian.');
+            return $this->redirect(['index']); // Redirect ke halaman lain jika gagal
         }
     }
 
@@ -198,13 +229,26 @@ class PemesananController extends Controller
         $modelPemesanan = Pemesanan::findOne($pemesanan_id);
 
         if ($modelPemesanan) {
-            // Hapus semua detail terkait jika ada
-            PesanDetail::deleteAll(['pemesanan_id' => $pemesanan_id]);
+            // Mulai transaksi untuk memastikan data konsisten
+            $transaction = Yii::$app->db->beginTransaction();
+            try {
+                // Hapus semua detail terkait jika ada
+                PesanDetail::deleteAll(['pemesanan_id' => $pemesanan_id]);
 
-            // Hapus data pemesanan
-            $modelPemesanan->delete();
+                // Hapus data pembelian terkait pemesanan
+                Pembelian::deleteAll(['pemesanan_id' => $pemesanan_id]);
 
-            Yii::$app->session->setFlash('success', 'Pemesanan telah dibatalkan.');
+                // Hapus data pemesanan
+                $modelPemesanan->delete();
+
+                // Commit transaksi jika semua penghapusan berhasil
+                $transaction->commit();
+                Yii::$app->session->setFlash('success', 'Pemesanan dan pembelian terkait telah dibatalkan.');
+            } catch (\Exception $e) {
+                // Rollback transaksi jika ada kegagalan
+                $transaction->rollBack();
+                Yii::$app->session->setFlash('error', 'Gagal membatalkan pemesanan: ' . $e->getMessage());
+            }
         } else {
             Yii::$app->session->setFlash('error', 'Data pemesanan tidak ditemukan.');
         }

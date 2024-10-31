@@ -55,8 +55,15 @@ class PembelianController extends Controller
      */
     public function actionView($pembelian_id)
     {
+        $model = $this->findModel($pembelian_id);
+
+        // Mengambil semua PesanDetail yang terkait dengan pemesanan ini
+        $PembelianDetail = $model->pembelianDetails;
+
+        // Mengirim model dan pesanDetails ke view
         return $this->render('view', [
-            'model' => $this->findModel($pembelian_id),
+            'model' => $model,
+            'PembelianDetail' => $PembelianDetail, // Pastikan $pesanDetails diteruskan
         ]);
     }
 

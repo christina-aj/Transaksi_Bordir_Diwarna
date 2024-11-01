@@ -2,16 +2,12 @@
 
 namespace app\controllers;
 
-use app\helpers\ModelHelper;
 use app\models\Pemesanan;
 use app\models\PemesananSearch;
+use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-use Yii;
-use yii\base\Model;
-
-
 
 /**
  * PemesananController implements the CRUD actions for Pemesanan model.
@@ -60,43 +56,16 @@ class PemesananController extends Controller
      */
     public function actionView($pemesanan_id)
     {
+        // Temukan model Pemesanan berdasarkan pemesanan_id
+        $model = $this->findModel($pemesanan_id);
+
+        // Mengambil semua PesanDetail yang terkait dengan pemesanan ini
+        $pesanDetails = $model->pesanDetails;
+
+        // Mengirim model dan pesanDetails ke view
         return $this->render('view', [
-            'model' => $this->findModel($pemesanan_id),
-        ]);
-    }
-
-    public function actionCreateMultiple()
-    {
-        // Inisialisasi array pemesanan
-        $pemesanan = [new Pemesanan()];
-
-        if (Yii::$app->request->post()) {
-            // Load data dari form post dan buat beberapa instance Pemesanan
-            $pemesanan = ModelHelper::createMultiple(Pemesanan::class);
-            Model::loadMultiple($pemesanan, Yii::$app->request->post());
-
-            // Validasi model pemesanan
-            $valid = Model::validateMultiple($pemesanan);
-
-            if ($valid) {
-                $transaction = Yii::$app->db->beginTransaction();
-                try {
-                    foreach ($pemesanan as $item) {
-                        if (!$item->save(false)) {
-                            $transaction->rollBack();
-                            break;
-                        }
-                    }
-                    $transaction->commit();
-                    return $this->redirect(['index']);
-                } catch (\Exception $e) {
-                    $transaction->rollBack();
-                }
-            }
-        }
-
-        return $this->render('create-multiple', [
-            'pemesanan' => $pemesanan, // Kirim variabel pemesanan ke view
+            'model' => $model,
+            'pesanDetails' => $pesanDetails, // Pastikan $pesanDetails diteruskan
         ]);
     }
 
@@ -105,8 +74,6 @@ class PemesananController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
-
-
     public function actionCreate()
     {
         $model = new Pemesanan();
@@ -172,5 +139,19 @@ class PemesananController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+    public function actionGetUserInfo()
+    {
+        if (Yii::$app->user->isGuest) {
+            return $this->asJson(['success' => false, 'message' => 'User not logged in']);
+        }
+
+        // Mengambil data user yang sedang login    
+        $user = Yii::$app->user->identity;
+
+        return $this->asJson([
+            'success' => true,
+            'username' => $user->nama_pengguna,
+        ]);
     }
 }

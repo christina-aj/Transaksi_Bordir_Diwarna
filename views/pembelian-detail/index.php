@@ -6,16 +6,10 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
-use kartik\daterange\DateRangePicker;
 
 /** @var yii\web\View $this */
 /** @var app\models\PembelianDetailSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
-if ($showFullContent) {
-    $this->title = 'Buku Kas';
-} else {
-    $this->title = 'Surat Jalan';
-}
 
 $this->title = 'Pembelian Detail';
 $this->params['breadcrumbs'][] = $this->title;
@@ -25,16 +19,16 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?php if ($showFullContent)
-            echo Html::a('Create Pembelian Detail', ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Create Pembelian Detail', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
     <?php // echo $this->render('_search', ['model' => $searchModel]); 
     ?>
+
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
-        'columns' => array_filter([
+        'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
             'belidetail_id',
@@ -64,7 +58,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     return Url::toRoute([$action, 'belidetail_id' => $model->belidetail_id]);
                 }
             ],
-        ]),
+        ],
     ]); ?>
 
 

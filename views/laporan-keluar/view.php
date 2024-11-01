@@ -37,5 +37,5 @@ $this->params['breadcrumbs'][] = $this->title;
             'catatan:ntext',
         ],
     ]) ?>
-
+    <?= Html::a('Back', ['laporan-keluar/index'], ['class' => 'btn btn-secondary']) ?>
 </div>

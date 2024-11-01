@@ -36,24 +36,12 @@ class PembelianDetailController extends Controller
      *
      * @return string
      */
-    public function actionIndex1()
+    public function actionIndex()
     {
         $searchModel = new PembelianDetailSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
-            'showFullContent' => true,
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-        ]);
-    }
-    public function actionIndex2()
-    {
-        $searchModel = new PembelianDetailSearch();
-        $dataProvider = $searchModel->search($this->request->queryParams);
-
-        return $this->render('index', [
-            'showFullContent' => false,
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);

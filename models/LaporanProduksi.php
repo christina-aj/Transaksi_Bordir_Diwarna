@@ -10,7 +10,7 @@ use Yii;
  * This is the model class for table "laporanproduksi".
  *
  * @property int $laporan_id
- * @property int $mesin_id
+ * @property int $nama_mesin
  * @property int $shift_id
  * @property string $tanggal_kerja
  * @property string $nama_kerjaan
@@ -52,11 +52,10 @@ class laporanproduksi extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['mesin_id', 'shift_id', 'nama_kerjaan', 'vs', 'stitch', 'kuantitas', 'bs','nama_barang'], 'required'],
-            [['mesin_id', 'shift_id', 'vs', 'stitch', 'kuantitas', 'bs'], 'integer'],
-            [['tanggal_kerja',], 'safe'],
-            [['nama_kerjaan'], 'string', 'max' => 200],
-            [['mesin_id'], 'exist', 'skipOnError' => true, 'targetClass' => Mesin::class, 'targetAttribute' => ['mesin_id' => 'mesin_id']],
+            [['nama_mesin', 'shift_id', 'nama_kerjaan', 'vs', 'stitch', 'kuantitas', 'bs','nama_barang'], 'required'],
+            [['shift_id', 'vs', 'stitch', 'kuantitas', 'bs'], 'integer'],
+            [['tanggal_kerja','nama_mesin'], 'safe'],
+            [['nama_kerjaan','nama_mesin'], 'string', 'max' => 200],
             [['shift_id'], 'exist', 'skipOnError' => true, 'targetClass' => Shift::class, 'targetAttribute' => ['shift_id' => 'shift_id']],
         ];
     }
@@ -68,7 +67,7 @@ class laporanproduksi extends \yii\db\ActiveRecord
     {
         return [
             'laporan_id' => 'Laporan ID',
-            'mesin_id' => 'Mesin ID',
+            'nama_mesin' => 'Nama Mesin',
             'shift_id' => 'Shift ID',
             'tanggal_kerja' => 'Tanggal Kerja',
             'nama_barang' => 'Nama Barang',
@@ -85,10 +84,6 @@ class laporanproduksi extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getMesin()
-    {
-        return $this->hasOne(Mesin::class, ['mesin_id' => 'mesin_id']);
-    }
 
     /**
      * Gets query for [[Shift]].
@@ -104,5 +99,6 @@ class laporanproduksi extends \yii\db\ActiveRecord
     {
         return $this->shift ? $this->shift->nama_operator : null;
     }
+
 
 }

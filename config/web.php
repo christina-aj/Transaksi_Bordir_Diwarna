@@ -39,7 +39,8 @@ $config = [
             'targets' => [
                 [
                     'class' => 'yii\log\FileTarget',
-                    'levels' => ['error', 'warning'],
+                    'levels' => ['error', 'warning', 'info'], // Pastikan 'debug' ada
+                    'logFile' => '@runtime/logs/app.log', // Tentukan file log
                 ],
             ],
         ],
@@ -52,10 +53,12 @@ $config = [
                 'pembelian-detail/get-harga' => 'pembelian-detail/get-harga',
                 'penggunaan/get-stock' => 'penggunaan/get-stock',
                 'stock/get-stock' => 'stock/get-stock',
-                'pembelian-detail/index' => 'pembelian-detail/index1',
-                'surat-jalan/index' => 'pembelian-detail/index2',
                 'penggunaan/get-user-info' => 'penggunaan/get-user-info',
                 'gudang/get-stock' => 'gudang/get-stock',
+                'pemesanan/get-user-info' => 'pemesanan/get-user-info',
+                'pemesanan/create-pemesanan' => 'pemesanan/create-pemesanan',
+                'pesan-detail/search' => 'pesan-detail/search',
+                'pesan-detail/update-multiple' => 'pesan-detail/update-multiple',
             ],
         ],
 
@@ -81,5 +84,7 @@ if (YII_ENV_DEV) {
         'allowedIPs' => ['127.0.0.1', '::1'],
     ];
 }
+
+
 
 return $config;

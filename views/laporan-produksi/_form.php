@@ -16,8 +16,8 @@ use app\models\Shift;
     <?php $form = ActiveForm::begin(); ?>
 
     <?php
-    $dataMesin = ArrayHelper::map(\app\models\Mesin::find()->asArray()->all(), 'mesin_id', 'mesin_id');
-    echo $form->field($model, 'mesin_id')
+    $dataMesin = ArrayHelper::map(\app\models\Mesin::find()->asArray()->all(), 'nama', 'nama');
+    echo $form->field($model, 'nama_mesin')
         ->dropDownList(
             $dataMesin,
             ['prompt'=>'Select Mesin']
@@ -26,8 +26,10 @@ use app\models\Shift;
 
     <?php
     $dataShift = ArrayHelper::map(Shift::find()->asArray()->all(), 'shift_id', function($model) {
-        return $model['shift_id'] . ' - ' . $model['nama_operator'];
+        $shiftTime = ($model['shift'] == 1) ? 'Pagi' : 'Sore';
+        return $model['shift_id'] . ' - ' . $model['nama_operator'] . ' (' . $shiftTime . ')';
     });
+    
     echo $form->field($model, 'shift_id')
         ->dropDownList(
             $dataShift,
@@ -35,7 +37,14 @@ use app\models\Shift;
         );
     ?>
 
-    <?= $form->field($model, 'tanggal_kerja')->hiddenInput()->label(false) ?>
+    <?= $form->field($model, 'tanggal_kerja')->widget(\kartik\date\DatePicker::classname(), [
+            'options' => ['placeholder' => 'Pilih tanggal ...'],
+            'pluginOptions' => [
+                'autoclose' => true,
+                'format' => 'dd-mm-yyyy',  
+                'todayHighlight' => true,
+            ],
+        ]); ?>
 
     <?= $form->field($model, 'nama_kerjaan')->textInput(['maxlength' => true]) ?>
 

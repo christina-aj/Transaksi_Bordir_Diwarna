@@ -58,7 +58,11 @@ use yii\widgets\ActiveForm;
                     <!-- <td><?= $form->field($modelDetail, "[$index]pemesanan_id")->hiddenInput(['readonly' => true, 'value' => $modelPemesanan->pemesanan_id])->label(false) ?></td> -->
                     <td><?= $form->field($modelDetail, "[$index]barang_id")->textInput(['readonly' => true])->label(false) ?></td>
                     <td><?= $form->field($modelDetail, "[$index]nama_barang")->widget(Typeahead::classname(), [
-                            'options' => ['placeholder' => 'Cari Nama Barang...', 'id' => 'pesandetail-0-nama_barang'],
+                            'options' => [
+                                'placeholder' => 'Cari Nama Barang...',
+                                'id' => 'pesandetail-0-nama_barang',
+                                'value' => $modelDetail->nama_barang,
+                            ],
                             'pluginOptions' => ['highlight' => true],
                             'scrollable' => true,
                             'dataset' => [
@@ -108,8 +112,8 @@ use yii\widgets\ActiveForm;
                             <button type="button" class="btn btn-success btn-sm add-row" title="Tambah">
                                 <i class="fas fa-plus"></i> <!-- Icon tambah -->
                             </button>
-                            <button type="button" class="btn btn-danger btn-sm delete-row" title="Hapus" style="display:none;">
-                                <i class="fas fa-trash"></i> <!-- Icon hapus -->
+                            <button type="button" class="btn btn-danger btn-sm delete-row" data-id="<?= $modelDetail->pesandetail_id ?>" title="Hapus">
+                                <i class="fas fa-trash"></i>
                             </button>
                         </div>
                     </td>
@@ -117,6 +121,8 @@ use yii\widgets\ActiveForm;
             <?php endforeach; ?>
         </tbody>
     </table>
+    <!-- Hidden input untuk menyimpan ID detail yang akan dihapus -->
+    <?= Html::hiddenInput('deleteRows', '', ['id' => 'deleteRows']) ?>
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
@@ -124,13 +130,21 @@ use yii\widgets\ActiveForm;
     </div>
 
     <?php ActiveForm::end(); ?>
-    <?= Html::a('Back', ['cancel', 'pemesanan_id' => $modelPemesanan->pemesanan_id], [
-        'class' => 'btn btn-danger',
-        'data' => [
-            'confirm' => 'Apakah Anda yakin ingin membatalkan pemesanan ini?',
-            'method' => 'post',
-        ],
-    ]) ?>
+    <?php if ($modelPemesanan->isNewRecord): ?>
+        <!-- Mode Create: Tombol Back berfungsi sebagai tombol Cancel -->
+        <?= Html::a('Cancel', ['cancel', 'pemesanan_id' => $modelPemesanan->pemesanan_id], [
+            'class' => 'btn btn-danger',
+            'data' => [
+                'confirm' => 'Apakah Anda yakin ingin membatalkan pemesanan ini?',
+                'method' => 'post',
+            ],
+        ]) ?>
+    <?php else: ?>
+        <!-- Mode Update: Tombol Back berfungsi untuk kembali ke halaman view -->
+        <?= Html::a('Back', ['view', 'pemesanan_id' => $modelPemesanan->pemesanan_id], [
+            'class' => 'btn btn-secondary',
+        ]) ?>
+    <?php endif; ?>
 
     <!-- JavaScript untuk Menambah dan Menghapus Baris -->
     <?php
@@ -173,7 +187,14 @@ use yii\widgets\ActiveForm;
 
     // Fungsi untuk menghapus baris
     $(document).on('click', '.delete-row', function() {
-        $(this).closest('tr').remove();
+        var id = $(this).data('id');
+        if (id) {
+            // Tambahkan ID detail ke array deleteRows
+            var deleteRows = $('#deleteRows').val() ? JSON.parse($('#deleteRows').val()) : [];
+            deleteRows.push(id);
+            $('#deleteRows').val(JSON.stringify(deleteRows));
+        }
+        $(this).closest('tr').remove(); // Hapus baris dari tampilan form
         toggleAddDeleteButtons();
     });
 

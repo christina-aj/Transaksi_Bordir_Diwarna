@@ -130,7 +130,15 @@ $this->params['breadcrumbs'][] = $this->title;
                 ]); ?>
 
                 <div class="form-group mb-4">
-                    <?= Html::a('Back', ['index'], ['class' => 'btn btn-secondary']) ?>
+                    <?php if ($model->status == 0): ?>
+                        <?= Html::a('Edit', ['update', 'pemesanan_id' => $model->pemesanan_id], ['class' => 'btn btn-danger']) ?>
+                        <?= Html::a('Back', ['index'], ['class' => 'btn btn-secondary']) ?>
+                    <?php elseif ($model->status == 1): ?>
+                        <?= Html::a('Update', ['index'], ['class' => 'btn btn-danger']) ?>
+                        <?= Html::a('Back', ['index'], ['class' => 'btn btn-secondary']) ?>
+                    <?php else: ?>
+                        <?= Html::a('Back', ['index'], ['class' => 'btn btn-secondary']) ?>
+                    <?php endif ?>
                 </div>
             </div>
         </div>

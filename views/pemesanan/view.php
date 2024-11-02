@@ -32,22 +32,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <p><strong>Total Item:</strong> <?= $model->total_item ?></p>
             </div>
             <div class="col-md-4">
-                <?php
-                // Tentukan warna berdasarkan status
-                $statusColor = '';
-                switch ($model->status) {
-                    case Pemesanan::STATUS_PENDING:
-                        $statusColor = 'color: orange;';
-                        break;
-                    case Pemesanan::STATUS_VERIFIED:
-                        $statusColor = 'color: blue;';
-                        break;
-                    case Pemesanan::STATUS_COMPLETE:
-                        $statusColor = 'color: green;';
-                        break;
-                }
-                ?>
-                <p><strong>Status:</strong><span style="<?= $statusColor ?>"> <?= $model->getStatusLabel() ?></span> </p>
+                <p><strong>Status:</strong> <?= $model->getStatusLabel() ?></p>
             </div>
         </div>
         <br>
@@ -134,7 +119,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         <?= Html::a('Edit', ['update', 'pemesanan_id' => $model->pemesanan_id], ['class' => 'btn btn-danger']) ?>
                         <?= Html::a('Back', ['index'], ['class' => 'btn btn-secondary']) ?>
                     <?php elseif ($model->status == 1): ?>
-                        <?= Html::a('Update', ['index'], ['class' => 'btn btn-danger']) ?>
+                        <?= Html::a('Update', ['update-qty'], ['class' => 'btn btn-danger']) ?>
                         <?= Html::a('Back', ['index'], ['class' => 'btn btn-secondary']) ?>
                     <?php else: ?>
                         <?= Html::a('Back', ['index'], ['class' => 'btn btn-secondary']) ?>

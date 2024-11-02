@@ -90,6 +90,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'value' => function ($model) {
                     return $model->getStatusLabel();
                 },
+                'format' => 'raw'
             ],
             // 'created_at',
             //'updated_at',

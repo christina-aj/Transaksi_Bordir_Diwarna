@@ -70,6 +70,14 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             // 'user_id',
             'total_biaya',
+            'pemesanan.status' => [
+                'label' => 'Status',
+                'attribute' => 'status',
+                'value' => function ($model) {
+                    return $model->pemesanan->getStatusLabel();
+                },
+                'format' => 'raw'
+            ],
             [
                 'class' => ActionColumn::className(),
                 'template' => '{view}',
@@ -77,6 +85,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     return Url::toRoute([$action, 'pembelian_id' => $model->pembelian_id]);
                 }
             ],
+
         ],
     ]); ?>
 

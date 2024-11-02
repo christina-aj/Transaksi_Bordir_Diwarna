@@ -93,7 +93,11 @@ use yii\widgets\ActiveForm;
                             ]
                         ])->label(false); ?></td>
                     <td><?= $form->field($modelDetail, "[$index]qty")->textInput()->label(false) ?></td>
-                    <td><?= $form->field($modelDetail, "[$index]qty_terima")->textInput()->label(false) ?></td>
+                    <?php if ($modelDetail->isNewRecord): ?>
+                        <?= Html::activeHiddenInput($modelDetail, "[$index]qty_terima", ['value' => 0]) ?>
+                    <?php else: ?>
+                        <td><?= $form->field($modelDetail, "[$index]qty_terima")->textInput()->label(false) ?></td>
+                    <?php endif ?>
                     <td><?= $form->field($modelDetail, "[$index]catatan")->textInput()->label(false) ?></td>
                     <td class="text-center">
                         <?= $form->field($modelDetail, "[$index]langsung_pakai")->checkbox([
@@ -126,13 +130,11 @@ use yii\widgets\ActiveForm;
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
-        <?php var_dump($modelPemesanan->isNewRecord);
-        ?> // Ini akan mencetak `true` jika dalam mode create, atau `false` jika update
 
     </div>
 
     <?php ActiveForm::end(); ?>
-    <?php if ($modelPemesanan->isNewRecord): ?>
+    <?php if ($modelDetail->isNewRecord): ?>
 
         <!-- Mode Create: Tombol Back berfungsi sebagai tombol Cancel -->
         <?= Html::a('Cancel', ['cancel', 'pemesanan_id' => $modelPemesanan->pemesanan_id], [
@@ -147,8 +149,6 @@ use yii\widgets\ActiveForm;
         <?= Html::a('Back', ['view', 'pemesanan_id' => $modelPemesanan->pemesanan_id], [
             'class' => 'btn btn-secondary',
         ]) ?>
-        <?php var_dump($modelPemesanan->isNewRecord);
-        ?> // Ini akan mencetak `true` jika dalam mode create, atau `false` jika update
     <?php endif; ?>
 
     <!-- JavaScript untuk Menambah dan Menghapus Baris -->

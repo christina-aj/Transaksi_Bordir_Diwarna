@@ -45,9 +45,9 @@ class Pemesanan extends \yii\db\ActiveRecord
     public static function getStatusLabels()
     {
         return [
-            self::STATUS_PENDING => 'Pending',
-            self::STATUS_VERIFIED => 'Verified',
-            self::STATUS_COMPLETE => 'Complete',
+            self::STATUS_PENDING => '<span style="color: orange">Pending</span>',
+            self::STATUS_VERIFIED => '<span style="color: blue">Verified</span>',
+            self::STATUS_COMPLETE => '<span style="color: green">Complete</span>',
         ];
     }
 

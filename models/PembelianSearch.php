@@ -20,12 +20,13 @@ class PembelianSearch extends Pembelian
     public $nama_pemesan;
     public $tanggal;
     public $total_item;
+    public $status;
 
     public function rules()
     {
         return [
             [['pembelian_id', 'pemesanan_id', 'user_id'], 'integer'],
-            [['tanggal', 'kode_pembelian', 'kode_pemesanan', 'nama_pemesan', 'total_item'], 'safe'],
+            [['tanggal', 'kode_pembelian', 'kode_pemesanan', 'nama_pemesan', 'total_item', 'status'], 'safe'],
             [['total_biaya'], 'number'],
         ];
     }
@@ -71,6 +72,10 @@ class PembelianSearch extends Pembelian
                     'tanggal',
                     'total_item',
                     'total_biaya',
+                    'status' => [
+                        'asc' => ['pemesanan.status' => SORT_ASC],
+                        'desc' => ['pemesanan.status' => SORT_DESC],
+                    ],
                 ]
             ],
 
@@ -88,6 +93,7 @@ class PembelianSearch extends Pembelian
         $query->andFilterWhere(['like', 'pemesanan.user_id', $this->nama_pemesan]);
         $query->andFilterWhere(['like', 'pemesanan.tanggal', $this->tanggal]);
         $query->andFilterWhere(['like', 'pemesanan.total_item', $this->total_item]);
+        $query->andFilterWhere(['like', 'pemesanan.status', $this->status]);
         // grid filtering conditions
         $query->andFilterWhere([
             'user_id' => $this->user_id,

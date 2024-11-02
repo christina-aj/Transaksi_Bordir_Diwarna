@@ -34,25 +34,11 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
             <div class="col-md-3">
                 <div><strong>Total Item:</strong> <?= $model->pemesanan->total_item ?? '-' ?></div>
-                <div><strong>Total Biaya:</strong> <?= Yii::$app->formatter->asCurrency($model->total_biaya) ?></div>
+                <div><strong>Total Biaya:</strong> Rp <?= Yii::$app->formatter->asDecimal($model->total_biaya, 0) ?></div>
+
             </div>
             <div class="col-md-3">
-                <?php
-                // Tentukan warna berdasarkan status
-                $statusColor = '';
-                switch ($model->pemesanan->status) {
-                    case Pemesanan::STATUS_PENDING:
-                        $statusColor = 'color: orange;';
-                        break;
-                    case Pemesanan::STATUS_VERIFIED:
-                        $statusColor = 'color: blue;';
-                        break;
-                    case Pemesanan::STATUS_COMPLETE:
-                        $statusColor = 'color: green;';
-                        break;
-                }
-                ?>
-                <div><strong>Status:</strong> <span style="<?= $statusColor ?>"><?= $model->pemesanan->getStatusLabel() ?? '-' ?></span> </div>
+                <div><strong>Status:</strong> <?= $model->pemesanan->getStatusLabel() ?? '-' ?></div>
             </div>
         </div>
         <br>
@@ -71,8 +57,6 @@ $this->params['breadcrumbs'][] = $this->title;
                         'pesanDetail.barang.kode_barang',
                         'pesanDetail.barang.nama_barang',
                         'pesanDetail.qty',
-                        'pesanDetail.qty_terima',
-                        'pesanDetail.catatan',
                         // 'pesanDetail.langsung_pakai' => [
                         //     'attribute' => 'pesanDetail.langsung_pakai',
                         //     'label' => 'Langsung Pakai',
@@ -93,15 +77,43 @@ $this->params['breadcrumbs'][] = $this->title;
                         //             : Html::tag('span', '&#10008;', ['style' => 'color: red; font-size: 20px;']);
                         //     },
                         // ],
-                        'cek_barang',
-                        'is_correct'
+                        'cek_barang' => [
+                            'attribute' => 'cek_barang',
+                            'label' => 'Harga',
+
+                        ],
+                        'total_biaya' => [
+                            'attribute' => 'total_biaya',
+                            'label' => 'Total Biaya',
+
+                        ],
+                        'is_correct' => [
+                            'attribute' => 'is_correct',
+                            'label' => 'Harga Sesuai',
+                            'format' => 'raw',
+                            'value' => function ($model) {
+                                return $model->is_correct == 1
+                                    ? Html::tag('span', '&#10004;', ['style' => 'color: green; font-size: 20px;'])
+                                    : Html::tag('span', '&#10008;', ['style' => 'color: red; font-size: 20px;']);
+                            },
+                        ],
                     ],
 
                 ]);
                 ?>
-
                 <div class="form-group mb-4">
-                    <?= Html::a('Back', ['index'], ['class' => 'btn btn-secondary']) ?>
+                    <?php if ($model->pemesanan->status == 0): ?>
+                        <?= Html::a('Update', ['update', 'pembelian_id' => $model->pembelian_id], ['class' => 'btn btn-success']) ?>
+                        <?= Html::a('Back', ['index'], ['class' => 'btn btn-secondary']) ?>
+                        <?= Html::a('Verify', ['verify', 'pembelian_id' => $model->pembelian_id], [
+                            'class' => 'btn btn-warning',
+                            'data-confirm' => 'Apakah Anda yakin ingin melakukan verifikasi?',
+                            'data-method' => 'post',
+                        ])
+                        ?>
+                    <?php else: ?>
+                        <?= Html::a('Back', ['index'], ['class' => 'btn btn-secondary']) ?>
+                    <?php endif ?>
                 </div>
 
             </div>

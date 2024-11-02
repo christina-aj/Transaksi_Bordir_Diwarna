@@ -126,11 +126,14 @@ use yii\widgets\ActiveForm;
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
+        <?php var_dump($modelPemesanan->isNewRecord);
+        ?> // Ini akan mencetak `true` jika dalam mode create, atau `false` jika update
 
     </div>
 
     <?php ActiveForm::end(); ?>
     <?php if ($modelPemesanan->isNewRecord): ?>
+
         <!-- Mode Create: Tombol Back berfungsi sebagai tombol Cancel -->
         <?= Html::a('Cancel', ['cancel', 'pemesanan_id' => $modelPemesanan->pemesanan_id], [
             'class' => 'btn btn-danger',
@@ -144,6 +147,8 @@ use yii\widgets\ActiveForm;
         <?= Html::a('Back', ['view', 'pemesanan_id' => $modelPemesanan->pemesanan_id], [
             'class' => 'btn btn-secondary',
         ]) ?>
+        <?php var_dump($modelPemesanan->isNewRecord);
+        ?> // Ini akan mencetak `true` jika dalam mode create, atau `false` jika update
     <?php endif; ?>
 
     <!-- JavaScript untuk Menambah dan Menghapus Baris -->

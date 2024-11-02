@@ -36,22 +36,7 @@ use yii\widgets\ActiveForm;
                 <div><strong>Total Biaya:</strong> <?= Yii::$app->formatter->asCurrency($model->total_biaya) ?></div>
             </div>
             <div class="col-md-3">
-                <?php
-                // Tentukan warna berdasarkan status
-                $statusColor = '';
-                switch ($model->pemesanan->status) {
-                    case Pemesanan::STATUS_PENDING:
-                        $statusColor = 'color: orange;';
-                        break;
-                    case Pemesanan::STATUS_VERIFIED:
-                        $statusColor = 'color: blue;';
-                        break;
-                    case Pemesanan::STATUS_COMPLETE:
-                        $statusColor = 'color: green;';
-                        break;
-                }
-                ?>
-                <div><strong>Status:</strong> <span style="<?= $statusColor ?>"><?= $model->pemesanan->getStatusLabel() ?? '-' ?></span> </div>
+                <div><strong>Status:</strong> <?= $model->pemesanan->getStatusLabel() ?? '-' ?></div>
             </div>
         </div>
         <br>

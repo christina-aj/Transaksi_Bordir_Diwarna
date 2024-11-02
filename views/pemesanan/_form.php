@@ -93,11 +93,7 @@ use yii\widgets\ActiveForm;
                             ]
                         ])->label(false); ?></td>
                     <td><?= $form->field($modelDetail, "[$index]qty")->textInput()->label(false) ?></td>
-                    <?php if ($modelDetail->isNewRecord): ?>
-                        <?= Html::activeHiddenInput($modelDetail, "[$index]qty_terima", ['value' => 0]) ?>
-                    <?php else: ?>
-                        <td><?= $form->field($modelDetail, "[$index]qty_terima")->textInput()->label(false) ?></td>
-                    <?php endif ?>
+                    <td><?= $form->field($modelDetail, "[$index]qty_terima")->textInput()->label(false) ?></td>
                     <td><?= $form->field($modelDetail, "[$index]catatan")->textInput()->label(false) ?></td>
                     <td class="text-center">
                         <?= $form->field($modelDetail, "[$index]langsung_pakai")->checkbox([

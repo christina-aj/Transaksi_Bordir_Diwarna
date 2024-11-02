@@ -13,146 +13,151 @@ use yii\widgets\ActiveForm;
 ?>
 
 <div class="pemesanan-form">
-
-    <?php $form = ActiveForm::begin(); ?>
-    <div class="row">
-        <!-- Kolom Kiri -->
-        <div class="col-md-6">
-
-            <?= $form->field($modelPemesanan, 'kode_pemesanan')->textInput(['readonly' => true, 'value' => $modelPemesanan->getFormattedOrderId()]) ?>
-            <!-- <?= $form->field($modelPemesanan, 'user_id')->textInput(['readonly' => true]) ?> -->
-            <?= $form->field($modelPemesanan, 'nama_pemesan')->textInput(['readonly' => true, 'value' => $modelPemesanan->user ? $modelPemesanan->user->nama_pengguna : '-']) ?>
+    <div class="card table-card">
+        <div class="card-header">
+            <h1><?= Html::encode($this->title) ?></h1>
         </div>
+        <div class="row mx-3 ">
+            <!-- Baris pertama: Kode Pembelian, Kode Pemesanan, Nama Pemesan -->
+            <div class="col-md-3">
+                <div><strong>Kode Pemesanan:</strong> <?= $modelPemesanan ? $modelPemesanan->getFormattedOrderId() : 'Kode Pemesanan Tidak Tersedia' ?></div>
+                <div><strong>Nama Pemesan:</strong> <?= $modelPemesanan->user->nama_pengguna ?? 'Nama Pemesan Tidak Tersedia' ?></div>
+            </div>
 
-        <!-- Kolom Kanan -->
-        <div class="col-md-6">
-            <?= $form->field($modelPemesanan, 'tanggal')->textInput(['readonly' => true]) ?>
-            <?= $form->field($modelPemesanan, 'total_item')->textInput(['readonly' => true]) ?>
-            <!-- Tambahkan field lain di kolom kanan sesuai kebutuhan -->
+            <!-- Baris kedua: Tanggal Pemesanan, Total Item, Total Biaya, Aksi -->
+            <div class="col-md-3">
+                <div><strong>Total Item:</strong> <?= $modelPemesanan->total_item ?? '-' ?></div>
+                <div><strong>Tanggal:</strong> <?= Yii::$app->formatter->asDate($modelPemesanan->tanggal ?? 'Tanggal Tidak Tersedia') ?></div>
+
+            </div>
         </div>
-    </div>
-    <br>
+        <br>
+        <hr>
+        <div class="card-body mx-4">
+            <!-- Tabel Detail Pemesanan -->
+            <?php $form = ActiveForm::begin(); ?>
+            <h3>Detail Pemesanan</h3>
 
-    <!-- Tabel Detail Pemesanan -->
-    <h3>Detail Pemesanan</h3>
-
-    <!-- Tabel Detail Pemesanan -->
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <!-- <th style="width: 25%;">Kode Pemesanan</th> -->
-                <th style="width: 25%;">Barang id</th>
-                <th style="width: 25%;">Nama Barang</th>
-                <th style="width: 15%;">Qty</th>
-                <th style="width: 15%;">Qty Terima</th>
-                <th style="width: 30%;">Catatan</th>
-                <th style="width: 15%;">Langsung Pakai</th>
-                <th style="width: 15%;">Barang sesuai</th>
-                <th style="width: 5%;">Aksi</th>
-            </tr>
-        </thead>
-        <tbody id="table-body">
-            <?php foreach ($modelDetails as $index => $modelDetail): ?>
-                <tr>
-                    <?= Html::activeHiddenInput($modelDetail, "[$index]pemesanan_id", ['value' => $modelPemesanan->pemesanan_id]) ?>
-                    <!-- <td><?= $form->field($modelDetail, "[$index]pemesanan_id")->hiddenInput(['readonly' => true, 'value' => $modelPemesanan->pemesanan_id])->label(false) ?></td> -->
-                    <td><?= $form->field($modelDetail, "[$index]barang_id")->textInput(['readonly' => true])->label(false) ?></td>
-                    <td><?= $form->field($modelDetail, "[$index]nama_barang")->widget(Typeahead::classname(), [
-                            'options' => [
-                                'placeholder' => 'Cari Nama Barang...',
-                                'id' => 'pesandetail-0-nama_barang',
-                                'value' => $modelDetail->nama_barang,
-                            ],
-                            'pluginOptions' => ['highlight' => true],
-                            'scrollable' => true,
-                            'dataset' => [
-                                [
-                                    'datumTokenizer' => "Bloodhound.tokenizers.obj.whitespace('value')",
-                                    'display' => 'value',
-                                    'templates' => [
-                                        'notFound' => "<div class='text-danger'>Tidak ada hasil</div>",
-                                        'suggestion' => new \yii\web\JsExpression('function(data) {
+            <!-- Tabel Detail Pemesanan -->
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <!-- <th style="width: 25%;">Kode Pemesanan</th> -->
+                        <th style="width: 25%;">Barang id</th>
+                        <th style="width: 25%;">Nama Barang</th>
+                        <th style="width: 15%;">Qty</th>
+                        <th style="width: 15%;">Qty Terima</th>
+                        <th style="width: 30%;">Catatan</th>
+                        <th style="width: 15%;">Langsung Pakai</th>
+                        <th style="width: 15%;">Barang sesuai</th>
+                        <th style="width: 5%;">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+                    <?php foreach ($modelDetails as $index => $modelDetail): ?>
+                        <tr>
+                            <?= Html::activeHiddenInput($modelDetail, "[$index]pemesanan_id", ['value' => $modelPemesanan->pemesanan_id]) ?>
+                            <!-- <td><?= $form->field($modelDetail, "[$index]pemesanan_id")->hiddenInput(['readonly' => true, 'value' => $modelPemesanan->pemesanan_id])->label(false) ?></td> -->
+                            <td><?= $form->field($modelDetail, "[$index]barang_id")->textInput(['readonly' => true])->label(false) ?></td>
+                            <td><?= $form->field($modelDetail, "[$index]nama_barang")->widget(Typeahead::classname(), [
+                                    'options' => [
+                                        'placeholder' => 'Cari Nama Barang...',
+                                        'id' => 'pesandetail-0-nama_barang',
+                                        'value' => $modelDetail->nama_barang,
+                                    ],
+                                    'pluginOptions' => ['highlight' => true],
+                                    'scrollable' => true,
+                                    'dataset' => [
+                                        [
+                                            'datumTokenizer' => "Bloodhound.tokenizers.obj.whitespace('value')",
+                                            'display' => 'value',
+                                            'templates' => [
+                                                'notFound' => "<div class='text-danger'>Tidak ada hasil</div>",
+                                                'suggestion' => new \yii\web\JsExpression('function(data) {
                         if (data.barang_id && data.kode_barang && data.nama_barang) {
                             return "<div>" + data.barang_id +  " - " + data.kode_barang + " - " + data.nama_barang + " - " + data.angka + " " + data.satuan + " - " + data.warna + "</div>";
                         } else {
                             return "<div>Barang tidak ditemukan</div>";
                         }
                     }')
+                                            ],
+                                            'remote' => [
+                                                'url' => Url::to(['pesan-detail/search']) . '?q=%QUERY',
+                                                'wildcard' => '%QUERY',
+                                            ],
+                                        ]
                                     ],
-                                    'remote' => [
-                                        'url' => Url::to(['pesan-detail/search']) . '?q=%QUERY',
-                                        'wildcard' => '%QUERY',
-                                    ],
-                                ]
-                            ],
-                            'pluginEvents' => [
-                                "typeahead:select" => new \yii\web\JsExpression('function(event, suggestion) {
+                                    'pluginEvents' => [
+                                        "typeahead:select" => new \yii\web\JsExpression('function(event, suggestion) {
                 $("#hidden-pesandetail-0-barang_id").val(suggestion.barang_id);
                 $("#pesandetail-0-barang_id").val(suggestion.id);
             }')
-                            ]
-                        ])->label(false); ?></td>
-                    <td><?= $form->field($modelDetail, "[$index]qty")->textInput()->label(false) ?></td>
-                    <td><?= $form->field($modelDetail, "[$index]qty_terima")->textInput()->label(false) ?></td>
-                    <td><?= $form->field($modelDetail, "[$index]catatan")->textInput()->label(false) ?></td>
-                    <td class="text-center">
-                        <?= $form->field($modelDetail, "[$index]langsung_pakai")->checkbox([
-                            'id' => "pesandetail-{$index}-langsung_pakai",
-                            'label' => null // Hapus label
-                        ]) ?>
-                    </td>
-                    <td class="text-center">
-                        <?= $form->field($modelDetail, "[$index]is_correct")->checkbox([
-                            'id' => "pesandetail-{$index}-is_correct",
-                            'label' => null // Hapus label
-                        ]) ?>
-                    </td>
-                    <td class="text-center">
-                        <div class="btn-group" role="group">
-                            <button type="button" class="btn btn-success btn-sm add-row" title="Tambah">
-                                <i class="fas fa-plus"></i> <!-- Icon tambah -->
-                            </button>
-                            <button type="button" class="btn btn-danger btn-sm delete-row" data-id="<?= $modelDetail->pesandetail_id ?>" title="Hapus">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
-    <!-- Hidden input untuk menyimpan ID detail yang akan dihapus -->
-    <?= Html::hiddenInput('deleteRows', '', ['id' => 'deleteRows']) ?>
+                                    ]
+                                ])->label(false); ?></td>
+                            <td><?= $form->field($modelDetail, "[$index]qty")->textInput()->label(false) ?></td>
+                            <td><?= $form->field($modelDetail, "[$index]qty_terima")->textInput()->label(false) ?></td>
+                            <td><?= $form->field($modelDetail, "[$index]catatan")->textInput()->label(false) ?></td>
+                            <td class="text-center">
+                                <?= $form->field($modelDetail, "[$index]langsung_pakai")->checkbox([
+                                    'id' => "pesandetail-{$index}-langsung_pakai",
+                                    'label' => null // Hapus label
+                                ]) ?>
+                            </td>
+                            <td class="text-center">
+                                <?= $form->field($modelDetail, "[$index]is_correct")->checkbox([
+                                    'id' => "pesandetail-{$index}-is_correct",
+                                    'label' => null // Hapus label
+                                ]) ?>
+                            </td>
+                            <td class="text-center">
+                                <div class="btn-group" role="group">
+                                    <button type="button" class="btn btn-success btn-sm add-row" title="Tambah">
+                                        <i class="fas fa-plus"></i> <!-- Icon tambah -->
+                                    </button>
+                                    <button type="button" class="btn btn-danger btn-sm delete-row" data-id="<?= $modelDetail->pesandetail_id ?>" title="Hapus">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+            <!-- Hidden input untuk menyimpan ID detail yang akan dihapus -->
+            <?= Html::hiddenInput('deleteRows', '', ['id' => 'deleteRows']) ?>
 
-    <div class="form-group">
-        <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
+            <div class="form-group">
+                <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
 
+            </div>
+
+            <?php ActiveForm::end(); ?>
+            <?php if ($modelDetail->isNewRecord): ?>
+
+                <!-- Mode Create: Tombol Back berfungsi sebagai tombol Cancel -->
+                <?= Html::a('Cancel', ['cancel', 'pemesanan_id' => $modelPemesanan->pemesanan_id], [
+                    'class' => 'btn btn-danger',
+                    'data' => [
+                        'confirm' => 'Apakah Anda yakin ingin membatalkan pemesanan ini?',
+                        'method' => 'post',
+                    ],
+                ]) ?>
+            <?php else: ?>
+                <!-- Mode Update: Tombol Back berfungsi untuk kembali ke halaman view -->
+                <?= Html::a('Back', ['view', 'pemesanan_id' => $modelPemesanan->pemesanan_id], [
+                    'class' => 'btn btn-secondary',
+                ]) ?>
+            <?php endif; ?>
+        </div>
     </div>
+</div>
 
-    <?php ActiveForm::end(); ?>
-    <?php if ($modelDetail->isNewRecord): ?>
+<!-- JavaScript untuk Menambah dan Menghapus Baris -->
+<?php
+// Dapatkan nilai `pemesanan_id` dari model
+$pemesananId = $modelPemesanan->pemesanan_id;
 
-        <!-- Mode Create: Tombol Back berfungsi sebagai tombol Cancel -->
-        <?= Html::a('Cancel', ['cancel', 'pemesanan_id' => $modelPemesanan->pemesanan_id], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => 'Apakah Anda yakin ingin membatalkan pemesanan ini?',
-                'method' => 'post',
-            ],
-        ]) ?>
-    <?php else: ?>
-        <!-- Mode Update: Tombol Back berfungsi untuk kembali ke halaman view -->
-        <?= Html::a('Back', ['view', 'pemesanan_id' => $modelPemesanan->pemesanan_id], [
-            'class' => 'btn btn-secondary',
-        ]) ?>
-    <?php endif; ?>
-
-    <!-- JavaScript untuk Menambah dan Menghapus Baris -->
-    <?php
-    // Dapatkan nilai `pemesanan_id` dari model
-    $pemesananId = $modelPemesanan->pemesanan_id;
-
-    $this->registerJs("
+$this->registerJs("
     var rowIndex = " . count($modelDetails) . ";
     var pemesananId = " . json_encode($pemesananId) . "; // Menyimpan nilai pemesanan_id dari server
 
@@ -259,14 +264,14 @@ use yii\widgets\ActiveForm;
     // Inisialisasi awal untuk menampilkan/menyembunyikan tombol add dan delete
     toggleAddDeleteButtons();
 ");
-    ?>
-    <style>
-        /* CSS untuk membuat dropdown saran scrollable */
-        .tt-menu {
-            max-height: 200px;
-            /* Tinggi maksimal dropdown */
-            overflow-y: auto;
-            /* Aktifkan scroll vertikal */
-        }
-    </style>
+?>
+<style>
+    /* CSS untuk membuat dropdown saran scrollable */
+    .tt-menu {
+        max-height: 200px;
+        /* Tinggi maksimal dropdown */
+        overflow-y: auto;
+        /* Aktifkan scroll vertikal */
+    }
+</style>
 </div>

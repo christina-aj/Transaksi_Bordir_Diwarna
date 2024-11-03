@@ -1,5 +1,5 @@
 <?php
-use kartik\date\DatePicker; // Import DatePicker
+use kartik\date\DatePicker; 
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\bootstrap5\Modal;
@@ -15,13 +15,16 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="pc-content">
     <h1><?= Html::encode($this->title) ?></h1>
     
-    <!-- Filter Button -->
+
     <?= Html::button('Filter Data', ['class' => 'btn btn-primary', 'id' => 'filter-button']) ?>
     
-    <!-- Combined Button for Date Range -->
+  
     <?= Html::button('Input Tanggal Awal dan Akhir', ['class' => 'btn btn-info', 'id' => 'date-range-button']) ?>
     
-   <!-- Modal for Filter -->
+
+    <?= Html::a('Kembali ke Normal', Url::to(['laporan-agregat/index']), ['class' => 'btn btn-secondary', 'id' => 'reset-button-date']) ?>
+    
+  
     <?php
     Modal::begin([
         'title' => '<h4>Filter Laporan Agregat</h4>',
@@ -31,8 +34,7 @@ $this->params['breadcrumbs'][] = $this->title;
     ?>
 
     <div id="filterModalContent">
-        <form id="filter-form" method="get" action="<?= Url::to(['laporan-agregat/index']) ?>"> <!-- Correct URL for action -->
-            <div class="form-group">
+        <form id="filter-form" method="get" action="<?= Url::to(['laporan-agregat/index']) ?>"> 
                 <label for="year">Tahun</label>
                 <input type="number" name="year" class="form-control" id="year">
             </div>
@@ -56,7 +58,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?php Modal::end(); ?>
 
-    <!-- Modal for Date Range Input -->
     <?php
     Modal::begin([
         'title' => '<h4>Input Tanggal Awal dan Akhir</h4>',
@@ -74,7 +75,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'name' => 'start_date',
                     'options' => ['placeholder' => 'Pilih Tanggal Awal', 'readonly' => true],
                     'pluginOptions' => [
-                        'format' => 'dd-mm-yyyy', // Set format to d-m-y
+                        'format' => 'dd-mm-yyyy', 
                         'autoclose' => true,
                     ],
                 ]); ?>
@@ -85,7 +86,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         'name' => 'end_date',
                         'options' => ['placeholder' => 'Pilih Tanggal Akhir', 'readonly' => true],
                         'pluginOptions' => [
-                            'format' => 'dd-mm-yyyy', // Set format to d-m-y
+                            'format' => 'dd-mm-yyyy',
                             'autoclose' => true,
                         ],
                     ]); ?>
@@ -99,7 +100,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?php Modal::end(); ?>
     
-    <?= Html::a('Kembali ke Normal', Url::to(['laporan-agregat/index']), ['class' => 'btn btn-secondary', 'id' => 'reset-button-date']) ?>
+    
 
     <?= GridView::widget([
         'dataProvider' => new \yii\data\ArrayDataProvider([

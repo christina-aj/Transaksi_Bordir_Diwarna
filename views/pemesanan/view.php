@@ -97,8 +97,18 @@ $this->params['breadcrumbs'][] = $this->title;
                             'format' => 'raw',
                             'value' => function ($model) {
                                 return $model->is_correct == 1
-                                    ? Html::tag('span', '&#10004;', ['style' => 'color: green; font-size: 20px;'])
-                                    : Html::tag('span', '&#10008;', ['style' => 'color: red; font-size: 20px;']);
+                                    ? Html::tag('span', '&#10004;', [
+                                        'style' => 'color: green; font-size: 20px;',
+                                        'class' => 'status-icon correct',  // Tambahkan class
+                                        'data-id' => $model->pesandetail_id, // Tambahkan data-id
+                                        'aria-disabled' => 'true', // Tambahkan atribut disabled menggunakan aria (tidak aktifkan pengguna)
+                                    ])
+                                    : Html::tag('span', '&#10008;', [
+                                        'style' => 'color: red; font-size: 20px;',
+                                        'class' => 'status-icon incorrect', // Tambahkan class berbeda untuk tidak sesuai
+                                        'data-id' => $model->pesandetail_id, // Tambahkan data-id
+                                        'aria-disabled' => 'true', // Tambahkan atribut disabled menggunakan aria
+                                    ]);
                             },
                         ],
                         // [
@@ -119,8 +129,15 @@ $this->params['breadcrumbs'][] = $this->title;
                         <?= Html::a('Edit', ['update', 'pemesanan_id' => $model->pemesanan_id], ['class' => 'btn btn-danger']) ?>
                         <?= Html::a('Back', ['index'], ['class' => 'btn btn-secondary']) ?>
                     <?php elseif ($model->status == 1): ?>
-                        <?= Html::a('Update', ['update-qty'], ['class' => 'btn btn-danger']) ?>
+                        <?= Html::a('Update', ['update-qty', 'pemesanan_id' => $model->pemesanan_id], ['class' => 'btn btn-danger']) ?>
                         <?= Html::a('Back', ['index'], ['class' => 'btn btn-secondary']) ?>
+                        <?= Html::a('Complete', ['verify', 'pemesanan_id' => $model->pemesanan_id], [
+                            'class' => 'btn btn-warning',
+                            'data-confirm' => 'Apakah Anda yakin ingin melakukan verifikasi?',
+                            'data-method' => 'post',
+                            'id' => 'verify-button', // Tambahkan ID untuk JavaScript
+                        ])
+                        ?>
                     <?php else: ?>
                         <?= Html::a('Back', ['index'], ['class' => 'btn btn-secondary']) ?>
                     <?php endif ?>
@@ -129,3 +146,46 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
     </div>
 </div>
+
+<?php
+$this->registerJs(
+    <<<JS
+    function checkAllCorrect() {
+        let allCorrect = true;
+        
+        // Loop melalui setiap ikon status
+        $('.status-icon').each(function() {
+            if (!$(this).hasClass('correct')) {
+                allCorrect = false;
+                return false; // Keluar dari loop jika ditemukan ikon merah
+            }
+        });
+        
+        // Atur status tombol berdasarkan hasil pengecekan
+        if (allCorrect) {
+            $('#verify-button').removeClass('disabled-button').prop('disabled', false);
+        } else {
+            $('#verify-button').addClass('disabled-button').prop('disabled', true);
+        }
+    }
+
+    // Cek status saat halaman selesai di-render
+    $(document).ready(function() {
+        checkAllCorrect();
+    });
+JS
+);
+?>
+
+<style>
+    .disabled-button {
+        background-color: #d3d3d3;
+        /* Warna abu-abu */
+        color: #666;
+        /* Warna teks lebih gelap */
+        cursor: not-allowed;
+        /* Tampilan kursor */
+        pointer-events: none;
+        /* Nonaktifkan klik */
+    }
+</style>

@@ -38,7 +38,12 @@ class PesanDetail extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-
+    public function scenarios()
+    {
+        $scenarios = parent::scenarios();
+        $scenarios['updateQty'] = ['catatan', 'qty_terima', 'is_correct']; // Hanya kolom yang ingin diupdate
+        return $scenarios;
+    }
     public function behaviors()
     {
         return [
@@ -55,7 +60,7 @@ class PesanDetail extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['pemesanan_id', 'barang_id', 'qty', 'is_correct', 'langsung_pakai', 'nama_barang'], 'required'],
+            [['pemesanan_id', 'barang_id', 'qty', 'is_correct', 'langsung_pakai', 'nama_barang'], 'required', 'on' => 'default'],
             [['pemesanan_id', 'barang_id', 'is_correct', 'langsung_pakai'], 'integer'],
             [['qty', 'qty_terima'], 'number'],
             [['qty_terima'], 'default', 'value' => 0],

@@ -4,11 +4,13 @@ namespace app\controllers;
 
 use app\helpers\ModelHelper;
 use app\models\Barang;
+use app\models\Gudang;
 use app\models\Pembelian;
 use app\models\PembelianDetail;
 use app\models\Pemesanan;
 use app\models\PemesananSearch;
 use app\models\PesanDetail;
+use app\models\Stock;
 use app\models\User;
 use Yii;
 use yii\base\Model;
@@ -351,6 +353,60 @@ class PemesananController extends Controller
         ]);
     }
 
+    public function actionUpdateQty($pemesanan_id)
+    {
+        // Memuat model Pemesanan berdasarkan ID
+        $modelPemesanan = Pemesanan::findOne($pemesanan_id);
+        if (!$modelPemesanan) {
+            throw new NotFoundHttpException("Data pembelian tidak ditemukan.");
+        }
+
+        $modelDetails = PesanDetail::findAll(['pemesanan_id' => $pemesanan_id]);
+
+        if (Yii::$app->request->isPost) {
+            $detailsData = Yii::$app->request->post('PemesananDetail', []);
+            $isValid = true;
+
+            $transaction = Yii::$app->db->beginTransaction();
+            try {
+                foreach ($detailsData as $id => $attributes) {
+                    $detailModel = PesanDetail::findOne($id);
+                    if ($detailModel) {
+                        $detailModel->setScenario('updateQty'); // Set skenario khusus
+                        $detailModel->qty_terima = $attributes['qty_terima'] ?? $detailModel->qty_terima;
+                        $detailModel->catatan = $attributes['catatan'] ?? $detailModel->catatan;
+                        $detailModel->is_correct = isset($attributes['is_correct']) ? 1 : 0;
+
+                        if (!$detailModel->validate() || !$detailModel->save(false)) {
+                            Yii::$app->session->setFlash('error', "Error pada detail ID {$id}: " . json_encode($detailModel->getErrors()));
+                            Yii::error("Validasi gagal untuk detail ID {$id}: " . json_encode($detailModel->getErrors()));
+                            throw new \Exception("Gagal menyimpan data untuk detail ID {$id}");
+                        }
+                    } else {
+                        throw new \Exception("Detail Pemesanan dengan ID {$id} tidak ditemukan.");
+                    }
+                }
+                $transaction->commit();
+                Yii::$app->session->setFlash('success', 'Pemesanan detail berhasil diperbarui.');
+            } catch (\Exception $e) {
+                $transaction->rollBack();
+                Yii::$app->session->setFlash('error', $e->getMessage());
+            }
+
+            // Berikan pesan berhasil hanya jika semua validasi sukses
+            if ($isValid) {
+                Yii::$app->session->setFlash('success', 'Pemesanan detail berhasil diperbarui.');
+            }
+
+            // Redirect setelah POST
+            return $this->redirect(['view', 'pemesanan_id' => $modelPemesanan->pemesanan_id]);
+        }
+
+        return $this->render('update-qty', [
+            'modelPemesanan' => $modelPemesanan,
+            'modelDetails' => $modelDetails,
+        ]);
+    }
 
 
     /**
@@ -429,5 +485,101 @@ class PemesananController extends Controller
             'success' => true,
             'username' => $user->nama_pengguna,
         ]);
+    }
+
+    public function actionVerify($pemesanan_id)
+    {
+        // Cari model Pembelian berdasarkan ID
+        $modelPembelian = Pemesanan::findOne($pemesanan_id);
+        if (!$modelPembelian) {
+            Yii::$app->session->setFlash('error', 'Data pemesanan tidak ditemukan.');
+            return $this->redirect(['index']);
+        }
+
+        // Ambil semua pembelianDetail yang terkait dengan pembelian ini
+        $pemesananDetails = PesanDetail::findAll(['pemesanan_id' => $pemesanan_id]);
+
+        // Cek apakah semua is_correct == 1
+        $allCorrect = true;
+        foreach ($pemesananDetails as $detail) {
+            if ($detail->is_correct != 1) {
+                $allCorrect = false;
+                break;
+            }
+        }
+
+        if ($allCorrect) {
+            // Jika semua is_correct == 1, ubah status pada tabel Pemesanan
+            $modelPemesanan = Pemesanan::findOne($modelPembelian->pemesanan_id);
+            if ($modelPemesanan) {
+                $modelPemesanan->status = Pemesanan::STATUS_COMPLETE; // atau nilai status sesuai kebutuhan
+                if ($modelPemesanan->save(false)) { // Simpan tanpa validasi
+
+                    // Loop melalui setiap detail pemesanan untuk membuat data stok
+                    foreach ($pemesananDetails as $detail) {
+                        $gudang = new Gudang();
+                        $gudang->tanggal = date('Y-m-d'); // Sesuaikan format tanggal jika diperlukan
+                        $gudang->barang_id = $detail->barang_id; // Sesuaikan dengan barang_id terkait
+                        $gudang->user_id = Yii::$app->user->id; // Mengambil ID user yang saat ini sedang login
+                        if ($detail->langsung_pakai == 1) {
+                            $gudang->quantity_awal = $this->getCurrentStock($detail->barang_id); // Dapatkan quantity awal
+                            $gudang->quantity_masuk = $detail->qty_terima; // Sesuaikan dengan jumlah quantity masuk
+                            $gudang->quantity_keluar = $detail->qty_terima; // Misalnya, tidak ada quantity keluar pada saat ini
+                            $gudang->quantity_akhir = $gudang->quantity_awal + $gudang->quantity_masuk - $gudang->quantity_keluar;
+                            $stock = new Stock();
+                            $stock->tambah_stock = date('Y-m-d');
+                            $stock->barang_id = $detail->barang_id;
+                            $stock->user_id = Yii::$app->user->id;
+                            $stock->quantity_awal = $this->getCurrentStockProduksi($detail->barang_id);
+                            $stock->quantity_masuk = $detail->qty_terima; // Sesuaikan dengan jumlah quantity masuk
+                            $stock->quantity_keluar = 0; // Misalnya, tidak ada quantity keluar pada saat ini
+                            $stock->quantity_akhir = $stock->quantity_awal + $stock->quantity_masuk;
+                            $stock->is_ready = 1;
+                            $stock->is_new = 0;
+                            $stock->created_at = date('Y-m-d H:i:s');
+                            $stock->updated_at = date('Y-m-d H:i:s');
+                            if (!$stock->save(false)) {
+                                Yii::$app->session->setFlash('error', 'Gagal menyimpan data stok Produksi untuk barang ID: ' . $detail->barang_id);
+                            }
+                        } else {
+                            $gudang->quantity_awal = $this->getCurrentStock($detail->barang_id); // Dapatkan quantity awal
+                            $gudang->quantity_masuk = $detail->qty_terima; // Sesuaikan dengan jumlah quantity masuk
+                            $gudang->quantity_keluar = 0; // Sesuaikan dengan jumlah quantity masuk
+                            $gudang->quantity_akhir = $gudang->quantity_awal + $gudang->quantity_masuk;
+                        }
+                        $gudang->catatan = 'Verifikasi pemesanan ID: ' . $pemesanan_id; // Catatan tambahan
+                        $gudang->created_at = date('Y-m-d H:i:s');
+                        $gudang->update_at = date('Y-m-d H:i:s');
+
+                        if (!$gudang->save(false)) {
+                            Yii::$app->session->setFlash('error', 'Gagal menyimpan data stok Gudang untuk barang ID: ' . $detail->barang_id);
+                            return $this->redirect(['view', 'pemesanan_id' => $pemesanan_id]);
+                        }
+                    }
+
+                    Yii::$app->session->setFlash('success', 'Pemesanan berhasil diverifikasi dan stok berhasil diperbarui.');
+                } else {
+                    Yii::$app->session->setFlash('error', 'Gagal mengupdate status pemesanan.');
+                }
+            } else {
+                Yii::$app->session->setFlash('error', 'Data pemesanan tidak ditemukan.');
+            }
+        } else {
+            Yii::$app->session->setFlash('warning', 'Verifikasi gagal. Pastikan semua item sudah disetujui (is_correct == 1).');
+        }
+
+        // Kembali ke halaman pembelian
+        return $this->redirect(['view', 'pemesanan_id' => $pemesanan_id]);
+    }
+
+    protected function getCurrentStock($barang_id)
+    {
+        $currentStock = Gudang::find()->where(['barang_id' => $barang_id])->orderBy(['created_at' => SORT_DESC])->one();
+        return $currentStock ? $currentStock->quantity_akhir : 0; // Jika tidak ada stok sebelumnya, mulai dari 0
+    }
+    protected function getCurrentStockProduksi($barang_id)
+    {
+        $currentStock = Stock::find()->where(['barang_id' => $barang_id])->orderBy(['created_at' => SORT_DESC])->one();
+        return $currentStock ? $currentStock->quantity_akhir : 0; // Jika tidak ada stok sebelumnya, mulai dari 0
     }
 }

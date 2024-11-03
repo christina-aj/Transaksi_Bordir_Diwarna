@@ -155,7 +155,6 @@ $formattedOrderId = $modelDetail[0]->getFormattedOrderIdProperty($pemesananId);
             <?php endif; ?>
         </tbody>
     </table>
-
     <div id="new-form-container"></div>
 
     <div class="form-group">
@@ -250,8 +249,6 @@ $(document).ready(function() {
         </div>
         `;
         $('#new-form-container').append(newForm); // Tambah form baru ke container
-
-        // Set nilai kode_pemesanan sama dengan pemesanan_id
 
         // Inisialisasi Typeahead untuk elemen yang baru saja ditambahkan
         initializeTypeahead(index);

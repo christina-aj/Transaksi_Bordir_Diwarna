@@ -2,10 +2,17 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
+<<<<<<< HEAD
 -- Host: localhost:3306
 -- Generation Time: Nov 03, 2024 at 04:57 PM
 -- Server version: 8.0.30
 -- PHP Version: 8.3.7
+=======
+-- Host: 127.0.0.1
+-- Generation Time: Nov 01, 2024 at 07:59 PM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.2.12
+>>>>>>> origin/test
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -28,6 +35,7 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `barang` (
+<<<<<<< HEAD
   `barang_id` int NOT NULL,
   `kode_barang` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
   `nama_barang` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
@@ -37,6 +45,17 @@ CREATE TABLE `barang` (
   `tipe` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
   `warna` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `supplier_id` int NOT NULL,
+=======
+  `barang_id` int(11) NOT NULL,
+  `kode_barang` varchar(255) CHARACTER SET armscii8 COLLATE armscii8_bin NOT NULL,
+  `nama_barang` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `angka` float NOT NULL,
+  `unit_id` int(11) NOT NULL,
+  `harga` decimal(10,0) NOT NULL,
+  `tipe` varchar(255) CHARACTER SET armscii8 COLLATE armscii8_bin NOT NULL,
+  `warna` varchar(255) CHARACTER SET armscii8 COLLATE armscii8_bin DEFAULT NULL,
+  `supplier_id` int(11) NOT NULL,
+>>>>>>> origin/test
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -65,11 +84,19 @@ INSERT INTO `barang` (`barang_id`, `kode_barang`, `nama_barang`, `angka`, `unit_
 --
 
 CREATE TABLE `barangproduksi` (
+<<<<<<< HEAD
   `barang_id` int NOT NULL,
   `nama` varchar(200) COLLATE utf8mb4_general_ci NOT NULL,
   `nama_jenis` varchar(200) COLLATE utf8mb4_general_ci NOT NULL,
   `ukuran` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
   `deskripsi` text COLLATE utf8mb4_general_ci NOT NULL
+=======
+  `barang_id` int(11) NOT NULL,
+  `nama` varchar(200) NOT NULL,
+  `nama_jenis` varchar(200) NOT NULL,
+  `ukuran` varchar(255) NOT NULL,
+  `deskripsi` text NOT NULL
+>>>>>>> origin/test
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -86,15 +113,26 @@ INSERT INTO `barangproduksi` (`barang_id`, `nama`, `nama_jenis`, `ukuran`, `desk
 --
 
 CREATE TABLE `gudang` (
+<<<<<<< HEAD
   `id_gudang` int NOT NULL,
   `tanggal` date NOT NULL,
   `barang_id` int NOT NULL,
   `user_id` int NOT NULL,
+=======
+  `id_gudang` int(11) NOT NULL,
+  `tanggal` date NOT NULL,
+  `barang_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+>>>>>>> origin/test
   `quantity_awal` float NOT NULL,
   `quantity_masuk` float NOT NULL,
   `quantity_keluar` float NOT NULL,
   `quantity_akhir` float NOT NULL,
+<<<<<<< HEAD
   `catatan` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+=======
+  `catatan` varchar(255) DEFAULT NULL,
+>>>>>>> origin/test
   `created_at` timestamp NULL DEFAULT NULL,
   `update_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -104,6 +142,7 @@ CREATE TABLE `gudang` (
 --
 
 INSERT INTO `gudang` (`id_gudang`, `tanggal`, `barang_id`, `user_id`, `quantity_awal`, `quantity_masuk`, `quantity_keluar`, `quantity_akhir`, `catatan`, `created_at`, `update_at`) VALUES
+<<<<<<< HEAD
 (7, '2024-11-03', 9, 1, 0, 5, 0, 5, 'Verifikasi pemesanan ID: 237', '2024-11-03 15:10:57', '2024-11-03 15:10:57'),
 (8, '2024-11-03', 10, 1, 0, 15, 0, 15, 'Verifikasi pemesanan ID: 237', '2024-11-03 15:10:57', '2024-11-03 15:10:57'),
 (9, '2024-11-03', 9, 1, 5, 20, 0, 25, 'Verifikasi pemesanan ID: 237', '2024-11-03 15:10:57', '2024-11-03 15:10:57'),
@@ -128,6 +167,11 @@ INSERT INTO `gudang` (`id_gudang`, `tanggal`, `barang_id`, `user_id`, `quantity_
 (28, '2024-11-03', 10, 1, 20, 15, 15, 20, 'Verifikasi pemesanan ID: 245', '2024-11-03 16:08:27', '2024-11-03 16:08:27'),
 (29, '2024-11-03', 14, 1, 30, 5, 0, 35, 'Verifikasi pemesanan ID: 245', '2024-11-03 16:08:27', '2024-11-03 16:08:27'),
 (30, '2024-11-03', 12, 1, 0, 1, 0, 1, 'Verifikasi pemesanan ID: 245', '2024-11-03 16:08:27', '2024-11-03 16:08:27');
+=======
+(1, '2024-09-02', 1, 1, 0, 5, 1, 4, 'test', NULL, '2024-09-13 19:39:44'),
+(2, '2024-09-02', 1, 1, 4, 15, 5, 14, 'test', '2024-09-13 19:44:28', '2024-09-13 19:44:28'),
+(3, '2024-09-01', 3, 1, 0, 15, 5, 10, 'test', '2024-09-13 19:58:00', '2024-09-13 19:58:00');
+>>>>>>> origin/test
 
 -- --------------------------------------------------------
 
@@ -136,9 +180,15 @@ INSERT INTO `gudang` (`id_gudang`, `tanggal`, `barang_id`, `user_id`, `quantity_
 --
 
 CREATE TABLE `jenis` (
+<<<<<<< HEAD
   `id` int NOT NULL,
   `nama_jenis` varchar(200) COLLATE utf8mb4_general_ci NOT NULL,
   `deskripsi` text COLLATE utf8mb4_general_ci NOT NULL
+=======
+  `id` int(11) NOT NULL,
+  `nama_jenis` varchar(200) NOT NULL,
+  `deskripsi` text NOT NULL
+>>>>>>> origin/test
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -157,6 +207,7 @@ INSERT INTO `jenis` (`id`, `nama_jenis`, `deskripsi`) VALUES
 --
 
 CREATE TABLE `laporanproduksi` (
+<<<<<<< HEAD
   `laporan_id` int NOT NULL,
   `mesin_id` int NOT NULL,
   `shift_id` int NOT NULL,
@@ -166,12 +217,25 @@ CREATE TABLE `laporanproduksi` (
   `stitch` int NOT NULL,
   `kuantitas` int NOT NULL,
   `bs` int NOT NULL
+=======
+  `laporan_id` int(11) NOT NULL,
+  `nama_mesin` varchar(100) NOT NULL,
+  `shift_id` int(11) NOT NULL,
+  `tanggal_kerja` date NOT NULL,
+  `nama_kerjaan` varchar(200) NOT NULL,
+  `vs` int(11) NOT NULL DEFAULT 1,
+  `stitch` int(11) NOT NULL,
+  `kuantitas` int(11) NOT NULL,
+  `bs` int(11) NOT NULL,
+  `nama_barang` varchar(200) NOT NULL
+>>>>>>> origin/test
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `laporanproduksi`
 --
 
+<<<<<<< HEAD
 INSERT INTO `laporanproduksi` (`laporan_id`, `mesin_id`, `shift_id`, `tanggal_kerja`, `nama_kerjaan`, `vs`, `stitch`, `kuantitas`, `bs`) VALUES
 (8, 2, 21, '2024-09-02', 'babi', 1, 2, 3, 4),
 (9, 2, 22, '2024-09-03', 'babi', 1, 2, 3, 4),
@@ -184,6 +248,13 @@ INSERT INTO `laporanproduksi` (`laporan_id`, `mesin_id`, `shift_id`, `tanggal_ke
 (23, 1, 23, '2024-09-05', 'Jahit', 123, 123, 123, 123),
 (24, 2, 22, '2019-07-01', 'Nukang', 1, 1, 1, 1),
 (25, 2, 21, '2019-07-12', 'Nukang', 1, 1, 3, 1);
+=======
+INSERT INTO `laporanproduksi` (`laporan_id`, `nama_mesin`, `shift_id`, `tanggal_kerja`, `nama_kerjaan`, `vs`, `stitch`, `kuantitas`, `bs`, `nama_barang`) VALUES
+(26, 'Mesin Bordir', 22, '2024-10-30', 'text1', 21, 21, 1, 1, 'Baju Merah'),
+(27, 'Mesin Bordir', 21, '2024-11-02', 'text1', 21, 21, 1, 1, 'Baju Merah'),
+(28, 'Mesin Bordir', 21, '2024-11-02', 'text1', 21, 21, 1, 1, 'Baju Merah'),
+(29, 'Mesin Bordir', 21, '2024-11-02', 'text11231', 21, 21, 1, 1, 'Baju Merah');
+>>>>>>> origin/test
 
 -- --------------------------------------------------------
 
@@ -192,12 +263,21 @@ INSERT INTO `laporanproduksi` (`laporan_id`, `mesin_id`, `shift_id`, `tanggal_ke
 --
 
 CREATE TABLE `laporan_keluar` (
+<<<<<<< HEAD
   `id` int NOT NULL,
   `nama` varchar(200) COLLATE utf8mb4_general_ci NOT NULL,
   `barang` varchar(200) COLLATE utf8mb4_general_ci NOT NULL,
   `qty` int NOT NULL,
   `tanggal` date NOT NULL,
   `catatan` text COLLATE utf8mb4_general_ci NOT NULL
+=======
+  `id` int(11) NOT NULL,
+  `nama` varchar(200) NOT NULL,
+  `barang` varchar(200) NOT NULL,
+  `qty` int(11) NOT NULL,
+  `tanggal` date NOT NULL,
+  `catatan` text NOT NULL
+>>>>>>> origin/test
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -233,6 +313,7 @@ INSERT INTO `mesin` (`mesin_id`, `nama`, `deskripsi`) VALUES
 --
 
 CREATE TABLE `nota` (
+<<<<<<< HEAD
   `nota_id` int NOT NULL,
   `nama_konsumen` varchar(200) COLLATE utf8mb4_general_ci NOT NULL,
   `tanggal` date NOT NULL,
@@ -241,6 +322,16 @@ CREATE TABLE `nota` (
   `qty` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
   `total_qty` int NOT NULL,
   `total_harga` int NOT NULL
+=======
+  `nota_id` int(11) NOT NULL,
+  `nama_konsumen` varchar(200) NOT NULL,
+  `tanggal` date NOT NULL,
+  `barang` varchar(255) NOT NULL,
+  `harga` varchar(255) NOT NULL,
+  `qty` varchar(255) NOT NULL,
+  `total_qty` int(11) NOT NULL,
+  `total_harga` int(11) NOT NULL
+>>>>>>> origin/test
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -257,9 +348,15 @@ INSERT INTO `nota` (`nota_id`, `nama_konsumen`, `tanggal`, `barang`, `harga`, `q
 --
 
 CREATE TABLE `pembelian` (
+<<<<<<< HEAD
   `pembelian_id` int NOT NULL,
   `pemesanan_id` int NOT NULL,
   `user_id` int DEFAULT NULL,
+=======
+  `pembelian_id` int(11) NOT NULL,
+  `pemesanan_id` int(11) NOT NULL,
+  `user_id` int(11) DEFAULT NULL,
+>>>>>>> origin/test
   `total_biaya` float NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -349,6 +446,7 @@ INSERT INTO `pembelian` (`pembelian_id`, `pemesanan_id`, `user_id`, `total_biaya
 (93, 159, NULL, 0),
 (94, 160, NULL, 0),
 (95, 161, NULL, 0),
+<<<<<<< HEAD
 (96, 162, NULL, 0),
 (97, 163, NULL, 0),
 (98, 164, NULL, 0),
@@ -399,6 +497,9 @@ INSERT INTO `pembelian` (`pembelian_id`, `pemesanan_id`, `user_id`, `total_biaya
 (152, 243, 1, 940000),
 (153, 244, 1, 4200000),
 (154, 245, 1, 2050000);
+=======
+(96, 162, NULL, 0);
+>>>>>>> origin/test
 
 -- --------------------------------------------------------
 
@@ -407,6 +508,7 @@ INSERT INTO `pembelian` (`pembelian_id`, `pemesanan_id`, `user_id`, `total_biaya
 --
 
 CREATE TABLE `pembelian_detail` (
+<<<<<<< HEAD
   `belidetail_id` int NOT NULL,
   `pembelian_id` int NOT NULL,
   `pesandetail_id` int NOT NULL,
@@ -414,6 +516,15 @@ CREATE TABLE `pembelian_detail` (
   `total_biaya` decimal(10,0) NOT NULL,
   `catatan` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `is_correct` tinyint NOT NULL,
+=======
+  `belidetail_id` int(11) NOT NULL,
+  `pembelian_id` int(11) NOT NULL,
+  `pesandetail_id` int(11) NOT NULL,
+  `cek_barang` decimal(10,0) NOT NULL,
+  `total_biaya` decimal(10,0) NOT NULL,
+  `catatan` varchar(255) DEFAULT NULL,
+  `is_correct` tinyint(4) NOT NULL,
+>>>>>>> origin/test
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -463,6 +574,7 @@ INSERT INTO `pembelian_detail` (`belidetail_id`, `pembelian_id`, `pesandetail_id
 (76, 93, 99, 0, 0, NULL, 0, '2024-10-06 12:37:29', NULL),
 (77, 94, 102, 0, 0, NULL, 0, '2024-10-06 12:45:50', NULL),
 (78, 95, 104, 0, 0, NULL, 0, '2024-10-06 12:48:38', NULL),
+<<<<<<< HEAD
 (79, 96, 109, 0, 0, NULL, 0, '2024-10-07 23:46:07', NULL),
 (80, 97, 112, 0, 0, NULL, 0, '2024-10-08 06:00:00', NULL),
 (81, 101, 114, 0, 0, NULL, 0, '2024-10-11 06:07:56', NULL),
@@ -502,6 +614,9 @@ INSERT INTO `pembelian_detail` (`belidetail_id`, `pembelian_id`, `pesandetail_id
 (147, 154, 213, 15000, 225000, NULL, 1, '2024-11-03 09:05:13', NULL),
 (148, 154, 214, 20000, 100000, NULL, 1, '2024-11-03 09:05:13', NULL),
 (149, 154, 215, 1500000, 1500000, NULL, 1, '2024-11-03 09:05:13', NULL);
+=======
+(79, 96, 109, 0, 0, NULL, 0, '2024-10-07 23:46:07', NULL);
+>>>>>>> origin/test
 
 -- --------------------------------------------------------
 
@@ -510,11 +625,18 @@ INSERT INTO `pembelian_detail` (`belidetail_id`, `pembelian_id`, `pesandetail_id
 --
 
 CREATE TABLE `pemesanan` (
+<<<<<<< HEAD
   `pemesanan_id` int NOT NULL,
   `user_id` int NOT NULL,
   `tanggal` date NOT NULL,
   `total_item` float NOT NULL,
   `status` tinyint NOT NULL DEFAULT '0',
+=======
+  `pemesanan_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `tanggal` date NOT NULL,
+  `total_item` float NOT NULL,
+>>>>>>> origin/test
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -523,6 +645,7 @@ CREATE TABLE `pemesanan` (
 -- Dumping data for table `pemesanan`
 --
 
+<<<<<<< HEAD
 INSERT INTO `pemesanan` (`pemesanan_id`, `user_id`, `tanggal`, `total_item`, `status`, `created_at`, `updated_at`) VALUES
 (71, 1, '2024-09-23', 1, 0, '2024-09-23 17:17:10', '2024-10-11 14:44:28'),
 (72, 1, '2024-09-23', 1, 0, '2024-09-23 17:18:29', '2024-10-11 14:45:39'),
@@ -679,6 +802,101 @@ INSERT INTO `pemesanan` (`pemesanan_id`, `user_id`, `tanggal`, `total_item`, `st
 (243, 1, '2024-11-03', 3, 2, '2024-11-03 15:44:45', '2024-11-03 15:46:33'),
 (244, 1, '2024-11-03', 4, 2, '2024-11-03 15:49:45', '2024-11-03 15:52:38'),
 (245, 1, '2024-11-03', 4, 2, '2024-11-03 16:00:51', '2024-11-03 16:06:19');
+=======
+INSERT INTO `pemesanan` (`pemesanan_id`, `user_id`, `tanggal`, `total_item`, `created_at`, `updated_at`) VALUES
+(71, 1, '2024-09-23', 1, '2024-09-23 17:17:10', '2024-09-23 17:32:52'),
+(72, 1, '2024-09-23', 0, '2024-09-23 17:18:29', '2024-09-23 17:18:29'),
+(73, 1, '2024-09-23', 0, '2024-09-23 17:21:58', '2024-09-23 17:21:58'),
+(74, 1, '2024-09-23', 0, '2024-09-23 17:29:54', '2024-09-23 17:29:54'),
+(75, 1, '2024-09-23', 0, '2024-09-23 17:31:57', '2024-09-23 17:31:57'),
+(76, 1, '2024-09-23', 1, '2024-09-23 17:33:08', '2024-09-23 17:33:19'),
+(77, 1, '2024-09-23', 1, '2024-09-23 17:35:08', '2024-09-23 17:36:01'),
+(78, 1, '2024-09-23', 1, '2024-09-23 17:36:15', '2024-09-23 17:36:23'),
+(79, 1, '2024-09-23', 1, '2024-09-23 17:47:07', '2024-09-23 17:47:19'),
+(80, 1, '2024-09-23', 1, '2024-09-23 17:56:06', '2024-09-23 17:56:15'),
+(81, 1, '2024-09-23', 2, '2024-09-23 18:05:25', '2024-09-23 18:06:40'),
+(82, 1, '2024-09-23', 1, '2024-09-23 18:11:57', '2024-09-23 18:12:02'),
+(83, 1, '2024-09-23', 2, '2024-09-23 18:52:43', '2024-10-06 13:10:53'),
+(84, 1, '2024-09-23', 1, '2024-09-23 19:04:53', '2024-09-23 19:05:01'),
+(85, 1, '2024-09-24', 1, '2024-09-24 16:51:19', '2024-09-24 16:51:47'),
+(86, 1, '2024-09-24', 0, '2024-09-24 17:38:47', '2024-09-24 17:38:47'),
+(87, 1, '2024-09-24', 0, '2024-09-24 17:52:08', '2024-09-24 17:52:08'),
+(88, 1, '2024-09-24', 0, '2024-09-24 17:57:52', '2024-09-24 17:57:52'),
+(89, 1, '2024-09-24', 0, '2024-09-24 18:04:16', '2024-09-24 18:04:16'),
+(90, 1, '2024-09-24', 0, '2024-09-24 18:04:29', '2024-09-24 18:04:29'),
+(91, 1, '2024-09-24', 0, '2024-09-24 18:06:15', '2024-09-24 18:06:15'),
+(92, 1, '2024-09-24', 0, '2024-09-24 18:09:35', '2024-09-24 18:09:35'),
+(93, 1, '2024-09-24', 0, '2024-09-24 18:44:45', '2024-09-24 18:44:45'),
+(94, 1, '2024-09-24', 0, '2024-09-24 19:07:57', '2024-09-24 19:07:57'),
+(95, 1, '2024-09-24', 0, '2024-09-24 19:10:10', '2024-09-24 19:10:10'),
+(96, 1, '2024-09-24', 0, '2024-09-24 19:10:45', '2024-09-24 19:10:45'),
+(97, 1, '2024-09-24', 0, '2024-09-24 19:11:25', '2024-09-24 19:11:25'),
+(98, 1, '2024-09-24', 1, '2024-09-24 19:19:15', '2024-09-24 19:31:35'),
+(99, 1, '2024-09-24', 1, '2024-09-24 19:31:51', '2024-09-24 19:32:21'),
+(100, 1, '2024-09-24', 1, '2024-09-24 19:32:44', '2024-09-24 19:46:10'),
+(101, 1, '2024-09-24', 0, '2024-09-24 19:46:37', '2024-09-24 19:46:37'),
+(102, 1, '2024-09-24', 1, '2024-09-24 19:47:07', '2024-09-24 19:48:35'),
+(103, 1, '2024-09-24', 1, '2024-09-24 19:48:50', '2024-09-24 19:53:41'),
+(104, 1, '2024-09-24', 0, '2024-09-24 19:53:44', '2024-09-24 19:53:44'),
+(105, 1, '2024-09-24', 0, '2024-09-24 20:01:56', '2024-09-24 20:01:56'),
+(106, 1, '2024-09-24', 1, '2024-09-24 20:03:16', '2024-09-24 20:07:23'),
+(107, 1, '2024-09-29', 0, '2024-09-29 14:02:58', '2024-09-29 14:02:58'),
+(108, 1, '2024-09-29', 0, '2024-09-29 14:03:01', '2024-09-29 14:03:01'),
+(109, 1, '2024-09-29', 0, '2024-09-29 14:04:47', '2024-09-29 14:04:47'),
+(110, 1, '2024-09-29', 0, '2024-09-29 16:20:45', '2024-09-29 16:20:45'),
+(111, 1, '2024-09-29', 0, '2024-09-29 16:20:51', '2024-09-29 16:20:51'),
+(112, 1, '2024-09-29', 0, '2024-09-29 16:24:23', '2024-09-29 16:24:23'),
+(113, 1, '2024-09-29', 1, '2024-09-29 16:24:39', '2024-09-29 16:59:23'),
+(114, 1, '2024-09-29', 0, '2024-09-29 16:59:32', '2024-09-29 16:59:32'),
+(115, 1, '2024-09-29', 0, '2024-09-29 17:56:54', '2024-09-29 17:56:54'),
+(116, 1, '2024-09-29', 2, '2024-09-29 18:08:34', '2024-09-29 18:19:55'),
+(117, 1, '2024-09-29', 2, '2024-09-29 18:22:39', '2024-09-29 18:27:12'),
+(118, 1, '2024-09-29', 0, '2024-09-29 18:37:24', '2024-09-29 18:37:24'),
+(119, 1, '2024-10-01', 2, '2024-10-01 17:31:42', '2024-10-01 17:42:35'),
+(120, 1, '2024-10-01', 3, '2024-10-01 17:45:13', '2024-10-01 18:09:12'),
+(121, 1, '2024-10-01', 3, '2024-10-01 18:10:38', '2024-10-01 18:12:59'),
+(122, 1, '2024-10-01', 3, '2024-10-01 18:25:26', '2024-10-01 18:26:13'),
+(123, 1, '2024-10-01', 2, '2024-10-01 18:30:28', '2024-10-01 18:30:59'),
+(124, 1, '2024-10-01', 3, '2024-10-01 18:34:38', '2024-10-01 18:35:28'),
+(125, 1, '2024-10-01', 3, '2024-10-01 18:40:07', '2024-10-01 18:40:35'),
+(126, 1, '2024-10-01', 1, '2024-10-01 18:43:27', '2024-10-01 18:43:34'),
+(127, 1, '2024-10-01', 3, '2024-10-01 18:48:28', '2024-10-01 18:49:18'),
+(128, 1, '2024-10-01', 1, '2024-10-01 18:49:35', '2024-10-01 18:49:43'),
+(129, 1, '2024-10-04', 0, '2024-10-04 10:56:06', '2024-10-04 10:56:06'),
+(130, 1, '2024-10-04', 0, '2024-10-04 11:10:22', '2024-10-04 11:10:22'),
+(131, 1, '2024-10-04', 3, '2024-10-04 11:16:59', '2024-10-04 11:54:29'),
+(132, 1, '2024-10-04', 0, '2024-10-04 12:20:59', '2024-10-04 12:20:59'),
+(133, 1, '2024-10-04', 8, '2024-10-04 12:22:52', '2024-10-04 12:43:20'),
+(134, 1, '2024-10-04', 4, '2024-10-04 12:53:16', '2024-10-06 07:44:44'),
+(135, 1, '2024-10-04', 0, '2024-10-04 14:31:28', '2024-10-04 14:31:28'),
+(136, 1, '2024-10-04', 0, '2024-10-04 14:40:54', '2024-10-04 14:40:54'),
+(137, 1, '2024-10-05', 0, '2024-10-05 12:32:09', '2024-10-05 12:32:09'),
+(138, 1, '2024-10-05', 0, '2024-10-05 12:51:05', '2024-10-05 12:51:05'),
+(139, 1, '2024-10-05', 0, '2024-10-05 14:02:33', '2024-10-05 14:02:33'),
+(140, 1, '2024-10-05', 4, '2024-10-05 14:56:51', '2024-10-06 07:28:54'),
+(141, 1, '2024-10-05', 0, '2024-10-05 14:57:55', '2024-10-05 14:57:55'),
+(142, 1, '2024-10-05', 0, '2024-10-05 14:58:16', '2024-10-05 14:58:16'),
+(143, 1, '2024-10-05', 0, '2024-10-05 15:12:14', '2024-10-05 15:12:14'),
+(144, 1, '2024-10-06', 0, '2024-10-06 06:30:12', '2024-10-06 06:30:12'),
+(145, 1, '2024-10-06', 0, '2024-10-06 06:38:48', '2024-10-06 06:38:48'),
+(146, 1, '2024-10-06', 0, '2024-10-06 06:40:04', '2024-10-06 06:40:04'),
+(147, 1, '2024-10-06', 0, '2024-10-06 06:43:07', '2024-10-06 06:43:07'),
+(148, 1, '2024-10-06', 0, '2024-10-06 06:50:09', '2024-10-06 06:50:09'),
+(149, 1, '2024-10-06', 0, '2024-10-06 06:58:14', '2024-10-06 06:58:14'),
+(150, 1, '2024-10-06', 0, '2024-10-06 07:03:32', '2024-10-06 07:03:32'),
+(151, 1, '2024-10-06', 2, '2024-10-06 07:05:19', '2024-10-06 07:22:37'),
+(152, 1, '2024-10-06', 0, '2024-10-06 07:07:36', '2024-10-06 07:07:36'),
+(153, 1, '2024-10-06', 3, '2024-10-06 07:08:20', '2024-10-06 07:28:24'),
+(154, 1, '2024-10-06', 3, '2024-10-06 07:50:58', '2024-10-06 07:57:43'),
+(155, 1, '2024-10-06', 3, '2024-10-06 13:11:58', '2024-10-06 13:14:11'),
+(156, 1, '2024-10-06', 0, '2024-10-06 16:39:48', '2024-10-06 16:39:48'),
+(157, 1, '2024-10-06', 0, '2024-10-06 18:40:40', '2024-10-06 18:40:40'),
+(158, 1, '2024-10-06', 0, '2024-10-06 18:59:59', '2024-10-06 18:59:59'),
+(159, 1, '2024-10-06', 3, '2024-10-06 19:09:57', '2024-10-06 19:37:29'),
+(160, 1, '2024-10-06', 2, '2024-10-06 19:38:35', '2024-10-06 19:45:50'),
+(161, 1, '2024-10-06', 5, '2024-10-06 19:46:57', '2024-10-06 19:48:38'),
+(162, 1, '2024-10-08', 3, '2024-10-08 06:45:21', '2024-10-08 06:46:07');
+>>>>>>> origin/test
 
 -- --------------------------------------------------------
 
@@ -687,11 +905,19 @@ INSERT INTO `pemesanan` (`pemesanan_id`, `user_id`, `tanggal`, `total_item`, `st
 --
 
 CREATE TABLE `penggunaan` (
+<<<<<<< HEAD
   `penggunaan_id` int NOT NULL,
   `barang_id` int NOT NULL,
   `user_id` int NOT NULL,
   `jumlah_digunakan` int NOT NULL,
   `catatan` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+=======
+  `penggunaan_id` int(11) NOT NULL,
+  `barang_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `jumlah_digunakan` int(11) NOT NULL,
+  `catatan` varchar(255) DEFAULT NULL,
+>>>>>>> origin/test
   `tanggal_digunakan` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -712,6 +938,7 @@ INSERT INTO `penggunaan` (`penggunaan_id`, `barang_id`, `user_id`, `jumlah_digun
 --
 
 CREATE TABLE `pesan_detail` (
+<<<<<<< HEAD
   `pesandetail_id` int NOT NULL,
   `pemesanan_id` int NOT NULL,
   `barang_id` int NOT NULL,
@@ -720,6 +947,16 @@ CREATE TABLE `pesan_detail` (
   `catatan` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `langsung_pakai` tinyint NOT NULL DEFAULT '0',
   `is_correct` tinyint NOT NULL DEFAULT '0',
+=======
+  `pesandetail_id` int(11) NOT NULL,
+  `pemesanan_id` int(11) NOT NULL,
+  `barang_id` int(11) NOT NULL,
+  `qty` float NOT NULL,
+  `qty_terima` float DEFAULT NULL,
+  `catatan` varchar(255) DEFAULT NULL,
+  `langsung_pakai` tinyint(4) NOT NULL DEFAULT 0,
+  `is_correct` tinyint(4) NOT NULL DEFAULT 0,
+>>>>>>> origin/test
   `created_at` timestamp NULL DEFAULT NULL,
   `update_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -729,11 +966,19 @@ CREATE TABLE `pesan_detail` (
 --
 
 INSERT INTO `pesan_detail` (`pesandetail_id`, `pemesanan_id`, `barang_id`, `qty`, `qty_terima`, `catatan`, `langsung_pakai`, `is_correct`, `created_at`, `update_at`) VALUES
+<<<<<<< HEAD
 (17, 71, 9, 5, 5, 'test', 1, 1, '2024-09-23 17:17:21', '2024-10-11 14:44:28'),
 (18, 72, 9, 4, 4, '', 1, 1, '2024-09-23 17:18:39', '2024-10-11 14:45:39'),
 (19, 73, 4, 5, 0, '', 1, 0, '2024-09-23 17:22:06', '2024-09-23 17:22:06'),
 (20, 74, 9, 5, 5, '', 1, 1, '2024-09-23 17:30:02', '2024-10-11 14:46:36'),
 (21, 75, 11, 5, 5, 'barang lengkap', 1, 1, '2024-09-23 17:32:07', '2024-10-11 14:53:41'),
+=======
+(17, 71, 9, 5, 0, '', 1, 0, '2024-09-23 17:17:21', '2024-09-23 17:32:52'),
+(18, 72, 9, 4, 0, '', 1, 0, '2024-09-23 17:18:39', '2024-09-23 17:18:39'),
+(19, 73, 4, 5, 0, '', 1, 0, '2024-09-23 17:22:06', '2024-09-23 17:22:06'),
+(20, 74, 9, 5, 0, '', 1, 0, '2024-09-23 17:30:02', '2024-09-23 17:30:02'),
+(21, 75, 11, 5, 0, '', 1, 0, '2024-09-23 17:32:07', '2024-09-23 17:32:07'),
+>>>>>>> origin/test
 (22, 76, 10, 5, 0, '', 1, 0, '2024-09-23 17:33:19', '2024-09-23 17:33:19'),
 (23, 77, 11, 5, 0, '', 1, 0, '2024-09-23 17:36:01', '2024-09-23 17:36:01'),
 (24, 78, 9, 4, 0, '', 1, 0, '2024-09-23 17:36:23', '2024-09-23 17:36:23'),
@@ -744,14 +989,23 @@ INSERT INTO `pesan_detail` (`pesandetail_id`, `pemesanan_id`, `barang_id`, `qty`
 (29, 82, 4, 5, 0, '', 1, 0, '2024-09-23 18:12:02', '2024-09-23 18:12:02'),
 (30, 83, 4, 5, 5, 'Proses Pemesanan', 1, 1, '2024-09-23 18:53:06', '2024-10-06 13:10:53'),
 (31, 83, 4, 5, 5, 'Proses Pemesanan', 1, 1, '2024-09-23 18:54:46', '2024-10-06 13:10:53'),
+<<<<<<< HEAD
 (32, 84, 9, 5, 5, 'Pesan', 0, 1, '2024-09-23 19:05:01', '2024-10-15 15:50:41'),
+=======
+(32, 84, 9, 5, 0, 'Pesan', 0, 0, '2024-09-23 19:05:01', '2024-09-23 19:05:01'),
+>>>>>>> origin/test
 (33, 85, 1, 5, 0, '', 1, 0, '2024-09-24 16:51:47', '2024-09-24 16:51:47'),
 (34, 98, 14, 5, 0, 'test', 1, 1, '2024-09-24 19:31:35', '2024-09-24 19:31:35'),
 (35, 99, 14, 5, 0, 'test', 1, 1, '2024-09-24 19:32:21', '2024-09-24 19:32:21'),
 (36, 100, 4, 15, 1, '', 1, 1, '2024-09-24 19:46:10', '2024-09-24 19:46:10'),
 (37, 102, 9, 123, 1, '', 1, 0, '2024-09-24 19:48:35', '2024-09-24 19:48:35'),
+<<<<<<< HEAD
 (38, 103, 9, 123, 123, '123', 0, 1, '2024-09-24 19:53:41', '2024-10-15 15:54:26'),
 (39, 106, 14, 5, 5, 'test', 0, 1, '2024-09-24 20:07:23', '2024-10-15 16:29:10'),
+=======
+(38, 103, 9, 123, 1, '123', 0, 0, '2024-09-24 19:53:41', '2024-09-24 19:53:41'),
+(39, 106, 14, 5, 0, 'test', 0, 0, '2024-09-24 20:07:23', '2024-09-24 20:07:23'),
+>>>>>>> origin/test
 (40, 113, 1, 5, 0, 'test', 1, 1, '2024-09-29 16:59:23', '2024-09-29 16:59:23'),
 (41, 116, 9, 5, 0, 'test', 1, 1, '2024-09-29 18:19:55', '2024-09-29 18:19:55'),
 (42, 116, 3, 6, 1, 'agg', 1, 1, '2024-09-29 18:19:55', '2024-09-29 18:19:55'),
@@ -759,7 +1013,11 @@ INSERT INTO `pesan_detail` (`pesandetail_id`, `pemesanan_id`, `barang_id`, `qty`
 (44, 117, 3, 5, 0, 'testtt', 1, 1, '2024-09-29 18:27:12', '2024-09-29 18:27:12'),
 (45, 119, 14, 5, 0, 'test', 1, 0, '2024-10-01 17:42:35', '2024-10-01 17:42:35'),
 (46, 119, 3, 15, 0, '', 0, 0, '2024-10-01 17:42:35', '2024-10-01 17:42:35'),
+<<<<<<< HEAD
 (47, 120, 4, 5, 5, 'test', 1, 1, '2024-10-01 18:09:12', '2024-10-15 16:36:22'),
+=======
+(47, 120, 4, 5, 0, 'test', 1, 0, '2024-10-01 18:09:12', '2024-10-01 18:09:12'),
+>>>>>>> origin/test
 (48, 120, 3, 5, 0, '', 0, 0, '2024-10-01 18:09:12', '2024-10-01 18:09:12'),
 (49, 120, 10, 7, 0, '', 0, 0, '2024-10-01 18:09:12', '2024-10-01 18:09:12'),
 (50, 121, 14, 5, 0, '', 0, 0, '2024-10-01 18:12:59', '2024-10-01 18:12:59'),
@@ -779,7 +1037,11 @@ INSERT INTO `pesan_detail` (`pesandetail_id`, `pemesanan_id`, `barang_id`, `qty`
 (64, 126, 14, 5, 0, 'test', 0, 0, '2024-10-01 18:43:34', '2024-10-01 18:43:34'),
 (65, 127, 4, 5, 0, '', 1, 0, '2024-10-01 18:49:18', '2024-10-01 18:49:18'),
 (66, 127, 9, 8, 0, 'ok', 0, 0, '2024-10-01 18:49:18', '2024-10-01 18:49:18'),
+<<<<<<< HEAD
 (67, 127, 11, 9, 9, '', 1, 1, '2024-10-01 18:49:18', '2024-10-11 14:54:23'),
+=======
+(67, 127, 11, 9, 0, '', 1, 0, '2024-10-01 18:49:18', '2024-10-01 18:49:18'),
+>>>>>>> origin/test
 (68, 128, 9, 5, 0, 'test', 1, 0, '2024-10-01 18:49:43', '2024-10-01 18:49:43'),
 (69, 131, 1, 5, 0, 'test', 1, 0, '2024-10-04 11:54:29', '2024-10-04 11:54:29'),
 (70, 131, 3, 5, 0, 'ok', 0, 0, '2024-10-04 11:54:29', '2024-10-04 11:54:29'),
@@ -796,7 +1058,11 @@ INSERT INTO `pesan_detail` (`pesandetail_id`, `pemesanan_id`, `barang_id`, `qty`
 (81, 134, 3, 10, 0, 'agg', 0, 0, '2024-10-04 12:53:32', '2024-10-04 12:53:32'),
 (82, 134, 14, 5, 0, 'test', 1, 0, '2024-10-04 12:56:41', '2024-10-04 12:56:41'),
 (83, 140, 9, 5, 0, 'test', 1, 0, '2024-10-05 14:57:26', '2024-10-05 14:57:26'),
+<<<<<<< HEAD
 (84, 140, 14, 6, 3, '', 0, 0, '2024-10-05 14:57:26', '2024-10-15 16:30:52'),
+=======
+(84, 140, 14, 6, 0, '', 0, 0, '2024-10-05 14:57:26', '2024-10-05 14:57:26'),
+>>>>>>> origin/test
 (85, 140, 10, 6, 0, 'yahhh', 1, 0, '2024-10-05 14:57:26', '2024-10-05 14:57:26'),
 (86, 151, 9, 5, 0, '', 0, 0, '2024-10-06 07:05:32', '2024-10-06 07:05:32'),
 (87, 153, 14, 5, 0, '', 1, 0, '2024-10-06 07:08:30', '2024-10-06 07:08:30'),
@@ -809,20 +1075,31 @@ INSERT INTO `pesan_detail` (`pesandetail_id`, `pemesanan_id`, `barang_id`, `qty`
 (94, 154, 5, 15, 15, '', 0, 1, '2024-10-06 07:51:38', '2024-10-06 07:52:33'),
 (95, 154, 13, 4, 4, '', 1, 1, '2024-10-06 07:51:38', '2024-10-06 07:57:43'),
 (96, 155, 9, 5, 5, 'test', 0, 1, '2024-10-06 13:12:35', '2024-10-06 13:14:11'),
+<<<<<<< HEAD
 (97, 155, 11, 15, 15, 'testtt', 1, 1, '2024-10-06 13:12:35', '2024-10-11 14:40:11'),
 (98, 155, 5, 17, 17, 'yahhh', 0, 1, '2024-10-06 13:12:35', '2024-10-06 13:14:11'),
 (99, 159, 11, 5, 5, 'testtt', 0, 1, '2024-10-06 19:37:29', '2024-10-11 13:22:12'),
+=======
+(97, 155, 11, 15, 0, 'testtt', 1, 0, '2024-10-06 13:12:35', '2024-10-06 13:14:11'),
+(98, 155, 5, 17, 17, 'yahhh', 0, 1, '2024-10-06 13:12:35', '2024-10-06 13:14:11'),
+(99, 159, 11, 5, 0, 'testtt', 0, 0, '2024-10-06 19:37:29', '2024-10-06 19:37:29'),
+>>>>>>> origin/test
 (100, 159, 5, 5, 0, '', 0, 0, '2024-10-06 19:37:29', '2024-10-06 19:37:29'),
 (101, 159, 13, 5, 0, 'yahhh', 1, 0, '2024-10-06 19:37:29', '2024-10-06 19:37:29'),
 (102, 160, 4, 5, 0, 'test', 0, 0, '2024-10-06 19:45:50', '2024-10-06 19:45:50'),
 (103, 160, 5, 15, 0, 'coba aja', 1, 0, '2024-10-06 19:45:50', '2024-10-06 19:45:50'),
 (104, 161, 1, 5, 0, 'test', 0, 0, '2024-10-06 19:48:38', '2024-10-06 19:48:38'),
+<<<<<<< HEAD
 (105, 161, 4, 12, 12, '', 1, 0, '2024-10-06 19:48:38', '2024-10-15 16:36:59'),
+=======
+(105, 161, 4, 12, 0, '', 1, 0, '2024-10-06 19:48:38', '2024-10-06 19:48:38'),
+>>>>>>> origin/test
 (106, 161, 11, 17, 0, '', 0, 0, '2024-10-06 19:48:38', '2024-10-06 19:48:38'),
 (107, 161, 9, 26, 0, '', 0, 0, '2024-10-06 19:48:38', '2024-10-06 19:48:38'),
 (108, 161, 10, 10, 0, '', 1, 0, '2024-10-06 19:48:38', '2024-10-06 19:48:38'),
 (109, 162, 11, 5, 0, '', 1, 0, '2024-10-08 06:46:07', '2024-10-08 06:46:07'),
 (110, 162, 9, 12, 0, 'testtt', 0, 0, '2024-10-08 06:46:07', '2024-10-08 06:46:07'),
+<<<<<<< HEAD
 (111, 162, 5, 14, 0, 'yahhh', 1, 0, '2024-10-08 06:46:07', '2024-10-08 06:46:07'),
 (112, 163, 1, 5, 5, 'test', 0, 1, '2024-10-08 13:00:00', '2024-10-11 14:24:34'),
 (113, 163, 3, 12, 12, 'agg', 0, 1, '2024-10-08 13:00:00', '2024-10-11 13:19:54'),
@@ -908,6 +1185,9 @@ INSERT INTO `pesan_detail` (`pesandetail_id`, `pemesanan_id`, `barang_id`, `qty`
 (213, 245, 10, 15, 15, '', 1, 1, '2024-11-03 16:05:13', '2024-11-03 16:06:16'),
 (214, 245, 14, 5, 5, '', 0, 1, '2024-11-03 16:05:13', '2024-11-03 16:06:16'),
 (215, 245, 12, 1, 1, '', 0, 1, '2024-11-03 16:05:13', '2024-11-03 16:06:16');
+=======
+(111, 162, 5, 14, 0, 'yahhh', 1, 0, '2024-10-08 06:46:07', '2024-10-08 06:46:07');
+>>>>>>> origin/test
 
 -- --------------------------------------------------------
 
@@ -993,6 +1273,7 @@ CREATE TABLE `stock` (
 -- Dumping data for table `stock`
 --
 
+<<<<<<< HEAD
 INSERT INTO `stock` (`stock_id`, `tambah_stock`, `barang_id`, `user_id`, `quantity_awal`, `quantity_masuk`, `quantity_keluar`, `quantity_akhir`, `is_ready`, `is_new`, `created_at`, `updated_at`) VALUES
 (33, '2024-10-11', 9, 0, 0, 9, 0, 9, 1, 0, '2024-10-10 17:00:00', '2024-10-11 14:46:36'),
 (34, '2024-10-11', 11, 0, 0, 5, 0, 5, 1, 0, '2024-10-11 14:53:41', '2024-10-11 14:53:41'),
@@ -1006,6 +1287,26 @@ INSERT INTO `stock` (`stock_id`, `tambah_stock`, `barang_id`, `user_id`, `quanti
 (42, '2024-11-03', 10, 1, 0, 15, 0, 15, 1, 0, '2024-11-03 16:06:19', '2024-11-03 16:06:19'),
 (43, '2024-11-03', 11, 1, 29, 15, 0, 44, 1, 0, '2024-11-03 16:08:27', '2024-11-03 16:08:27'),
 (44, '2024-11-03', 10, 1, 15, 15, 0, 30, 1, 0, '2024-11-03 16:08:27', '2024-11-03 16:08:27');
+=======
+INSERT INTO `stock` (`stock_id`, `tambah_stock`, `barang_id`, `quantity_awal`, `quantity_masuk`, `quantity_keluar`, `quantity_akhir`, `user_id`, `is_ready`, `is_new`, `created_at`, `updated_at`) VALUES
+(6, '2024-09-02', 1, 0, 3, 0, 3, 2, 0, 1, '2024-09-04 21:14:34', '2024-09-04 21:14:34'),
+(10, '2024-09-02', 1, 3, 6, 0, 9, 2, 0, 1, '2024-09-04 21:42:35', '2024-09-04 21:42:35'),
+(13, '2024-09-02', 3, 0, 3, 0, 3, 2, 0, 1, '2024-09-04 21:55:25', '2024-09-04 21:55:25'),
+(14, '2024-09-02', 3, 3, 5, 0, 8, 2, 0, 1, '2024-09-04 21:55:48', '2024-09-04 21:55:48'),
+(16, '2024-09-02', 3, 8, 0, 6, 8, 2, 1, 0, '2024-09-04 22:05:32', '2024-09-04 22:05:32'),
+(18, '2024-09-02', 5, 0, 0, 12, 0, 2, 1, 0, '2024-09-04 22:07:57', '2024-09-04 22:07:57'),
+(20, '2024-09-02', 5, 0, 6, 0, 6, 2, 0, 1, '2024-09-04 22:09:48', '2024-09-04 22:09:48'),
+(23, '2024-09-10', 3, 8, 0, 4, 4, 3, 1, 0, '2024-09-05 11:31:32', '2024-09-05 11:31:32'),
+(24, '2024-09-11', 1, 9, 6, 0, 15, 6, 0, 1, '2024-09-05 14:24:42', '2024-09-05 14:24:42'),
+(25, '2024-09-11', 1, 15, 0, 12, 15, 6, 1, 0, '2024-09-05 14:25:18', '2024-09-05 14:25:18'),
+(26, '2024-09-19', 1, 15, 0, 6, 9, 6, 1, 0, '2024-09-05 14:31:46', '2024-09-05 14:31:46'),
+(27, '2024-09-03', 3, 4, 12, 0, 16, 3, 0, 1, '2024-09-05 17:27:18', '2024-09-05 17:27:18'),
+(28, '2024-09-03', 7, 0, 12, 0, 12, 3, 0, 1, '2024-09-05 17:29:00', '2024-09-05 17:29:00'),
+(29, '2024-09-10', 3, 16, 0, 4, 12, 3, 1, 0, '2024-09-07 11:58:18', '2024-09-07 11:58:18'),
+(30, '2024-09-19', 1, 9, 0, 6, 3, 6, 1, 0, '2024-09-07 11:58:36', '2024-09-07 11:58:36'),
+(31, '2024-09-23', 3, 12, 0, 4, 8, 5, 1, 0, '2024-09-10 16:22:13', '2024-09-10 16:22:13'),
+(32, '2024-09-01', 3, 8, 0, 4, 4, 1, 1, 0, '2024-09-13 19:28:06', '2024-09-13 19:28:06');
+>>>>>>> origin/test
 
 -- --------------------------------------------------------
 
@@ -1230,37 +1531,61 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT for table `barang`
 --
 ALTER TABLE `barang`
+<<<<<<< HEAD
   MODIFY `barang_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+=======
+  MODIFY `barang_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+>>>>>>> origin/test
 
 --
 -- AUTO_INCREMENT for table `barangproduksi`
 --
 ALTER TABLE `barangproduksi`
+<<<<<<< HEAD
   MODIFY `barang_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+=======
+  MODIFY `barang_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+>>>>>>> origin/test
 
 --
 -- AUTO_INCREMENT for table `gudang`
 --
 ALTER TABLE `gudang`
+<<<<<<< HEAD
   MODIFY `id_gudang` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+=======
+  MODIFY `id_gudang` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+>>>>>>> origin/test
 
 --
 -- AUTO_INCREMENT for table `jenis`
 --
 ALTER TABLE `jenis`
+<<<<<<< HEAD
   MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+=======
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+>>>>>>> origin/test
 
 --
 -- AUTO_INCREMENT for table `laporanproduksi`
 --
 ALTER TABLE `laporanproduksi`
+<<<<<<< HEAD
   MODIFY `laporan_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+=======
+  MODIFY `laporan_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
+>>>>>>> origin/test
 
 --
 -- AUTO_INCREMENT for table `laporan_keluar`
 --
 ALTER TABLE `laporan_keluar`
+<<<<<<< HEAD
   MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+=======
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+>>>>>>> origin/test
 
 --
 -- AUTO_INCREMENT for table `mesin`
@@ -1275,34 +1600,60 @@ ALTER TABLE `nota`
   MODIFY `nota_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
+-- AUTO_INCREMENT for table `nota`
+--
+ALTER TABLE `nota`
+  MODIFY `nota_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+
+--
 -- AUTO_INCREMENT for table `pembelian`
 --
 ALTER TABLE `pembelian`
+<<<<<<< HEAD
   MODIFY `pembelian_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=155;
+=======
+  MODIFY `pembelian_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=97;
+>>>>>>> origin/test
 
 --
 -- AUTO_INCREMENT for table `pembelian_detail`
 --
 ALTER TABLE `pembelian_detail`
+<<<<<<< HEAD
   MODIFY `belidetail_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=150;
+=======
+  MODIFY `belidetail_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=80;
+>>>>>>> origin/test
 
 --
 -- AUTO_INCREMENT for table `pemesanan`
 --
 ALTER TABLE `pemesanan`
+<<<<<<< HEAD
   MODIFY `pemesanan_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=246;
+=======
+  MODIFY `pemesanan_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=163;
+>>>>>>> origin/test
 
 --
 -- AUTO_INCREMENT for table `penggunaan`
 --
 ALTER TABLE `penggunaan`
+<<<<<<< HEAD
   MODIFY `penggunaan_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+=======
+  MODIFY `penggunaan_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+>>>>>>> origin/test
 
 --
 -- AUTO_INCREMENT for table `pesan_detail`
 --
 ALTER TABLE `pesan_detail`
+<<<<<<< HEAD
   MODIFY `pesandetail_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=216;
+=======
+  MODIFY `pesandetail_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=112;
+>>>>>>> origin/test
 
 --
 -- AUTO_INCREMENT for table `role`
@@ -1320,25 +1671,41 @@ ALTER TABLE `shift`
 -- AUTO_INCREMENT for table `stock`
 --
 ALTER TABLE `stock`
+<<<<<<< HEAD
   MODIFY `stock_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
+=======
+  MODIFY `stock_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
+>>>>>>> origin/test
 
 --
 -- AUTO_INCREMENT for table `supplier`
 --
 ALTER TABLE `supplier`
+<<<<<<< HEAD
   MODIFY `supplier_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+=======
+  MODIFY `supplier_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+>>>>>>> origin/test
 
 --
 -- AUTO_INCREMENT for table `unit`
 --
 ALTER TABLE `unit`
+<<<<<<< HEAD
   MODIFY `unit_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+=======
+  MODIFY `unit_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+>>>>>>> origin/test
 
 --
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
+<<<<<<< HEAD
   MODIFY `user_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+=======
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+>>>>>>> origin/test
 
 --
 -- Constraints for dumped tables

@@ -21,20 +21,16 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= Html::a('Create Shift', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-
-            'shift_id',
             'user_id',
             [
                 'attribute' => 'tanggal',
                 'value' => function($model) {
-                    return Yii::$app->formatter->asDate($model->tanggal, 'php:d-m-yy');
+                    return Yii::$app->formatter->asDate($model->tanggal, 'php:d-m-Y');
                 },
             ],
             'shift',

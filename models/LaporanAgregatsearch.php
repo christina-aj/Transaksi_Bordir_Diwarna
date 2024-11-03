@@ -17,7 +17,7 @@ class LaporanAgregatsearch extends LaporanAgregat
     public function rules()
     {
         return [
-            [['laporan_id', 'mesin_id', 'shift_id', 'vs', 'stitch', 'kuantitas', 'bs'], 'integer'],
+            [['laporan_id', 'shift_id', 'vs', 'stitch', 'kuantitas', 'bs'], 'integer'],
             [['tanggal_kerja', 'nama_kerjaan'], 'safe'],
         ];
     }
@@ -59,7 +59,7 @@ class LaporanAgregatsearch extends LaporanAgregat
         // grid filtering conditions
         $query->andFilterWhere([
             'laporan_id' => $this->laporan_id,
-            'mesin_id' => $this->mesin_id,
+            'Nama Mesin' => $this->nama_mesin,
             'shift_id' => $this->shift_id,
             'tanggal_kerja' => $this->tanggal_kerja,
             'vs' => $this->vs,

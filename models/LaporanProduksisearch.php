@@ -17,8 +17,8 @@ class LaporanProduksisearch extends LaporanProduksi
     public function rules()
     {
         return [
-            [['laporan_id', 'mesin_id', 'shift_id', 'vs', 'stitch', 'kuantitas', 'bs'], 'integer'],
-            [['tanggal_kerja', 'nama_kerjaan'], 'safe'],
+            [['laporan_id', 'shift_id', 'vs', 'stitch', 'kuantitas', 'bs'], 'integer'],
+            [['tanggal_kerja', 'nama_kerjaan','nama_mesin'], 'safe'],
         ];
     }
 
@@ -41,25 +41,25 @@ class LaporanProduksisearch extends LaporanProduksi
     public function search($params)
     {
         $query = LaporanProduksi::find();
-
-        // add conditions that should always apply here
+        
+        $query->orderBy(['tanggal_kerja' => SORT_DESC]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'pagination' => [
+                'pageSize' => 20, 
+            ],
         ]);
 
         $this->load($params);
 
         if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
             return $dataProvider;
         }
 
-        // grid filtering conditions
         $query->andFilterWhere([
             'laporan_id' => $this->laporan_id,
-            'mesin_id' => $this->mesin_id,
+            'nama_mesin' => $this->nama_mesin,
             'shift_id' => $this->shift_id,
             'tanggal_kerja' => $this->tanggal_kerja,
             'vs' => $this->vs,
@@ -72,4 +72,5 @@ class LaporanProduksisearch extends LaporanProduksi
 
         return $dataProvider;
     }
+
 }

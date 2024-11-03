@@ -35,19 +35,6 @@ class Shift extends \yii\db\ActiveRecord
 
     public $waktu_kerja_hidden;
 
-    public function behaviors()
-     {
-         return [
-             [
-                 'class' => TimestampBehavior::className(),
-                 'attributes' => [
-                     \yii\db\ActiveRecord::EVENT_BEFORE_INSERT => ['tanggal'],
-                 ],
-                 'value' => new Expression('NOW()'), 
-             ],
-         ];
-     }
- 
     public static function tableName()
     {
         return 'shift';
@@ -59,9 +46,9 @@ class Shift extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['shift', 'waktu_kerja', 'nama_operator', 'mulai_istirahat', 'selesai_istirahat', 'kendala', 'ganti_benang', 'ganti_kain'], 'required'],
+            [['shift', 'waktu_kerja', 'nama_operator', 'mulai_istirahat', 'selesai_istirahat','ganti_benang', 'ganti_kain'], 'required'],
             [['user_id', 'ganti_benang', 'ganti_kain'], 'integer'],
-            [['tanggal', 'mulai_istirahat', 'selesai_istirahat', 'start_time', 'end_time'], 'safe'],
+            [['tanggal', 'mulai_istirahat', 'selesai_istirahat', 'start_time', 'end_time','kendala'], 'safe'],
             [['shift'], 'integer'],
             [['waktu_kerja'], 'number', 'min' => 0, 'max' => 1], 
             [['waktu_kerja_hidden'], 'string'],
@@ -101,6 +88,23 @@ class Shift extends \yii\db\ActiveRecord
             'ganti_kain' => 'Ganti Kain',
             
         ];
+    }
+    public function beforeSave($insert)
+    {
+        if (parent::beforeSave($insert)) {
+            // Mengubah format tanggal dari dd-mm-yyyy ke yyyy-mm-dd
+            if ($this->tanggal) {
+                $dateTime = \DateTime::createFromFormat('d-m-Y', $this->tanggal);
+                if ($dateTime) {
+                    $this->tanggal = $dateTime->format('Y-m-d');
+                } else {
+                    $this->addError('tanggal', 'Format tanggal tidak valid.');
+                    return false; 
+                }
+            }
+            return true;
+        }
+        return false;
     }
 
     /**

@@ -29,12 +29,16 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
-            'shift_id',
             'user_id',
-            'tanggal:date',
+            [
+                'attribute' => 'tanggal',
+                'value' => function($model) {
+                    return Yii::$app->formatter->asDate($model->tanggal, 'php:d-m-Y');
+                },
+            ],
             'shift',
             'waktu_kerja',
-            'nama_operator',
+            'nama_operator', 
             'mulai_istirahat',
             'selesai_istirahat',
             'kendala:ntext',

@@ -26,22 +26,22 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-
-            'laporan_id',
-            'mesin_id',
+            'nama_mesin',
             [
-                'label' => 'Shift ID - Nama Operator',
+                'attribute' => 'Nama Operator - Shift',
                 'value' => function($model) {
-                    return $model->shift_id . ' - ' . $model->shift->nama_operator;
+                    $shiftTime = ($model['shift'] == "1") ? 'Pagi' : 'Sore';
+                    return $model->shift->nama_operator. ' (' . $shiftTime . ')';
                 }
             ],
             [
                 'attribute' => 'tanggal_kerja',
                 'value' => function($model) {
-                    return Yii::$app->formatter->asDate($model->tanggal_kerja, 'php:d-m-yy');
+                    return Yii::$app->formatter->asDate($model->tanggal_kerja, 'php:d-m-Y');
                 },
             ],
             'nama_kerjaan',
+            'nama_barang',
             'vs',
             'stitch',
             'kuantitas',

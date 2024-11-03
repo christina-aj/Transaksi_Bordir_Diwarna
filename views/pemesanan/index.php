@@ -1,6 +1,7 @@
 <?php
 
 use app\models\Pemesanan;
+
 use kartik\daterange\DateRangePicker;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -24,13 +25,13 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= Html::a('Create Pesanan', ['pemesanan/create'], ['class' => 'btn btn-success']) ?>
     </p>
 
+
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
 
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-
             // 'pemesanan_id' =>
             [
                 'label' => 'Kode Pemesanan',

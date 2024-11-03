@@ -100,7 +100,6 @@ class PesanDetailController extends Controller
                             $model->created_at = date('Y-m-d H:i:s');
                             $model->langsung_pakai = !empty(Yii::$app->request->post('PesanDetail')[$index]['langsung_pakai']) ? 1 : 0;
                             $model->is_correct = !empty(Yii::$app->request->post('PesanDetail')[$index]['is_correct']) ? 1 : 0;
-
                             if (!$model->save()) {
                                 Yii::$app->session->setFlash('error', 'Penyimpanan gagal untuk model ke-' . $index);
                                 throw new \Exception('Gagal menyimpan detail pemesanan: ' . json_encode($model->getErrors()));
@@ -138,9 +137,6 @@ class PesanDetailController extends Controller
             'pemesanan' => $pemesanan,
         ]);
     }
-
-
-
 
     // Fungsi untuk membuat pemesanan
     public function actionCreatePemesanan()
@@ -252,10 +248,10 @@ class PesanDetailController extends Controller
         $modelDetail = PesanDetail::find()->joinWith(['barang', 'pemesanan'])->where(['pesandetail_id' => $pesandetail_id])->one();
 
         if (!$modelDetail) {
+
             Yii::$app->session->setFlash('error', 'Data tidak ditemukan.');
             return $this->redirect(['index']);
         }
-
         // Store pemesanan_id for use in the view
         $pemesananId = $modelDetail->pemesanan_id;
 

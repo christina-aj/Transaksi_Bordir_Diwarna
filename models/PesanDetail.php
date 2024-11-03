@@ -142,7 +142,6 @@ class PesanDetail extends \yii\db\ActiveRecord
         }
     }
 
-
     // public function afterDelete()
     // {
     //     parent::afterDelete();

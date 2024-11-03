@@ -1,7 +1,6 @@
 <?php
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use yii\helpers\ArrayHelper;
 
 /** @var yii\web\View $this */
 /** @var app\models\Shift $model */
@@ -17,7 +16,14 @@ use yii\helpers\ArrayHelper;
     
     <?= $form->field($model, 'user_id')->hiddenInput(['value' => Yii::$app->user->id])->label(false) ?>
     
-    <?= $form->field($model, 'tanggal')->hiddenInput()->label(false) ?>
+    <?= $form->field($model, 'tanggal')->widget(\kartik\date\DatePicker::classname(), [
+        'options' => ['placeholder' => 'Pilih tanggal ...'],
+        'pluginOptions' => [
+            'autoclose' => true,
+            'format' => 'dd-mm-yyyy',  
+            'todayHighlight' => true,
+        ],
+    ]); ?>
 
     <?= $form->field($model, 'shift')->dropDownList([1 => '1', 2 => '2'], ['prompt' => 'Select Shift']) ?>
 
@@ -58,6 +64,22 @@ use yii\helpers\ArrayHelper;
     <?php ActiveForm::end(); ?>
 
 </div>
+
+<script>
+
+    $('form').on('submit', function() {
+        var day = $('#day-input').val();
+        var month = $('#month-input').val();
+        var year = $('#year-input').val();
+        
+        
+        var formattedDate = day + '-' + month + '-' + year;
+        
+       
+        $('#tanggal-hidden').val(formattedDate);
+    });
+</script>
+
 
 <?php
 $script = <<< JS

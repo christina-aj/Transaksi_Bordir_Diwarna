@@ -24,22 +24,31 @@ $this->params['breadcrumbs'][] = $this->title;
                 'method' => 'post',
             ],
         ]) ?>
-        <?= Html::a('Back', ['laporan-produksi/index'], ['class' => 'btn btn-secondary']) ?>
     </p>
 
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
-            'laporan_id',
-            'mesin_id',
-            'shift_id',
-            'tanggal_kerja:date',
+            [
+                'attribute' => 'Nama Operator - Shift',
+                'value' => function($model) {
+                    $shiftTime = ($model['shift'] == "1") ? 'Pagi' : 'Sore';
+                    return $model->shift->nama_operator. ' (' . $shiftTime . ')';
+                }
+            ],
+            [
+                'attribute' => 'tanggal_kerja',
+                'value' => function($model) {
+                    return Yii::$app->formatter->asDate($model->tanggal_kerja, 'php:d-m-Y');
+                },
+            ],
             'nama_kerjaan',
+            'nama_barang',
             'vs',
             'stitch',
             'kuantitas',
             'bs',
         ],
     ]) ?>
-
+    <?= Html::a('Back', ['laporan-produksi/index'], ['class' => 'btn btn-secondary']) ?>
 </div>

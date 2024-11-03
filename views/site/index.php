@@ -111,7 +111,6 @@ $this->title = 'Dashboard';
                 </div>
             </div>
         </div>
-
         <!-- <div class="col-md-4 col-sm-6">
             <div class="card statistics-card-1">
                 <div class="card-body">

@@ -8,7 +8,7 @@ use yii\widgets\ActiveForm;
 /** @var yii\widgets\ActiveForm $form */
 ?>
 
-<div class="laporan-produksi-search">
+<div class="pc-content">
 
     <?php $form = ActiveForm::begin([
         'action' => ['index'],
@@ -17,7 +17,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'laporan_id') ?>
 
-    <?= $form->field($model, 'mesin_id') ?>
+    <?= $form->field($model, 'nama_mesin') ?>
 
     <?= $form->field($model, 'shift_id') ?>
 

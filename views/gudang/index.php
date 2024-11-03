@@ -18,7 +18,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-
     <?php // echo $this->render('_search', ['model' => $searchModel]); 
     ?>
 
@@ -64,6 +63,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'placeholder' => 'Cari Barang', // Placeholder yang ingin ditampilkan
                 ],
             ],
+
             // 'barang_id',
             'barang.nama_barang' => [
                 'attribute' => 'nama_barang', // Atribut dari tabel supplier
@@ -111,6 +111,7 @@ $this->params['breadcrumbs'][] = $this->title;
             // 'update_at',
             [
                 'template' => '{view}',
+
                 'class' => ActionColumn::className(),
                 'urlCreator' => function ($action, Gudang $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'id_gudang' => $model->id_gudang]);

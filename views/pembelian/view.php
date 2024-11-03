@@ -30,7 +30,6 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="col-md-3">
                 <div><strong>Kode Pemesanan:</strong> <?= $model->pemesanan ? $model->pemesanan->getFormattedOrderId() : 'Kode Pemesanan Tidak Tersedia' ?></div>
                 <div><strong>Tanggal Pemesanan:</strong> <?= Yii::$app->formatter->asDate($model->pemesanan->tanggal ?? 'Tanggal Tidak Tersedia') ?></div>
-
             </div>
             <div class="col-md-3">
                 <div><strong>Total Item:</strong> <?= $model->pemesanan->total_item ?? '-' ?></div>

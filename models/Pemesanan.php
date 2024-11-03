@@ -90,6 +90,7 @@ class Pemesanan extends \yii\db\ActiveRecord
             'pemesanan_id' => 'Pemesanan ID',
             'kode_pemesanan' => 'Kode Pemesanan',
             'nama_pemesan' => 'Nama Pemesan',
+
             'user_id' => 'User ID',
             'tanggal' => 'Tanggal',
             'total_item' => 'Total Item',

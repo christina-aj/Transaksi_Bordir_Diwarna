@@ -67,54 +67,60 @@ class ShiftController extends Controller
      * @return string|\yii\web\Response
      */
     public function actionCreate()
-    {
-        $model = new Shift();
+{
+    $model = new Shift();
 
-        if ($this->request->isPost) {
-            $model->load($this->request->post());
+    if ($this->request->isPost) {
+        $model->load($this->request->post());
 
-            // Set the user_id to the currently logged-in user
-            $model->user_id = Yii::$app->user->id;
+        // Set the user_id to the currently logged-in user
+        $model->user_id = Yii::$app->user->id;
 
-            // Custom time logic
-            if ($model->waktu_kerja === 'custom') {
-                $startTime = $this->request->post('Shift')['start_time'];
-                $endTime = $this->request->post('Shift')['end_time'];
+        // Custom time logic
+        if ($model->waktu_kerja === 'custom') {
+            $startTime = $model->start_time; // Ambil dari model
+            $endTime = $model->end_time; // Ambil dari model
 
-                if ($startTime && $endTime) {
-                    $startTime = \DateTime::createFromFormat('H:i', $startTime);
-                    $endTime = \DateTime::createFromFormat('H:i', $endTime);
-                    
-                    if ($startTime && $endTime) {
-                        $interval = $startTime->diff($endTime);
-                        $hours = $interval->h + ($interval->i / 60);
-                        $model->waktu_kerja = $hours / 9; // Calculate the percentage based on a 9-hour shift
-                    } else {
-                        $model->addError('start_time', 'Invalid start time format.');
-                        $model->addError('end_time', 'Invalid end time format.');
-                    }
+            if ($startTime && $endTime) {
+                $startTimeObj = \DateTime::createFromFormat('H:i', $startTime);
+                $endTimeObj = \DateTime::createFromFormat('H:i', $endTime);
+                
+                if ($startTimeObj && $endTimeObj) {
+                    // Hitung selisih waktu
+                    $interval = $startTimeObj->diff($endTimeObj);
+                    $hours = $interval->h + ($interval->i / 60);
+                    $model->waktu_kerja = $hours / 9; // Hitung persentase berdasarkan shift 9 jam
                 } else {
-                    $model->addError('start_time', 'Start time is required.');
-                    $model->addError('end_time', 'End time is required.');
+                    $model->addError('start_time', 'Format waktu mulai tidak valid.');
+                    $model->addError('end_time', 'Format waktu selesai tidak valid.');
                 }
+            } else {
+                $model->addError('start_time', 'Waktu mulai diperlukan.');
+                $model->addError('end_time', 'Waktu selesai diperlukan.');
             }
+        }
 
+        // Menyimpan model
+        if ($model->validate()) {
             try {
                 if ($model->save()) {
                     return $this->redirect(['view', 'shift_id' => $model->shift_id]);
                 }
-            } catch (IntegrityException $e) {
-                $model->addError('user_id', 'Duplicate entry for user ID.');
-                // Optionally, log the error or perform additional actions
+            } catch (\yii\db\Exception $e) {
+                // Tangkap kesalahan dan tampilkan pesan
+                Yii::$app->session->setFlash('error', 'Kesalahan saat menyimpan data: ' . $e->getMessage());
+                // Anda dapat menambahkan error ke model jika perlu
+                $model->addError('save', 'Kesalahan saat menyimpan data.');
             }
-        } else {
-            $model->loadDefaultValues();
         }
-
-        return $this->render('create', [
-            'model' => $model,
-        ]);
+    } else {
+        $model->loadDefaultValues();
     }
+
+    return $this->render('create', [
+        'model' => $model,
+    ]);
+}
 
 
     /**

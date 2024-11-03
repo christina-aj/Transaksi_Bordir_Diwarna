@@ -274,4 +274,3 @@ $this->registerJs("
         /* Aktifkan scroll vertikal */
     }
 </style>
-</div>

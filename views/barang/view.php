@@ -17,15 +17,13 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
-            'barang_id',
+            // 'barang_id',
             'kode_barang',
             'nama_barang',
             'angka',
-            'unit_id',
-            'harga',
+            'unit.satuan',
             'tipe',
             'warna',
-            'supplier.nama',
             'created_at:datetime',
             'updated_at:datetime',
         ],

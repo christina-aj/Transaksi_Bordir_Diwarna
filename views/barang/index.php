@@ -57,6 +57,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         ],
                         'angka' => [
                             'attribute' => 'angka',
+                            'label' => 'Jumlah',
                             'filter' => false
                         ],
                         'unit.satuan' => [
@@ -67,11 +68,6 @@ $this->params['breadcrumbs'][] = $this->title;
                                 'class' => 'form-control',
                                 'placeholder' => 'Cari satuan',
                             ],
-                        ],
-                        'harga' =>
-                        [
-                            'attribute' => 'harga',
-                            'filter' => false
                         ],
                         [
                             'attribute' => 'tipe',
@@ -84,25 +80,6 @@ $this->params['breadcrumbs'][] = $this->title;
                                 'prompt' => 'Pilih Tipe',
                             ],
                         ],
-
-                        // 'tipe',
-                        // 'warna',
-                        // [
-                        //     'attribute' => 'warna',
-                        //     'filter' => false
-                        // ],
-                        'supplier.nama' => [
-                            'attribute' => 'nama_supplier', // Atribut dari tabel supplier
-                            'value' => 'supplier.nama', // Mengakses nama supplier melalui relasi
-                            'label' => 'Nama Supplier',
-                            'filterInputOptions' => [            // Menambahkan placeholder pada input filter
-                                'class' => 'form-control',       // Tambahkan class jika perlu
-                                'placeholder' => 'Cari Nama Supplier', // Placeholder yang ingin ditampilkan
-                            ],
-                        ],
-
-                        //'created_at',
-                        //'updated_at',
                         [
                             'class' => ActionColumn::className(),
                             'urlCreator' => function ($action, Barang $model, $key, $index, $column) {
@@ -110,25 +87,6 @@ $this->params['breadcrumbs'][] = $this->title;
                             }
                         ],
 
-                    ],
-                    'pager' => [
-                        'class' => LinkPager::class,
-                        // Tidak perlu mengatur ulang pagination karena sudah didefinisikan di $dataProvider
-                        'pagination' => $dataProvider->getPagination(),
-
-                        // Mengatur label untuk halaman pertama dan terakhir
-                        'firstPageLabel' => 'First', // Menampilkan 'First' jika bukan halaman pertama
-                        'lastPageLabel' => 'Last', // Menampilkan 'Last' jika bukan halaman terakhir
-
-                        // Label untuk halaman sebelumnya dan berikutnya
-                        'nextPageLabel' => 'Next',
-                        'prevPageLabel' => 'Previous', // Menampilkan 'Previous' jika bukan halaman pertama
-
-                        // Opsi tampilan tambahan
-                        'options' => ['class' => 'pagination'], // Kelas CSS untuk elemen pagination
-                        'linkOptions' => ['class' => 'page-link'], // Kelas CSS untuk tautan
-                        // 'disabledPageCssClass' => 'disabled', // Kelas untuk halaman yang dinonaktifkan
-                        // 'activePageCssClass' => 'active', // Kelas untuk halaman yang aktif
                     ],
                 ]); ?>
 

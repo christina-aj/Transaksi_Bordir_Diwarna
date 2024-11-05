@@ -2,12 +2,14 @@
 
 namespace app\controllers;
 
+use app\helpers\ModelHelper;
 use app\models\Barang;
 use app\models\BarangSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use Yii;
+use yii\base\Model;
 
 /**
  * BarangController implements the CRUD actions for Barang model.
@@ -68,20 +70,62 @@ class BarangController extends Controller
      */
     public function actionCreate()
     {
-        $model = new Barang();
+        $modelBarangs = [new Barang()];
 
-        if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'barang_id' => $model->barang_id]);
+        if (Yii::$app->request->isPost) {
+            // Load multiple instances
+            $modelBarangs = ModelHelper::createMultiple(Barang::classname());
+            if (Model::loadMultiple($modelBarangs, Yii::$app->request->post())) {
+                foreach ($modelBarangs as $index => $modelBarang) {
+                    Yii::info("Loaded ModelBarang #$index: " . json_encode($modelBarang->attributes), 'modelData');
+                }
+            } else {
+                Yii::info("Data failed to load into modelBarangs.", 'loadError');
             }
-        } else {
-            $model->loadDefaultValues();
+
+            // Validate models
+            if (Model::validateMultiple($modelBarangs)) {
+                $transaction = Yii::$app->db->beginTransaction();
+                try {
+                    foreach ($modelBarangs as $index => $modelBarang) {
+                        $modelBarang->warna = $modelBarang->warna ?? null;
+                        $modelBarang->created_at = date('Y-m-d H:i:s');
+                        $modelBarang->updated_at = date('Y-m-d H:i:s');
+
+                        if (!$modelBarang->save()) {
+                            Yii::$app->session->setFlash('error', "Failed to save item #{$index}: " . json_encode($modelBarang->getErrors()));
+                            throw new \yii\db\Exception('Failed to save items.');
+                        }
+                    }
+
+                    $transaction->commit();
+                    Yii::$app->session->set('modelBarangs', $modelBarangs);
+                    return $this->redirect(['view', 'barang_id' => end($modelBarangs)->barang_id]);
+                } catch (\yii\db\Exception $e) {
+                    $transaction->rollBack();
+                    Yii::$app->session->setFlash('error', 'Database error: ' . $e->getMessage());
+                } catch (\Exception $e) {
+                    $transaction->rollBack();
+                    Yii::$app->session->setFlash('error', 'Error: ' . $e->getMessage());
+                }
+            } else {
+                $allErrors = [];
+                foreach ($modelBarangs as $index => $modelBarang) {
+                    $errors = $modelBarang->getErrors();
+                    if (!empty($errors)) {
+                        $allErrors[] = "Item #{$index} errors: " . json_encode($errors);
+                    }
+                }
+                Yii::$app->session->setFlash('error', 'Validation failed: ' . implode(' | ', $allErrors));
+            }
         }
 
         return $this->render('create', [
-            'model' => $model,
+            'modelBarangs' => $modelBarangs,
+            'isReadonly' => true,
         ]);
     }
+
 
     /**
      * Updates an existing Barang model.

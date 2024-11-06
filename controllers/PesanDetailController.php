@@ -349,8 +349,6 @@ class PesanDetailController extends Controller
                                 $stock->quantity_masuk = $quantityMasuk;
                                 $stock->quantity_keluar = 0;
                                 $stock->quantity_akhir = $quantityAwal + $quantityMasuk;
-                                $stock->is_ready = 1;
-                                $stock->is_new = 0;
                                 $stock->created_at = date('Y-m-d');
                                 $stock->updated_at = date('Y-m-d');
                                 if (!$stock->save()) {

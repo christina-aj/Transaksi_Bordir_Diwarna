@@ -44,6 +44,8 @@ class PenggunaanSearch extends Penggunaan
      */
     public function search($params)
     {
+
+
         $query = Penggunaan::find()->joinWith(['user', 'barang']);
 
         // add conditions that should always apply here

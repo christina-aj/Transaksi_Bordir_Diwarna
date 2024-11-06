@@ -25,19 +25,21 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'quantity_masuk') ?>
 
-    <?php // echo $form->field($model, 'quantity_keluar') ?>
+    <?php // echo $form->field($model, 'quantity_keluar') 
+    ?>
 
-    <?php // echo $form->field($model, 'quantity_akhir') ?>
+    <?php // echo $form->field($model, 'quantity_akhir') 
+    ?>
 
-    <?php // echo $form->field($model, 'user_id') ?>
+    <?php // echo $form->field($model, 'user_id') 
+    ?>
 
-    <?php // echo $form->field($model, 'is_ready') ?>
 
-    <?php // echo $form->field($model, 'is_new') ?>
+    <?php // echo $form->field($model, 'created_at') 
+    ?>
 
-    <?php // echo $form->field($model, 'created_at') ?>
-
-    <?php // echo $form->field($model, 'updated_at') ?>
+    <?php // echo $form->field($model, 'updated_at') 
+    ?>
 
     <div class="form-group">
         <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>

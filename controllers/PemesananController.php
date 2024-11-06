@@ -529,8 +529,6 @@ class PemesananController extends Controller
                             $stock->quantity_masuk = $detail->qty_terima; // Sesuaikan dengan jumlah quantity masuk
                             $stock->quantity_keluar = 0; // Misalnya, tidak ada quantity keluar pada saat ini
                             $stock->quantity_akhir = $stock->quantity_awal + $stock->quantity_masuk;
-                            $stock->is_ready = 1;
-                            $stock->is_new = 0;
                             $stock->created_at = date('Y-m-d H:i:s');
                             $stock->updated_at = date('Y-m-d H:i:s');
                             if (!$stock->save(false)) {

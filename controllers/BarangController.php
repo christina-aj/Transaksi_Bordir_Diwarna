@@ -5,6 +5,7 @@ namespace app\controllers;
 use app\helpers\ModelHelper;
 use app\models\Barang;
 use app\models\BarangSearch;
+use app\models\Gudang;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -160,6 +161,21 @@ class BarangController extends Controller
 
         return $this->redirect(['index']);
     }
+
+    public function actionSearch($query)
+    {
+        $data = Barang::find()
+            ->select(['barang.barang_id', 'barang.kode_barang', 'barang.nama_barang', 'gudang.quantity_akhir']) // Mengambil field stock
+            ->leftJoin('gudang', 'gudang.barang_id = barang.barang_id') // Join dengan tabel stock
+            ->where(['like', 'barang.nama_barang', $query])
+            ->orwhere(['like', 'barang.kode_barang', $query])
+            ->andWhere(['>', 'gudang.quantity_akhir', 0]) // Hanya ambil barang yang memiliki stock lebih dari 0
+            ->asArray()
+            ->all();
+
+        return \yii\helpers\Json::encode($data); // Kembalikan dalam format JSON
+    }
+
 
 
 

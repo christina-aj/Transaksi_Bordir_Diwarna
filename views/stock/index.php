@@ -95,46 +95,17 @@ $this->params['breadcrumbs'][] = $this->title;
                             'attribute' => 'quantity_akhir', // Atribut dari tabel supplier
                             'filter' => false,
                         ],
-                        // 'user_id',
-                        'user.nama_pengguna' => [
-                            'attribute' => 'nama_pengguna', // Atribut dari tabel supplier
-                            'value' => 'user.nama_pengguna', // Mengakses nama supplier melalui relasi
-                            'label' => 'Nama Pengguna',
-                            'filterInputOptions' => [            // Menambahkan placeholder pada input filter
-                                'class' => 'form-control',       // Tambahkan class jika perlu
-                                'placeholder' => 'Cari Nama', // Placeholder yang ingin ditampilkan
-                            ],
-                        ],
-                        'is_ready' => [
-                            'attribute' => 'is_ready', // Atribut dari tabel supplier
-                            'filter' => false,
-                            'format' => 'raw', // This allows for raw HTML output (for icons)
-                            'value' => function ($model) {
-                                // Check the value of the status field
-                                if ($model->is_ready == 1) {
-                                    // Active status (1)
-                                    return Html::tag('span', '&#10004;', ['style' => 'color: green; font-size: 20px;']); // Checkmark icon
-                                } else {
-                                    // Inactive status (0)
-                                    return Html::tag('span', '&#10008;', ['style' => 'color: red; font-size: 20px;']); // Cross icon
-                                }
-                            },
-                        ],
-                        'is_new' => [
-                            'attribute' => 'is_new', // Atribut dari tabel supplier
-                            'filter' => false,
-                            'format' => 'raw', // This allows for raw HTML output (for icons)
-                            'value' => function ($model) {
-                                // Check the value of the status field
-                                if ($model->is_new == 1) {
-                                    // Active status (1)
-                                    return Html::tag('span', '&#10004;', ['style' => 'color: green; font-size: 20px;']); // Checkmark icon
-                                } else {
-                                    // Inactive status (0)
-                                    return Html::tag('span', '&#10008;', ['style' => 'color: red; font-size: 20px;']); // Cross icon
-                                }
-                            },
-                        ],
+                        // // 'user_id',
+                        // 'user.nama_pengguna' => [
+                        //     'attribute' => 'nama_pengguna', // Atribut dari tabel supplier
+                        //     'value' => 'user.nama_pengguna', // Mengakses nama supplier melalui relasi
+                        //     'label' => 'Nama Pengguna',
+                        //     'filterInputOptions' => [            // Menambahkan placeholder pada input filter
+                        //         'class' => 'form-control',       // Tambahkan class jika perlu
+                        //         'placeholder' => 'Cari Nama', // Placeholder yang ingin ditampilkan
+                        //     ],
+                        // ],
+
                         // 'created_at',
                         // 'updated_at',
                         [

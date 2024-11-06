@@ -18,8 +18,6 @@ use yii\db\Expression;
  * @property float $quantity_keluar
  * @property float $quantity_akhir
  * @property int $user_id
- * @property int $is_ready
- * @property int $is_new
  * @property string|null $created_at
  * @property string|null $updated_at
  *
@@ -58,9 +56,9 @@ class Stock extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['tambah_stock', 'barang_id', 'quantity_awal', 'quantity_masuk', 'quantity_keluar', 'quantity_akhir', 'user_id', 'is_ready', 'is_new'], 'required'],
+            [['tambah_stock', 'barang_id', 'quantity_awal', 'quantity_masuk', 'quantity_keluar', 'quantity_akhir', 'user_id'], 'required'],
             [['tambah_stock', 'created_at', 'updated_at', 'pesandetail_id'], 'safe'],
-            [['barang_id', 'user_id', 'is_ready', 'is_new'], 'integer'],
+            [['barang_id', 'user_id'], 'integer'],
             [['quantity_awal', 'quantity_masuk', 'quantity_keluar', 'quantity_akhir'], 'number'],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'user_id']],
         ];
@@ -81,8 +79,6 @@ class Stock extends \yii\db\ActiveRecord
             'quantity_keluar' => 'Quantity Keluar',
             'quantity_akhir' => 'Quantity Akhir',
             'user_id' => 'User ID',
-            'is_ready' => 'Is Ready',
-            'is_new' => 'Is New',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
         ];

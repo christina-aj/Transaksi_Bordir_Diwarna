@@ -1,8 +1,22 @@
 <?php
 
+
+use yii\helpers\Url;
+use yii\web\View;
+
 /** @var yii\web\View $this */
 
 $this->title = 'Dashboard';
+
+$url = Url::to(['laporan-agregat/get-aggregated-data']);
+
+$this->registerJsFile('https://code.jquery.com/jquery-3.6.0.min.js', [
+    'position' => View::POS_HEAD
+]);
+
+$this->registerJsFile('https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js', [
+    'position' => View::POS_HEAD
+]);
 ?>
 
 <div class="pc-content">
@@ -28,7 +42,7 @@ $this->title = 'Dashboard';
                 </div>
             </div>
         </div>
-        <div class="col-md-6 col-xl-3">
+        <!-- <div class="col-md-6 col-xl-3">
             <div class="card bg-grd-warning order-card">
                 <div class="card-body">
                     <h6 class="text-white">Revenue</h6>
@@ -47,6 +61,7 @@ $this->title = 'Dashboard';
                 </div>
             </div>
         </div>
+     -->
         <div class="col-md-6 col-xl-7">
             <div class="card">
                 <div class="card-header">
@@ -57,106 +72,98 @@ $this->title = 'Dashboard';
                 </div>
             </div>
         </div>
-        <div class="col-md-6 col-xl-5">
-            <div class="card">
-                <div class="card-header d-flex align-items-center justify-content-between py-3">
-                    <h5>Agregat Produksi</h5>
-                    <div class="dropdown">
-                        <a class="avtar avtar-xs btn-link-secondary dropdown-toggle arrow-none" href="#" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="material-icons-two-tone f-18">more_vert</i></a>
-                        <div class="dropdown-menu dropdown-menu-end">
-                            <a class="dropdown-item" href="#">View</a>
-                            <a class="dropdown-item" href="#">Edit</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <div class="media align-items-center">
-                        <div class="avtar avtar-s bg-light-primary flex-shrink-0">
-                            <i class="ph ph-money f-20"></i>
-                        </div>
-                        <div class="media-body ms-3">
-                            <p class="mb-0 text-muted">Total Produksi</p>
-                            <h5 class="mb-0">556</h5>
-                        </div>
-                    </div>
-                    <div id="earnings-users-chart"></div>
-                </div>
-            </div>
-            <div class="card">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-6">
-                            <div class="media align-items-center">
-                                <div class="avtar avtar-s bg-grd-primary flex-shrink-0">
-                                    <i class="ph ph-money f-20 text-white"></i>
-                                </div>
-                                <div class="media-body ms-2">
-                                    <p class="mb-0 text-muted">Total Produksi</p>
-                                    <h6 class="mb-0">556</h6>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="media align-items-center">
-                                <div class="avtar avtar-s bg-grd-success flex-shrink-0">
-                                    <i class="ph ph-shopping-cart text-white f-20"></i>
-                                </div>
-                                <div class="media-body ms-2">
-                                    <p class="mb-0 text-muted">Product Sold</p>
-                                    <h6 class="mb-0">15,830</h6>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <!-- Recent Orders start -->
-        <div class="col-sm-12">
-            <div class="card table-card">
+        <div class="col-md-6 col-xl-7">
+            <div class="card">
                 <div class="card-header">
-                    <h5>Recent Add</h5>
+                    <h5>Total Produksi</h5>
                 </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table">
-                            <tr>
-                                <th>Product Code</th>
-                                <th>Customer</th>
-                                <th>Purchased On</th>
-                                <th>Transaction ID</th>
-                            </tr>
-                            <tr>
-                                <td>PNG002413</td>
-                                <td>Jane Elliott</td>
-                                <td>06-01-2017</td>
-                                <td>#7234421</td>
-                            </tr>
-                            <tr>
-                                <td>PNG002344</td>
-                                <td>John Deo</td>
-                                <td>05-01-2017</td>
-                                <td>#7234486</td>
-                            </tr>
-                            <tr>
-                                <td>PNG002653</td>
-                                <td>Eugine Turner</td>
-                                <td>04-01-2017</td>
-                                <td>#7234417</td>
-                            </tr>
-                            <tr>
-                                <td>PNG002156</td>
-                                <td>Jacqueline Howell</td>
-                                <td>03-01-2017</td>
-                                <td>#7234454</td>
-                            </tr>
-                        </table>
-                    </div>
+                <div class="card-body">
+                    <canvas id="productionChart" style="width: 100%; height: 400px;"></canvas>
                 </div>
             </div>
         </div>
-        <!-- Recent Orders end -->
     </div>
-    <!-- [ Main Content ] end -->
 </div>
+
+<?php
+$script = <<<JS
+$(document).ready(function() {
+    $('#debugInfo').html('Loading data...');
+    
+    $.ajax({
+        url: '{$url}',
+        type: 'GET',
+        dataType: 'json',
+        success: function(response) {
+            $('#debugInfo').html('Data received. Processing...');
+            console.log('Data received:', response);
+            
+            if (!response || response.length === 0) {
+                $('#debugInfo').html('No data received from server');
+                return;
+            }
+
+           
+            const chartData = {
+                labels: response.map(item => item.year.toString()),
+                datasets: [{
+                    label: 'Total Produksi',
+                    data: response.map(item => parseInt(item.total_kuantitas)),
+                    fill: false,
+                    borderColor: 'rgb(75, 192, 192)',
+                    tension: 0.1
+                }]
+            };
+
+            const config = {
+                type: 'line',
+                data: chartData,
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Grafik Produksi per Tahun'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Total Kuantitas'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Tahun'
+                            }
+                        }
+                    }
+                }
+            };
+
+            
+            const ctx = document.getElementById('productionChart').getContext('2d');
+            new Chart(ctx, config);
+            
+            $('#debugInfo').html('Chart created successfully');
+        },
+        error: function(xhr, status, error) {
+            $('#debugInfo').html('Error loading data: ' + error);
+            console.error('Error:', error);
+            console.log('Status:', status);
+            console.log('Response:', xhr.responseText);
+        }
+    });
+});
+JS;
+
+$url = Url::to(['laporan-agregat/get-aggregated-data']);
+$this->registerJs($script, View::POS_END);
+?>

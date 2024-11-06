@@ -36,18 +36,6 @@ class laporanproduksi extends \yii\db\ActiveRecord
      * {@inheritdoc}
      */
 
-     public function behaviors()
-     {
-         return [
-             [
-                 'class' => TimestampBehavior::className(),
-                 'attributes' => [
-                     \yii\db\ActiveRecord::EVENT_BEFORE_INSERT => ['tanggal_kerja'],
-                 ],
-                 'value' => new Expression('NOW()'), 
-             ],
-         ];
-     }
 
     public function rules()
     {
@@ -98,6 +86,23 @@ class laporanproduksi extends \yii\db\ActiveRecord
     public function getNamaOperator()
     {
         return $this->shift ? $this->shift->nama_operator : null;
+    }
+
+    public function beforeSave($insert)
+    {
+        if (parent::beforeSave($insert)) {
+            if ($this->tanggal_kerja) {
+                $dateTime = \DateTime::createFromFormat('d-m-Y', $this->tanggal_kerja);
+                if ($dateTime) {
+                    $this->tanggal_kerja = $dateTime->format('Y-m-d');
+                } else {
+                    $this->addError('tanggal_kerja', 'Format tanggal tidak valid.');
+                    return false; 
+                }
+            }
+            return true;
+        }
+        return false;
     }
 
 

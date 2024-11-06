@@ -29,15 +29,13 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-
-            'id',
             'nama',
             'barang',
             'qty',
             [
                 'attribute' => 'tanggal',
                 'value' => function($model) {
-                    return Yii::$app->formatter->asDate($model->tanggal, 'php:d-m-yy');
+                    return Yii::$app->formatter->asDate($model->tanggal, 'php:d-m-Y');
                 },
             ],
             'catatan:ntext',

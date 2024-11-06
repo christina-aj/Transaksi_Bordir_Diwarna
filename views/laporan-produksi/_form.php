@@ -38,13 +38,26 @@ use app\models\Shift;
     ?>
 
     <?= $form->field($model, 'tanggal_kerja')->widget(\kartik\date\DatePicker::classname(), [
-            'options' => ['placeholder' => 'Pilih tanggal ...'],
-            'pluginOptions' => [
-                'autoclose' => true,
-                'format' => 'dd-mm-yyyy',  
-                'todayHighlight' => true,
-            ],
-        ]); ?>
+        'options' => [
+            'placeholder' => 'Pilih tanggal ...',
+            'onchange' => '
+                var date = $(this).val();
+                $.ajax({
+                    url: "' . \yii\helpers\Url::to(['laporan-produksi/get-shifts']) . '",
+                    type: "POST",
+                    data: {date: date},
+                    success: function(data) {
+                        $("#laporanproduksi-shift_id").html(data);
+                    }
+                });
+            ',
+        ],
+        'pluginOptions' => [
+            'autoclose' => true,
+            'format' => 'dd-mm-yyyy',
+            'todayHighlight' => true,
+        ],
+    ]); ?>
 
     <?= $form->field($model, 'nama_kerjaan')->textInput(['maxlength' => true]) ?>
 

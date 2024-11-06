@@ -110,4 +110,28 @@ class LaporanAgregat extends \yii\db\ActiveRecord
         return $query->asArray()->all();
     }
 
+    public function actionGetAggregatedData()
+    
+    {
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        $year = Yii::$app->request->get('year');
+        $month = Yii::$app->request->get('month');
+        $nama_kerjaan = Yii::$app->request->get('nama_kerjaan');
+        $startDate = Yii::$app->request->get('start_date');
+        $endDate = Yii::$app->request->get('end_date');
+
+        
+        if ($startDate) {
+            $startDate = \DateTime::createFromFormat('d-m-Y', $startDate)->format('Y-m-d');
+        }
+        if ($endDate) {
+            $endDate = \DateTime::createFromFormat('d-m-Y', $endDate)->format('Y-m-d');
+        }
+
+        $data = LaporanAgregat::getFilterAggregatedData($year, $month, $nama_kerjaan, $startDate, $endDate);
+
+        return $data;
+    }
+
 }

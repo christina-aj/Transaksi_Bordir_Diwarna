@@ -92,7 +92,6 @@ class Shift extends \yii\db\ActiveRecord
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {
-            // Mengubah format tanggal dari dd-mm-yyyy ke yyyy-mm-dd
             if ($this->tanggal) {
                 $dateTime = \DateTime::createFromFormat('d-m-Y', $this->tanggal);
                 if ($dateTime) {

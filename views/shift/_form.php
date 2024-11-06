@@ -25,7 +25,7 @@ use yii\widgets\ActiveForm;
         ],
     ]); ?>
 
-    <?= $form->field($model, 'shift')->dropDownList([1 => '1', 2 => '2'], ['prompt' => 'Select Shift']) ?>
+    <?= $form->field($model, 'shift')->dropDownList([1 => 'Pagi', 2 => 'Sore'], ['prompt' => 'Select Shift']) ?>
 
     <?= $form->field($model, 'waktu_kerja')->dropDownList(
         [

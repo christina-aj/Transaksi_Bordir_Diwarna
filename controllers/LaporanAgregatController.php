@@ -74,5 +74,46 @@ class LaporanAgregatController extends Controller
         ]);
     }
 
+    public function actionGetAggregatedData()
+    {
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        
+        try {
+            // Tambahkan logging
+            Yii::info('Fetching aggregated data...');
+            
+            $query = (new \yii\db\Query())
+                ->select([
+                    'YEAR(tanggal_kerja) as year',
+                    'SUM(kuantitas) as total_kuantitas'
+                ])
+                ->from('laporanproduksi')
+                ->groupBy('YEAR(tanggal_kerja)')
+                ->orderBy(['YEAR(tanggal_kerja)' => SORT_ASC]);
 
+            $result = $query->all();
+            
+            // Log hasil query
+            Yii::info('Query result: ' . print_r($result, true));
+            
+            if (empty($result)) {
+                Yii::info('No data found');
+                return [];
+            }
+
+            // Pastikan data terformat dengan benar
+            $formattedResult = array_map(function($row) {
+                return [
+                    'year' => (int)$row['year'],
+                    'total_kuantitas' => (int)$row['total_kuantitas']
+                ];
+            }, $result);
+
+            return $formattedResult;
+
+        } catch (\Exception $e) {
+            Yii::error('Error in getAggregatedData: ' . $e->getMessage());
+            throw $e;
+        }
+    }
 }

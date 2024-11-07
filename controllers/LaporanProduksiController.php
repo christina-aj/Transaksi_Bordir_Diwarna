@@ -7,6 +7,8 @@ use app\models\LaporanProduksisearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use Yii;
+use app\models\Shift;
 
 /**
  * LaporanProduksiController implements the CRUD actions for LaporanProduksi model.
@@ -131,5 +133,33 @@ class LaporanProduksiController extends Controller
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
+
+    public function actionGetShifts()
+
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_HTML;
+
+        if (Yii::$app->request->isPost) {
+            $date = Yii::$app->request->post('date');
+            $month = date('m', strtotime($date));
+
+            // Ambil shift yang sesuai bulan
+            $dataShift = Shift::find()
+                ->where(['MONTH(tanggal)' => $month])
+                ->asArray()
+                ->all();
+
+            $options = "<option value=''>Select Shift</option>";
+            foreach ($dataShift as $shift) {
+                $shiftTime = ($shift['shift'] == 1) ? 'Pagi' : 'Sore';
+                $options .= "<option value='{$shift['shift_id']}'>{$shift['shift_id']} - {$shift['nama_operator']} ({$shiftTime})</option>";
+            }
+
+            return $options;
+        }
+        return "<option value=''>No shift available</option>";
+    }
+
+
 
 }

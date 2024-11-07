@@ -8,7 +8,7 @@ use yii\helpers\Url;
 /** @var yii\web\View $this */
 /** @var array $aggregatedData */
 
-$this->title = 'Laporan Agregat Bulanan';
+$this->title = 'Laporan Agregat';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 
@@ -68,35 +68,45 @@ $this->params['breadcrumbs'][] = $this->title;
     ?>
 
     <div class="form-group">
-     <form id="filter-form" method="get" action="<?= Url::to(['laporan-agregat/index']) ?>">
-        <div class="form-group">
-            <label for="start_date">Tanggal Awal</label>
+        <form id="filter-form" method="get" action="<?= Url::to(['laporan-agregat/index']) ?>">
+            <div class="form-group">
+                <label for="start_date">Tanggal Awal</label>
                 <?= DatePicker::widget([
                     'name' => 'start_date',
-                    'options' => ['placeholder' => 'Pilih Tanggal Awal', 'readonly' => true],
+                    'options' => [
+                        'placeholder' => 'Pilih Tanggal Awal',
+                        'readonly' => true,
+                        'id' => 'start-date-picker'
+                    ],
                     'pluginOptions' => [
-                        'format' => 'dd-mm-yyyy', 
+                        'format' => 'dd-mm-yyyy',
                         'autoclose' => true,
                     ],
                 ]); ?>
-                </div>
-                <div class="form-group">
-                    <label for="end_date">Tanggal Akhir</label>
-                    <?= DatePicker::widget([
-                        'name' => 'end_date',
-                        'options' => ['placeholder' => 'Pilih Tanggal Akhir', 'readonly' => true],
-                        'pluginOptions' => [
-                            'format' => 'dd-mm-yyyy',
-                            'autoclose' => true,
-                        ],
-                    ]); ?>
-                </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-success">Filter Data</button>
-                </div>
-          </form>
+            </div>
+
+            <div class="form-group">
+                <label for="end_date">Tanggal Akhir</label>
+                <?= DatePicker::widget([
+                    'name' => 'end_date',
+                    'options' => [
+                        'placeholder' => 'Pilih Tanggal Akhir',
+                        'readonly' => true,
+                        'id' => 'end-date-picker'
+                    ],
+                    'pluginOptions' => [
+                        'format' => 'dd-mm-yyyy',
+                        'autoclose' => true,
+                    ],
+                ]); ?>
+            </div>
+
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-success">Filter Data</button>
+            </div>
+        </form>
     </div>
-    
+        
 
     <?php Modal::end(); ?>
     
@@ -111,36 +121,65 @@ $this->params['breadcrumbs'][] = $this->title;
         ]),
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-            ['attribute' => 'year', 'label' => 'Tahun'],
-            ['attribute' => 'month', 'label' => 'Bulan'],
-            ['attribute' => 'nama_barang', 'label' => 'Nama Barang'],
-            ['attribute' => 'nama_kerjaan', 'label' => 'Job Name'],
-            ['attribute' => 'total_kuantitas', 'label' => 'Qty', 'format' => ['integer']],
+            [
+                'attribute' => 'year', 
+                'label' => 'Tahun'
+            ],
+            [
+                'attribute' => 'month', 
+                'label' => 'Bulan'
+            ],
+            [
+                'attribute' => 'nama_barang', 
+                'label' => 'Nama Barang'
+            ],
+            [
+                'attribute' => 'nama_kerjaan', 
+                'label' => 'Job Name'
+            ],
+            [
+                'attribute' => 'total_kuantitas', 
+                'label' => 'Qty', 'format' => ['integer']
+            ],
         ],
     ]); ?>
 </div>
 
 <?php
-$script = <<< JS
-$('#filter-button').on('click', function () {
-    $('#filter-modal').modal('show');
-});
+    $script = <<< JS
+   
+    $('#filter-button').on('click', function () {
+        $('#filter-modal').modal('show');
+    });
 
-$('#date-range-button').on('click', function () {
-    $('#date-range-modal').modal('show');
-});
+    $('#date-range-button').on('click', function () {
+        $('#date-range-modal').modal('show');
+    });
 
-$('#date-range-form').on('submit', function (e) {
-    var startDate = $('input[name="start_date"]').val();
-    var endDate = $('input[name="end_date"]').val();
-    
-    if (new Date(startDate.split('-').reverse().join('-')) > new Date(endDate.split('-').reverse().join('-'))) {
-        e.preventDefault();
-        $('#error-message').text('Tanggal Akhir tidak boleh lebih awal dari Tanggal Awal.').show();
-    } else {
-        $('#error-message').hide();
-    }
-});
-JS;
-$this->registerJs($script);
+    $('#start-date-picker').on('changeDate', function (e) {
+        var startDate = $(this).datepicker('getDate');
+        if (startDate) {
+           
+            var formattedDate = ('0' + startDate.getDate()).slice(-2) + '-' +
+                                ('0' + (startDate.getMonth() + 1)).slice(-2) + '-' +
+                                startDate.getFullYear();
+                                
+            
+            $('#end-date-picker').datepicker('setStartDate', formattedDate);
+        }
+    });
+
+    $('#date-range-form').on('submit', function (e) {
+        var startDate = $('input[name="start_date"]').val();
+        var endDate = $('input[name="end_date"]').val();
+        
+        if (new Date(startDate.split('-').reverse().join('-')) > new Date(endDate.split('-').reverse().join('-'))) {
+            e.preventDefault();
+            $('#error-message').text('Tanggal Akhir tidak boleh lebih awal dari Tanggal Awal.').show();
+        } else {
+            $('#error-message').hide();
+        }
+    });
+    JS;
+    $this->registerJs($script);
 ?>

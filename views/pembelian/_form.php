@@ -1,8 +1,9 @@
 <?php
 
 use app\models\Pemesanan;
+use app\models\Supplier;
 use yii\grid\GridView;
-
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -12,6 +13,7 @@ use yii\widgets\ActiveForm;
 /** @var app\models\PembelianDetail[] $PembelianDetail */
 
 /** @var $dataProvider yii\data\ActiveDataProvider */
+$supplierList = ArrayHelper::map(Supplier::find()->all(), 'supplier_id', 'nama');
 ?>
 
 <div class="pembelian-form">
@@ -106,6 +108,17 @@ use yii\widgets\ActiveForm;
                             return Html::checkbox("PembelianDetail[{$model->belidetail_id}][is_correct]", $model->is_correct, [
                                 'value' => 1, // Nilai yang akan dikirim saat checkbox dicentang
                                 'class' => 'form-check-input',
+                            ]);
+                        },
+                    ],
+                    [
+                        'attribute' => 'supplier_id',
+                        'label' => 'Nama Supplier',
+                        'format' => 'raw',
+                        'value' => function ($model, $key, $index, $column) use ($supplierList) {
+                            return Html::dropDownList("PembelianDetail[{$model->belidetail_id}][supplier_id]", $model->supplier_id, $supplierList, [
+                                'class' => 'form-control',
+                                'prompt' => 'Pilih Supplier', // Teks default yang muncul sebelum memilih
                             ]);
                         },
                     ],

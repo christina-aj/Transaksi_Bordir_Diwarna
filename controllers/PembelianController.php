@@ -123,6 +123,7 @@ class PembelianController extends Controller
                     $detailModel->total_biaya = $attributes['total_biaya'] ?? $detailModel->total_biaya;
                     $detailModel->catatan = $attributes['catatan'] ?? $detailModel->catatan;
                     $detailModel->is_correct = isset($attributes['is_correct']) ? 1 : 0;
+                    $detailModel->supplier_id = $attributes['supplier_id'] ?? $detailModel->supplier_id;
 
                     // Simpan setiap detail model jika valid
                     if ($detailModel->validate()) {

@@ -65,6 +65,7 @@ $config = [
                 'pemesanan/create-pemesanan' => 'pemesanan/create-pemesanan',
                 'pesan-detail/search' => 'pesan-detail/search',
                 'barang/search' => 'barang/search',
+                'stock/search' => 'stock/search',
                 'pesan-detail/update-multiple' => 'pesan-detail/update-multiple',
                 'gudang/get-gudang' => 'gudang/get-gudang',
             ],

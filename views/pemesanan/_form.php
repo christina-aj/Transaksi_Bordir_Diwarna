@@ -95,7 +95,7 @@ use yii\widgets\ActiveForm;
                                     ]
                                 ])->label(false); ?></td>
                             <td><?= $form->field($modelDetail, "[$index]qty")->textInput()->label(false) ?></td>
-                            <td><?= $form->field($modelDetail, "[$index]qty_terima")->textInput()->label(false) ?></td>
+                            <td><?= $form->field($modelDetail, "[$index]qty_terima")->textInput(['readonly' => true])->label(false) ?></td>
                             <td><?= $form->field($modelDetail, "[$index]catatan")->textInput()->label(false) ?></td>
                             <td class="text-center">
                                 <?= $form->field($modelDetail, "[$index]langsung_pakai")->checkbox([
@@ -106,7 +106,9 @@ use yii\widgets\ActiveForm;
                             <td class="text-center">
                                 <?= $form->field($modelDetail, "[$index]is_correct")->checkbox([
                                     'id' => "pesandetail-{$index}-is_correct",
-                                    'label' => null // Hapus label
+                                    'label' => null, // Hapus label
+                                    'disabled' => true,
+                                    'value' => 0,
                                 ]) ?>
                             </td>
                             <td class="text-center">
@@ -169,10 +171,10 @@ $this->registerJs("
                 <td><input type='text' name='PesanDetail[` + rowIndex + `][barang_id]' id='pesandetail-` + rowIndex + `-barang_id' class='form-control' readonly></td>
                 <td><input type='text' name='PesanDetail[` + rowIndex + `][nama_barang]' id='pesandetail-` + rowIndex + `-nama_barang' class='form-control'></td>
                 <td><input type='text' name='PesanDetail[` + rowIndex + `][qty]' class='form-control'></td>
-                <td><input type='text' name='PesanDetail[` + rowIndex + `][qty_terima]' class='form-control'></td>
+                <td><input type='text' name='PesanDetail[` + rowIndex + `][qty_terima]' class='form-control' readonly></td>
                 <td><input type='text' name='PesanDetail[` + rowIndex + `][catatan]' class='form-control'></td>
                 <td class='text-center'><input type='checkbox' name='PesanDetail[` + rowIndex + `][langsung_pakai]' value='1' class='form-check-input langsung_pakai'></td>
-                <td class='text-center'><input type='checkbox' name='PesanDetail[` + rowIndex + `][is_correct]' value='1' class='form-check-input is_correct'></td>
+                <td class='text-center'><input type='checkbox' name='PesanDetail[` + rowIndex + `][is_correct]' value='1' class='form-check-input is_correct 'disabled></td>
                 <td class='text-center'>
                     <div class='btn-group' role='group'>
                         <button type='button' class='btn btn-success btn-sm add-row' title='Tambah'>

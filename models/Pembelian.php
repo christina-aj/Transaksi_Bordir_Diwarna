@@ -23,6 +23,7 @@ class Pembelian extends \yii\db\ActiveRecord
 
     public $kode_pemesanan;
     public $kode_pembelian;
+
     public static function tableName()
     {
         return 'pembelian';

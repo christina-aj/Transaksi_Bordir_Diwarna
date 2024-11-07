@@ -66,6 +66,11 @@ $this->params['breadcrumbs'][] = $this->title;
                             'label' => 'Total Biaya',
 
                         ],
+                        'nama_supplier' => [
+                            'attribute' => 'nama_supplier',
+                            'label' => 'Nama Supplier',
+                            'value' => 'supplier.nama',
+                        ],
                         'is_correct' => [
                             'attribute' => 'is_correct',
                             'label' => 'Harga Sesuai',

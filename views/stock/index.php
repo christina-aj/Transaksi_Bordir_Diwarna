@@ -19,6 +19,9 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="card table-card">
         <div class="card-header">
             <h1><?= Html::encode($this->title) ?></h1>
+            <p>
+                <?= Html::a('Create Stock Out', ['create'], ['class' => 'btn btn-success']) ?>
+            </p>
         </div>
 
         <div class="card-body mx-4">
@@ -95,19 +98,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             'attribute' => 'quantity_akhir', // Atribut dari tabel supplier
                             'filter' => false,
                         ],
-                        // // 'user_id',
-                        // 'user.nama_pengguna' => [
-                        //     'attribute' => 'nama_pengguna', // Atribut dari tabel supplier
-                        //     'value' => 'user.nama_pengguna', // Mengakses nama supplier melalui relasi
-                        //     'label' => 'Nama Pengguna',
-                        //     'filterInputOptions' => [            // Menambahkan placeholder pada input filter
-                        //         'class' => 'form-control',       // Tambahkan class jika perlu
-                        //         'placeholder' => 'Cari Nama', // Placeholder yang ingin ditampilkan
-                        //     ],
-                        // ],
 
-                        // 'created_at',
-                        // 'updated_at',
                         [
                             'class' => ActionColumn::className(),
                             'template' => '{view}',

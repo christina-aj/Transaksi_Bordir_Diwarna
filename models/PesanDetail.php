@@ -60,13 +60,13 @@ class PesanDetail extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['pemesanan_id', 'barang_id', 'qty', 'is_correct', 'langsung_pakai', 'nama_barang'], 'required', 'on' => 'default'],
+            [['pemesanan_id', 'barang_id', 'qty', 'langsung_pakai', 'nama_barang'], 'required', 'on' => 'default'],
             [['pemesanan_id', 'barang_id', 'is_correct', 'langsung_pakai'], 'integer'],
             [['qty', 'qty_terima'], 'number'],
             [['qty_terima'], 'default', 'value' => 0],
             [['is_correct'], 'default', 'value' => 0],
             [['langsung_pakai'], 'default', 'value' => 0],
-            [['created_at', 'update_at', 'nama_barang', 'kode_pemesanan'], 'safe'],
+            [['created_at', 'update_at', 'nama_barang', 'kode_pemesanan', 'is_correct'], 'safe'],
             [['catatan'], 'string', 'max' => 255],
             [['pemesanan_id'], 'exist', 'skipOnError' => true, 'targetClass' => Pemesanan::class, 'targetAttribute' => ['pemesanan_id' => 'pemesanan_id']],
             [['barang_id'], 'exist', 'skipOnError' => true, 'targetClass' => Barang::class, 'targetAttribute' => ['barang_id' => 'barang_id']],

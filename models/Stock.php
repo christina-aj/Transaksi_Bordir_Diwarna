@@ -31,6 +31,10 @@ class Stock extends \yii\db\ActiveRecord
      */
 
     public $pesandetail_id;
+    public $nama_barang;
+    public $kode_barang;
+
+    const SCENARIO_CREATE = 'create';
     public static function tableName()
     {
         return 'stock';
@@ -53,16 +57,31 @@ class Stock extends \yii\db\ActiveRecord
             ],
         ];
     }
+
+
     public function rules()
     {
         return [
-            [['tambah_stock', 'barang_id', 'quantity_awal', 'quantity_masuk', 'quantity_keluar', 'quantity_akhir', 'user_id'], 'required'],
-            [['tambah_stock', 'created_at', 'updated_at', 'pesandetail_id'], 'safe'],
+            // Aturan untuk skenario create, hanya 'nama_barang' dan 'quantity_keluar' yang wajib diisi
+            [['quantity_keluar'], 'required', 'on' => self::SCENARIO_CREATE],
+            [['nama_barang', 'quantity_awal', 'quantity_masuk', 'quantity_akhir', 'tambah_stock', 'created_at', 'updated_at'], 'safe', 'on' => self::SCENARIO_CREATE],
+
+            // Aturan umum atau untuk skenario lain (selain create)
+            [['tambah_stock', 'barang_id', 'quantity_awal', 'quantity_masuk', 'quantity_keluar', 'quantity_akhir', 'user_id'], 'required', 'except' => self::SCENARIO_CREATE],
+
             [['barang_id', 'user_id'], 'integer'],
             [['quantity_awal', 'quantity_masuk', 'quantity_keluar', 'quantity_akhir'], 'number'],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'user_id']],
         ];
     }
+
+    public function scenarios()
+    {
+        $scenarios = parent::scenarios();
+        $scenarios[self::SCENARIO_CREATE] = ['nama_barang', 'quantity_keluar']; // hanya field ini yang divalidasi
+        return $scenarios;
+    }
+
 
     /**
      * {@inheritdoc}

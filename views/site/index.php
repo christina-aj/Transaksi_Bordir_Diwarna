@@ -1,6 +1,7 @@
 <?php
 
-
+use yii\grid\GridView;
+use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\web\View;
 
@@ -28,7 +29,7 @@ $this->registerJsFile('https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.mi
                     <h6 class="text-white">Stock Gudang</h6>
                     <h2 class="text-end text-white"><i class="feather icon-shopping-cart float-start"></i><span>486</span>
                     </h2>
-                    <p class="m-b-0">Completed Orders<span class="float-end">351</span></p>
+                    <!-- <p class="m-b-0">Completed Orders<span class="float-end">351</span></p> -->
                 </div>
             </div>
         </div>
@@ -38,7 +39,7 @@ $this->registerJsFile('https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.mi
                     <h6 class="text-white">Stock Produksi</h6>
                     <h2 class="text-end text-white"><i class="feather icon-tag float-start"></i><span>1641</span>
                     </h2>
-                    <p class="m-b-0">This Month<span class="float-end">213</span></p>
+                    <!-- <p class="m-b-0">This Month<span class="float-end">213</span></p> -->
                 </div>
             </div>
         </div>
@@ -68,11 +69,69 @@ $this->registerJsFile('https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.mi
                     <h5>Wilayah yang pernah Order di Diwarna</h5>
                 </div>
                 <div class="card-body">
-                    <div id="world-map-markers" class="set-map" style="height:365px;"></div>
+                    <div id="map" class="set-map" style="height:365px;"></div>
                 </div>
             </div>
         </div>
         <div class="col-md-6 col-xl-5">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Total Produksi</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="productionChart" style="width: 100%; height: 365px;"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12 col-xl-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Recent Order</h5>
+                </div>
+                <div class="card-body">
+                    <?= GridView::widget([
+                        'dataProvider' => new \yii\data\ArrayDataProvider([
+                            'allModels' => $pesanDetails,
+                            'pagination' => false, // Sesuaikan jika tidak menggunakan pagination
+                        ]),
+                        'columns' => [
+                            ['class' => 'yii\grid\SerialColumn', 'header' => 'No'],
+                            [
+                                'attribute' => 'kode_barang',
+                                'label' => 'Kode Barang',
+                                'value' => function ($model) {
+                                    if ($model->barang) {
+                                        return $model->barang->kode_barang;
+                                    }
+                                    return 'Barang tidak ditemukan';
+                                },
+                            ],
+                            [
+                                'attribute' => 'barang_id',
+                                'label' => 'Nama Barang',
+                                'value' => function ($model) {
+                                    if ($model->barang) {
+                                        return $model->barang->nama_barang;
+                                    }
+                                    return 'Barang tidak ditemukan';
+                                },
+                            ],
+                            [
+                                'attribute' => 'qty',
+                                'label' => 'Quantity Pesan',
+                            ],
+                            [
+                                'attribute' => 'created_at',
+                                'format' => 'datetime',
+                                'label' => 'Dibuat Pada',
+                            ],
+                        ],
+                    ]); ?>
+
+                </div>
+            </div>
+        </div>
+        <!-- <div class="col-md-6 col-xl-5">
             <div class="card">
                 <div class="card-header d-flex align-items-center justify-content-between py-3">
                     <h5>Agregat Produksi</h5>
@@ -125,7 +184,7 @@ $this->registerJsFile('https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.mi
                     </div>
                 </div>
             </div>
-        </div>
+        </div> -->
         <!-- <div class="col-md-4 col-sm-6">
             <div class="card statistics-card-1">
                 <div class="card-body">
@@ -201,21 +260,39 @@ $this->registerJsFile('https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.mi
             </div>
         </div> -->
         <!-- Recent Orders start -->
-        <div class="col-sm-12">
-            <div class="card table-card">
-                <div class="card-header">
-                    <h5>Total Produksi</h5>
-                </div>
-                <div class="card-body">
-                    <canvas id="productionChart" style="width: 100%; height: 400px;"></canvas>
-                </div>
-            </div>
-        </div>
+
     </div>
 </div>
 
 <?php
 $script = <<<JS
+
+// Inisialisasi peta dan atur pusatnya di Indonesia
+var map = L.map('map').setView([-2.548926, 118.0148634], 5); // Koordinat pusat Indonesia
+
+// Tambahkan layer peta dari OpenStreetMap
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+}).addTo(map);
+
+// Contoh marker: Jakarta
+L.marker([-6.2088, 106.8456]).addTo(map) // Koordinat Jakarta
+    .bindPopup('Jakarta, Indonesia')
+    .openPopup();
+
+// Tambahkan marker lain di lokasi-lokasi di Indonesia
+var locations = [
+    { title: "Yogyakarta", position: [-7.797068, 110.370529] },
+    { title: "Manado", position: [1.48218, 124.84899] },
+    { title: "Bali", position: [-8.409518, 115.188919] }
+];
+
+// Loop untuk menambahkan marker pada setiap lokasi
+locations.forEach(function (location) {
+    L.marker(location.position).addTo(map)
+        .bindPopup(location.title);
+});
+
 $(document).ready(function() {
     $('#debugInfo').html('Loading data...');
     

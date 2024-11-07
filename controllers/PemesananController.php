@@ -77,6 +77,20 @@ class PemesananController extends Controller
             'pesanDetails' => $pesanDetails, // Pastikan $pesanDetails diteruskan
         ]);
     }
+    public function actionDashboard($pemesanan_id)
+    {
+        // Temukan model Pemesanan berdasarkan pemesanan_id
+        $model = $this->findModel($pemesanan_id);
+
+        // Mengambil semua PesanDetail yang terkait dengan pemesanan ini
+        $pesanDetails = $model->pesanDetails;
+
+        // Mengirim model dan pesanDetails ke view
+        return $this->render('//site/index', [
+            'model' => $model,
+            'pesanDetails' => $pesanDetails, // Pastikan $pesanDetails diteruskan
+        ]);
+    }
 
     /**
      * Creates a new Pemesanan model.

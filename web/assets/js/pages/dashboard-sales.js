@@ -13,18 +13,16 @@ function floatchart() {
       selector: "#world-map-markers",
       map: "world",
       markersSelectable: true,
-      markers: [{
-        coords: [-14.2350, -51.9253]
-      },
-      {
-        coords: [35.8617, 104.1954]
-      },
-      {
-        coords: [61, 105]
-      },
-      {
-        coords: [26.8206, 30.8025]
-      }
+      markers: [,
+        {
+          coords: [35.8617, 104.1954]
+        },
+        {
+          coords: [61, 105]
+        },
+        {
+          coords: [26.8206, 30.8025]
+        }
       ],
       markerStyle: {
         initial: {

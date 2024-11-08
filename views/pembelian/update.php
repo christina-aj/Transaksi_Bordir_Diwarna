@@ -3,19 +3,18 @@
 use yii\helpers\Html;
 
 /** @var yii\web\View $this */
-/** @var app\models\Pembelian $model */
+/** @var app\models\Pembelian $modelPembelian */
+/** @var app\models\PembelianDetail[] $modelDetails */
 
-$this->title = 'Update Pembelian: ' . $model->pembelian_id;
+$this->title = 'Update Pembelian Kode: ' . $modelPembelian->getFormattedBuyOrderId();
 $this->params['breadcrumbs'][] = ['label' => 'Pembelians', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->pembelian_id, 'url' => ['view', 'pembelian_id' => $model->pembelian_id]];
+$this->params['breadcrumbs'][] = ['label' => $modelPembelian->pembelian_id, 'url' => ['view', 'pembelian_id' => $modelPembelian->pembelian_id]];
 $this->params['breadcrumbs'][] = 'Update';
 ?>
 <div class="pc-content">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-
     <?= $this->render('_form', [
-        'model' => $model,
+        'model' => $modelPembelian,
+        'modelDetails' => $modelDetails,
     ]) ?>
 
 </div>

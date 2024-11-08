@@ -44,12 +44,17 @@ class PenggunaanSearch extends Penggunaan
      */
     public function search($params)
     {
+
+
         $query = Penggunaan::find()->joinWith(['user', 'barang']);
 
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'pagination' => [
+                'pagesize' => 15,
+            ],
             'sort' => [
                 'attributes' => [
                     'penggunaan_id', // Aktifkan sorting untuk kolom tanggal

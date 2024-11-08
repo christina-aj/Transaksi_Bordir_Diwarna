@@ -4,6 +4,12 @@ $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
 
 $config = [
+    'modules' => [
+        'gridview' => [
+            'class' => '\kartik\grid\Module',
+            // Anda bisa menambahkan konfigurasi opsional di sini
+        ],
+    ],
     'defaultRoute' => 'site/login',
     'id' => 'basic',
     'basePath' => dirname(__DIR__),
@@ -58,7 +64,10 @@ $config = [
                 'pemesanan/get-user-info' => 'pemesanan/get-user-info',
                 'pemesanan/create-pemesanan' => 'pemesanan/create-pemesanan',
                 'pesan-detail/search' => 'pesan-detail/search',
+                'barang/search' => 'barang/search',
+                'stock/search' => 'stock/search',
                 'pesan-detail/update-multiple' => 'pesan-detail/update-multiple',
+                'gudang/get-gudang' => 'gudang/get-gudang',
             ],
         ],
 

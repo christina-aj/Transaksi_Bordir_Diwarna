@@ -21,6 +21,7 @@ class AppAsset extends AssetBundle
         "assets/css/style-preset.css",
         'https://cdn-uicons.flaticon.com/2.5.1/uicons-thin-straight/css/uicons-thin-straight.css',
         'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css',
+        'https://unpkg.com/leaflet@1.7.1/dist/leaflet.css'
 
     ];
     public $js = [
@@ -36,6 +37,7 @@ class AppAsset extends AssetBundle
         'assets/js/pcoded.js',
         'assets/js/plugins/feather.min.js',
         'https://kit.fontawesome.com/445c1285d8.js',
+        'https://unpkg.com/leaflet@1.7.1/dist/leaflet.js'
     ];
     public $depends = [
         'yii\web\YiiAsset',

@@ -26,7 +26,7 @@ class StockSearch extends Stock
     public function rules()
     {
         return [
-            [['stock_id', 'barang_id', 'user_id', 'is_ready', 'is_new'], 'integer'],
+            [['stock_id', 'barang_id', 'user_id'], 'integer'],
             [['tambah_stock', 'created_at', 'updated_at', 'nama_pengguna', 'nama_barang', 'kode_barang', 'tanggal'], 'safe'],
             [['quantity_awal', 'quantity_masuk', 'quantity_keluar', 'quantity_akhir'], 'number'],
         ];
@@ -56,6 +56,9 @@ class StockSearch extends Stock
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'pagination' => [
+                'pagesize' => 15,
+            ],
             'sort' => [
                 'attributes' => [
                     'stock_id',
@@ -79,8 +82,6 @@ class StockSearch extends Stock
                         'asc' => ['barang.nama_barang' => SORT_ASC],
                         'desc' => ['barang.nama_barang' => SORT_DESC],
                     ],
-                    'is_new',
-                    'is_ready',
                 ]
             ]
         ]);
@@ -121,8 +122,6 @@ class StockSearch extends Stock
             'quantity_keluar' => $this->quantity_keluar,
             'quantity_akhir' => $this->quantity_akhir,
             'user_id' => $this->user_id,
-            'is_ready' => $this->is_ready,
-            'is_new' => $this->is_new,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ]);

@@ -14,32 +14,30 @@ $this->title = 'Units';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="pc-content">
+    <div class="card card-table">
+        <div class="card-header">
+            <h1><?= Html::encode($this->title) ?></h1>
+            <?= Html::a('Create Unit', ['create'], ['class' => 'btn btn-success']) ?>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <?= GridView::widget([
+                    'dataProvider' => $dataProvider,
+                    'filterModel' => $searchModel,
+                    'columns' => [
+                        ['class' => 'yii\grid\SerialColumn'],
 
-    <h1><?= Html::encode($this->title) ?></h1>
-
-    <p>
-        <?= Html::a('Create Unit', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
-
-    <?php // echo $this->render('_search', ['model' => $searchModel]); 
-    ?>
-
-    <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-
-            // 'unit_id',
-            'satuan',
-            [
-                'class' => ActionColumn::className(),
-                'urlCreator' => function ($action, Unit $model, $key, $index, $column) {
-                    return Url::toRoute([$action, 'unit_id' => $model->unit_id]);
-                }
-            ],
-        ],
-    ]); ?>
-
-
+                        // 'unit_id',
+                        'satuan',
+                        [
+                            'class' => ActionColumn::className(),
+                            'urlCreator' => function ($action, Unit $model, $key, $index, $column) {
+                                return Url::toRoute([$action, 'unit_id' => $model->unit_id]);
+                            }
+                        ],
+                    ],
+                ]); ?>
+            </div>
+        </div>
+    </div>
 </div>

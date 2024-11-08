@@ -164,4 +164,23 @@ class GudangController extends Controller
         // Jika tidak ditemukan atau barang_id tidak valid, kembalikan null
         return $this->asJson(['quantity_akhir' => null]);
     }
+
+    public function actionGetGudang($barang_id)
+    {
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        // Mengambil nama gudang berdasarkan barang_id
+        $gudang = Gudang::find()
+            ->select('qty_akhir')
+            ->where(['barang_id' => $barang_id])
+            ->orderBy(['created_at' => SORT_DESC])
+            ->limit(1)
+            ->scalar(); // Ambil nama gudang terakhir
+
+        if ($gudang !== false) {
+            return ['qty_akhir' => $gudang]; // Mengembalikan hasil dalam format JSON
+        } else {
+            return ['qty_akhir' => null]; // Jika tidak ditemukan
+        }
+    }
 }

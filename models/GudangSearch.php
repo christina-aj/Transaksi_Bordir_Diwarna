@@ -18,11 +18,13 @@ class GudangSearch extends Gudang
     public $nama_barang;
     public $nama_pengguna;
 
+    public $kode_barang;
+
     public function rules()
     {
         return [
             [['id_gudang', 'barang_id', 'user_id'], 'integer'],
-            [['tanggal', 'catatan', 'created_at', 'update_at', 'nama_pengguna', 'nama_barang'], 'safe'],
+            [['tanggal', 'catatan', 'created_at', 'update_at', 'nama_pengguna', 'nama_barang', 'kode_barang'], 'safe'],
             [['quantity_awal', 'quantity_masuk', 'quantity_keluar', 'quantity_akhir'], 'number'],
         ];
     }
@@ -58,6 +60,10 @@ class GudangSearch extends Gudang
                         'desc' => ['nama_pengguna' => SORT_DESC],
                     ],
                     'nama_barang' => [
+                        'asc' => ['nama_barang' => SORT_ASC],  // Kolom supplier_name diurutkan berdasarkan nama di tabel supplier
+                        'desc' => ['nama_barang' => SORT_DESC],
+                    ],
+                    'kode_barang' => [
                         'asc' => ['nama_barang' => SORT_ASC],  // Kolom supplier_name diurutkan berdasarkan nama di tabel supplier
                         'desc' => ['nama_barang' => SORT_DESC],
                     ],
@@ -112,6 +118,7 @@ class GudangSearch extends Gudang
         $query->andFilterWhere(['like', 'catatan', $this->catatan]);
         $query->andFilterWhere(['like', 'barang.nama_barang', $this->nama_barang]);
         $query->andFilterWhere(['like', 'user.nama_pengguna', $this->nama_pengguna]);
+        $query->andFilterWhere(['like', 'barang.kode_barang', $this->kode_barang]);
 
         return $dataProvider;
     }

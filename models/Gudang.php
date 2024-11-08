@@ -103,6 +103,10 @@ class Gudang extends \yii\db\ActiveRecord
     {
         return $this->hasOne(User::class, ['user_id' => 'user_id']);
     }
+    public function getPenggunaan()
+    {
+        return $this->hasOne(Penggunaan::class, ['barang_id' => 'barang_id']);
+    }
 
     public function beforeSave($insert)
     {

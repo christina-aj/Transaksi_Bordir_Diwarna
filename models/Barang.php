@@ -13,8 +13,6 @@ use yii\db\Expression;
  * @property string $kode_barang
  * @property string $nama_barang
  * @property int $unit_id
- * @property int $supplier_id
- * @property float $harga
  * @property float $angka
  * @property string $tipe
  * @property string|null $warna
@@ -55,9 +53,9 @@ class Barang extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['kode_barang', 'nama_barang', 'unit_id', 'harga', 'tipe'], 'required'],
-            [['unit_id', 'supplier_id'], 'integer'],
-            [['harga', 'angka'], 'number'],
+            [['kode_barang', 'nama_barang', 'unit_id', 'tipe'], 'required'],
+            [['unit_id'], 'integer'],
+            [['angka'], 'number'],
             [['created_at', 'updated_at'], 'safe'],
             [['kode_barang', 'nama_barang', 'tipe', 'warna'], 'string', 'max' => 255],
             [['kode_barang'], 'unique'],
@@ -76,10 +74,8 @@ class Barang extends \yii\db\ActiveRecord
             'nama_barang' => 'Nama Barang',
             'angka' => 'Angka',
             'unit_id' => 'Satuan',
-            'harga' => 'Harga',
             'tipe' => 'Tipe',
             'warna' => 'Warna',
-            'supplier_id' => 'Supplier Id',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
         ];
@@ -103,11 +99,6 @@ class Barang extends \yii\db\ActiveRecord
     public function getStocks()
     {
         return $this->hasMany(Stock::class, ['barang_id' => 'barang_id']);
-    }
-
-    public function getSupplier()
-    {
-        return $this->hasOne(Supplier::class, ['supplier_id' => 'supplier_id']);
     }
 
     /**

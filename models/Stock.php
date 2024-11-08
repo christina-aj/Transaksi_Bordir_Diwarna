@@ -18,8 +18,6 @@ use yii\db\Expression;
  * @property float $quantity_keluar
  * @property float $quantity_akhir
  * @property int $user_id
- * @property int $is_ready
- * @property int $is_new
  * @property string|null $created_at
  * @property string|null $updated_at
  *
@@ -31,6 +29,12 @@ class Stock extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
+
+    public $pesandetail_id;
+    public $nama_barang;
+    public $kode_barang;
+
+    const SCENARIO_CREATE = 'create';
     public static function tableName()
     {
         return 'stock';
@@ -53,16 +57,31 @@ class Stock extends \yii\db\ActiveRecord
             ],
         ];
     }
+
+
     public function rules()
     {
         return [
-            [['tambah_stock', 'barang_id', 'quantity_awal', 'quantity_masuk', 'quantity_keluar', 'quantity_akhir', 'user_id', 'is_ready', 'is_new'], 'required'],
-            [['tambah_stock', 'created_at', 'updated_at'], 'safe'],
-            [['barang_id', 'user_id', 'is_ready', 'is_new'], 'integer'],
+            // Aturan untuk skenario create, hanya 'nama_barang' dan 'quantity_keluar' yang wajib diisi
+            [['quantity_keluar'], 'required', 'on' => self::SCENARIO_CREATE],
+            [['nama_barang', 'quantity_awal', 'quantity_masuk', 'quantity_akhir', 'tambah_stock', 'created_at', 'updated_at'], 'safe', 'on' => self::SCENARIO_CREATE],
+
+            // Aturan umum atau untuk skenario lain (selain create)
+            [['tambah_stock', 'barang_id', 'quantity_awal', 'quantity_masuk', 'quantity_keluar', 'quantity_akhir', 'user_id'], 'required', 'except' => self::SCENARIO_CREATE],
+
+            [['barang_id', 'user_id'], 'integer'],
             [['quantity_awal', 'quantity_masuk', 'quantity_keluar', 'quantity_akhir'], 'number'],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'user_id']],
         ];
     }
+
+    public function scenarios()
+    {
+        $scenarios = parent::scenarios();
+        $scenarios[self::SCENARIO_CREATE] = ['nama_barang', 'quantity_keluar']; // hanya field ini yang divalidasi
+        return $scenarios;
+    }
+
 
     /**
      * {@inheritdoc}
@@ -71,6 +90,7 @@ class Stock extends \yii\db\ActiveRecord
     {
         return [
             'stock_id' => 'Stock ID',
+            'pesandetail_id' => 'pesandetail_id',
             'tambah_stock' => 'Tambah Stock',
             'barang_id' => 'Barang ID',
             'quantity_awal' => 'Quantity Awal',
@@ -78,8 +98,6 @@ class Stock extends \yii\db\ActiveRecord
             'quantity_keluar' => 'Quantity Keluar',
             'quantity_akhir' => 'Quantity Akhir',
             'user_id' => 'User ID',
-            'is_ready' => 'Is Ready',
-            'is_new' => 'Is New',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
         ];
@@ -112,6 +130,10 @@ class Stock extends \yii\db\ActiveRecord
     public function getPembelian()
     {
         return $this->hasOne(Pembelian::class, ['pembelian_id' => 'pembelian_id']);
+    }
+    public function getPesanDetail()
+    {
+        return $this->hasOne(PesanDetail::class, ['pesandetail_id' => 'pesandetail_id']);
     }
 
     public function beforeSave($insert)

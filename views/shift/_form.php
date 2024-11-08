@@ -46,9 +46,9 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'nama_operator')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'mulai_istirahat')->textInput(['placeholder' => 'jam:menit:detik']) ?>
+    <?= $form->field($model, 'mulai_istirahat')->textInput(['placeholder' => 'Jam:Menit']) ?>
 
-    <?= $form->field($model, 'selesai_istirahat')->textInput(['placeholder' => 'jam:menit:detik']) ?>
+    <?= $form->field($model, 'selesai_istirahat')->textInput(['placeholder' => 'Jam:Menit']) ?>
 
     <?= $form->field($model, 'kendala')->textarea(['rows' => 6]) ?>
 

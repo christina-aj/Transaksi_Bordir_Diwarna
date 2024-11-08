@@ -5,16 +5,14 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var app\models\Stock $model */
 
-$this->title = 'Create Stock';
-$this->params['breadcrumbs'][] = ['label' => 'Stocks', 'url' => ['index']];
+$this->title = 'Buat Stock Keluar';
+$this->params['breadcrumbs'][] = ['label' => 'Stock', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="pc-content">
 
-    <h1><?= Html::encode($this->title) ?></h1>
-
     <?= $this->render('_form', [
-        'model' => $model,
+        'models' => $modelStocks,
     ]) ?>
 
 </div>

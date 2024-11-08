@@ -14,12 +14,14 @@ class PembelianDetailSearch extends PembelianDetail
     /**
      * {@inheritdoc}
      */
+
+    public $nama_supplier;
     public function rules()
     {
         return [
             [['belidetail_id', 'pembelian_id', 'pesandetail_id', 'is_correct'], 'integer'],
             [['cek_barang', 'total_biaya'], 'number'],
-            [['catatan', 'created_at', 'updated_at'], 'safe'],
+            [['catatan', 'created_at', 'updated_at', 'nama_supplier'], 'safe'],
         ];
     }
 
@@ -41,7 +43,7 @@ class PembelianDetailSearch extends PembelianDetail
      */
     public function search($params)
     {
-        $query = PembelianDetail::find();
+        $query = PembelianDetail::find()->joinWith(['supplier']);
 
         // add conditions that should always apply here
 
@@ -57,6 +59,7 @@ class PembelianDetailSearch extends PembelianDetail
             return $dataProvider;
         }
 
+        $query->andFilterWhere(['like', 'supplier.nama', $this->nama_supplier]);
         // grid filtering conditions
         $query->andFilterWhere([
             'belidetail_id' => $this->belidetail_id,

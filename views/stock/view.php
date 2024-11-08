@@ -34,8 +34,6 @@ $this->params['breadcrumbs'][] = $this->title;
             'quantity_akhir',
             'user_id',
             'user.nama_pengguna',
-            'is_ready',
-            'is_new',
             'created_at:datetime',
             'updated_at:datetime',
         ],

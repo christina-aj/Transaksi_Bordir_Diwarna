@@ -1,0 +1,98 @@
+<?php
+
+use app\models\Pembelian;
+use yii\helpers\Html;
+use yii\helpers\Url;
+use yii\grid\ActionColumn;
+use yii\grid\GridView;
+
+/** @var yii\web\View $this */
+/** @var app\models\PembelianSearch $searchModel */
+/** @var yii\data\ActiveDataProvider $dataProvider */
+
+$this->title = 'Pembelian Barang Produksi';
+$this->params['breadcrumbs'][] = $this->title;
+?>
+<div class="pc-content">
+    <div class="card table-card ">
+        <div class="card-header">
+            <h1><?= Html::encode($this->title) ?></h1>
+        </div>
+        <div class="card-body  mx-4">
+            <div class="table-responsive">
+                <?= GridView::widget([
+                    'dataProvider' => $dataProvider,
+                    'filterModel' => $searchModel,
+                    'columns' => [
+                        ['class' => 'yii\grid\SerialColumn'],
+                        // 'pembelian_id',
+                        'kode_pembelian' => [
+                            'label' => 'Kode pembelian',
+                            'attribute' => 'kode_pembelian',
+                            'value' => function ($model) {
+                                return $model->getFormattedBuyOrderId(); // Call the method to get the formatted ID
+                            },
+                            'filterInputOptions' => [
+                                'class' => 'form-control',
+                                'placeholder' => 'Cari Kode Pembelian',
+                            ],
+                        ],
+                        'kode_pemesanan' => [
+                            'label' => 'Kode pemesanan',
+                            'attribute' => 'kode_pemesanan',
+                            'value' => function ($model) {
+                                $pemesanan = $model->pemesanan;
+                                return $pemesanan->getFormattedOrderId(); // Call the method to get the formatted ID
+                            },
+                            'filterInputOptions' => [
+                                'class' => 'form-control',
+                                'placeholder' => 'Cari Kode Pembelian',
+                            ],
+                        ],
+                        // 'pemesanan_id',
+                        // 'pemesanan.pemesanan_id',
+                        // 'pemesanan.user_id',
+                        'pemesanan.user.nama_pengguna' => [
+                            'label' => 'Nama Pemesan',
+                            'attribute' => 'nama_pemesan',
+                            'value' => 'pemesanan.user.nama_pengguna',
+                        ],
+                        'pemesanan.tanggal' => [
+                            'label' => 'Tanggal Pemesanan',
+                            'attribute' => 'tanggal',
+                            'value' => 'pemesanan.tanggal',
+                        ],
+                        'pemesanan.total_item' => [
+                            'label' => 'Total Item',
+                            'attribute' => 'total_item',
+                            'value' => 'pemesanan.total_item'
+                        ],
+                        // 'user_id',
+                        'total_biaya',
+                        'pemesanan.status' => [
+                            'label' => 'Status',
+                            'attribute' => 'status',
+                            'value' => function ($model) {
+                                return $model->pemesanan->getStatusLabel();
+                            },
+                            'format' => 'raw'
+                        ],
+                        [
+                            'class' => ActionColumn::className(),
+                            'template' => '{view}',
+                            'urlCreator' => function ($action, Pembelian $model, $key, $index, $column) {
+                                return Url::toRoute([$action, 'pembelian_id' => $model->pembelian_id]);
+                            }
+                        ],
+
+                    ],
+                ]); ?>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+</div>

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Nov 07, 2024 at 07:08 PM
+-- Generation Time: Nov 08, 2024 at 11:20 AM
 -- Server version: 8.0.30
 -- PHP Version: 8.3.7
 
@@ -115,7 +115,12 @@ INSERT INTO `gudang` (`id_gudang`, `tanggal`, `barang_id`, `user_id`, `quantity_
 (42, '2024-11-06', 11, 1, 15, 15, 15, 15, 'Verifikasi pemesanan ID: 251', '2024-11-06 19:34:37', '2024-11-06 19:34:37'),
 (43, '2024-11-06', 1, 1, 0, 20, 0, 20, 'Verifikasi pemesanan ID: 251', '2024-11-06 19:34:37', '2024-11-06 19:34:37'),
 (44, '2024-11-07', 11, 1, 15, 0, 2, 13, NULL, '2024-11-07 16:10:01', '2024-11-07 16:10:01'),
-(45, '2024-11-07', 4, 1, 14, 0, 5, 9, NULL, '2024-11-07 17:07:20', '2024-11-07 17:07:20');
+(45, '2024-11-07', 4, 1, 14, 0, 5, 9, NULL, '2024-11-07 17:07:20', '2024-11-07 17:07:20'),
+(46, '2024-11-08', 11, 3, 13, 0, 5, 8, NULL, '2024-11-08 11:11:51', '2024-11-08 11:11:51'),
+(47, '2024-11-08', 4, 2, 9, 0, 2, 7, NULL, '2024-11-08 11:15:13', '2024-11-08 11:15:13'),
+(48, '2024-11-08', 11, 3, 8, 0, 2, 6, NULL, '2024-11-08 11:15:13', '2024-11-08 11:15:13'),
+(49, '2024-11-08', 1, 2, 20, 0, 5, 15, 'Dipakai 5 Benang, buat produksi', '2024-11-08 11:18:52', '2024-11-08 11:18:52'),
+(50, '2024-11-08', 4, 3, 7, 0, 1, 6, 'dipakai 1 buat buat produksi', '2024-11-08 11:18:52', '2024-11-08 11:18:52');
 
 -- --------------------------------------------------------
 
@@ -207,24 +212,6 @@ CREATE TABLE `mesin` (
 
 INSERT INTO `mesin` (`mesin_id`, `nama`, `deskripsi`) VALUES
 (1, 'Mesin Bordir', 'test');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `migration`
---
-
-CREATE TABLE `migration` (
-  `version` varchar(180) NOT NULL,
-  `apply_time` int DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Dumping data for table `migration`
---
-
-INSERT INTO `migration` (`version`, `apply_time`) VALUES
-('m000000_000000_base', 1730818832);
 
 -- --------------------------------------------------------
 
@@ -407,7 +394,10 @@ INSERT INTO `pembelian` (`pembelian_id`, `pemesanan_id`, `user_id`, `total_biaya
 (160, 251, 1, 1225000),
 (162, 253, 1, 0),
 (165, 256, 1, 360000),
-(166, 257, 1, 495000);
+(166, 257, 1, 495000),
+(167, 258, 1, 0),
+(168, 259, 1, 0),
+(171, 262, 1, 0);
 
 -- --------------------------------------------------------
 
@@ -528,7 +518,12 @@ INSERT INTO `pembelian_detail` (`belidetail_id`, `pembelian_id`, `pesandetail_id
 (163, 165, 229, 15000, 180000, 1, NULL, 1, '2024-11-07 11:16:05', NULL),
 (164, 165, 230, 12000, 180000, 2, NULL, 1, '2024-11-07 11:16:05', NULL),
 (165, 166, 231, 15000, 180000, 1, NULL, 1, '2024-11-07 11:16:57', NULL),
-(166, 166, 232, 21000, 315000, 3, NULL, 1, '2024-11-07 11:16:57', NULL);
+(166, 166, 232, 21000, 315000, 3, NULL, 1, '2024-11-07 11:16:57', NULL),
+(167, 168, 235, 0, 0, 0, NULL, 0, '2024-11-07 23:57:47', NULL),
+(168, 168, 236, 0, 0, 0, NULL, 0, '2024-11-07 23:57:47', NULL),
+(169, 171, 237, 0, 0, 0, NULL, 0, '2024-11-08 02:57:47', NULL),
+(170, 171, 238, 0, 0, 0, NULL, 0, '2024-11-08 02:57:47', NULL),
+(171, 171, 239, 0, 0, 0, NULL, 0, '2024-11-08 02:57:47', NULL);
 
 -- --------------------------------------------------------
 
@@ -714,7 +709,10 @@ INSERT INTO `pemesanan` (`pemesanan_id`, `user_id`, `tanggal`, `total_item`, `st
 (251, 1, '2024-11-06', 3, 2, '2024-11-06 19:33:12', '2024-11-06 19:34:37'),
 (253, 1, '2024-11-06', 0, 0, '2024-11-06 20:16:47', '2024-11-06 20:16:47'),
 (256, 1, '2024-11-07', 2, 1, '2024-11-07 18:14:17', '2024-11-07 18:56:04'),
-(257, 1, '2024-11-07', 2, 1, '2024-11-07 18:16:26', '2024-11-07 18:55:21');
+(257, 1, '2024-11-07', 2, 1, '2024-11-07 18:16:26', '2024-11-07 18:55:21'),
+(258, 1, '2024-11-08', 2, 0, '2024-11-08 06:54:46', '2024-11-08 06:55:55'),
+(259, 1, '2024-11-08', 2, 0, '2024-11-08 06:57:21', '2024-11-08 06:57:47'),
+(262, 1, '2024-11-08', 3, 0, '2024-11-08 09:49:41', '2024-11-08 09:57:47');
 
 -- --------------------------------------------------------
 
@@ -755,7 +753,12 @@ INSERT INTO `penggunaan` (`penggunaan_id`, `barang_id`, `user_id`, `jumlah_digun
 (24, 11, 1, 2, '', '2024-11-06'),
 (25, 1, 3, 3, '', '2024-11-06'),
 (26, 11, 1, 2, 'test', '2024-11-07'),
-(27, 4, 1, 5, 'test', '2024-11-07');
+(27, 4, 1, 5, 'test', '2024-11-07'),
+(28, 11, 3, 5, '', '2024-11-08'),
+(29, 4, 2, 2, 'Diambil 2 untuk produksi kaos kaki', '2024-11-08'),
+(30, 11, 3, 2, 'Diambil 2 untuk produksi kaos kaki', '2024-11-08'),
+(31, 1, 2, 5, 'Dipakai 5 Benang, buat produksi', '2024-11-08'),
+(32, 4, 3, 1, 'dipakai 1 buat buat produksi', '2024-11-08');
 
 -- --------------------------------------------------------
 
@@ -976,7 +979,14 @@ INSERT INTO `pesan_detail` (`pesandetail_id`, `pemesanan_id`, `barang_id`, `qty`
 (229, 256, 11, 12, 0, 'test', 1, 0, '2024-11-07 18:16:05', '2024-11-07 18:16:05'),
 (230, 256, 25, 15, 0, 'ok', 0, 0, '2024-11-07 18:16:05', '2024-11-07 18:16:05'),
 (231, 257, 24, 12, 0, '', 1, 0, '2024-11-07 18:16:57', '2024-11-07 18:16:57'),
-(232, 257, 25, 15, 0, '', 0, 0, '2024-11-07 18:16:57', '2024-11-07 18:16:57');
+(232, 257, 25, 15, 0, '', 0, 0, '2024-11-07 18:16:57', '2024-11-07 18:16:57'),
+(233, 258, 4, 12, 0, '', 1, 0, '2024-11-08 06:55:55', '2024-11-08 06:55:55'),
+(234, 258, 9, 12, 0, '', 0, 0, '2024-11-08 06:55:55', '2024-11-08 06:55:55'),
+(235, 259, 11, 12, 0, '', 1, 0, '2024-11-08 06:57:47', '2024-11-08 06:57:47'),
+(236, 259, 14, 15, 0, '', 0, 0, '2024-11-08 06:57:47', '2024-11-08 06:57:47'),
+(237, 262, 9, 5, 0, '', 1, 0, '2024-11-08 09:57:47', '2024-11-08 09:57:47'),
+(238, 262, 1, 15, 0, '', 0, 0, '2024-11-08 09:57:47', '2024-11-08 09:57:47'),
+(239, 262, 11, 20, 0, '', 1, 0, '2024-11-08 09:57:47', '2024-11-08 09:57:47');
 
 -- --------------------------------------------------------
 
@@ -1075,7 +1085,13 @@ INSERT INTO `stock` (`stock_id`, `tambah_stock`, `barang_id`, `user_id`, `quanti
 (80, '2024-11-07', 4, 3, 13, 0, 5, 8, '2024-11-07 17:58:42', '2024-11-07 17:58:42'),
 (81, '2024-11-07', 11, 1, 17, 0, 5, 12, '2024-11-07 17:58:42', '2024-11-07 17:58:42'),
 (82, '2024-11-07', 11, 2, 12, 0, 1, 11, '2024-11-07 19:03:21', '2024-11-07 19:03:21'),
-(83, '2024-11-07', 4, 1, 8, 0, 1, 7, '2024-11-07 19:03:21', '2024-11-07 19:03:21');
+(83, '2024-11-07', 4, 1, 8, 0, 1, 7, '2024-11-07 19:03:21', '2024-11-07 19:03:21'),
+(84, '2024-11-08', 11, 3, 11, 0, 2, 9, '2024-11-08 10:24:18', '2024-11-08 10:24:18'),
+(85, '2024-11-08', 11, 3, 9, 5, 0, 14, '2024-11-08 11:11:51', '2024-11-08 11:11:51'),
+(86, '2024-11-08', 4, 2, 7, 2, 0, 9, '2024-11-08 11:15:13', '2024-11-08 11:15:13'),
+(87, '2024-11-08', 11, 3, 14, 2, 0, 16, '2024-11-08 11:15:13', '2024-11-08 11:15:13'),
+(88, '2024-11-08', 1, 2, 1, 5, 0, 6, '2024-11-08 11:18:52', '2024-11-08 11:18:52'),
+(89, '2024-11-08', 4, 3, 9, 1, 0, 10, '2024-11-08 11:18:52', '2024-11-08 11:18:52');
 
 -- --------------------------------------------------------
 
@@ -1201,12 +1217,6 @@ ALTER TABLE `mesin`
   ADD PRIMARY KEY (`mesin_id`);
 
 --
--- Indexes for table `migration`
---
-ALTER TABLE `migration`
-  ADD PRIMARY KEY (`version`);
-
---
 -- Indexes for table `nota`
 --
 ALTER TABLE `nota`
@@ -1318,7 +1328,7 @@ ALTER TABLE `barangproduksi`
 -- AUTO_INCREMENT for table `gudang`
 --
 ALTER TABLE `gudang`
-  MODIFY `id_gudang` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
+  MODIFY `id_gudang` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
 
 --
 -- AUTO_INCREMENT for table `jenis`
@@ -1354,31 +1364,31 @@ ALTER TABLE `nota`
 -- AUTO_INCREMENT for table `pembelian`
 --
 ALTER TABLE `pembelian`
-  MODIFY `pembelian_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=167;
+  MODIFY `pembelian_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=174;
 
 --
 -- AUTO_INCREMENT for table `pembelian_detail`
 --
 ALTER TABLE `pembelian_detail`
-  MODIFY `belidetail_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=167;
+  MODIFY `belidetail_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=172;
 
 --
 -- AUTO_INCREMENT for table `pemesanan`
 --
 ALTER TABLE `pemesanan`
-  MODIFY `pemesanan_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=258;
+  MODIFY `pemesanan_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=265;
 
 --
 -- AUTO_INCREMENT for table `penggunaan`
 --
 ALTER TABLE `penggunaan`
-  MODIFY `penggunaan_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+  MODIFY `penggunaan_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
 
 --
 -- AUTO_INCREMENT for table `pesan_detail`
 --
 ALTER TABLE `pesan_detail`
-  MODIFY `pesandetail_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=233;
+  MODIFY `pesandetail_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=240;
 
 --
 -- AUTO_INCREMENT for table `role`
@@ -1396,7 +1406,7 @@ ALTER TABLE `shift`
 -- AUTO_INCREMENT for table `stock`
 --
 ALTER TABLE `stock`
-  MODIFY `stock_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=84;
+  MODIFY `stock_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=90;
 
 --
 -- AUTO_INCREMENT for table `supplier`

@@ -56,6 +56,9 @@ class StockSearch extends Stock
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'pagination' => [
+                'pagesize' => 15,
+            ],
             'sort' => [
                 'attributes' => [
                     'stock_id',

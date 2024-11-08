@@ -26,7 +26,6 @@ use yii\grid\GridView;
                 <?= GridView::widget([
                     'dataProvider' => new \yii\data\ArrayDataProvider([
                         'allModels' => $models, // Pastikan $models adalah array model Penggunaan
-                        'pagination' => false,
                     ]),
                     'columns' => [
                         ['class' => 'yii\grid\SerialColumn'],
@@ -61,7 +60,7 @@ use yii\grid\GridView;
                                             'templates' => [
                                                 'notFound' => "<div class='text-danger'>Tidak ada hasil</div>",
                                                 'suggestion' => new \yii\web\JsExpression('function(data) {
-                                                    return "<div>" + data.kode_barang + " - " + data.nama_barang + " (Stock: " + data.quantity_akhir + ")</div>";
+                                                    return "<div>" + data.kode_barang + " - " + data.nama_barang + "</div>";
                                                 }')
                                             ],
                                             'remote' => [
@@ -72,9 +71,18 @@ use yii\grid\GridView;
                                     ],
                                     'pluginEvents' => [
                                         "typeahead:selected" => "function(event, suggestion) {
-                                            $('#" . Html::getInputId($model, "[$index]barang_id") . "').val(suggestion.barang_id);
-                                            $('#" . Html::getInputId($model, "[$index]kode_barang") . "').val(suggestion.kode_barang);
-                                            $('#" . Html::getInputId($model, "[$index]stock") . "').val(suggestion.quantity_akhir); // Mengisi field stock
+                                            // Isi field barang_id dan kode_barang
+                                            var barangIdField = $('#" . Html::getInputId($model, "[$index]barang_id") . "');
+                                            var kodeBarangField = $('#" . Html::getInputId($model, "[$index]kode_barang") . "');
+                                            
+                                            barangIdField.val(suggestion.barang_id);
+                                            kodeBarangField.val(suggestion.kode_barang);
+                        
+                                            // AJAX untuk mengisi quantity_awal berdasarkan barang_id
+                                            $.get('" . Url::to(['get-stock']) . "?barang_id=' + suggestion.barang_id, function(data) {
+                                                var result = JSON.parse(data);
+                                                $('#" . Html::getInputId($model, "[$index]stock") . "').val(result.quantity_akhir);
+                                            });
                                         }"
                                     ]
                                 ])->label(false);
@@ -179,14 +187,23 @@ $this->registerJs("
             templates: {
                 notFound: '<div class=\"text-danger\">Tidak ada hasil</div>',
                 suggestion: function(data) {
-                    return `<div>\${data.kode_barang} - \${data.nama_barang} (Stock: \${data.quantity_akhir})</div>`;
+                    return `<div>\${data.kode_barang} - \${data.nama_barang} </div>`;
                 }
             }
         }).bind('typeahead:select', function(ev, suggestion) {
-            var index = $(this).attr('name').match(/\\d+/)[0];
-            $('input[name=\"Penggunaan[' + index + '][barang_id]\"]').val(suggestion.barang_id);
-            $('input[name=\"Penggunaan[' + index + '][kode_barang]\"]').val(suggestion.kode_barang);
-            $('input[name=\"Penggunaan[' + index + '][stock]\"]').val(suggestion.quantity_akhir);
+            // Update fields with selected suggestion
+            var barangIdField = $('input[name=\"Penggunaan[' + index + '][barang_id]\"]');
+            var kodeBarangField = $('input[name=\"Penggunaan[' + index + '][kode_barang]\"]');
+            var quantityAwalField = $('input[name=\"Penggunaan[' + index + '][stock]\"]');
+
+            barangIdField.val(suggestion.barang_id);
+            kodeBarangField.val(suggestion.kode_barang);
+
+            // AJAX call to get latest quantity_awal based on barang_id
+            $.get('" . Url::to(['get-stock']) . "?barang_id=' + suggestion.barang_id, function(data) {
+                var result = JSON.parse(data);
+                quantityAwalField.val(result.quantity_akhir);
+            });
         });
     }
 

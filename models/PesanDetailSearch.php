@@ -15,6 +15,7 @@ class PesanDetailSearch extends PesanDetail
      * {@inheritdoc}
      */
     public $nama_barang;
+    public $kode_barang;
     public $kode_pemesanan;
 
     public function rules()
@@ -22,7 +23,7 @@ class PesanDetailSearch extends PesanDetail
         return [
             [['pesandetail_id', 'pemesanan_id', 'barang_id', 'is_correct', 'langsung_pakai'], 'integer'],
             [['qty', 'qty_terima'], 'number'],
-            [['catatan', 'created_at', 'update_at', 'nama_barang', 'kode_pemesanan'], 'safe'],
+            [['catatan', 'created_at', 'update_at', 'nama_barang', 'kode_pemesanan', 'kode_barang'], 'safe'],
         ];
     }
 

@@ -43,7 +43,8 @@ use yii\widgets\ActiveForm;
                 <thead>
                     <tr>
                         <!-- <th style="width: 25%;">Kode Pemesanan</th> -->
-                        <th style="width: 25%;">Barang id</th>
+                        <th style="width: 25%;" class="barang-header">Barang id</th>
+                        <th style="width: 25%;">Kode Barang</th>
                         <th style="width: 25%;">Nama Barang</th>
                         <th style="width: 15%;">Qty</th>
                         <th style="width: 15%;">Qty Terima</th>
@@ -57,8 +58,10 @@ use yii\widgets\ActiveForm;
                     <?php foreach ($modelDetails as $index => $modelDetail): ?>
                         <tr>
                             <?= Html::activeHiddenInput($modelDetail, "[$index]pemesanan_id", ['value' => $modelPemesanan->pemesanan_id]) ?>
-                            <!-- <td><?= $form->field($modelDetail, "[$index]pemesanan_id")->hiddenInput(['readonly' => true, 'value' => $modelPemesanan->pemesanan_id])->label(false) ?></td> -->
-                            <td><?= $form->field($modelDetail, "[$index]barang_id")->textInput(['readonly' => true])->label(false) ?></td>
+                            <td class="barang-column"><?= $form->field($modelDetail, "[$index]barang_id")->textInput([
+                                                            'readonly' => true,
+                                                        ])->label(false) ?></td>
+                            <td><?= $form->field($modelDetail, "[$index]kode_barang")->textInput(['readonly' => true])->label(false) ?></td>
                             <td><?= $form->field($modelDetail, "[$index]nama_barang")->widget(Typeahead::classname(), [
                                     'options' => [
                                         'placeholder' => 'Cari Nama Barang...',
@@ -91,6 +94,7 @@ use yii\widgets\ActiveForm;
                                         "typeahead:select" => new \yii\web\JsExpression('function(event, suggestion) {
                                             $("#hidden-pesandetail-0-barang_id").val(suggestion.barang_id);
                                             $("#pesandetail-0-barang_id").val(suggestion.id);
+                                            $("#pesandetail-0-kode_barang").val(suggestion.kode_barang);
                                         }')
                                     ]
                                 ])->label(false); ?></td>
@@ -162,13 +166,15 @@ $pemesananId = $modelPemesanan->pemesanan_id;
 $this->registerJs("
     var rowIndex = " . count($modelDetails) . ";
     var pemesananId = " . json_encode($pemesananId) . "; // Menyimpan nilai pemesanan_id dari server
-
+    $('.barang-header').hide();
+    $('.barang-column').hide();
     // Fungsi untuk menambah baris baru
     $(document).on('click', '.add-row', function() {
         var newRow = `
             <tr>
                 <input type='hidden' name='PesanDetail[` + rowIndex + `][pemesanan_id]' value='` + pemesananId + `' class='form-control' readonly>
-                <td><input type='text' name='PesanDetail[` + rowIndex + `][barang_id]' id='pesandetail-` + rowIndex + `-barang_id' class='form-control' readonly></td>
+                <td class='barang-column'><input type='text' name='PesanDetail[` + rowIndex + `][barang_id]' id='pesandetail-` + rowIndex + `-barang_id' class='form-control' readonly></td>
+                <td><input type='text' name='PesanDetail[` + rowIndex + `][kode_barang]' id='pesandetail-` + rowIndex + `-kode_barang' class='form-control' readonly></td>
                 <td><input type='text' name='PesanDetail[` + rowIndex + `][nama_barang]' id='pesandetail-` + rowIndex + `-nama_barang' class='form-control'></td>
                 <td><input type='text' name='PesanDetail[` + rowIndex + `][qty]' class='form-control'></td>
                 <td><input type='text' name='PesanDetail[` + rowIndex + `][qty_terima]' class='form-control' readonly></td>
@@ -189,6 +195,8 @@ $this->registerJs("
         `;
         $('#table-body').append(newRow);
         initializeTypeahead(`#pesandetail-` + rowIndex + `-nama_barang`, rowIndex);
+        $('.barang-header').hide();
+        $('.barang-column').hide();
         rowIndex++;
         toggleAddDeleteButtons();
     });
@@ -205,6 +213,7 @@ $this->registerJs("
         $(this).closest('tr').remove(); // Hapus baris dari tampilan form
         toggleAddDeleteButtons();
     });
+
 
     // Fungsi untuk menambahkan input hidden dengan nilai 0 jika checkbox tidak dicentang
     $('form').on('submit', function() {
@@ -243,6 +252,7 @@ $this->registerJs("
         }).bind('typeahead:select', function(ev, suggestion) {
             // Set nilai barang_id sesuai dengan pilihan
             $(`#pesandetail-` + index + `-barang_id`).val(suggestion.barang_id);
+            $(`#pesandetail-` + index + `-kode_barang`).val(suggestion.kode_barang);
         });
     }
 

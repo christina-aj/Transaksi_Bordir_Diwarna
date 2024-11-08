@@ -14,31 +14,31 @@ $this->title = 'Mesin';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="pc-content">
+    <div class="card card-table">
+        <div class="card-header">
+            <h1><?= Html::encode($this->title) ?></h1>
+            <?= Html::a('Create Mesin', ['create'], ['class' => 'btn btn-success']) ?>
 
-    <h1><?= Html::encode($this->title) ?></h1>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <?= GridView::widget([
+                    'dataProvider' => $dataProvider,
+                    'filterModel' => $searchModel,
+                    'columns' => [
+                        ['class' => 'yii\grid\SerialColumn'],
 
-    <p>
-        <?= Html::a('Create Mesin', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
-
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-
-    <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-
-            'nama',
-            'deskripsi:ntext',
-            [
-                'class' => ActionColumn::className(),
-                'urlCreator' => function ($action, Mesin $model, $key, $index, $column) {
-                    return Url::toRoute([$action, 'mesin_id' => $model->mesin_id]);
-                 }
-            ],
-        ],
-    ]); ?>
-
-
+                        'nama',
+                        'deskripsi:ntext',
+                        [
+                            'class' => ActionColumn::className(),
+                            'urlCreator' => function ($action, Mesin $model, $key, $index, $column) {
+                                return Url::toRoute([$action, 'mesin_id' => $model->mesin_id]);
+                            }
+                        ],
+                    ],
+                ]); ?>
+            </div>
+        </div>
+    </div>
 </div>

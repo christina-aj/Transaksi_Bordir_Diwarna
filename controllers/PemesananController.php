@@ -232,6 +232,7 @@ class PemesananController extends Controller
                 $pembelianDetail->pesandetail_id = $pesanDetail->pesandetail_id;
                 $pembelianDetail->cek_barang = 0;
                 $pembelianDetail->total_biaya = 0;
+                $pembelianDetail->supplier_id = 0;
                 $pembelianDetail->is_correct = 0;
                 $pembelianDetail->created_at = date('Y-m-d H:i:s');
 

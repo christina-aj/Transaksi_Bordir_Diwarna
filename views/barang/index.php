@@ -19,15 +19,13 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="pc-content">
     <div class="card table-card">
         <div class="card-header">
-
             <!-- <h1><?= Html::encode($this->title) ?></h1> -->
             <h1>List Barang</h1>
+            <?= Html::a('Create Barang', ['create'], ['class' => 'btn btn-success']) ?>
         </div>
         <div class="card-body mx-4">
             <div class="table-responsive">
-                <p>
-                    <?= Html::a('Create Barang', ['create'], ['class' => 'btn btn-success']) ?>
-                </p>
+
 
                 <?php // echo $this->render('_search', ['model' => $searchModel]); 
                 ?>

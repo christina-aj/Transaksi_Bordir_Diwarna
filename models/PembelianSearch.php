@@ -55,6 +55,9 @@ class PembelianSearch extends Pembelian
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'pagination' => [
+                'pageSize' => 15, // Jumlah item per halaman
+            ],
             'sort' => [
                 'attributes' => [
                     'kode_pembelian' => [

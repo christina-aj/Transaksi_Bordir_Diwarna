@@ -103,6 +103,7 @@ class PenggunaanController extends Controller
                         $gudang->quantity_masuk = 0; // Sesuaikan dengan jumlah quantity masuk
                         $gudang->quantity_keluar = $modelPenggunaan->jumlah_digunakan; // Misalnya, tidak ada quantity keluar pada saat ini
                         $gudang->quantity_akhir = $gudang->quantity_awal + $gudang->quantity_masuk - $gudang->quantity_keluar;
+                        $gudang->catatan = $modelPenggunaan->catatan;
                         if (!$gudang->save(false)) {
                             Yii::$app->session->setFlash('error', 'Gagal menyimpan data stok untuk barang ID: ' . $modelPenggunaan->barang_id);
                         }
@@ -198,29 +199,6 @@ class PenggunaanController extends Controller
         throw new NotFoundHttpException('The requested page does not exist.');
     }
 
-    public function actionGetStock()
-    {
-        // Mendapatkan data POST dari request
-        $barang_id = Yii::$app->request->post('barang_id');
-
-        // Cek apakah barang_id ada dalam request
-        if ($barang_id) {
-            // Mencari stock terbaru berdasarkan barang_id
-            $stock = \app\models\Stock::find()
-                ->where(['barang_id' => $barang_id])
-                ->orderBy(['stock_id' => SORT_DESC]) // Mengambil stock terbaru
-                ->one(); // Mengambil satu record terbaru
-
-            // Jika ditemukan stock, kirimkan quantity_akhir sebagai respon JSON
-            if ($stock) {
-                return $this->asJson(['quantity_akhir' => $stock->quantity_akhir]);
-            }
-        }
-
-        // Jika tidak ditemukan atau barang_id tidak valid, kembalikan null
-        return $this->asJson(['quantity_akhir' => null]);
-    }
-
     public function actionGetUserInfo()
     {
         if (Yii::$app->user->isGuest) {
@@ -245,5 +223,15 @@ class PenggunaanController extends Controller
     {
         $currentStock = Gudang::find()->where(['barang_id' => $barang_id])->orderBy(['created_at' => SORT_DESC])->one();
         return $currentStock ? $currentStock->quantity_akhir : 0; // Jika tidak ada stok sebelumnya, mulai dari 0
+    }
+    public function actionGetStock($barang_id)
+    {
+        $gudang = Gudang::find()
+            ->joinWith('barang') // Asumsi ada relasi ke tabel barang jika perlu
+            ->where(['barang.barang_id' => $barang_id])
+            ->orderBy(['gudang.id_gudang' => SORT_DESC])
+            ->one();
+
+        return \yii\helpers\Json::encode(['quantity_akhir' => $gudang ? $gudang->quantity_akhir : 0]);
     }
 }

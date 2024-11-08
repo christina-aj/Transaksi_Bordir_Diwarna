@@ -29,6 +29,7 @@ class PesanDetail extends \yii\db\ActiveRecord
      * {@inheritdoc}
      */
     public $nama_barang;
+    public $kode_barang;
     public $kode_pemesanan;
     public static function tableName()
     {
@@ -66,7 +67,7 @@ class PesanDetail extends \yii\db\ActiveRecord
             [['qty_terima'], 'default', 'value' => 0],
             [['is_correct'], 'default', 'value' => 0],
             [['langsung_pakai'], 'default', 'value' => 0],
-            [['created_at', 'update_at', 'nama_barang', 'kode_pemesanan', 'is_correct'], 'safe'],
+            [['created_at', 'update_at', 'nama_barang', 'kode_pemesanan', 'is_correct', 'kode_barang'], 'safe'],
             [['catatan'], 'string', 'max' => 255],
             [['pemesanan_id'], 'exist', 'skipOnError' => true, 'targetClass' => Pemesanan::class, 'targetAttribute' => ['pemesanan_id' => 'pemesanan_id']],
             [['barang_id'], 'exist', 'skipOnError' => true, 'targetClass' => Barang::class, 'targetAttribute' => ['barang_id' => 'barang_id']],
@@ -81,6 +82,7 @@ class PesanDetail extends \yii\db\ActiveRecord
         return [
             'kode_pemesanan' => 'Kode Pemesanan',
             'nama_barang' => 'Nama Barang',
+            'kode_barang' => 'Kode Barang',
             'pesandetail_id' => 'Pesandetail ID',
             'pemesanan_id' => 'Pemesanan ID',
             'barang_id' => 'Barang ID',

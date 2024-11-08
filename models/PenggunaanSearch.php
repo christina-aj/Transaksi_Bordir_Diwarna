@@ -52,6 +52,9 @@ class PenggunaanSearch extends Penggunaan
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'pagination' => [
+                'pagesize' => 15,
+            ],
             'sort' => [
                 'attributes' => [
                     'penggunaan_id', // Aktifkan sorting untuk kolom tanggal

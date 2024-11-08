@@ -19,9 +19,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="card table-card">
         <div class="card-header">
             <h1><?= Html::encode($this->title) ?></h1>
-            <p>
-                <?= Html::a('Create Stock Out', ['create'], ['class' => 'btn btn-success']) ?>
-            </p>
+            <?= Html::a('Create Stock Out', ['create'], ['class' => 'btn btn-success']) ?>
         </div>
 
         <div class="card-body mx-4">

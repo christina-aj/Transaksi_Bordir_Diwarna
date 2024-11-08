@@ -9,6 +9,7 @@ use yii\web\Response;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
+use app\models\laporanproduksi;
 use app\models\PesanDetail;
 
 class SiteController extends Controller
@@ -99,10 +100,16 @@ class SiteController extends Controller
             ->orderBy(['created_at' => SORT_DESC])
             ->limit(5)
             ->all();
+        $laporanProduksi = laporanproduksi::find()
+            ->orderBy(['tanggal_kerja' => SORT_DESC])
+            ->limit(5)
+            ->all();
         return $this->render('index', [
-            'pesanDetails' => $pesanDetails
+            'pesanDetails' => $pesanDetails,
+            'laporanProduksi' => $laporanProduksi
         ]);
     }
+
     public function actionPanduan()
     {
         // kode lain untuk halaman index

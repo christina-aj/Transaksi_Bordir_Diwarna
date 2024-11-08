@@ -48,7 +48,7 @@ class Shift extends \yii\db\ActiveRecord
         return [
             [['shift', 'waktu_kerja', 'nama_operator', 'mulai_istirahat', 'selesai_istirahat','ganti_benang', 'ganti_kain'], 'required'],
             [['user_id', 'ganti_benang', 'ganti_kain'], 'integer'],
-            [['tanggal', 'mulai_istirahat', 'selesai_istirahat', 'start_time', 'end_time','kendala'], 'safe'],
+            [['tanggal', 'mulai_istirahat', 'selesai_istirahat','start_time', 'end_time','kendala'], 'safe'],
             [['shift'], 'integer'],
             [['waktu_kerja'], 'number', 'min' => 0, 'max' => 1], 
             [['waktu_kerja_hidden'], 'string'],

@@ -21,40 +21,59 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= Html::a('Create Nota', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-
-            'nota_id',
             'nama_konsumen',
             'tanggal',
             [
                 'attribute' => 'barang',
-                'format' => 'raw', 
+                'format' => 'raw',
                 'value' => function ($model) {
-                    return nl2br(str_replace(',', "<br/>", $model->barang)); 
+                    $items = explode(',', $model->barang);
+                    $formattedItems = '<ul>';
+                    foreach ($items as $item) {
+                        $formattedItems .= '<li>' . Html::encode($item) . '</li>';
+                    }
+                    $formattedItems .= '</ul>';
+                    return $formattedItems;
                 },
             ],
             [
                 'attribute' => 'harga',
-                'format' => 'raw', 
+                'format' => 'raw',
                 'value' => function ($model) {
-                    return nl2br(str_replace(',', "<br/>", $model->harga)); 
+                    $prices = explode(',', $model->harga);
+                    $formattedPrices = '<ul>';
+                    foreach ($prices as $price) {
+                        $formattedPrices .= '<li>' . Yii::$app->formatter->asCurrency($price, 'IDR') . '</li>';
+                    }
+                    $formattedPrices .= '</ul>';
+                    return $formattedPrices;
                 },
             ],
             [
                 'attribute' => 'qty',
-                'format' => 'raw', 
+                'format' => 'raw',
                 'value' => function ($model) {
-                    return nl2br(str_replace(',', "<br/>", $model->qty)); 
+                    $quantities = explode(',', $model->qty);
+                    $formattedQuantities = '<ul>';
+                    foreach ($quantities as $quantity) {
+                        $formattedQuantities .= '<li>' . Html::encode($quantity) . '</li>';
+                    }
+                    $formattedQuantities .= '</ul>';
+                    return $formattedQuantities;
                 },
             ],
             'total_qty',
-            'total_harga',
+            [
+                'attribute' => 'total_harga',
+                'value' => function ($model) {
+                    return Yii::$app->formatter->asCurrency($model->total_harga, 'IDR');
+                },
+            ],
             [
                 'class' => ActionColumn::className(),
                 'urlCreator' => function ($action, Nota $model, $key, $index, $column) {

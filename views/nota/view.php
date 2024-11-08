@@ -23,9 +23,9 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
         ]) ?>
         <?= Html::a('Print', ['print', 'nota_id' => $model->nota_id], [
-        'class' => 'btn btn-info',
-        'target' => '_blank', 
-        ]) ?>>
+            'class' => 'btn btn-info',
+            'target' => '_blank',
+        ]) ?>
         <?= Html::a('Back', ['nota/index'], ['class' => 'btn btn-secondary']) ?>
     </p>
 
@@ -36,7 +36,10 @@ $this->params['breadcrumbs'][] = $this->title;
             'nama_konsumen',
             'tanggal',
             'total_qty',
-            'total_harga',
+            [
+                'attribute' => 'total_harga',
+                'value' => Yii::$app->formatter->asCurrency($model->total_harga, 'IDR'),
+            ],
         ],
     ]) ?>
 
@@ -55,9 +58,9 @@ $this->params['breadcrumbs'][] = $this->title;
             <?php foreach ($model->barangList as $index => $barang): ?>
                 <tr>
                     <td><?= Html::encode($barang) ?></td>
-                    <td><?= Html::encode($model->hargaList[$index]) ?></td>
+                    <td><?= Yii::$app->formatter->asCurrency($model->hargaList[$index], 'IDR') ?></td>
                     <td><?= Html::encode($model->qtyList[$index]) ?></td>
-                    <td><?= Html::encode($model->hargaList[$index] * $model->qtyList[$index]) ?></td>
+                    <td><?= Yii::$app->formatter->asCurrency($model->hargaList[$index] * $model->qtyList[$index], 'IDR') ?></td>
                 </tr>
             <?php endforeach; ?>
         </tbody>

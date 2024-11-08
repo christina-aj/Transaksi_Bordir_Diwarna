@@ -92,6 +92,92 @@ $this->registerJsFile('https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.mi
                     <?= GridView::widget([
                         'dataProvider' => new \yii\data\ArrayDataProvider([
                             'allModels' => $pesanDetails,
+                            'pagination' => false,
+                        ]),
+                        'columns' => [
+                            ['class' => 'yii\grid\SerialColumn', 'header' => 'No'],
+                            [
+                                'attribute' => 'kode_barang',
+                                'label' => 'Kode Barang',
+                                'value' => function ($model) {
+                                    if ($model->barang) {
+                                        return $model->barang->kode_barang;
+                                    }
+                                    return 'Barang tidak ditemukan';
+                                },
+                            ],
+                            [
+                                'attribute' => 'barang_id',
+                                'label' => 'Nama Barang',
+                                'value' => function ($model) {
+                                    if ($model->barang) {
+                                        return $model->barang->nama_barang;
+                                    }
+                                    return 'Barang tidak ditemukan';
+                                },
+                            ],
+                            [
+                                'attribute' => 'qty',
+                                'label' => 'Quantity Pesan',
+                            ],
+                            [
+                                'attribute' => 'created_at',
+                                'format' => 'datetime',
+                                'label' => 'Dibuat Pada',
+                            ],
+                        ],
+                    ]); ?>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12 col-xl-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Laporan Produksi Terbaru</h5>
+                </div>
+                <div class="card-body">
+                    <?= GridView::widget([
+                        'dataProvider' => new \yii\data\ArrayDataProvider([
+                            'allModels' => $laporanProduksi,
+                            'pagination' => false,
+                        ]),
+                        'columns' => [
+                            ['class' => 'yii\grid\SerialColumn'],
+                            'nama_mesin',
+                            [
+                                'attribute' => 'Nama Operator - Shift',
+                                'value' => function ($model) {
+                                    $shiftTime = ($model['shift'] == "1") ? 'Pagi' : 'Sore';
+                                    return $model->shift->nama_operator . ' (' . $shiftTime . ')';
+                                }
+                            ],
+                            [
+                                'attribute' => 'tanggal_kerja',
+                                'value' => function ($model) {
+                                    return Yii::$app->formatter->asDate($model->tanggal_kerja, 'php:d-m-Y');
+                                },
+                            ],
+                            'nama_kerjaan',
+                            'nama_barang',
+                            'vs',
+                            'stitch',
+                            'kuantitas',
+                            'bs',
+                        ],
+                    ]); ?>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12 col-xl-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Recent Order</h5>
+                </div>
+                <div class="card-body">
+                    <?= GridView::widget([
+                        'dataProvider' => new \yii\data\ArrayDataProvider([
+                            'allModels' => $pesanDetails,
                             'pagination' => false, // Sesuaikan jika tidak menggunakan pagination
                         ]),
                         'columns' => [

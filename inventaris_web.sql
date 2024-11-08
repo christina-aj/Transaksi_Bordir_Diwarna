@@ -81,7 +81,7 @@ CREATE TABLE `barangproduksi` (
 --
 
 INSERT INTO `barangproduksi` (`barang_id`, `nama`, `nama_jenis`, `ukuran`, `deskripsi`) VALUES
-(4, 'Baju Merah', 'Baju Lengan Panjan', '0', '134');
+(4, 'Baju Merah', 'Baju Lengan Panjan', '25', 'Baju dengan kain katun');
 
 -- --------------------------------------------------------
 
@@ -170,7 +170,8 @@ INSERT INTO `laporanproduksi` (`laporan_id`, `nama_mesin`, `shift_id`, `tanggal_
 (26, 'Mesin Bordir', 22, '2024-10-30', 'text1', 21, 21, 1, 1, 'Baju Merah'),
 (27, 'Mesin Bordir', 21, '2024-11-02', 'text1', 21, 21, 1, 1, 'Baju Merah'),
 (28, 'Mesin Bordir', 21, '2024-11-02', 'text1', 21, 21, 1, 1, 'Baju Merah'),
-(29, 'Mesin Bordir', 21, '2024-11-02', 'text11231', 21, 21, 1, 1, 'Baju Merah');
+(29, 'Mesin Bordir', 21, '2024-11-02', 'text11231', 21, 21, 1, 1, 'Baju Merah'),
+(30, 'Mesin Bordir', 25, '2025-02-14', 'SD 2 Solo', 1, 1, 2515, 1, 'Baju Merah');
 
 -- --------------------------------------------------------
 
@@ -235,7 +236,7 @@ CREATE TABLE `nota` (
 --
 
 INSERT INTO `nota` (`nota_id`, `nama_konsumen`, `tanggal`, `barang`, `harga`, `qty`, `total_qty`, `total_harga`) VALUES
-(18, 'Test21', '2024-10-14', 'Baju Merah,Baju Merah', '155,1551', '155,151', 306, 258226);
+(18, 'Test21', '2024-10-14', 'Baju Merah,Baju Merah', '1500,1500', '155,151', 306, 459000);
 
 -- --------------------------------------------------------
 
@@ -1033,9 +1034,9 @@ CREATE TABLE `shift` (
   `nama_operator` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `mulai_istirahat` time NOT NULL,
   `selesai_istirahat` time NOT NULL,
-  `kendala` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `ganti_benang` int NOT NULL,
-  `ganti_kain` int NOT NULL
+  `kendala` text NOT NULL DEFAULT 'Tidak Ada',
+  `ganti_benang` int(11) NOT NULL,
+  `ganti_kain` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -1045,7 +1046,9 @@ CREATE TABLE `shift` (
 INSERT INTO `shift` (`shift_id`, `tanggal`, `user_id`, `shift`, `waktu_kerja`, `nama_operator`, `mulai_istirahat`, `selesai_istirahat`, `kendala`, `ganti_benang`, `ganti_kain`) VALUES
 (21, '2024-06-12', 2, '2', 0.44, 'Joni', '12:00:00', '13:00:00', 'tidak ada', 1, 1),
 (22, '2024-06-12', 2, '2', 0.33, 'Joni', '12:00:00', '13:00:00', 'test', 1, 1),
-(23, '2024-09-05', 2, '2', 1.00, 'Koni', '12:00:00', '13:00:00', 'aewe', 1, 1);
+(23, '2024-09-05', 2, '2', 1.00, 'Koni', '12:00:00', '13:00:00', 'aewe', 1, 1),
+(24, '2024-11-09', 1, '1', 1.00, 'Doni', '12:00:00', '13:00:00', 'Tidak ada', 1, 1),
+(25, '2025-02-15', 1, '1', 1.00, 'Lisa', '12:00:00', '13:00:00', '\'Tidak Ada\'', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -1340,7 +1343,7 @@ ALTER TABLE `jenis`
 -- AUTO_INCREMENT for table `laporanproduksi`
 --
 ALTER TABLE `laporanproduksi`
-  MODIFY `laporan_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `laporan_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT for table `laporan_keluar`
@@ -1400,7 +1403,7 @@ ALTER TABLE `role`
 -- AUTO_INCREMENT for table `shift`
 --
 ALTER TABLE `shift`
-  MODIFY `shift_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `shift_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `stock`

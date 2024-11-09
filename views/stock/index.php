@@ -7,6 +7,7 @@ use yii\grid\ActionColumn;
 use yii\grid\GridView;
 use kartik\daterange\DateRangePicker;
 use rmrevin\yii\fontawesome\FA;
+use yii\bootstrap5\Alert;
 
 /** @var yii\web\View $this */
 /** @var app\models\StockSearch $searchModel */
@@ -14,6 +15,14 @@ use rmrevin\yii\fontawesome\FA;
 
 $this->title = 'Stocks';
 $this->params['breadcrumbs'][] = $this->title;
+if (Yii::$app->session->hasFlash('success')) {
+    echo Alert::widget([
+        'options' => [
+            'class' => 'alert-success', // Kelas untuk menampilkan alert sukses
+        ],
+        'body' => Yii::$app->session->getFlash('success'),
+    ]);
+}
 ?>
 <div class="pc-content">
     <div class="card table-card">
@@ -95,14 +104,6 @@ $this->params['breadcrumbs'][] = $this->title;
                         'quantity_akhir' => [
                             'attribute' => 'quantity_akhir', // Atribut dari tabel supplier
                             'filter' => false,
-                        ],
-
-                        [
-                            'class' => ActionColumn::className(),
-                            'template' => '{view}',
-                            'urlCreator' => function ($action, Stock $model, $key, $index, $column) {
-                                return Url::toRoute([$action, 'stock_id' => $model->stock_id]);
-                            }
                         ],
                     ],
                 ]); ?>

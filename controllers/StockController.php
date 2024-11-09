@@ -103,7 +103,7 @@ class StockController extends Controller
                         }
 
                         $transaction->commit();
-                        Yii::$app->session->setFlash('success', 'All items saved successfully.');
+                        Yii::$app->session->setFlash('success', 'Semua Item telah disimpan.');
                         return $this->redirect(['index']);
                     } catch (\yii\db\Exception $e) {
                         $transaction->rollBack();

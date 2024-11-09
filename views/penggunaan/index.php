@@ -6,6 +6,7 @@ use yii\helpers\Url;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
 use kartik\daterange\DateRangePicker;
+use yii\bootstrap5\Alert;
 
 /** @var yii\web\View $this */
 /** @var app\models\PenggunaanSearch $searchModel */
@@ -13,6 +14,26 @@ use kartik\daterange\DateRangePicker;
 
 $this->title = 'Penggunaan Bahan Produksi';
 $this->params['breadcrumbs'][] = $this->title;
+
+// Cek apakah ada flash message 'success'
+if (Yii::$app->session->hasFlash('success')) {
+    echo Alert::widget([
+        'options' => [
+            'class' => 'alert-success', // Kelas untuk menampilkan alert sukses
+        ],
+        'body' => Yii::$app->session->getFlash('success'),
+    ]);
+}
+
+// Cek apakah ada flash message 'error'
+if (Yii::$app->session->hasFlash('error')) {
+    echo Alert::widget([
+        'options' => [
+            'class' => 'alert-danger', // Kelas untuk menampilkan alert error
+        ],
+        'body' => Yii::$app->session->getFlash('error'),
+    ]);
+}
 ?>
 <div class="pc-content">
     <div class="card card-table">
@@ -91,12 +112,6 @@ $this->params['breadcrumbs'][] = $this->title;
                         'filter' => false,
                     ],
                     // 'tanggal_digunakan',
-                    [
-                        'class' => ActionColumn::className(),
-                        'urlCreator' => function ($action, Penggunaan $model, $key, $index, $column) {
-                            return Url::toRoute([$action, 'penggunaan_id' => $model->penggunaan_id]);
-                        }
-                    ],
                 ],
             ]); ?>
         </div>

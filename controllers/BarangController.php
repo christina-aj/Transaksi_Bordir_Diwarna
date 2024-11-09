@@ -100,8 +100,12 @@ class BarangController extends Controller
                     }
 
                     $transaction->commit();
+
+                    // Set success flash message
+                    Yii::$app->session->setFlash('success', 'Data berhasil disimpan.');
+
                     Yii::$app->session->set('modelBarangs', $modelBarangs);
-                    return $this->redirect(['view', 'barang_id' => end($modelBarangs)->barang_id]);
+                    return $this->redirect(['index']);
                 } catch (\yii\db\Exception $e) {
                     $transaction->rollBack();
                     Yii::$app->session->setFlash('error', 'Database error: ' . $e->getMessage());
@@ -137,14 +141,30 @@ class BarangController extends Controller
      */
     public function actionUpdate($barang_id)
     {
-        $model = $this->findModel($barang_id);
+        // Cari model Barang berdasarkan ID
+        $modelBarang = Barang::findOne($barang_id);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'barang_id' => $model->barang_id]);
+        if (!$modelBarang) {
+            throw new NotFoundHttpException("Barang tidak ditemukan.");
+        }
+
+        // Cek jika ada data yang di-post
+        if ($modelBarang->load(Yii::$app->request->post()) && $modelBarang->validate()) {
+            $modelBarang->updated_at = date('Y-m-d H:i:s'); // Update timestamp
+
+            // Simpan perubahan
+            if ($modelBarang->save()) {
+                Yii::$app->session->setFlash('success', 'Data barang berhasil diperbarui.');
+                return $this->redirect(['index']); // Sesuaikan redirect sesuai kebutuhan
+            } else {
+                Yii::$app->session->setFlash('error', 'Gagal menyimpan data barang.');
+            }
+        } else if ($modelBarang->hasErrors()) {
+            Yii::$app->session->setFlash('error', 'Validasi gagal: ' . json_encode($modelBarang->getErrors()));
         }
 
         return $this->render('update', [
-            'model' => $model,
+            'modelBarang' => $modelBarang,
         ]);
     }
 

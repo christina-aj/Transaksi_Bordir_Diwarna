@@ -1,6 +1,7 @@
 <?php
 
 use app\models\Barang;
+use yii\bootstrap5\Alert;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
@@ -15,6 +16,15 @@ $pagination = $dataProvider->getPagination();
 
 $this->title = 'List Barang';
 $this->params['breadcrumbs'][] = $this->title;
+
+if (Yii::$app->session->hasFlash('success')) {
+    echo Alert::widget([
+        'options' => [
+            'class' => 'alert-success', // Menggunakan styling success untuk pesan
+        ],
+        'body' => Yii::$app->session->getFlash('success'), // Menampilkan pesan flash
+    ]);
+}
 ?>
 <div class="pc-content">
     <div class="card table-card">
@@ -80,6 +90,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         ],
                         [
                             'class' => ActionColumn::className(),
+                            'template' => '{update}',
                             'urlCreator' => function ($action, Barang $model, $key, $index, $column) {
                                 return Url::toRoute([$action, 'barang_id' => $model->barang_id]);
                             }

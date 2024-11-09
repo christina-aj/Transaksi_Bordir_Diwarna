@@ -3,19 +3,18 @@
 use yii\helpers\Html;
 
 /** @var yii\web\View $this */
-/** @var app\models\Barang $model */
+/** @var app\models\Barang $modelBarang */
 
-$this->title = 'Update Barang: ' . $model->barang_id;
+$this->title = 'Update Barang  ';
 $this->params['breadcrumbs'][] = ['label' => 'Barangs', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->barang_id, 'url' => ['view', 'barang_id' => $model->barang_id]];
+$this->params['breadcrumbs'][] = ['label' => $modelBarang->barang_id, 'url' => ['view', 'barang_id' => $modelBarang->barang_id]];
 $this->params['breadcrumbs'][] = 'Update';
 ?>
 <div class="pc-content">
 
-    <h1><?= Html::encode($this->title) ?></h1>
 
-    <?= $this->render('_form', [
-        'model' => $model,
+    <?= $this->render('_form-update', [
+        'modelBarang' => $modelBarang
     ]) ?>
 
 </div>

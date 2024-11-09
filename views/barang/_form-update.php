@@ -11,7 +11,7 @@ use yii\data\ActiveDataProvider;
 use yii\grid\ActionColumn;
 
 /** @var yii\web\View $this */
-/** @var app\models\Barang $model */
+/** @var app\models\Barang $modelBarangmodel */
 /** @var yii\widgets\ActiveForm $form */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
@@ -22,7 +22,6 @@ use yii\grid\ActionColumn;
     <div class="card table-card">
         <div class="card-header">
             <h1><?= Html::encode($this->title) ?></h1>
-            <!-- Tambahkan tombol Toggle -->
             <!-- Tombol Consumable dan Non Consumable -->
             <?= Html::button('Consumable', [
                 'class' => 'btn btn-outline-primary',
@@ -33,108 +32,39 @@ use yii\grid\ActionColumn;
                 'id' => 'toggle-non-consumable-button',
             ]) ?>
         </div>
+
         <div class="card-body mx-4">
-
             <?php $form = ActiveForm::begin(); ?>
-            <div id="barang-gridview">
-                <?= GridView::widget([
-                    'dataProvider' => new \yii\data\ArrayDataProvider([
-                        'allModels' => $modelBarangs, // Pastikan $modelBarangs adalah array model Barang
-                        'pagination' => false,
-                    ]),
-                    'columns' => [
-                        ['class' => 'yii\grid\SerialColumn'],
 
-                        [
-                            'attribute' => 'kode_barang',
-                            'format' => 'raw',
-                            'value' => function ($model, $key, $index, $column) use ($form) {
-                                return $form->field($model, "[$index]kode_barang")->textInput(['maxlength' => true])->label(false);
-                            },
-                        ],
-                        [
-                            'attribute' => 'nama_barang',
-                            'format' => 'raw',
-                            'value' => function ($model, $key, $index, $column) use ($form) {
-                                return $form->field($model, "[$index]nama_barang")->textInput(['maxlength' => true])->label(false);
-                            },
-                        ],
-                        [
-                            'attribute' => 'angka',
-                            'format' => 'raw',
-                            'label' => 'Jumlah',
-                            'value' => function ($model, $key, $index, $column) use ($form) {
-                                return $form->field($model, "[$index]angka")->textInput(['maxlength' => true])->label(false);
-                            },
-                        ],
-                        [
-                            'attribute' => 'unit_id',
-                            'format' => 'raw',
-                            'value' => function ($model, $key, $index, $column) use ($form) {
-                                $dataPost = ArrayHelper::map(Unit::find()->asArray()->all(), 'unit_id', 'satuan');
-                                return $form->field($model, "[$index]unit_id")->dropDownList($dataPost, ['prompt' => 'Pilih Satuan'])->label(false);
-                            },
-                        ],
-                        [
-                            'attribute' => 'tipe',
-                            'format' => 'raw',
-                            'value' => function ($model, $key, $index, $column) use ($form) {
-                                return $form->field($model, "[$index]tipe")->textInput([
-                                    'class' => 'form-control tipe-field', // Menambahkan class "tipe-field"
-                                    'readonly' => true,                   // Membuat field menjadi readonly
-                                ])->label(false);
-                            },
-                        ],
-                        [
-                            'attribute' => 'warna',
-                            'format' => 'raw',
-                            'headerOptions' => ['class' => 'warna-header'],
-                            'contentOptions' => ['class' => 'warna-column'],
-                            'value' => function ($model, $key, $index, $column) use ($form) {
-                                // Mengatur ID dinamis berdasarkan indeks baris
-                                $inputId = "consumable-{$index}"; // ID unik menggunakan indeks baris
-                                return $form->field($model, "[$index]warna")->textInput([
-                                    'maxlength' => true,
-                                    'id' => $inputId, // Mengatur ID untuk setiap field
-                                ])->label(false);
-                            },
-                        ],
+            <?= $form->field($modelBarang, 'kode_barang')->textInput(['maxlength' => true]) ?>
 
+            <?= $form->field($modelBarang, 'nama_barang')->textInput(['maxlength' => true]) ?>
 
-                        [
-                            'class' => 'yii\grid\ActionColumn',
-                            'template' => '{actions}',
-                            'buttons' => [
-                                'actions' => function ($url, $model) {
-                                    return Html::tag(
-                                        'div',
-                                        Html::a(Html::tag('i', '', ['class' => 'fas fa-plus fa-xs']), '#', [
-                                            'class' => 'btn btn-success btn-xs pb-1 px-2 add-row ',
-                                            'onclick' => 'return false;',
-                                        ]) .
-                                            Html::a(Html::tag('i', '', ['class' => 'fas fa-trash fa-xs']), '#', [
-                                                'class' => 'btn btn-danger btn-xs pb-1 px-2 delete-row ',
-                                                'onclick' => 'return false;',
-                                            ]),
-                                        ['class' => 'd-flex justify-content-between align-content-center align-items-center']
-                                    );
-                                },
-                            ], // Tambahkan kelas untuk gaya CSS khusus
-                        ],
-                    ],
-                ]); ?>
-            </div>
+            <?= $form->field($modelBarang, 'angka')->textInput(['maxlength' => true]) ?>
+
+            <?= $form->field($modelBarang, 'unit_id')->dropDownList(
+                ArrayHelper::map(Unit::find()->asArray()->all(), 'unit_id', 'satuan'),
+                ['prompt' => 'Pilih Satuan']
+            ) ?>
+
+            <?= $form->field($modelBarang, 'tipe')->textInput([
+                'class' => 'form-control tipe-field',
+                'readonly' => true,
+            ]) ?>
+
+            <?= $form->field($modelBarang, 'warna')->textInput([
+                'maxlength' => true,
+                'id' => 'warna-field',
+            ]) ?>
 
             <div class="form-group">
                 <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
-                <?= Html::a('Back', 'index', ['class' => 'btn btn-secondary']) ?>
+                <?= Html::a('Back', ['index'], ['class' => 'btn btn-secondary']) ?>
             </div>
 
             <?php ActiveForm::end(); ?>
         </div>
     </div>
-
-
 </div>
 
 <?php

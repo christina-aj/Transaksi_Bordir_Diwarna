@@ -275,6 +275,7 @@ class PemesananController extends Controller
         // Set nama_barang untuk setiap modelDetail jika dalam mode update
         foreach ($modelDetails as $modelDetail) {
             $modelDetail->nama_barang = $modelDetail->getNamaBarang();
+            $modelDetail->kode_barang = $modelDetail->getKodeBarang();
         }
 
         if (Yii::$app->request->isPost) {
@@ -345,6 +346,7 @@ class PemesananController extends Controller
                             'pesandetail_id' => $newDetail->pesandetail_id, // Gunakan pesandetail_id dari PesanDetail yang baru disimpan
                             'cek_barang' => 0,
                             'total_biaya' => 0,
+                            'supplier_id' => 0,
                             'is_correct' => 0,
                         ]);
                         $pembelianDetail->save(false); // Simpan PembelianDetail tanpa validasi

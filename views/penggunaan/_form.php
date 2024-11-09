@@ -91,8 +91,12 @@ use yii\grid\GridView;
                         [
                             'attribute' => 'stock',
                             'format' => 'raw',
+                            'label' => 'Stok',
                             'value' => function ($model, $key, $index, $column) use ($form) {
-                                return $form->field($model, "[$index]stock")->textInput(['maxlength' => true, 'readonly' => true])->label(false);
+                                return $form->field($model, "[$index]stock")->textInput([
+                                    'class' => 'form-control stock-input', // Kelas untuk stok input
+                                    'readonly' => true, // Misalnya stok bersifat read-only
+                                ])->label(false);
                             },
                         ],
                         [
@@ -109,7 +113,10 @@ use yii\grid\GridView;
                             'format' => 'raw',
                             'label' => 'Jumlah',
                             'value' => function ($model, $key, $index, $column) use ($form) {
-                                return $form->field($model, "[$index]jumlah_digunakan")->textInput(['maxlength' => true])->label(false);
+                                return $form->field($model, "[$index]jumlah_digunakan")->textInput([
+                                    'maxlength' => true,
+                                    'class' => 'form-control jumlah-digunakan-input', // Tambahkan kelas untuk referensi
+                                ])->label(false);
                             },
                         ],
                         [
@@ -162,9 +169,28 @@ foreach ($dataPengguna as $userId => $nama) {
 }
 
 $this->registerJs("
+    $(document).ready(function() {
+        // Fungsi untuk validasi jumlah
+        function validateQuantity(input, stock) {
+            var value = parseInt(input.value);
+            if (value > stock) {
+                alert('Jumlah yang dimasukkan tidak boleh melebihi stok yang tersedia (' + stock + ')');
+                input.value = stock; // Membatasi nilai yang dimasukkan ke stock
+            }
+        }
 
+        // Menggunakan event delegation untuk menangani input jumlah_digunakan pada baris yang ada dan baru
+        $('table').on('input', '.jumlah-digunakan-input', function() {
+            // Mengambil nilai stok dari input stok yang ada pada baris yang sama
+            var stockValue = $(this).closest('tr').find('.stock-input').val(); // Menemukan nilai stok di baris yang sama
+            validateQuantity(this, parseInt(stockValue)); // Panggil fungsi validateQuantity dengan stok yang sesuai
+        });
+    });
+
+    // Initializing the grid view and other elements
     $('.warna-header').hide();
     $('.warna-column').hide();
+
     // Function to initialize typeahead
     function initializeTypeahead(selector, index) {
         $(selector).typeahead({
@@ -237,14 +263,14 @@ $this->registerJs("
                 <td class='warna-column'><input type='hidden' name='Penggunaan[\${index}][barang_id]' class='form-control warna-field' maxlength='true'></td>
                 <td><input type='text' name='Penggunaan[\${index}][kode_barang]' class='form-control' maxlength='true' readonly></td>
                 <td><input type='text' name='Penggunaan[\${index}][nama_barang]' class='form-control nama-barang' maxlength='true'></td>
-                <td><input type='text' name='Penggunaan[\${index}][stock]' class='form-control' maxlength='true' readonly></td>
+                <td><input type='text' name='Penggunaan[\${index}][stock]' class='form-control stock-input' maxlength='true' readonly></td>
                 <td>
                     <select name='Penggunaan[\${index}][user_id]' class='form-control'>
                         <option value=''>Pilih User</option>
                         $optionsHtml
                     </select>
                 </td>
-                <td><input type='text' name='Penggunaan[\${index}][jumlah_digunakan]' class='form-control' maxlength='true'></td>
+                <td><input type='text' name='Penggunaan[\${index}][jumlah_digunakan]' class='form-control jumlah-digunakan-input' maxlength='true'></td>
                 <td><input type='text' name='Penggunaan[\${index}][catatan]' class='form-control' maxlength='true'></td>
                 <td>
                     <div class='d-flex justify-content-between align-content-center align-items-center'>

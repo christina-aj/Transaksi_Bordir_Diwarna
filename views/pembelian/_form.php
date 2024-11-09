@@ -36,7 +36,7 @@ $supplierList = ArrayHelper::map(Supplier::find()->all(), 'supplier_id', 'nama')
             </div>
             <div class="col-md-3">
                 <div><strong>Total Item:</strong> <?= $model->pemesanan->total_item ?? '-' ?></div>
-                <div><strong>Total Biaya:</strong> <?= Yii::$app->formatter->asCurrency($model->total_biaya) ?></div>
+                <div><strong>Total Biaya:</strong> Rp <?= Yii::$app->formatter->asDecimal($model->total_biaya, 0) ?></div>
             </div>
             <div class="col-md-3">
                 <div><strong>Status:</strong> <?= $model->pemesanan->getStatusLabel() ?? '-' ?></div>

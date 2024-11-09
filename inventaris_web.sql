@@ -1,46 +1,47 @@
--- phpMyAdmin SQL Dump
--- version 5.2.1
--- https://www.phpmyadmin.net/
+-- ph... SQLINES DEMO ***
+-- ve... SQLINES DEMO ***
+-- SQLINES DEMO *** admin.net/
 --
--- Host: localhost:3306
--- Generation Time: Nov 08, 2024 at 11:20 AM
--- Server version: 8.0.30
--- PHP Version: 8.3.7
+-- Ho... SQLINES DEMO ***
+-- SQLINES DEMO *** Nov 08, 2024 at 04:16 PM
+-- SQLINES DEMO *** 0.4.32-MariaDB
+-- PH... SQLINES DEMO ***
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
 
 
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
+/* SQLINES DEMO *** ARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/* SQLINES DEMO *** ARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/* SQLINES DEMO *** LLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/* SQLINES DEMO *** tf8mb4 */;
 
 --
--- Database: `inventaris_web`
+-- SQLINES DEMO *** aris_web`
 --
 
--- --------------------------------------------------------
+-- SQLINES DEMO *** ---------------------------------------
 
 --
--- Table structure for table `barang`
+-- SQLINES DEMO *** or table `barang`
 --
 
+-- SQLINES FOR EVALUATION USE ONLY (14 DAYS)
 CREATE TABLE `barang` (
-  `barang_id` int NOT NULL,
-  `kode_barang` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `nama_barang` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `barang_id` int(11) NOT NULL,
+  `kode_barang` varchar(255) NOT NULL,
+  `nama_barang` varchar(255) NOT NULL,
   `angka` float NOT NULL,
-  `unit_id` int NOT NULL,
-  `tipe` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `warna` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `unit_id` int(11) NOT NULL,
+  `tipe` varchar(255) NOT NULL,
+  `warna` varchar(255) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `barang`
+-- SQLINES DEMO *** table `barang`
 --
 
 INSERT INTO `barang` (`barang_id`, `kode_barang`, `nama_barang`, `angka`, `unit_id`, `tipe`, `warna`, `created_at`, `updated_at`) VALUES
@@ -62,49 +63,49 @@ INSERT INTO `barang` (`barang_id`, `kode_barang`, `nama_barang`, `angka`, `unit_
 (37, 'ESTEH123', 'kerangka Badan', 1, 9, 'Non Consumable', '', '2024-11-05 17:24:25', '2024-11-05 17:24:25'),
 (38, 'ESTEH124', 'kerangka Mesin', 2, 9, 'Non Consumable', '', '2024-11-05 17:24:25', '2024-11-05 17:24:25');
 
--- --------------------------------------------------------
+-- SQLINES DEMO *** ---------------------------------------
 
 --
--- Table structure for table `barangproduksi`
+-- SQLINES DEMO *** or table `barangproduksi`
 --
 
 CREATE TABLE `barangproduksi` (
-  `barang_id` int NOT NULL,
-  `nama` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `nama_jenis` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `ukuran` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `deskripsi` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL
+  `barang_id` int(11) NOT NULL,
+  `nama` varchar(200) NOT NULL,
+  `nama_jenis` varchar(200) NOT NULL,
+  `ukuran` varchar(255) NOT NULL,
+  `deskripsi` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `barangproduksi`
+-- SQLINES DEMO *** table `barangproduksi`
 --
 
 INSERT INTO `barangproduksi` (`barang_id`, `nama`, `nama_jenis`, `ukuran`, `deskripsi`) VALUES
 (4, 'Baju Merah', 'Baju Lengan Panjan', '25', 'Baju dengan kain katun');
 
--- --------------------------------------------------------
+-- SQLINES DEMO *** ---------------------------------------
 
 --
--- Table structure for table `gudang`
+-- SQLINES DEMO *** or table `gudang`
 --
 
 CREATE TABLE `gudang` (
-  `id_gudang` int NOT NULL,
+  `id_gudang` int(11) NOT NULL,
   `tanggal` date NOT NULL,
-  `barang_id` int NOT NULL,
-  `user_id` int NOT NULL,
+  `barang_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
   `quantity_awal` float NOT NULL,
   `quantity_masuk` float NOT NULL,
   `quantity_keluar` float NOT NULL,
   `quantity_akhir` float NOT NULL,
-  `catatan` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `catatan` varchar(255) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `update_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `gudang`
+-- SQLINES DEMO *** table `gudang`
 --
 
 INSERT INTO `gudang` (`id_gudang`, `tanggal`, `barang_id`, `user_id`, `quantity_awal`, `quantity_masuk`, `quantity_keluar`, `quantity_akhir`, `catatan`, `created_at`, `update_at`) VALUES
@@ -122,20 +123,20 @@ INSERT INTO `gudang` (`id_gudang`, `tanggal`, `barang_id`, `user_id`, `quantity_
 (49, '2024-11-08', 1, 2, 20, 0, 5, 15, 'Dipakai 5 Benang, buat produksi', '2024-11-08 11:18:52', '2024-11-08 11:18:52'),
 (50, '2024-11-08', 4, 3, 7, 0, 1, 6, 'dipakai 1 buat buat produksi', '2024-11-08 11:18:52', '2024-11-08 11:18:52');
 
--- --------------------------------------------------------
+-- SQLINES DEMO *** ---------------------------------------
 
 --
--- Table structure for table `jenis`
+-- SQLINES DEMO *** or table `jenis`
 --
 
 CREATE TABLE `jenis` (
-  `id` int NOT NULL,
-  `nama_jenis` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `deskripsi` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL
+  `id` int(11) NOT NULL,
+  `nama_jenis` varchar(200) NOT NULL,
+  `deskripsi` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `jenis`
+-- SQLINES DEMO *** table `jenis`
 --
 
 INSERT INTO `jenis` (`id`, `nama_jenis`, `deskripsi`) VALUES
@@ -143,10 +144,10 @@ INSERT INTO `jenis` (`id`, `nama_jenis`, `deskripsi`) VALUES
 (2, 'Baju Lengan Panjan', 'Baju dengan Lengan Panjang'),
 (3, 'Celana Pendek', 'Celana Dengan panjang 20cm');
 
--- --------------------------------------------------------
+-- SQLINES DEMO *** ---------------------------------------
 
 --
--- Table structure for table `laporanproduksi`
+-- SQLINES DEMO *** or table `laporanproduksi`
 --
 
 CREATE TABLE `laporanproduksi` (
@@ -161,9 +162,8 @@ CREATE TABLE `laporanproduksi` (
   `bs` int NOT NULL,
   `nama_barang` varchar(200) COLLATE utf8mb4_general_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
 --
--- Dumping data for table `laporanproduksi`
+-- SQLINES DEMO *** table `laporanproduksi`
 --
 
 INSERT INTO `laporanproduksi` (`laporan_id`, `nama_mesin`, `shift_id`, `tanggal_kerja`, `nama_kerjaan`, `vs`, `stitch`, `kuantitas`, `bs`, `nama_barang`) VALUES
@@ -173,10 +173,10 @@ INSERT INTO `laporanproduksi` (`laporan_id`, `nama_mesin`, `shift_id`, `tanggal_
 (29, 'Mesin Bordir', 21, '2024-11-02', 'text11231', 21, 21, 1, 1, 'Baju Merah'),
 (30, 'Mesin Bordir', 25, '2025-02-14', 'SD 2 Solo', 1, 1, 2515, 1, 'Baju Merah');
 
--- --------------------------------------------------------
+-- SQLINES DEMO *** ---------------------------------------
 
 --
--- Table structure for table `laporan_keluar`
+-- SQLINES DEMO *** or table `laporan_keluar`
 --
 
 CREATE TABLE `laporan_keluar` (
@@ -189,35 +189,35 @@ CREATE TABLE `laporan_keluar` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `laporan_keluar`
+-- SQLINES DEMO *** table `laporan_keluar`
 --
 
 INSERT INTO `laporan_keluar` (`id`, `nama`, `barang`, `qty`, `tanggal`, `catatan`) VALUES
 (1, 'babi12', 'Baju Merah', 2, '2024-10-01', 'test');
 
--- --------------------------------------------------------
+-- SQLINES DEMO *** ---------------------------------------
 
 --
--- Table structure for table `mesin`
+-- SQLINES DEMO *** or table `mesin`
 --
 
 CREATE TABLE `mesin` (
-  `mesin_id` int NOT NULL,
-  `nama` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `deskripsi` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL
+  `mesin_id` int(11) NOT NULL,
+  `nama` varchar(200) NOT NULL,
+  `deskripsi` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `mesin`
+-- SQLINES DEMO *** table `mesin`
 --
 
 INSERT INTO `mesin` (`mesin_id`, `nama`, `deskripsi`) VALUES
 (1, 'Mesin Bordir', 'test');
 
--- --------------------------------------------------------
+-- SQLINES DEMO *** ---------------------------------------
 
 --
--- Table structure for table `nota`
+-- SQLINES DEMO *** or table `nota`
 --
 
 CREATE TABLE `nota` (
@@ -232,27 +232,27 @@ CREATE TABLE `nota` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `nota`
+-- SQLINES DEMO *** table `nota`
 --
 
 INSERT INTO `nota` (`nota_id`, `nama_konsumen`, `tanggal`, `barang`, `harga`, `qty`, `total_qty`, `total_harga`) VALUES
 (18, 'Test21', '2024-10-14', 'Baju Merah,Baju Merah', '1500,1500', '155,151', 306, 459000);
 
--- --------------------------------------------------------
+-- SQLINES DEMO *** ---------------------------------------
 
 --
--- Table structure for table `pembelian`
+-- SQLINES DEMO *** or table `pembelian`
 --
 
 CREATE TABLE `pembelian` (
-  `pembelian_id` int NOT NULL,
-  `pemesanan_id` int NOT NULL,
-  `user_id` int DEFAULT NULL,
+  `pembelian_id` int(11) NOT NULL,
+  `pemesanan_id` int(11) NOT NULL,
+  `user_id` int(11) DEFAULT NULL,
   `total_biaya` float NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `pembelian`
+-- SQLINES DEMO *** table `pembelian`
 --
 
 INSERT INTO `pembelian` (`pembelian_id`, `pemesanan_id`, `user_id`, `total_biaya`) VALUES
@@ -400,10 +400,10 @@ INSERT INTO `pembelian` (`pembelian_id`, `pemesanan_id`, `user_id`, `total_biaya
 (168, 259, 1, 0),
 (171, 262, 1, 0);
 
--- --------------------------------------------------------
+-- SQLINES DEMO *** ---------------------------------------
 
 --
--- Table structure for table `pembelian_detail`
+-- SQLINES DEMO *** or table `pembelian_detail`
 --
 
 CREATE TABLE `pembelian_detail` (
@@ -418,9 +418,8 @@ CREATE TABLE `pembelian_detail` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
 --
--- Dumping data for table `pembelian_detail`
+-- SQLINES DEMO *** table `pembelian_detail`
 --
 
 INSERT INTO `pembelian_detail` (`belidetail_id`, `pembelian_id`, `pesandetail_id`, `cek_barang`, `total_biaya`, `supplier_id`, `catatan`, `is_correct`, `created_at`, `updated_at`) VALUES
@@ -526,24 +525,24 @@ INSERT INTO `pembelian_detail` (`belidetail_id`, `pembelian_id`, `pesandetail_id
 (170, 171, 238, 0, 0, 0, NULL, 0, '2024-11-08 02:57:47', NULL),
 (171, 171, 239, 0, 0, 0, NULL, 0, '2024-11-08 02:57:47', NULL);
 
--- --------------------------------------------------------
+-- SQLINES DEMO *** ---------------------------------------
 
 --
--- Table structure for table `pemesanan`
+-- SQLINES DEMO *** or table `pemesanan`
 --
 
 CREATE TABLE `pemesanan` (
-  `pemesanan_id` int NOT NULL,
-  `user_id` int NOT NULL,
+  `pemesanan_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
   `tanggal` date NOT NULL,
   `total_item` float NOT NULL,
-  `status` tinyint NOT NULL DEFAULT '0',
+  `status` tinyint(4) NOT NULL DEFAULT 0,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `pemesanan`
+-- SQLINES DEMO *** table `pemesanan`
 --
 
 INSERT INTO `pemesanan` (`pemesanan_id`, `user_id`, `tanggal`, `total_item`, `status`, `created_at`, `updated_at`) VALUES
@@ -715,10 +714,10 @@ INSERT INTO `pemesanan` (`pemesanan_id`, `user_id`, `tanggal`, `total_item`, `st
 (259, 1, '2024-11-08', 2, 0, '2024-11-08 06:57:21', '2024-11-08 06:57:47'),
 (262, 1, '2024-11-08', 3, 0, '2024-11-08 09:49:41', '2024-11-08 09:57:47');
 
--- --------------------------------------------------------
+-- SQLINES DEMO *** ---------------------------------------
 
 --
--- Table structure for table `penggunaan`
+-- SQLINES DEMO *** or table `penggunaan`
 --
 
 CREATE TABLE `penggunaan` (
@@ -729,9 +728,8 @@ CREATE TABLE `penggunaan` (
   `catatan` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `tanggal_digunakan` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
 --
--- Dumping data for table `penggunaan`
+-- SQLINES DEMO *** table `penggunaan`
 --
 
 INSERT INTO `penggunaan` (`penggunaan_id`, `barang_id`, `user_id`, `jumlah_digunakan`, `catatan`, `tanggal_digunakan`) VALUES
@@ -761,27 +759,27 @@ INSERT INTO `penggunaan` (`penggunaan_id`, `barang_id`, `user_id`, `jumlah_digun
 (31, 1, 2, 5, 'Dipakai 5 Benang, buat produksi', '2024-11-08'),
 (32, 4, 3, 1, 'dipakai 1 buat buat produksi', '2024-11-08');
 
--- --------------------------------------------------------
+-- SQLINES DEMO *** ---------------------------------------
 
 --
--- Table structure for table `pesan_detail`
+-- SQLINES DEMO *** or table `pesan_detail`
 --
 
 CREATE TABLE `pesan_detail` (
-  `pesandetail_id` int NOT NULL,
-  `pemesanan_id` int NOT NULL,
-  `barang_id` int NOT NULL,
+  `pesandetail_id` int(11) NOT NULL,
+  `pemesanan_id` int(11) NOT NULL,
+  `barang_id` int(11) NOT NULL,
   `qty` float NOT NULL,
   `qty_terima` float DEFAULT NULL,
-  `catatan` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `langsung_pakai` tinyint NOT NULL DEFAULT '0',
-  `is_correct` tinyint NOT NULL DEFAULT '0',
+  `catatan` varchar(255) DEFAULT NULL,
+  `langsung_pakai` tinyint(4) NOT NULL DEFAULT 0,
+  `is_correct` tinyint(4) NOT NULL DEFAULT 0,
   `created_at` timestamp NULL DEFAULT NULL,
   `update_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `pesan_detail`
+-- SQLINES DEMO *** table `pesan_detail`
 --
 
 INSERT INTO `pesan_detail` (`pesandetail_id`, `pemesanan_id`, `barang_id`, `qty`, `qty_terima`, `catatan`, `langsung_pakai`, `is_correct`, `created_at`, `update_at`) VALUES
@@ -989,29 +987,29 @@ INSERT INTO `pesan_detail` (`pesandetail_id`, `pemesanan_id`, `barang_id`, `qty`
 (238, 262, 1, 15, 0, '', 0, 0, '2024-11-08 09:57:47', '2024-11-08 09:57:47'),
 (239, 262, 11, 20, 0, '', 1, 0, '2024-11-08 09:57:47', '2024-11-08 09:57:47');
 
--- --------------------------------------------------------
+-- SQLINES DEMO *** ---------------------------------------
 
 --
--- Table structure for table `report`
+-- SQLINES DEMO *** or table `report`
 --
 
 CREATE TABLE `report` (
-  `report_id` int NOT NULL
+  `report_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- --------------------------------------------------------
+-- SQLINES DEMO *** ---------------------------------------
 
 --
--- Table structure for table `role`
+-- SQLINES DEMO *** or table `role`
 --
 
 CREATE TABLE `role` (
-  `id_role` int NOT NULL,
-  `nama` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL
+  `id_role` int(11) NOT NULL,
+  `nama` varchar(200) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `role`
+-- SQLINES DEMO *** table `role`
 --
 
 INSERT INTO `role` (`id_role`, `nama`) VALUES
@@ -1019,10 +1017,10 @@ INSERT INTO `role` (`id_role`, `nama`) VALUES
 (2, 'Admin'),
 (3, 'Operator');
 
--- --------------------------------------------------------
+-- SQLINES DEMO *** ---------------------------------------
 
 --
--- Table structure for table `shift`
+-- SQLINES DEMO *** or table `shift`
 --
 
 CREATE TABLE `shift` (
@@ -1034,33 +1032,37 @@ CREATE TABLE `shift` (
   `nama_operator` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `mulai_istirahat` time NOT NULL,
   `selesai_istirahat` time NOT NULL,
-  `kendala` text NOT NULL DEFAULT 'Tidak Ada',
+  `kendala` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'Tidak Ada',
   `ganti_benang` int(11) NOT NULL,
   `ganti_kain` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `shift`
---
+
+
 
 INSERT INTO `shift` (`shift_id`, `tanggal`, `user_id`, `shift`, `waktu_kerja`, `nama_operator`, `mulai_istirahat`, `selesai_istirahat`, `kendala`, `ganti_benang`, `ganti_kain`) VALUES
 (21, '2024-06-12', 2, '2', 0.44, 'Joni', '12:00:00', '13:00:00', 'tidak ada', 1, 1),
 (22, '2024-06-12', 2, '2', 0.33, 'Joni', '12:00:00', '13:00:00', 'test', 1, 1),
 (23, '2024-09-05', 2, '2', 1.00, 'Koni', '12:00:00', '13:00:00', 'aewe', 1, 1),
 (24, '2024-11-09', 1, '1', 1.00, 'Doni', '12:00:00', '13:00:00', 'Tidak ada', 1, 1),
-(25, '2025-02-15', 1, '1', 1.00, 'Lisa', '12:00:00', '13:00:00', '\'Tidak Ada\'', 1, 1);
-
--- --------------------------------------------------------
+(25, '2025-02-15', 1, '1', 1.00, 'Lisa', '12:00:00', '13:00:00', 'Tidak Ada', 1, 1);
 
 --
--- Table structure for table `stock`
+-- SQLINES DEMO *** table `shift`
+--
+
+
+-- SQLINES DEMO *** ---------------------------------------
+
+--
+-- SQLINES DEMO *** or table `stock`
 --
 
 CREATE TABLE `stock` (
-  `stock_id` int NOT NULL,
+  `stock_id` int(11) NOT NULL,
   `tambah_stock` date NOT NULL,
-  `barang_id` int NOT NULL,
-  `user_id` int NOT NULL,
+  `barang_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
   `quantity_awal` float NOT NULL,
   `quantity_masuk` float NOT NULL,
   `quantity_keluar` float NOT NULL,
@@ -1070,7 +1072,7 @@ CREATE TABLE `stock` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `stock`
+-- SQLINES DEMO *** table `stock`
 --
 
 INSERT INTO `stock` (`stock_id`, `tambah_stock`, `barang_id`, `user_id`, `quantity_awal`, `quantity_masuk`, `quantity_keluar`, `quantity_akhir`, `created_at`, `updated_at`) VALUES
@@ -1096,23 +1098,23 @@ INSERT INTO `stock` (`stock_id`, `tambah_stock`, `barang_id`, `user_id`, `quanti
 (88, '2024-11-08', 1, 2, 1, 5, 0, 6, '2024-11-08 11:18:52', '2024-11-08 11:18:52'),
 (89, '2024-11-08', 4, 3, 9, 1, 0, 10, '2024-11-08 11:18:52', '2024-11-08 11:18:52');
 
--- --------------------------------------------------------
+-- SQLINES DEMO *** ---------------------------------------
 
 --
--- Table structure for table `supplier`
+-- SQLINES DEMO *** or table `supplier`
 --
 
 CREATE TABLE `supplier` (
-  `supplier_id` int NOT NULL,
-  `nama` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `notelfon` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `alamat` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `kota` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `kodepos` int NOT NULL
+  `supplier_id` int(11) NOT NULL,
+  `nama` varchar(200) NOT NULL,
+  `notelfon` varchar(200) NOT NULL,
+  `alamat` varchar(200) NOT NULL,
+  `kota` varchar(200) NOT NULL,
+  `kodepos` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `supplier`
+-- SQLINES DEMO *** table `supplier`
 --
 
 INSERT INTO `supplier` (`supplier_id`, `nama`, `notelfon`, `alamat`, `kota`, `kodepos`) VALUES
@@ -1120,19 +1122,19 @@ INSERT INTO `supplier` (`supplier_id`, `nama`, `notelfon`, `alamat`, `kota`, `ko
 (2, 'Toko Abadi', '082122224532', 'Jalan Mawar  1/11', 'Jakarta', 60113),
 (3, 'Toko Bahagia Kasih', '098741365897', 'Jl. Krembangan 123', 'Surabaya', 94123);
 
--- --------------------------------------------------------
+-- SQLINES DEMO *** ---------------------------------------
 
 --
--- Table structure for table `unit`
+-- SQLINES DEMO *** or table `unit`
 --
 
 CREATE TABLE `unit` (
-  `unit_id` int NOT NULL,
-  `satuan` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL
+  `unit_id` int(11) NOT NULL,
+  `satuan` varchar(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `unit`
+-- SQLINES DEMO *** table `unit`
 --
 
 INSERT INTO `unit` (`unit_id`, `satuan`) VALUES
@@ -1143,24 +1145,24 @@ INSERT INTO `unit` (`unit_id`, `satuan`) VALUES
 (8, 'Gulung'),
 (9, 'Unit');
 
--- --------------------------------------------------------
+-- SQLINES DEMO *** ---------------------------------------
 
 --
--- Table structure for table `user`
+-- SQLINES DEMO *** or table `user`
 --
 
 CREATE TABLE `user` (
-  `user_id` int NOT NULL,
-  `id_role` int NOT NULL,
-  `nama_pengguna` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `email` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `kata_sandi` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `dibuat_pada` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `user_id` int(11) NOT NULL,
+  `id_role` int(11) NOT NULL,
+  `nama_pengguna` varchar(200) NOT NULL,
+  `email` varchar(200) NOT NULL,
+  `kata_sandi` varchar(200) NOT NULL,
+  `dibuat_pada` datetime NOT NULL DEFAULT current_timestamp(),
   `diperbarui_pada` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `user`
+-- SQLINES DEMO *** table `user`
 --
 
 INSERT INTO `user` (`user_id`, `id_role`, `nama_pengguna`, `email`, `kata_sandi`, `dibuat_pada`, `diperbarui_pada`) VALUES
@@ -1171,24 +1173,24 @@ INSERT INTO `user` (`user_id`, `id_role`, `nama_pengguna`, `email`, `kata_sandi`
 (6, 1, 'Christina', 'christina@gmail.com', '123', '2024-09-05 21:23:17', '2024-09-05 21:23:17');
 
 --
--- Indexes for dumped tables
+-- SQLINES DEMO *** d tables
 --
 
 --
--- Indexes for table `barang`
+-- SQLINES DEMO ***  `barang`
 --
 ALTER TABLE `barang`
   ADD PRIMARY KEY (`barang_id`),
   ADD KEY `unit_id` (`unit_id`);
 
 --
--- Indexes for table `barangproduksi`
+-- SQLINES DEMO ***  `barangproduksi`
 --
 ALTER TABLE `barangproduksi`
   ADD PRIMARY KEY (`barang_id`);
 
 --
--- Indexes for table `gudang`
+-- SQLINES DEMO ***  `gudang`
 --
 ALTER TABLE `gudang`
   ADD PRIMARY KEY (`id_gudang`),
@@ -1196,37 +1198,37 @@ ALTER TABLE `gudang`
   ADD KEY `user_id` (`user_id`);
 
 --
--- Indexes for table `jenis`
+-- SQLINES DEMO ***  `jenis`
 --
 ALTER TABLE `jenis`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `laporanproduksi`
+-- SQLINES DEMO ***  `laporanproduksi`
 --
 ALTER TABLE `laporanproduksi`
   ADD PRIMARY KEY (`laporan_id`);
 
 --
--- Indexes for table `laporan_keluar`
+-- SQLINES DEMO ***  `laporan_keluar`
 --
 ALTER TABLE `laporan_keluar`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `mesin`
+-- SQLINES DEMO ***  `mesin`
 --
 ALTER TABLE `mesin`
   ADD PRIMARY KEY (`mesin_id`);
 
 --
--- Indexes for table `nota`
+-- SQLINES DEMO ***  `nota`
 --
 ALTER TABLE `nota`
   ADD PRIMARY KEY (`nota_id`);
 
 --
--- Indexes for table `pembelian`
+-- SQLINES DEMO ***  `pembelian`
 --
 ALTER TABLE `pembelian`
   ADD PRIMARY KEY (`pembelian_id`),
@@ -1234,7 +1236,7 @@ ALTER TABLE `pembelian`
   ADD KEY `pemesanan_id` (`pemesanan_id`);
 
 --
--- Indexes for table `pembelian_detail`
+-- SQLINES DEMO ***  `pembelian_detail`
 --
 ALTER TABLE `pembelian_detail`
   ADD PRIMARY KEY (`belidetail_id`),
@@ -1243,14 +1245,14 @@ ALTER TABLE `pembelian_detail`
   ADD KEY `supplier_id` (`supplier_id`);
 
 --
--- Indexes for table `pemesanan`
+-- SQLINES DEMO ***  `pemesanan`
 --
 ALTER TABLE `pemesanan`
   ADD PRIMARY KEY (`pemesanan_id`),
   ADD KEY `user_id` (`user_id`);
 
 --
--- Indexes for table `penggunaan`
+-- SQLINES DEMO ***  `penggunaan`
 --
 ALTER TABLE `penggunaan`
   ADD PRIMARY KEY (`penggunaan_id`),
@@ -1258,7 +1260,7 @@ ALTER TABLE `penggunaan`
   ADD KEY `user_id` (`user_id`);
 
 --
--- Indexes for table `pesan_detail`
+-- SQLINES DEMO ***  `pesan_detail`
 --
 ALTER TABLE `pesan_detail`
   ADD PRIMARY KEY (`pesandetail_id`),
@@ -1266,26 +1268,26 @@ ALTER TABLE `pesan_detail`
   ADD KEY `barang_id` (`barang_id`);
 
 --
--- Indexes for table `report`
+-- SQLINES DEMO ***  `report`
 --
 ALTER TABLE `report`
   ADD PRIMARY KEY (`report_id`);
 
 --
--- Indexes for table `role`
+-- SQLINES DEMO ***  `role`
 --
 ALTER TABLE `role`
   ADD PRIMARY KEY (`id_role`);
 
 --
--- Indexes for table `shift`
+-- SQLINES DEMO ***  `shift`
 --
 ALTER TABLE `shift`
   ADD PRIMARY KEY (`shift_id`),
   ADD KEY `user_id` (`user_id`) USING BTREE;
 
 --
--- Indexes for table `stock`
+-- SQLINES DEMO ***  `stock`
 --
 ALTER TABLE `stock`
   ADD PRIMARY KEY (`stock_id`),
@@ -1293,203 +1295,149 @@ ALTER TABLE `stock`
   ADD KEY `user_id` (`user_id`);
 
 --
--- Indexes for table `supplier`
+-- SQLINES DEMO ***  `supplier`
 --
 ALTER TABLE `supplier`
   ADD PRIMARY KEY (`supplier_id`);
 
 --
--- Indexes for table `unit`
+-- SQLINES DEMO ***  `unit`
 --
 ALTER TABLE `unit`
   ADD PRIMARY KEY (`unit_id`) USING BTREE;
 
 --
--- Indexes for table `user`
+-- SQLINES DEMO ***  `user`
 --
 ALTER TABLE `user`
   ADD PRIMARY KEY (`user_id`),
   ADD KEY `id_role` (`id_role`);
 
 --
--- AUTO_INCREMENT for dumped tables
+-- SQLINES DEMO *** r dumped tables
 --
 
 --
--- AUTO_INCREMENT for table `barang`
+-- SQLINES DEMO *** r table `barang`
 --
 ALTER TABLE `barang`
-  MODIFY `barang_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
+  MODIFY `barang_id` INT(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
 
---
--- AUTO_INCREMENT for table `barangproduksi`
---
 ALTER TABLE `barangproduksi`
-  MODIFY `barang_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `barang_id` INT(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
---
--- AUTO_INCREMENT for table `gudang`
---
 ALTER TABLE `gudang`
-  MODIFY `id_gudang` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
+  MODIFY `id_gudang` INT(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
 
---
--- AUTO_INCREMENT for table `jenis`
---
 ALTER TABLE `jenis`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` INT(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
---
--- AUTO_INCREMENT for table `laporanproduksi`
---
 ALTER TABLE `laporanproduksi`
-  MODIFY `laporan_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `laporan_id` INT(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
---
--- AUTO_INCREMENT for table `laporan_keluar`
---
 ALTER TABLE `laporan_keluar`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` INT(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
---
--- AUTO_INCREMENT for table `mesin`
---
 ALTER TABLE `mesin`
-  MODIFY `mesin_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `mesin_id` INT(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
---
--- AUTO_INCREMENT for table `nota`
---
 ALTER TABLE `nota`
-  MODIFY `nota_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `nota_id` INT(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
---
--- AUTO_INCREMENT for table `pembelian`
---
 ALTER TABLE `pembelian`
-  MODIFY `pembelian_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=174;
+  MODIFY `pembelian_id` INT(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=174;
 
---
--- AUTO_INCREMENT for table `pembelian_detail`
---
 ALTER TABLE `pembelian_detail`
-  MODIFY `belidetail_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=172;
+  MODIFY `belidetail_id` INT(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=172;
 
---
--- AUTO_INCREMENT for table `pemesanan`
---
 ALTER TABLE `pemesanan`
-  MODIFY `pemesanan_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=265;
+  MODIFY `pemesanan_id` INT(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=265;
 
---
--- AUTO_INCREMENT for table `penggunaan`
---
 ALTER TABLE `penggunaan`
-  MODIFY `penggunaan_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
+  MODIFY `penggunaan_id` INT(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
 
---
--- AUTO_INCREMENT for table `pesan_detail`
---
 ALTER TABLE `pesan_detail`
-  MODIFY `pesandetail_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=240;
+  MODIFY `pesandetail_id` INT(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=240;
 
---
--- AUTO_INCREMENT for table `role`
---
 ALTER TABLE `role`
-  MODIFY `id_role` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id_role` INT(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
---
--- AUTO_INCREMENT for table `shift`
---
 ALTER TABLE `shift`
-  MODIFY `shift_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `shift_id` INT(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
---
--- AUTO_INCREMENT for table `stock`
---
 ALTER TABLE `stock`
-  MODIFY `stock_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=90;
+  MODIFY `stock_id` INT(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=90;
 
---
--- AUTO_INCREMENT for table `supplier`
---
 ALTER TABLE `supplier`
-  MODIFY `supplier_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `supplier_id` INT(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
---
--- AUTO_INCREMENT for table `unit`
---
 ALTER TABLE `unit`
-  MODIFY `unit_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `unit_id` INT(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
---
--- AUTO_INCREMENT for table `user`
---
 ALTER TABLE `user`
-  MODIFY `user_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `user_id` INT(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
--- Constraints for dumped tables
+-- SQLINES DEMO *** umped tables
 --
 
 --
--- Constraints for table `barang`
+-- SQLINES DEMO *** able `barang`
 --
 ALTER TABLE `barang`
   ADD CONSTRAINT `barang_ibfk_1` FOREIGN KEY (`unit_id`) REFERENCES `unit` (`unit_id`);
 
 --
--- Constraints for table `gudang`
+-- SQLINES DEMO *** able `gudang`
 --
 ALTER TABLE `gudang`
   ADD CONSTRAINT `gudang_ibfk_1` FOREIGN KEY (`barang_id`) REFERENCES `barang` (`barang_id`),
   ADD CONSTRAINT `gudang_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`);
 
 --
--- Constraints for table `pembelian`
+-- SQLINES DEMO *** able `pembelian`
 --
 ALTER TABLE `pembelian`
   ADD CONSTRAINT `pembelian_ibfk_3` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`);
 
 --
--- Constraints for table `pemesanan`
+-- SQLINES DEMO *** able `pemesanan`
 --
 ALTER TABLE `pemesanan`
   ADD CONSTRAINT `pemesanan_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`);
 
 --
--- Constraints for table `penggunaan`
+-- SQLINES DEMO *** able `penggunaan`
 --
 ALTER TABLE `penggunaan`
   ADD CONSTRAINT `penggunaan_ibfk_1` FOREIGN KEY (`barang_id`) REFERENCES `barang` (`barang_id`);
 
 --
--- Constraints for table `pesan_detail`
+-- SQLINES DEMO *** able `pesan_detail`
 --
 ALTER TABLE `pesan_detail`
   ADD CONSTRAINT `pesan_detail_ibfk_1` FOREIGN KEY (`pemesanan_id`) REFERENCES `pemesanan` (`pemesanan_id`),
   ADD CONSTRAINT `pesan_detail_ibfk_2` FOREIGN KEY (`barang_id`) REFERENCES `barang` (`barang_id`);
 
 --
--- Constraints for table `shift`
+-- SQLINES DEMO *** able `shift`
 --
 ALTER TABLE `shift`
   ADD CONSTRAINT `shift_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`);
 
 --
--- Constraints for table `stock`
+-- SQLINES DEMO *** able `stock`
 --
 ALTER TABLE `stock`
   ADD CONSTRAINT `stock_ibfk_2` FOREIGN KEY (`barang_id`) REFERENCES `barang` (`barang_id`);
 
 --
--- Constraints for table `user`
+-- SQLINES DEMO *** able `user`
 --
 ALTER TABLE `user`
   ADD CONSTRAINT `user_ibfk_1` FOREIGN KEY (`id_role`) REFERENCES `role` (`id_role`);
 COMMIT;
 
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/* SQLINES DEMO *** ER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/* SQLINES DEMO *** ER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/* SQLINES DEMO *** ON_CONNECTION=@OLD_COLLATION_CONNECTION */;

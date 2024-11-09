@@ -65,7 +65,7 @@ use yii\widgets\ActiveForm;
                             <td><?= $form->field($modelDetail, "[$index]nama_barang")->widget(Typeahead::classname(), [
                                     'options' => [
                                         'placeholder' => 'Cari Nama Barang...',
-                                        'id' => 'pesandetail-0-nama_barang',
+                                        'id' => "pesandetail-{$index}-nama_barang",  // Menggunakan ID dinamis
                                         'value' => $modelDetail->nama_barang,
                                     ],
                                     'pluginOptions' => ['highlight' => true],
@@ -78,7 +78,7 @@ use yii\widgets\ActiveForm;
                                                 'notFound' => "<div class='text-danger'>Tidak ada hasil</div>",
                                                 'suggestion' => new \yii\web\JsExpression('function(data) {
                                                     if (data.barang_id && data.kode_barang && data.nama_barang) {
-                                                        return "<div>" + data.barang_id +  " - " + data.kode_barang + " - " + data.nama_barang + " - " + data.angka + " " + data.satuan + " - " + data.warna + "</div>";
+                                                        return "<div>" + data.kode_barang + " - " + data.nama_barang + "</div>";
                                                     } else {
                                                         return "<div>Barang tidak ditemukan</div>";
                                                     }
@@ -91,11 +91,10 @@ use yii\widgets\ActiveForm;
                                         ]
                                     ],
                                     'pluginEvents' => [
-                                        "typeahead:select" => new \yii\web\JsExpression('function(event, suggestion) {
-                                            $("#hidden-pesandetail-0-barang_id").val(suggestion.barang_id);
-                                            $("#pesandetail-0-barang_id").val(suggestion.id);
-                                            $("#pesandetail-0-kode_barang").val(suggestion.kode_barang);
-                                        }')
+                                        "typeahead:select" => new \yii\web\JsExpression("function(event, suggestion) {
+                                            $('#pesandetail-{$index}-barang_id').val(suggestion.barang_id);  // ID dinamis
+                                            $('#pesandetail-{$index}-kode_barang').val(suggestion.kode_barang);
+                                        }")
                                     ]
                                 ])->label(false); ?></td>
                             <td><?= $form->field($modelDetail, "[$index]qty")->textInput()->label(false) ?></td>
@@ -164,6 +163,9 @@ use yii\widgets\ActiveForm;
 $pemesananId = $modelPemesanan->pemesanan_id;
 
 $this->registerJs("
+
+    
+
     var rowIndex = " . count($modelDetails) . ";
     var pemesananId = " . json_encode($pemesananId) . "; // Menyimpan nilai pemesanan_id dari server
     $('.barang-header').hide();
@@ -175,12 +177,12 @@ $this->registerJs("
                 <input type='hidden' name='PesanDetail[` + rowIndex + `][pemesanan_id]' value='` + pemesananId + `' class='form-control' readonly>
                 <td class='barang-column'><input type='text' name='PesanDetail[` + rowIndex + `][barang_id]' id='pesandetail-` + rowIndex + `-barang_id' class='form-control' readonly></td>
                 <td><input type='text' name='PesanDetail[` + rowIndex + `][kode_barang]' id='pesandetail-` + rowIndex + `-kode_barang' class='form-control' readonly></td>
-                <td><input type='text' name='PesanDetail[` + rowIndex + `][nama_barang]' id='pesandetail-` + rowIndex + `-nama_barang' class='form-control'></td>
+                <td><input type='text' name='PesanDetail[` + rowIndex + `][nama_barang]' id='pesandetail-` + rowIndex + `-nama_barang' class='form-control typeahead-input' data-index='` + rowIndex + `'></td>
                 <td><input type='text' name='PesanDetail[` + rowIndex + `][qty]' class='form-control'></td>
                 <td><input type='text' name='PesanDetail[` + rowIndex + `][qty_terima]' class='form-control' readonly></td>
                 <td><input type='text' name='PesanDetail[` + rowIndex + `][catatan]' class='form-control'></td>
                 <td class='text-center'><input type='checkbox' name='PesanDetail[` + rowIndex + `][langsung_pakai]' value='1' class='form-check-input langsung_pakai'></td>
-                <td class='text-center'><input type='checkbox' name='PesanDetail[` + rowIndex + `][is_correct]' value='1' class='form-check-input is_correct 'disabled></td>
+                <td class='text-center'><input type='checkbox' name='PesanDetail[` + rowIndex + `][is_correct]' value='1' class='form-check-input is_correct' disabled></td>
                 <td class='text-center'>
                     <div class='btn-group' role='group'>
                         <button type='button' class='btn btn-success btn-sm add-row' title='Tambah'>
@@ -246,13 +248,12 @@ $this->registerJs("
             templates: {
                 notFound: '<div class=\"text-danger\">Tidak ada hasil</div>',
                 suggestion: function(data) {
-                    return `<div>\${data . barang_id} - \${data . kode_barang} - \${data . nama_barang} - \${data . angka} \${data . satuan} - \${data . warna}</div>`;
+                    return `<div>\${data . kode_barang} - \${data . nama_barang}</div>`;
                 }
             }
         }).bind('typeahead:select', function(ev, suggestion) {
-            // Set nilai barang_id sesuai dengan pilihan
-            $(`#pesandetail-` + index + `-barang_id`).val(suggestion.barang_id);
-            $(`#pesandetail-` + index + `-kode_barang`).val(suggestion.kode_barang);
+            $(`#pesandetail-\${index}-barang_id`).val(suggestion.barang_id);
+            $(`#pesandetail-\${index}-kode_barang`).val(suggestion.kode_barang);
         });
     }
 

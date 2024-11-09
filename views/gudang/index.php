@@ -109,14 +109,6 @@ $this->params['breadcrumbs'][] = $this->title;
                         ],
                         // 'created_at',
                         // 'update_at',
-                        [
-                            'template' => '{view}',
-
-                            'class' => ActionColumn::className(),
-                            'urlCreator' => function ($action, Gudang $model, $key, $index, $column) {
-                                return Url::toRoute([$action, 'id_gudang' => $model->id_gudang]);
-                            }
-                        ],
                     ],
                 ]); ?>
             </div>

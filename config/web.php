@@ -19,6 +19,11 @@ $config = [
         '@npm'   => '@vendor/npm-asset',
     ],
     'components' => [
+
+        'session' => [
+            'class' => 'yii\web\Session',
+            'cookieParams' => ['httpOnly' => true],
+        ],
         'request' => [
             'cookieValidationKey' => '2I2doEmMhGooS5mKkD9HxtR9tt5To-vK',
         ],

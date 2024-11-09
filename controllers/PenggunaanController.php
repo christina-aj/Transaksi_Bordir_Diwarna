@@ -82,7 +82,7 @@ class PenggunaanController extends Controller
                     Yii::info("Loaded Model Penggunaan #$index: " . json_encode($modelPenggunaan->attributes), 'modelData');
                 }
             } else {
-                Yii::info("Data failed to load into modelBarangs.", 'loadError');
+                Yii::info("Data failed to load into modelPenggunaans.", 'loadError');
             }
 
             // Validate models
@@ -121,9 +121,15 @@ class PenggunaanController extends Controller
                         }
                     }
 
+                    // Commit transaction jika semua data berhasil disimpan
                     $transaction->commit();
+
+                    // Setel flash message sukses jika transaksi berhasil
+                    Yii::$app->session->setFlash('success', 'Data berhasil disimpan.');
+
+                    // Redirect ke halaman detail penggunaan setelah berhasil menyimpan
                     Yii::$app->session->set('modelPenggunaans', $modelPenggunaans);
-                    return $this->redirect(['view', 'penggunaan_id' => $modelPenggunaan->penggunaan_id]);
+                    return $this->redirect(['index']);
                 } catch (\yii\db\Exception $e) {
                     $transaction->rollBack();
                     Yii::$app->session->setFlash('error', 'Database error: ' . $e->getMessage());
@@ -148,6 +154,7 @@ class PenggunaanController extends Controller
             'isReadonly' => true,
         ]);
     }
+
 
     /**
      * Updates an existing Penggunaan model.

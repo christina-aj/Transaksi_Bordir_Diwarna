@@ -114,6 +114,14 @@ class PesanDetail extends \yii\db\ActiveRecord
 
         return null;
     }
+    public function getKodeBarang()
+    {
+        if ($this->barang) {
+            return $this->barang->kode_barang;
+        }
+
+        return null;
+    }
 
     /**
      * Gets query for [[Pemesanan]].

@@ -169,54 +169,7 @@ $this->registerJsFile('https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.mi
                 </div>
             </div>
         </div>
-        <div class="col-md-12 col-xl-12">
-            <div class="card">
-                <div class="card-header">
-                    <h5>Recent Order</h5>
-                </div>
-                <div class="card-body">
-                    <?= GridView::widget([
-                        'dataProvider' => new \yii\data\ArrayDataProvider([
-                            'allModels' => $pesanDetails,
-                            'pagination' => false, // Sesuaikan jika tidak menggunakan pagination
-                        ]),
-                        'columns' => [
-                            ['class' => 'yii\grid\SerialColumn', 'header' => 'No'],
-                            [
-                                'attribute' => 'kode_barang',
-                                'label' => 'Kode Barang',
-                                'value' => function ($model) {
-                                    if ($model->barang) {
-                                        return $model->barang->kode_barang;
-                                    }
-                                    return 'Barang tidak ditemukan';
-                                },
-                            ],
-                            [
-                                'attribute' => 'barang_id',
-                                'label' => 'Nama Barang',
-                                'value' => function ($model) {
-                                    if ($model->barang) {
-                                        return $model->barang->nama_barang;
-                                    }
-                                    return 'Barang tidak ditemukan';
-                                },
-                            ],
-                            [
-                                'attribute' => 'qty',
-                                'label' => 'Quantity Pesan',
-                            ],
-                            [
-                                'attribute' => 'created_at',
-                                'format' => 'datetime',
-                                'label' => 'Dibuat Pada',
-                            ],
-                        ],
-                    ]); ?>
 
-                </div>
-            </div>
-        </div>
         <!-- <div class="col-md-6 col-xl-5">
             <div class="card">
                 <div class="card-header d-flex align-items-center justify-content-between py-3">
@@ -370,7 +323,12 @@ L.marker([-6.2088, 106.8456]).addTo(map) // Koordinat Jakarta
 var locations = [
     { title: "Yogyakarta", position: [-7.797068, 110.370529] },
     { title: "Manado", position: [1.48218, 124.84899] },
-    { title: "Bali", position: [-8.409518, 115.188919] }
+    { title: "Kabupaten fak fak", position: [-2.9681789118086446, 132.8682517109166] },
+    { title: "Kecamatan Wori", position: [1.6313313945801442, 124.90209507802184] },
+    { title: "Kabupaten Bangka", position: [-1.917286312945985, 105.9030137753801] },
+    { title: "Probolinggo", position: [-7.768922256456851, 113.19638092855286] },
+    { title: "Kabupaten Bangkalan", position: [-7.025535325036352, 112.75108682501377] },
+    { title: "Kecamatan Batumarmar", position: [-6.953545934028033, 113.49277917391947] },
 ];
 
 // Loop untuk menambahkan marker pada setiap lokasi

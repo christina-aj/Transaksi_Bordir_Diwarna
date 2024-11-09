@@ -47,20 +47,45 @@ class Nota extends ActiveRecord
         $this->barangList = $this->barang ? explode(',', $this->barang) : [];
         $this->hargaList = $this->harga ? explode(',', $this->harga) : [];
         $this->qtyList = $this->qty ? explode(',', $this->qty) : [];
+        
+       
+        if ($this->tanggal) {
+            $dateTime = \DateTime::createFromFormat('Y-m-d', $this->tanggal);
+            if ($dateTime) {
+                $this->tanggal = $dateTime->format('d-m-Y');
+            }
+        }
     }
 
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {
+         
             $this->barang = $this->barangList ? implode(',', $this->barangList) : '';
             $this->harga = $this->hargaList ? implode(',', $this->hargaList) : '';
             $this->qty = $this->qtyList ? implode(',', $this->qtyList) : '';
 
-            // Hitung total harga
+            
             $this->total_harga = array_sum(array_map(function($price, $qty) {
                 return intval($price) * intval($qty);
             }, $this->hargaList ?: [], $this->qtyList ?: []));
+            
+            
             $this->total_qty = array_sum($this->qtyList ?: []);
+            
+         
+            if ($this->tanggal) {
+                $dateTime = \DateTime::createFromFormat('d-m-Y', $this->tanggal);
+                if ($dateTime) {
+                    $this->tanggal = $dateTime->format('Y-m-d');
+                } else {
+                    $dateTime = \DateTime::createFromFormat('Y-m-d', $this->tanggal);
+                    if (!$dateTime) {
+                        $this->addError('tanggal', 'Format tanggal tidak valid.');
+                        return false;
+                    }
+                }
+            }
             
             return true;
         }

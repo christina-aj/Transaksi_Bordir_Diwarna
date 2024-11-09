@@ -17,12 +17,12 @@ use yii\widgets\ActiveForm;
     <?= $form->field($model, 'user_id')->hiddenInput(['value' => Yii::$app->user->id])->label(false) ?>
     
     <?= $form->field($model, 'tanggal')->widget(\kartik\date\DatePicker::classname(), [
-        'options' => ['placeholder' => 'Pilih tanggal ...'],
-        'pluginOptions' => [
-            'autoclose' => true,
-            'format' => 'dd-mm-yyyy',  
-            'todayHighlight' => true,
-        ],
+    'options' => ['placeholder' => 'Pilih tanggal ...'],
+    'pluginOptions' => [
+        'autoclose' => true,
+        'format' => 'dd-mm-yyyy', 
+        'todayHighlight' => true,
+    ],
     ]); ?>
 
     <?= $form->field($model, 'shift')->dropDownList([1 => 'Pagi', 2 => 'Sore'], ['prompt' => 'Select Shift']) ?>

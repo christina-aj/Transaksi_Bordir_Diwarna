@@ -39,7 +39,14 @@ $this->registerJs($js);
 
     <?= $form->field($model, 'nama_konsumen')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'tanggal')->textInput(['type' => 'date']) ?>
+    <?= $form->field($model, 'tanggal')->widget(\kartik\date\DatePicker::classname(), [
+    'options' => ['placeholder' => 'Pilih tanggal ...'],
+    'pluginOptions' => [
+        'autoclose' => true,
+        'format' => 'dd-mm-yyyy', 
+        'todayHighlight' => true,
+    ],
+    ]); ?>
 
     <div id="items-container">
         <?php 

@@ -133,49 +133,59 @@ class ShiftController extends Controller
     public function actionUpdate($shift_id)
     {
         $model = $this->findModel($shift_id);
-
+    
         if ($this->request->isPost) {
             $model->load($this->request->post());
-
-       
+    
+            
             $model->user_id = Yii::$app->user->id;
-
-           
+    
+            
             if ($model->waktu_kerja === 'custom') {
                 $startTime = $this->request->post('Shift')['start_time'];
                 $endTime = $this->request->post('Shift')['end_time'];
-
-                if ($startTime && $endTime) {
-                    $startTime = \DateTime::createFromFormat('H:i', $startTime);
-                    $endTime = \DateTime::createFromFormat('H:i', $endTime);
+    
+                if (!empty($startTime) && !empty($endTime)) {
+                    $startTimeObj = \DateTime::createFromFormat('H:i', $startTime);
+                    $endTimeObj = \DateTime::createFromFormat('H:i', $endTime);
+    
                     
-                    if ($startTime && $endTime) {
-                        $interval = $startTime->diff($endTime);
-                        $hours = $interval->h + ($interval->i / 60);
-                        $model->waktu_kerja = $hours / 9; 
+                    if ($startTimeObj && $endTimeObj) {
+                        if ($startTimeObj < $endTimeObj) {
+                            $interval = $startTimeObj->diff($endTimeObj);
+                            $hours = $interval->h + ($interval->i / 60);
+                            $model->waktu_kerja = $hours / 9; // Assuming a 9-hour full shift
+                        } else {
+                            $model->addError('end_time', 'End time must be after start time.');
+                        }
                     } else {
-                        $model->addError('start_time', 'Invalid start time format.');
-                        $model->addError('end_time', 'Invalid end time format.');
+                        $model->addError('start_time', 'Invalid time format.');
+                        $model->addError('end_time', 'Invalid time format.');
                     }
                 } else {
                     $model->addError('start_time', 'Start time is required.');
                     $model->addError('end_time', 'End time is required.');
                 }
             }
-
-            try {
-                if ($model->save()) {
-                    return $this->redirect(['view', 'shift_id' => $model->shift_id]);
+    
+            if ($model->validate()) {
+                try {
+                    if ($model->save()) {
+                        return $this->redirect(['view', 'shift_id' => $model->shift_id]);
+                    }
+                } catch (\yii\db\IntegrityException $e) {
+                    $model->addError('user_id', 'Duplicate entry for user ID.');
+                } catch (\Exception $e) {
+                    $model->addError('general', 'An error occurred while saving the data.');
                 }
-            } catch (IntegrityException $e) {
-                $model->addError('user_id', 'Duplicate entry for user ID.');
             }
         }
-
+    
         return $this->render('update', [
             'model' => $model,
         ]);
     }
+    
 
 
     /**

@@ -3,8 +3,6 @@
 namespace app\models;
 
 use Yii;
-use yii\behaviors\TimestampBehavior;
-use yii\db\Expression;
 
 /**
  * This is the model class for table "shift".
@@ -98,13 +96,25 @@ class Shift extends \yii\db\ActiveRecord
                     $this->tanggal = $dateTime->format('Y-m-d');
                 } else {
                     $this->addError('tanggal', 'Format tanggal tidak valid.');
-                    return false; 
+                    return false;
                 }
             }
             return true;
         }
         return false;
     }
+    
+    public function afterFind()
+    {
+        parent::afterFind();
+        if ($this->tanggal) {
+            $dateTime = \DateTime::createFromFormat('Y-m-d', $this->tanggal);
+            if ($dateTime) {
+                $this->tanggal = $dateTime->format('d-m-Y');
+            }
+        }
+    }
+    
 
     /**
      * Gets query for [[LaporanProduksis]].

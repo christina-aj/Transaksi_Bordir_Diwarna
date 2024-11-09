@@ -81,21 +81,25 @@ class LaporanAgregat extends \yii\db\ActiveRecord
     }
 
 
-    public static function getFilterAggregatedData($year = null, $month = null, $nama_kerjaan = null, $startDate = null, $endDate = null)
+    public static function getFilterAggregatedData($year = null,$day = null, $month = null, $nama_kerjaan = null, $startDate = null, $endDate = null)
     {
         $query = self::find()
             ->select([
                 'MONTH(tanggal_kerja) AS month',
                 'YEAR(tanggal_kerja) AS year',
+                'DAY(tanggal_kerja) AS day', 
                 'nama_kerjaan',
                 'nama_barang',
                 'SUM(kuantitas) AS total_kuantitas'
             ])
             ->groupBy(['MONTH(tanggal_kerja)', 'YEAR(tanggal_kerja)', 'nama_kerjaan']);
 
-        // Apply filters
+        
         if ($year) {
             $query->andWhere(['YEAR(tanggal_kerja)' => $year]);
+        }
+        if ($day) {
+            $query->andWhere(['DAY(tanggal_kerja)' => $day]);
         }
         if ($month) {
             $query->andWhere(['MONTH(tanggal_kerja)' => $month]);
@@ -117,6 +121,7 @@ class LaporanAgregat extends \yii\db\ActiveRecord
 
         $year = Yii::$app->request->get('year');
         $month = Yii::$app->request->get('month');
+        $day = Yii::$app->request->get('day');
         $nama_kerjaan = Yii::$app->request->get('nama_kerjaan');
         $startDate = Yii::$app->request->get('start_date');
         $endDate = Yii::$app->request->get('end_date');
@@ -129,7 +134,7 @@ class LaporanAgregat extends \yii\db\ActiveRecord
             $endDate = \DateTime::createFromFormat('d-m-Y', $endDate)->format('Y-m-d');
         }
 
-        $data = LaporanAgregat::getFilterAggregatedData($year, $month, $nama_kerjaan, $startDate, $endDate);
+        $data = LaporanAgregat::getFilterAggregatedData($year,$day, $month, $nama_kerjaan, $startDate, $endDate);
 
         return $data;
     }

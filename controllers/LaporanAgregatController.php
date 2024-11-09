@@ -44,6 +44,7 @@ class LaporanAgregatController extends Controller
         $dataProvider = $searchModel->search($this->request->queryParams);
         $year = Yii::$app->request->get('year');
         $month = Yii::$app->request->get('month');
+        $day = Yii::$app->request->get('day');
         $nama_kerjaan = Yii::$app->request->get('nama_kerjaan');
         
 
@@ -59,10 +60,10 @@ class LaporanAgregatController extends Controller
         }
 
       
-        Yii::debug(compact('year', 'month', 'nama_kerjaan', 'startDate', 'endDate'), __METHOD__);
+        Yii::debug(compact('year', 'month', 'day' , 'nama_kerjaan', 'startDate', 'endDate'), __METHOD__);
 
-        if ($year || $month || $nama_kerjaan || $startDate || $endDate) {
-            $aggregatedData = LaporanAgregat::getFilterAggregatedData($year, $month, $nama_kerjaan, $startDate, $endDate);
+        if ($year || $month|| $day || $nama_kerjaan || $startDate || $endDate) {
+            $aggregatedData = LaporanAgregat::getFilterAggregatedData($year, $day, $month, $nama_kerjaan, $startDate, $endDate);
         } else {
             $aggregatedData = LaporanAgregat::getMonthlyAggregatedData();
         }

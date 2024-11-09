@@ -1,8 +1,7 @@
 <?php
 
 namespace app\models;
-use yii\behaviors\TimestampBehavior;
-use yii\db\Expression;
+
 
 use Yii;
 
@@ -88,6 +87,20 @@ class laporanproduksi extends \yii\db\ActiveRecord
         return $this->shift ? $this->shift->nama_operator : null;
     }
 
+    public function afterFind()
+    {
+        parent::afterFind();
+        if ($this->tanggal_kerja) {
+            $dateTime = \DateTime::createFromFormat('Y-m-d', $this->tanggal_kerja);
+            if ($dateTime) {
+                $this->tanggal_kerja = $dateTime->format('d-m-Y');
+            }
+        }
+    }
+
+    /**
+     * Mengkonversi format tanggal dari d-m-Y ke Y-m-d sebelum disimpan ke database
+     */
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {
@@ -96,8 +109,12 @@ class laporanproduksi extends \yii\db\ActiveRecord
                 if ($dateTime) {
                     $this->tanggal_kerja = $dateTime->format('Y-m-d');
                 } else {
-                    $this->addError('tanggal_kerja', 'Format tanggal tidak valid.');
-                    return false; 
+                    // Coba parse format Y-m-d jika format d-m-Y gagal
+                    $dateTime = \DateTime::createFromFormat('Y-m-d', $this->tanggal_kerja);
+                    if (!$dateTime) {
+                        $this->addError('tanggal_kerja', 'Format tanggal tidak valid.');
+                        return false;
+                    }
                 }
             }
             return true;

@@ -26,11 +26,9 @@ $this->params['breadcrumbs'][] = $this->title;
             'catatan:ntext',
         ],
     ]) ?>
-<<<<<<< Updated upstream
 
-    <?= Html::a('Back', ['laporan-keluar/index'], ['class' => 'btn btn-secondary']) ?>
 </div>
-=======
+
     <p>
         <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Delete', ['delete', 'id' => $model->id], [
@@ -44,4 +42,3 @@ $this->params['breadcrumbs'][] = $this->title;
     </p>
 </div>
 
->>>>>>> Stashed changes

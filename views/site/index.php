@@ -23,21 +23,23 @@ $this->registerJsFile('https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.mi
 <div class="pc-content">
     <!-- [ Main Content ] start -->
     <div class="row">
-        <div class="col-md-6 col-xl-3">
+        <div class="col-md-6 col-xl-6">
             <div class="card bg-grd-primary order-card">
                 <div class="card-body">
-                    <h6 class="text-white">Stock Gudang</h6>
-                    <h2 class="text-end text-white"><i class="feather icon-shopping-cart float-start"></i><span>486</span>
+                    <h5 class="text-white"><span>Stock Gudang</span></h5>
+                    <h6 class="text-start text-white"><span><?= $randomItem['kode_barang'] ?> - <?= $randomItem['nama_barang'] ?></span></h6>
+                    <h2 class="text-end text-white"><i class="fi fi-ts-box-alt float-start g-3"></i><?= $randomItem['quantity_akhir'] ?></span>
                     </h2>
                     <!-- <p class="m-b-0">Completed Orders<span class="float-end">351</span></p> -->
                 </div>
             </div>
         </div>
-        <div class="col-md-6 col-xl-3">
+        <div class="col-md-6 col-xl-6">
             <div class="card bg-grd-success order-card">
                 <div class="card-body">
-                    <h6 class="text-white">Stock Produksi</h6>
-                    <h2 class="text-end text-white"><i class="feather icon-tag float-start"></i><span>1641</span>
+                    <h5 class="text-white">Stock Produksi</h5>
+                    <h6 class="text-start text-white"><span><?= $randomItemProduksi['kode_barang'] ?> - <?= $randomItemProduksi['nama_barang'] ?></span></h6>
+                    <h2 class="text-end text-white"><i class="fi fi-ts-box-alt float-start g-3"></i><?= $randomItemProduksi['quantity_akhir'] ?></span>
                     </h2>
                     <!-- <p class="m-b-0">This Month<span class="float-end">213</span></p> -->
                 </div>

@@ -96,6 +96,31 @@ class SiteController extends Controller
     public function actionIndex()
     {
         // kode lain untuk halaman index
+        $randomItem = Yii::$app->db->createCommand("
+            SELECT b.nama_barang, b.kode_barang, g.quantity_akhir
+            FROM gudang g
+            JOIN barang b ON g.barang_id = b.barang_id
+            WHERE (g.barang_id, g.created_at) IN (
+                SELECT barang_id, MAX(created_at)
+                FROM gudang
+                GROUP BY barang_id
+            )
+            ORDER BY RAND()
+            LIMIT 1
+        ")->queryOne();
+        $randomItemProduksi = Yii::$app->db->createCommand("
+            SELECT b.nama_barang, b.kode_barang, s.quantity_akhir
+            FROM stock s
+            JOIN barang b ON s.barang_id = b.barang_id
+            WHERE (s.barang_id, s.created_at) IN (
+                SELECT barang_id, MAX(created_at)
+                FROM stock
+                GROUP BY barang_id
+            )
+            ORDER BY RAND()
+            LIMIT 1
+        ")->queryOne();
+
         $pesanDetails = PesanDetail::find()
             ->orderBy(['created_at' => SORT_DESC])
             ->limit(5)
@@ -106,7 +131,9 @@ class SiteController extends Controller
             ->all();
         return $this->render('index', [
             'pesanDetails' => $pesanDetails,
-            'laporanProduksi' => $laporanProduksi
+            'laporanProduksi' => $laporanProduksi,
+            'randomItem' => $randomItem,
+            'randomItemProduksi' => $randomItemProduksi,
         ]);
     }
 

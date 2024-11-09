@@ -151,17 +151,27 @@ INSERT INTO `jenis` (`id`, `nama_jenis`, `deskripsi`) VALUES
 
 CREATE TABLE `laporanproduksi` (
   `laporan_id` int NOT NULL,
+<<<<<<< Updated upstream
   `nama_mesin` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `shift_id` int NOT NULL,
   `tanggal_kerja` date NOT NULL,
   `nama_kerjaan` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+=======
+  `nama_mesin` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
+  `shift_id` int NOT NULL,
+  `tanggal_kerja` date NOT NULL,
+  `nama_kerjaan` varchar(200) COLLATE utf8mb4_general_ci NOT NULL,
+>>>>>>> Stashed changes
   `vs` int NOT NULL DEFAULT '1',
   `stitch` int NOT NULL,
   `kuantitas` int NOT NULL,
   `bs` int NOT NULL,
+<<<<<<< Updated upstream
   `nama_barang` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL
+=======
+  `nama_barang` varchar(200) COLLATE utf8mb4_general_ci NOT NULL
+>>>>>>> Stashed changes
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
 --
 -- Dumping data for table `laporanproduksi`
 --
@@ -181,11 +191,19 @@ INSERT INTO `laporanproduksi` (`laporan_id`, `nama_mesin`, `shift_id`, `tanggal_
 
 CREATE TABLE `laporan_keluar` (
   `id` int NOT NULL,
+<<<<<<< Updated upstream
   `nama` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `barang` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `qty` int NOT NULL,
   `tanggal` date NOT NULL,
   `catatan` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL
+=======
+  `nama` varchar(200) COLLATE utf8mb4_general_ci NOT NULL,
+  `barang` varchar(200) COLLATE utf8mb4_general_ci NOT NULL,
+  `qty` int NOT NULL,
+  `tanggal` date NOT NULL,
+  `catatan` text COLLATE utf8mb4_general_ci NOT NULL
+>>>>>>> Stashed changes
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -222,11 +240,19 @@ INSERT INTO `mesin` (`mesin_id`, `nama`, `deskripsi`) VALUES
 
 CREATE TABLE `nota` (
   `nota_id` int NOT NULL,
+<<<<<<< Updated upstream
   `nama_konsumen` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `tanggal` date NOT NULL,
   `barang` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `harga` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `qty` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+=======
+  `nama_konsumen` varchar(200) COLLATE utf8mb4_general_ci NOT NULL,
+  `tanggal` date NOT NULL,
+  `barang` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `harga` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `qty` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+>>>>>>> Stashed changes
   `total_qty` int NOT NULL,
   `total_harga` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -278,7 +304,6 @@ CREATE TABLE `pembelian_detail` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
 --
 -- Dumping data for table `pembelian_detail`
 --
@@ -333,7 +358,6 @@ CREATE TABLE `penggunaan` (
   `catatan` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `tanggal_digunakan` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
 --
 -- Dumping data for table `penggunaan`
 --
@@ -425,7 +449,6 @@ CREATE TABLE `shift` (
   `ganti_benang` int NOT NULL,
   `ganti_kain` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
 --
 -- Dumping data for table `shift`
 --

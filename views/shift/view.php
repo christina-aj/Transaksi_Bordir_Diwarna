@@ -14,18 +14,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="pc-content">
 
     <h1><?= Html::encode($this->title) ?></h1>
-
-    <p>
-        <?= Html::a('Update', ['update', 'shift_id' => $model->shift_id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Delete', ['delete', 'shift_id' => $model->shift_id], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => 'Are you sure you want to delete this item?',
-                'method' => 'post',
-            ],
-        ]) ?>
-    </p>
-
+    
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
@@ -46,7 +35,15 @@ $this->params['breadcrumbs'][] = $this->title;
             'ganti_kain',
         ],
     ]) ?>
-
-    <?= Html::a('Back', ['shift/index'], ['class' => 'btn btn-secondary']) ?>
-
+    <p>
+        <?= Html::a('Update', ['update', 'shift_id' => $model->shift_id], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Delete', ['delete', 'shift_id' => $model->shift_id], [
+            'class' => 'btn btn-danger',
+            'data' => [
+                'confirm' => 'Are you sure you want to delete this item?',
+                'method' => 'post',
+            ],
+        ]) ?>
+        <?= Html::a('Back', ['shift/index'], ['class' => 'btn btn-secondary']) ?>
+    </p>
 </div>

@@ -63,8 +63,43 @@ $this->params['breadcrumbs'][] = $this->title;
     ]);
     ?>
     <div class="form-group">
-        <label for="month">Bulan</label>
-        <input type="number" name="month" class="form-control" id="month">
+        <form id="filter-form" method="get" action="<?= Url::to(['laporan-agregat/index']) ?>">
+            <div class="form-group">
+                <label for="start_date">Tanggal Awal</label>
+                <?= DatePicker::widget([
+                    'name' => 'start_date',
+                    'options' => [
+                        'placeholder' => 'Pilih Tanggal Awal',
+                        'readonly' => true,
+                        'id' => 'start-date-picker'
+                    ],
+                    'pluginOptions' => [
+                        'format' => 'dd-mm-yyyy',
+                        'autoclose' => true,
+                    ],
+                ]); ?>
+            </div>
+
+            <div class="form-group">
+                <label for="end_date">Tanggal Akhir</label>
+                <?= DatePicker::widget([
+                    'name' => 'end_date',
+                    'options' => [
+                        'placeholder' => 'Pilih Tanggal Akhir',
+                        'readonly' => true,
+                        'id' => 'end-date-picker'
+                    ],
+                    'pluginOptions' => [
+                        'format' => 'dd-mm-yyyy',
+                        'autoclose' => true,
+                    ],
+                ]); ?>
+            </div>
+
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-success">Filter Data</button>
+            </div>
+        </form>
     </div>
     <?php Modal::end(); ?>
 

@@ -63,8 +63,6 @@ $this->registerJs($js);
                     'type' => 'number', 
                     'value' => $model->qtyList[$index] ?? null
                 ]); ?>
-                
-                <button type="button" class="btn btn-danger remove-item">Hapus</button>
             </div>
         <?php endforeach; ?>
     </div>

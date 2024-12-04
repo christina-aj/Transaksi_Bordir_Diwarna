@@ -146,4 +146,11 @@ class Shift extends \yii\db\ActiveRecord
     {
         return $this->hasOne(User::class, ['user_id' => 'user_id']);
     }
+
+    public function getLaporanProduksiList()
+    {
+        return $this->hasMany(LaporanProduksi::class, ['shift_id' => 'shift_id']);
+    }
+
+
 }

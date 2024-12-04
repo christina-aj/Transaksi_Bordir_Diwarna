@@ -1,7 +1,9 @@
 <?php
 namespace app\controllers;
 
+
 use Yii;
+
 use app\models\Shift;
 use app\models\ShiftSearch;
 use yii\web\Controller;
@@ -42,6 +44,7 @@ class ShiftController extends Controller
         $searchModel = new ShiftSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
+        
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
@@ -72,6 +75,14 @@ class ShiftController extends Controller
 
     if ($this->request->isPost) {
         $model->load($this->request->post());
+
+        if ($model->save()) {
+            Yii::$app->session->setFlash('success', 'Shift berhasil ditambahkan.');
+            return $this->redirect(['view', 'shift_id' => $model->shift_id]);
+        } else {
+            Yii::$app->session->setFlash('error', 'Terjadi kesalahan saat menyimpan shift.');
+        }
+
 
         // Set the user_id to the currently logged-in user
         $model->user_id = Yii::$app->user->id;
@@ -197,8 +208,19 @@ class ShiftController extends Controller
      */
     public function actionDelete($shift_id)
     {
-        $this->findModel($shift_id)->delete();
+        $model = $this->findModel($shift_id);
 
+    
+        if ($model->getLaporanProduksiList()->exists()) {
+            Yii::$app->session->setFlash('error', 'Shift ini tidak dapat dihapus karena sedang digunakan di laporan produksi.');
+            return $this->redirect(['index']);
+        }
+
+        
+        $model->delete();
+        Yii::$app->session->setFlash('success', 'Shift berhasil dihapus.');
+
+        
         return $this->redirect(['index']);
     }
 

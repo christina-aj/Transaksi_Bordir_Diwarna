@@ -46,4 +46,28 @@ $this->params['breadcrumbs'][] = $this->title;
         ]) ?>
         <?= Html::a('Back', ['shift/index'], ['class' => 'btn btn-secondary']) ?>
     </p>
+
+    <h2>Pekerjaan</h2>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Tanggal Kerja</th>
+                <th>Nama Pekerjaan</th>
+                <th>Barang</th>
+                <th>Kuantitas</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($model->laporanProduksiList as $laporan): ?>
+                <tr>
+                    <td><?= Html::encode($laporan->shift->nama_operator) ?> (<?= $laporan->shift->shift == '1' ? 'Pagi' : 'Sore' ?>)</td>
+                    <td><?= Yii::$app->formatter->asDate($laporan->tanggal_kerja, 'php:d-m-Y') ?></td>
+                    <td><?= Html::encode($laporan->nama_kerjaan) ?></td>
+                    <td><?= Html::encode($laporan->nama_barang) ?></td>
+                    <td><?= Html::encode($laporan->kuantitas) ?></td>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
 </div>

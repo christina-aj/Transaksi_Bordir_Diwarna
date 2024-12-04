@@ -124,7 +124,7 @@ AppAsset::register($this);
             </div>
         </div>
     </header>
-
+    
     <!-- Main Content -->
     <main class="pc-container" id="main">
         <?= $content ?>

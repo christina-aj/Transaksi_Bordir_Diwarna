@@ -18,7 +18,7 @@ class LaporanProduksisearch extends LaporanProduksi
     {
         return [
             [['laporan_id', 'shift_id', 'vs', 'stitch', 'kuantitas', 'bs'], 'integer'],
-            [['tanggal_kerja', 'nama_kerjaan','nama_mesin'], 'safe'],
+            [['tanggal_kerja', 'nama_kerjaan','nama_mesin','berat', 'vs', 'stitch'], 'safe'],
         ];
     }
 
@@ -66,6 +66,7 @@ class LaporanProduksisearch extends LaporanProduksi
             'stitch' => $this->stitch,
             'kuantitas' => $this->kuantitas,
             'bs' => $this->bs,
+            'berat' => $this->berat,
         ]);
 
         $query->andFilterWhere(['like', 'nama_kerjaan', $this->nama_kerjaan]);

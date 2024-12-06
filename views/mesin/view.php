@@ -24,6 +24,16 @@ $this->params['breadcrumbs'][] = $this->title;
         'attributes' => [
             'mesin_id',
             'nama',
+            [
+                'attribute' => 'kategori',
+                'value' => function ($model) {
+                    return $model->kategori == 1 ? 'Bordir' : ($model->kategori == 2 ? 'Kaos Kaki' : 'Tidak diketahui');
+                },
+                'filter' => [
+                    1 => 'Bordir',
+                    2 => 'Kaos Kaki',
+                ], 
+            ],
             'deskripsi:ntext',
         ],
     ]) ?>

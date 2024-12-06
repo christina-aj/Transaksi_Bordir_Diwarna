@@ -14,6 +14,19 @@ $this->title = 'Mesin';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="pc-content">
+
+    <?php if (Yii::$app->session->hasFlash('success')): ?>
+        <div class="alert alert-success" style="margin-top: 3px;">
+            <?= Yii::$app->session->getFlash('success') ?>
+        </div>
+    <?php endif; ?>
+
+    <?php if (Yii::$app->session->hasFlash('error')): ?>
+        <div class="alert alert-danger" style="margin-top: 3px;">
+            <?= Yii::$app->session->getFlash('error') ?>
+        </div>
+    <?php endif; ?>
+    
     <div class="card card-table">
         <div class="card-header">
             <h1><?= Html::encode($this->title) ?></h1>
@@ -29,6 +42,16 @@ $this->params['breadcrumbs'][] = $this->title;
                         ['class' => 'yii\grid\SerialColumn'],
 
                         'nama',
+                        [
+                            'attribute' => 'kategori',
+                            'value' => function ($model) {
+                                return $model->kategori == 1 ? 'Bordir' : ($model->kategori == 2 ? 'Kaos Kaki' : 'Tidak diketahui');
+                            },
+                            'filter' => [
+                                1 => 'Bordir',
+                                2 => 'Kaos Kaki',
+                            ], 
+                        ],
                         'deskripsi:ntext',
                         [
                             'class' => ActionColumn::className(),

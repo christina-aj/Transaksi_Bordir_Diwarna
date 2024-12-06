@@ -9,20 +9,30 @@ use app\models\Shift;
 /** @var yii\web\View $this */
 /** @var app\models\LaporanProduksi $model */
 /** @var yii\widgets\ActiveForm $form */
+
+$shiftId = Yii::$app->session->get('shift_id');
+$tanggalKerja = Yii::$app->session->get('tanggal_kerja'); 
+
+if ($shiftId !== null) {
+    $model->shift_id = $shiftId;
+}
+
+if ($tanggalKerja !== null) {
+    $model->tanggal_kerja = $tanggalKerja; 
+}
 ?>
 
 <div class="pc-content">
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?php
-    $dataMesin = ArrayHelper::map(\app\models\Mesin::find()->asArray()->all(), 'nama', 'nama');
-    echo $form->field($model, 'nama_mesin')
-        ->dropDownList(
-            $dataMesin,
-            ['prompt'=>'Select Mesin']
-        );
-    ?>
+    <?= $form->field($model, 'mesin_id')->dropDownList(
+        $mesinlist,
+        [
+            'prompt' => 'Pilih Mesin',
+            'id' => 'mesin-dropdown', 
+        ]
+    ) ?>
 
     <?php
     $dataShift = ArrayHelper::map(Shift::find()->asArray()->all(), 'shift_id', function($model) {
@@ -33,7 +43,7 @@ use app\models\Shift;
     echo $form->field($model, 'shift_id')
         ->dropDownList(
             $dataShift,
-            ['prompt'=>'Select Shift']
+            ['prompt'=>'Select Shift','readonly' => true]
         );
     ?>
 
@@ -57,7 +67,8 @@ use app\models\Shift;
             'format' => 'dd-mm-yyyy',
             'todayHighlight' => true,
         ],
-    ]); ?>
+        'readonly' => true,
+        ]); ?>
 
     <?= $form->field($model, 'nama_kerjaan')->textInput(['maxlength' => true]) ?>
 
@@ -70,13 +81,21 @@ use app\models\Shift;
         );
     ?>
 
-    <?= $form->field($model, 'vs')->textInput() ?>
+    <div id="vs-field" style="display: none;">
+        <?= $form->field($model, 'vs')->textInput() ?>
+    </div>
 
-    <?= $form->field($model, 'stitch')->textInput() ?>
+    <div id="stich-field" style="display: none;">
+        <?= $form->field($model, 'stich')->textInput() ?>
+    </div>
 
     <?= $form->field($model, 'kuantitas')->textInput() ?>
 
     <?= $form->field($model, 'bs')->textInput() ?>
+
+    <div id="berat-field" style="display: none;">
+        <?= $form->field($model, 'berat')->textInput() ?>
+    </div>
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
@@ -87,4 +106,44 @@ use app\models\Shift;
 
 </div>
 
+<!-- JavaScript untuk Menyesuaikan Kolom -->
+<?php
+$script = <<<JS
+document.getElementById('mesin-dropdown').addEventListener('change', function () {
+    var mesinId = this.value;
+
+    if (mesinId) {
+        $.ajax({
+            url: '/mesin/get-kategori',
+            type: 'GET',
+            data: { id: mesinId },
+            success: function (response) {
+                if (response.kategori === '1') {
+                    $('#vs-field').show();
+                    $('#stitch-field').show();
+                    $('#berat-field').hide();
+                } else if (response.kategori === '2') {
+                    $('#vs-field').hide();
+                    $('#stitch-field').hide();
+                    $('#berat-field').show();
+                } else {
+                    $('#vs-field').hide();
+                    $('#stitch-field').hide();
+                    $('#berat-field').hide();
+                }
+            },
+            error: function () {
+                alert('Gagal mendapatkan kategori mesin.');
+            }
+        });
+    } else {
+        $('#vs-field').hide();
+        $('#stitch-field').hide();
+        $('#berat-field').hide();
+    }
+});
+JS;
+
+$this->registerJs($script);
+?>
 

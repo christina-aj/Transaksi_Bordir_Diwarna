@@ -44,9 +44,9 @@ class Shift extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['shift', 'waktu_kerja', 'nama_operator', 'mulai_istirahat', 'selesai_istirahat','ganti_benang', 'ganti_kain'], 'required'],
+            [['shift', 'waktu_kerja', 'nama_operator', 'mulai_istirahat', 'selesai_istirahat'], 'required'],
             [['user_id', 'ganti_benang', 'ganti_kain'], 'integer'],
-            [['tanggal', 'mulai_istirahat', 'selesai_istirahat','start_time', 'end_time','kendala'], 'safe'],
+            [['tanggal', 'mulai_istirahat', 'selesai_istirahat','start_time', 'end_time','kendala'.'ganti_benang', 'ganti_kain'], 'safe'],
             [['shift'], 'integer'],
             [['waktu_kerja'], 'number', 'min' => 0, 'max' => 1], 
             [['waktu_kerja_hidden'], 'string'],

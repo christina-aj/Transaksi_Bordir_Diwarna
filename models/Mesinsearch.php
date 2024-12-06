@@ -18,7 +18,7 @@ class Mesinsearch extends Mesin
     {
         return [
             [['mesin_id'], 'integer'],
-            [['nama', 'deskripsi'], 'safe'],
+            [['nama', 'deskripsi'.'kategori'], 'safe'],
         ];
     }
 

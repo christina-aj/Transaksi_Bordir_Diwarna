@@ -59,8 +59,14 @@ class ShiftController extends Controller
      */
     public function actionView($shift_id)
     {
+        $model = $this->findModel($shift_id);
+
+        
+        Yii::$app->session->set('shift_id', $model->shift_id);
+        Yii::$app->session->set('tanggal_kerja', $model->tanggal); 
+
         return $this->render('view', [
-            'model' => $this->findModel($shift_id),
+            'model' => $model,
         ]);
     }
 
@@ -70,68 +76,62 @@ class ShiftController extends Controller
      * @return string|\yii\web\Response
      */
     public function actionCreate()
-{
-    $model = new Shift();
+    {
+        $model = new Shift();
 
-    if ($this->request->isPost) {
-        $model->load($this->request->post());
+        if ($this->request->isPost) {
+            $model->load($this->request->post());
 
-        if ($model->save()) {
-            Yii::$app->session->setFlash('success', 'Shift berhasil ditambahkan.');
-            return $this->redirect(['view', 'shift_id' => $model->shift_id]);
-        } else {
-            Yii::$app->session->setFlash('error', 'Terjadi kesalahan saat menyimpan shift.');
-        }
-
-
-        // Set the user_id to the currently logged-in user
-        $model->user_id = Yii::$app->user->id;
-
-        // Custom time logic
-        if ($model->waktu_kerja === 'custom') {
-            $startTime = $model->start_time; // Ambil dari model
-            $endTime = $model->end_time; // Ambil dari model
-
-            if ($startTime && $endTime) {
-                $startTimeObj = \DateTime::createFromFormat('H:i', $startTime);
-                $endTimeObj = \DateTime::createFromFormat('H:i', $endTime);
-                
-                if ($startTimeObj && $endTimeObj) {
-                    // Hitung selisih waktu
-                    $interval = $startTimeObj->diff($endTimeObj);
-                    $hours = $interval->h + ($interval->i / 60);
-                    $model->waktu_kerja = $hours / 9; // Hitung persentase berdasarkan shift 9 jam
-                } else {
-                    $model->addError('start_time', 'Format waktu mulai tidak valid.');
-                    $model->addError('end_time', 'Format waktu selesai tidak valid.');
-                }
+            if ($model->save()) {
+                Yii::$app->session->setFlash('success', 'Shift berhasil ditambahkan.');
+                return $this->redirect(['view', 'shift_id' => $model->shift_id]);
             } else {
-                $model->addError('start_time', 'Waktu mulai diperlukan.');
-                $model->addError('end_time', 'Waktu selesai diperlukan.');
+                Yii::$app->session->setFlash('error', 'Terjadi kesalahan saat menyimpan shift.');
             }
+
+            $model->user_id = Yii::$app->user->id;
+
+            if ($model->waktu_kerja === 'custom') {
+                $startTime = $model->start_time;
+                $endTime = $model->end_time;
+
+                if ($startTime && $endTime) {
+                    $startTimeObj = \DateTime::createFromFormat('H:i', $startTime);
+                    $endTimeObj = \DateTime::createFromFormat('H:i', $endTime);
+
+                    if ($startTimeObj && $endTimeObj) {
+                        $interval = $startTimeObj->diff($endTimeObj);
+                        $hours = $interval->h + ($interval->i / 60);
+                        $model->waktu_kerja = $hours / 9;
+                    } else {
+                        $model->addError('start_time', 'Format waktu mulai tidak valid.');
+                        $model->addError('end_time', 'Format waktu selesai tidak valid.');
+                    }
+                } else {
+                    $model->addError('start_time', 'Waktu mulai diperlukan.');
+                    $model->addError('end_time', 'Waktu selesai diperlukan.');
+                }
+            }
+
+            if ($model->validate()) {
+                try {
+                    if ($model->save()) {
+                        return $this->redirect(['view', 'shift_id' => $model->shift_id]);
+                    }
+                } catch (\yii\db\Exception $e) {
+                    Yii::$app->session->setFlash('error', 'Kesalahan saat menyimpan data: ' . $e->getMessage());
+                    $model->addError('save', 'Kesalahan saat menyimpan data.');
+                }
+            }
+        } else {
+            $model->loadDefaultValues();
         }
 
-        // Menyimpan model
-        if ($model->validate()) {
-            try {
-                if ($model->save()) {
-                    return $this->redirect(['view', 'shift_id' => $model->shift_id]);
-                }
-            } catch (\yii\db\Exception $e) {
-                // Tangkap kesalahan dan tampilkan pesan
-                Yii::$app->session->setFlash('error', 'Kesalahan saat menyimpan data: ' . $e->getMessage());
-                // Anda dapat menambahkan error ke model jika perlu
-                $model->addError('save', 'Kesalahan saat menyimpan data.');
-            }
-        }
-    } else {
-        $model->loadDefaultValues();
+        return $this->render('create', [
+            'model' => $model,
+        ]);
     }
 
-    return $this->render('create', [
-        'model' => $model,
-    ]);
-}
 
 
     /**
@@ -165,7 +165,7 @@ class ShiftController extends Controller
                         if ($startTimeObj < $endTimeObj) {
                             $interval = $startTimeObj->diff($endTimeObj);
                             $hours = $interval->h + ($interval->i / 60);
-                            $model->waktu_kerja = $hours / 9; // Assuming a 9-hour full shift
+                            $model->waktu_kerja = $hours / 9; 
                         } else {
                             $model->addError('end_time', 'End time must be after start time.');
                         }

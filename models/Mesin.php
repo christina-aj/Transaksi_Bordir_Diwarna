@@ -31,7 +31,7 @@ class Mesin extends \yii\db\ActiveRecord
     {
         return [
             [['nama', 'deskripsi'], 'required'],
-            [['deskripsi'], 'string'],
+            [['deskripsi','kategori'], 'string'],
             [['nama'], 'string', 'max' => 200],
         ];
     }
@@ -44,6 +44,7 @@ class Mesin extends \yii\db\ActiveRecord
         return [
             'mesin_id' => 'Mesin ID',
             'nama' => 'Nama',
+            'kategori' => 'Kategori',
             'deskripsi' => 'Deskripsi',
         ];
     }
@@ -65,6 +66,11 @@ class Mesin extends \yii\db\ActiveRecord
      */
     public function getShifts()
     {
-        return $this->hasMany(Shift::class, ['shift_id' => 'shift_id'])->viaTable('laporan_produksi', ['mesin_id' => 'mesin_id']);
+        return $this->hasMany(Shift::class, ['shift_id' => 'shift_id'])->viaTable('laporanproduksi', ['mesin_id' => 'mesin_id']);
+    }
+
+    public function getLaporan()
+    {
+        return $this->hasMany(LaporanProduksi::class, ['nama_mesin' => 'nama_mesin']);
     }
 }

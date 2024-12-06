@@ -14,6 +14,8 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'nama')->textInput(['maxlength' => true]) ?>
 
+    <?= $form->field($model, 'kategori')->dropDownList([1 => 'Bordir', 2 => 'Kaos Kaki'], ['prompt' => 'Pilih Kategori']) ?>
+
     <?= $form->field($model, 'deskripsi')->textarea(['rows' => 6]) ?>
 
     <div class="form-group">

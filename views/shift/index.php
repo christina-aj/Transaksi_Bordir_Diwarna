@@ -62,4 +62,15 @@ $this->params['breadcrumbs'][] = $this->title;
     ],
 ]); ?>
 
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const cells = document.querySelectorAll('td, th');
+    cells.forEach(cell => {
+        if (cell.textContent.trim() === '(not set)') {
+            cell.textContent = 'kosong';
+        }
+    });
+});
+</script>
+
 </div>

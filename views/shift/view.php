@@ -44,7 +44,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'method' => 'post',
             ],
         ]) ?>
-        <?= Html::a('Back', ['shift/index'], ['class' => 'btn btn-secondary']) ?>
+        <?= Html::a('Back', ['laporan-produksi/create'], ['class' => 'btn btn-secondary']) ?>
     </p>
 
     <h2>Pekerjaan</h2>
@@ -71,3 +71,14 @@ $this->params['breadcrumbs'][] = $this->title;
         </tbody>
     </table>
 </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const cells = document.querySelectorAll('td, th');
+    cells.forEach(cell => {
+        if (cell.textContent.trim() === '(not set)') {
+            cell.textContent = 'kosong';
+        }
+    });
+});
+</script>

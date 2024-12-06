@@ -46,6 +46,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'stitch',
             'kuantitas',
             'bs',
+            'berat',
             [
                 'class' => ActionColumn::className(),
                 'urlCreator' => function ($action, LaporanProduksi $model, $key, $index, $column) {

@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use Yii;
 use app\models\Mesin;
 use app\models\Mesinsearch;
 use yii\web\Controller;
@@ -70,13 +71,16 @@ class MesinController extends Controller
         $model = new Mesin();
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'mesin_id' => $model->mesin_id]);
-            }
-        } else {
-            $model->loadDefaultValues();
-        }
+            $model->load($this->request->post());
 
+            if ($model->save()) {
+                Yii::$app->session->setFlash('success', 'Mesin berhasil ditambahkan.');
+                return $this->redirect(['view', 'mesin_id' => $model->mesin_id]);
+            } else {
+                Yii::$app->session->setFlash('error', 'Terjadi kesalahan saat menyimpan Mesin.');
+            }
+
+        } 
         return $this->render('create', [
             'model' => $model,
         ]);
@@ -111,9 +115,20 @@ class MesinController extends Controller
      */
     public function actionDelete($mesin_id)
     {
-        $this->findModel($mesin_id)->delete();
+        $model = $this->findModel($mesin_id);
 
-        return $this->redirect(['index']);
+        
+        if($model->getLaporan()->exists()){
+            Yii::$app->session->setFlash('error', 'Mesin ini tidak dapat dihapus karena sedang digunakan di laporan produksi.');
+            return $this->redirect(['index']);
+        }else{
+            $model->delete();
+            Yii::$app->session->setFlash('success', 'Mesin berhasil dihapus.');
+
+            return $this->redirect(['index']);
+
+        }
+
     }
 
     /**

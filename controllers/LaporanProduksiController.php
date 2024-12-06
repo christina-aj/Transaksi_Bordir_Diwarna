@@ -2,6 +2,8 @@
 
 namespace app\controllers;
 
+use yii\helpers\ArrayHelper;
+use app\models\Mesin;
 use app\models\LaporanProduksi;
 use app\models\LaporanProduksisearch;
 use yii\web\Controller;
@@ -43,6 +45,8 @@ class LaporanProduksiController extends Controller
         $searchModel = new LaporanProduksisearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
+
+
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
@@ -70,16 +74,26 @@ class LaporanProduksiController extends Controller
     public function actionCreate()
     {
         $model = new LaporanProduksi();
+        
+        $mesinlist = ArrayHelper::map(
+            Mesin::find()->all(),
+            'mesin_id', 
+            'nama'     
+        );
+        
+        $model->shift_id = Yii::$app->session->get('shift_id');
+        $model->tanggal_kerja = Yii::$app->session->get('tanggal_kerja');
 
-        if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'laporan_id' => $model->laporan_id]);
-            }
-        } else {
-            $model->loadDefaultValues();
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            Yii::$app->session->remove('shift_id');
+            Yii::$app->session->remove('tanggal_kerja');
+
+            Yii::$app->session->setFlash('success', 'Laporan Produksi berhasil disimpan.');
+            return $this->redirect(['view', 'laporan_id' => $model->laporan_id]); 
         }
 
         return $this->render('create', [
+            'mesinList' => $mesinlist,
             'model' => $model,
         ]);
     }
@@ -137,13 +151,13 @@ class LaporanProduksiController extends Controller
     public function actionGetShifts()
 
     {
-        \Yii::$app->response->format = \yii\web\Response::FORMAT_HTML;
+        Yii::$app->response->format = \yii\web\Response::FORMAT_HTML;
 
         if (Yii::$app->request->isPost) {
             $date = Yii::$app->request->post('date');
             $month = date('m', strtotime($date));
 
-            // Ambil shift yang sesuai bulan
+            
             $dataShift = Shift::find()
                 ->where(['MONTH(tanggal)' => $month])
                 ->asArray()
@@ -160,6 +174,17 @@ class LaporanProduksiController extends Controller
         return "<option value=''>No shift available</option>";
     }
 
+    public function actionGetKategori($id)
+{
+    Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+    $mesin = Mesin::findOne($id);
+    if ($mesin) {
+        return ['kategori' => $mesin->kategori];
+    }
+
+    return ['kategori' => null];
+}
 
 
 }

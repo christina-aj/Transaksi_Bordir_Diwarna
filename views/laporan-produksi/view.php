@@ -37,6 +37,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'stitch',
             'kuantitas',
             'bs',
+            'berat',
         ],
     ]) ?>
     <p>

@@ -59,7 +59,7 @@ class LaporanAgregatsearch extends LaporanAgregat
         // grid filtering conditions
         $query->andFilterWhere([
             'laporan_id' => $this->laporan_id,
-            'Nama Mesin' => $this->nama_mesin,
+            'mesin_id' => $this->mesin_id,
             'shift_id' => $this->shift_id,
             'tanggal_kerja' => $this->tanggal_kerja,
             'vs' => $this->vs,

@@ -55,6 +55,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <th>Tanggal Kerja</th>
                 <th>Nama Pekerjaan</th>
                 <th>Barang</th>
+                <th>Nama Barang</th>
                 <th>Kuantitas</th>
             </tr>
         </thead>

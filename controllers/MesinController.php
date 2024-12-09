@@ -146,4 +146,16 @@ class MesinController extends Controller
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
+
+    public function actionGetKategori($id)
+    {
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        
+        $mesin = Mesin::findOne($id);
+        if ($mesin) {
+            return ['kategori' => $mesin->kategori];
+        }
+        
+        return ['kategori' => null];
+    }
 }

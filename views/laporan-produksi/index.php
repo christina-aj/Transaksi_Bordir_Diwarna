@@ -23,10 +23,15 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-            'nama_mesin',
+            [
+                'attribute' => 'mesin_id',
+                'label' => 'Nama Mesin',
+                'value' => function ($model) {
+                    return $model->mesin->nama;
+                },
+            ],
             [
                 'attribute' => 'Nama Operator - Shift',
                 'value' => function($model) {
@@ -55,5 +60,16 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
         ],
     ]); ?>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const cells = document.querySelectorAll('td, th');
+    cells.forEach(cell => {
+        if (cell.textContent.trim() === '(not set)') {
+            cell.textContent = 'kosong';
+        }
+    });
+});
+</script>
 
 </div>

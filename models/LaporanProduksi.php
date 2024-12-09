@@ -39,10 +39,10 @@ class laporanproduksi extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['nama_mesin', 'shift_id', 'nama_kerjaan', 'kuantitas', 'bs','nama_barang'], 'required'],
+            [['mesin_id', 'shift_id', 'nama_kerjaan', 'kuantitas', 'bs','nama_barang'], 'required'],
             [['shift_id', 'vs', 'stitch', 'kuantitas', 'bs'], 'integer'],
-            [['tanggal_kerja','nama_mesin', 'vs', 'stitch','berat'], 'safe'],
-            [['nama_kerjaan','nama_mesin','berat'], 'string', 'max' => 200],
+            [['tanggal_kerja','mesin_id', 'vs', 'stitch','berat'], 'safe'],
+            [['nama_kerjaan','mesin_id','berat'], 'string', 'max' => 200],
             [['shift_id'], 'exist', 'skipOnError' => true, 'targetClass' => Shift::class, 'targetAttribute' => ['shift_id' => 'shift_id']],
         ];
     }
@@ -54,7 +54,7 @@ class laporanproduksi extends \yii\db\ActiveRecord
     {
         return [
             'laporan_id' => 'Laporan ID',
-            'nama_mesin' => 'Nama Mesin',
+            'mesin_id' => 'Nama Mesin',
             'shift_id' => 'Shift ID',
             'tanggal_kerja' => 'Tanggal Kerja',
             'nama_barang' => 'Nama Barang',
@@ -97,6 +97,11 @@ class laporanproduksi extends \yii\db\ActiveRecord
                 $this->tanggal_kerja = $dateTime->format('d-m-Y');
             }
         }
+    }
+
+    public function getMesin()
+    {
+        return $this->hasOne(Mesin::class, ['mesin_id' => 'mesin_id']);
     }
 
     /**

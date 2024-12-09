@@ -1,14 +1,23 @@
 <?php
 
+use kartik\select2\Select2;
+use yii\helpers\Url;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\helpers\ArrayHelper;
 use app\models\Shift;
-
+use app\models\Mesin;
 
 /** @var yii\web\View $this */
 /** @var app\models\LaporanProduksi $model */
 /** @var yii\widgets\ActiveForm $form */
+/** @var array $mesinlist */  
+
+$mesinList = ArrayHelper::map(
+    Mesin::find()->all(),
+    'mesin_id',
+    'nama'
+);
 
 $shiftId = Yii::$app->session->get('shift_id');
 $tanggalKerja = Yii::$app->session->get('tanggal_kerja'); 
@@ -27,12 +36,13 @@ if ($tanggalKerja !== null) {
     <?php $form = ActiveForm::begin(); ?>
 
     <?= $form->field($model, 'mesin_id')->dropDownList(
-        $mesinlist,
+        $mesinList,
         [
             'prompt' => 'Pilih Mesin',
-            'id' => 'mesin-dropdown', 
+            'id' => 'mesin-dropdown',
         ]
     ) ?>
+
 
     <?php
     $dataShift = ArrayHelper::map(Shift::find()->asArray()->all(), 'shift_id', function($model) {
@@ -81,21 +91,18 @@ if ($tanggalKerja !== null) {
         );
     ?>
 
-    <div id="vs-field" style="display: none;">
+    <div id="bordir-fields" style="display: none;">
         <?= $form->field($model, 'vs')->textInput() ?>
+        <?= $form->field($model, 'stitch')->textInput() ?>
     </div>
 
-    <div id="stich-field" style="display: none;">
-        <?= $form->field($model, 'stich')->textInput() ?>
+    <div id="kaoskaki-fields" style="display: none;">
+        <?= $form->field($model, 'berat')->textInput() ?>
     </div>
 
     <?= $form->field($model, 'kuantitas')->textInput() ?>
 
     <?= $form->field($model, 'bs')->textInput() ?>
-
-    <div id="berat-field" style="display: none;">
-        <?= $form->field($model, 'berat')->textInput() ?>
-    </div>
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
@@ -106,44 +113,28 @@ if ($tanggalKerja !== null) {
 
 </div>
 
-<!-- JavaScript untuk Menyesuaikan Kolom -->
 <?php
 $script = <<<JS
-document.getElementById('mesin-dropdown').addEventListener('change', function () {
-    var mesinId = this.value;
-
-    if (mesinId) {
-        $.ajax({
-            url: '/mesin/get-kategori',
-            type: 'GET',
-            data: { id: mesinId },
-            success: function (response) {
-                if (response.kategori === '1') {
-                    $('#vs-field').show();
-                    $('#stitch-field').show();
-                    $('#berat-field').hide();
-                } else if (response.kategori === '2') {
-                    $('#vs-field').hide();
-                    $('#stitch-field').hide();
-                    $('#berat-field').show();
-                } else {
-                    $('#vs-field').hide();
-                    $('#stitch-field').hide();
-                    $('#berat-field').hide();
+$(document).ready(function() {
+    $('#mesin-dropdown').change(function() {
+        var mesinId = $(this).val();
+        
+        
+        $('#bordir-fields').hide();
+        $('#kaoskaki-fields').hide();
+        
+        if(mesinId) {
+            
+            $.get('/mesin/get-kategori', {id: mesinId}, function(data) {
+                if(data.kategori === '1') {  
+                    $('#bordir-fields').show();
+                } else if(data.kategori === '2') { 
+                    $('#kaoskaki-fields').show();
                 }
-            },
-            error: function () {
-                alert('Gagal mendapatkan kategori mesin.');
-            }
-        });
-    } else {
-        $('#vs-field').hide();
-        $('#stitch-field').hide();
-        $('#berat-field').hide();
-    }
+            });
+        }
+    });
 });
 JS;
-
 $this->registerJs($script);
 ?>
-

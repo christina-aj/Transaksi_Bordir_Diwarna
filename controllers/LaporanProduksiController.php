@@ -74,13 +74,7 @@ class LaporanProduksiController extends Controller
     public function actionCreate()
     {
         $model = new LaporanProduksi();
-        
-        $mesinlist = ArrayHelper::map(
-            Mesin::find()->all(),
-            'mesin_id', 
-            'nama'     
-        );
-        
+
         $model->shift_id = Yii::$app->session->get('shift_id');
         $model->tanggal_kerja = Yii::$app->session->get('tanggal_kerja');
 
@@ -93,7 +87,6 @@ class LaporanProduksiController extends Controller
         }
 
         return $this->render('create', [
-            'mesinList' => $mesinlist,
             'model' => $model,
         ]);
     }
@@ -108,11 +101,12 @@ class LaporanProduksiController extends Controller
     public function actionUpdate($laporan_id)
     {
         $model = $this->findModel($laporan_id);
-
+        
+        
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
             return $this->redirect(['view', 'laporan_id' => $model->laporan_id]);
         }
-    
+
         return $this->render('update', [
             'model' => $model,
         ]);

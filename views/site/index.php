@@ -146,7 +146,13 @@ $this->registerJsFile('https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.mi
                         ]),
                         'columns' => [
                             ['class' => 'yii\grid\SerialColumn'],
-                            'nama_mesin',
+                            [
+                                'attribute' => 'mesin_id',
+                                'label' => 'Nama Mesin',
+                                'value' => function ($model) {
+                                    return $model->mesin->nama;
+                                },
+                            ],
                             [
                                 'attribute' => 'Nama Operator - Shift',
                                 'value' => function ($model) {
@@ -418,3 +424,14 @@ JS;
 $url = Url::to(['laporan-agregat/get-aggregated-data']);
 $this->registerJs($script, View::POS_END);
 ?>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const cells = document.querySelectorAll('td, th');
+    cells.forEach(cell => {
+        if (cell.textContent.trim() === '(not set)') {
+            cell.textContent = 'kosong';
+        }
+    });
+});
+</script>

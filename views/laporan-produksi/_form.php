@@ -19,6 +19,15 @@ $mesinList = ArrayHelper::map(
     'nama'
 );
 
+$dataBarang = ArrayHelper::map(
+    \app\models\Barangproduksi::find()
+        ->select(['barang_id', 'nama'])
+        ->asArray()
+        ->all(), 
+    'barang_id', 
+    'nama'
+);
+
 $shiftId = Yii::$app->session->get('shift_id');
 $tanggalKerja = Yii::$app->session->get('tanggal_kerja'); 
 
@@ -83,12 +92,16 @@ if ($tanggalKerja !== null) {
     <?= $form->field($model, 'nama_kerjaan')->textInput(['maxlength' => true]) ?>
 
     <?php
-    $dataBarang = ArrayHelper::map(\app\models\Barangproduksi::find()->asArray()->all(), 'nama', 'nama');
-    echo $form->field($model, 'nama_barang')
-        ->dropDownList(
-            $dataBarang,
-            ['prompt'=>'Pilih Barang']
-        );
+    echo $form->field($model, 'nama_barang')->widget(Select2::classname(), [
+        'data' => $dataBarang,
+        'options' => [
+            'placeholder' => 'Pilih Barang',
+        ],
+        'pluginOptions' => [
+            'allowClear' => true,
+            'width' => '100%'
+        ],
+    ]);
     ?>
 
     <div id="bordir-fields" style="display: none;">

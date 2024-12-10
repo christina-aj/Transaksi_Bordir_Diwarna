@@ -51,7 +51,11 @@ class StockSearch extends Stock
     public function search($params)
     {
         $query = Stock::find()->joinWith(['barang', 'user']);
-
+        $query->orderBy([
+            'tambah_stock' => SORT_DESC,  // Atur default sorting descending berdasarkan 'tanggal'
+            // atau untuk kolom lain
+            // 'kode_pembelian' => SORT_DESC,
+        ]);
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([

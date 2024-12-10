@@ -47,7 +47,11 @@ class PenggunaanSearch extends Penggunaan
 
 
         $query = Penggunaan::find()->joinWith(['user', 'barang']);
-
+        $query->orderBy([
+            'tanggal_digunakan' => SORT_DESC,  // Atur default sorting descending berdasarkan 'tanggal'
+            // atau untuk kolom lain
+            // 'kode_pembelian' => SORT_DESC,
+        ]);
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([

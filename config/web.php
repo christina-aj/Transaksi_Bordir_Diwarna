@@ -23,6 +23,7 @@ $config = [
         'session' => [
             'class' => 'yii\web\Session',
             'cookieParams' => ['httpOnly' => true],
+            'name' => 'advance_session',
         ],
         'request' => [
             'cookieValidationKey' => '2I2doEmMhGooS5mKkD9HxtR9tt5To-vK',

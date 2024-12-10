@@ -50,7 +50,11 @@ class PembelianSearch extends Pembelian
     public function search($params)
     {
         $query = Pembelian::find()->joinWith(['pemesanan', 'user']);
-
+        $query->orderBy([
+            'tanggal' => SORT_DESC,  // Atur default sorting descending berdasarkan 'tanggal'
+            // atau untuk kolom lain
+            'pembelian_id' => SORT_DESC,
+        ]);
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
@@ -58,6 +62,7 @@ class PembelianSearch extends Pembelian
             'pagination' => [
                 'pageSize' => 15, // Jumlah item per halaman
             ],
+
             'sort' => [
                 'attributes' => [
                     'kode_pembelian' => [

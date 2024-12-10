@@ -48,7 +48,11 @@ class GudangSearch extends Gudang
     public function search($params)
     {
         $query = Gudang::find()->joinWith(['user', 'barang']);
-
+        $query->orderBy([
+            'tanggal' => SORT_DESC,  // Atur default sorting descending berdasarkan 'tanggal'
+            // atau untuk kolom lain
+            // 'kode_pembelian' => SORT_DESC,
+        ]);
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([

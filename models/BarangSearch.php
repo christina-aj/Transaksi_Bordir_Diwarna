@@ -47,7 +47,11 @@ class BarangSearch extends Barang
     public function search($params)
     {
         $query = Barang::find()->joinWith(['unit']);
-
+        $query->orderBy([
+            'kode_barang' => SORT_ASC,  // Atur default sorting descending berdasarkan 'tanggal'
+            // atau untuk kolom lain
+            // 'kode_pembelian' => SORT_DESC,
+        ]);
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([

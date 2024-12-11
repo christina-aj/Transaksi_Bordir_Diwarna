@@ -6,10 +6,14 @@ use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
+use kartik\dialog\Dialog;
+
+
 
 /** @var yii\web\View $this */
 /** @var app\models\Pemesanan $modelPemesanan */
 /** @var yii\widgets\ActiveForm $form */
+echo Dialog::widget();
 ?>
 
 <div class="pemesanan-form">
@@ -116,10 +120,10 @@ use yii\widgets\ActiveForm;
                             </td>
                             <td class="text-center">
                                 <div class="btn-group" role="group">
-                                    <button type="button" class="btn btn-success btn-sm add-row" title="Tambah">
+                                    <button type="button" class="btn btn-success btn-sm add-row" id="add-rows" title="Tambah">
                                         <i class="fas fa-plus"></i> <!-- Icon tambah -->
                                     </button>
-                                    <button type="button" class="btn btn-danger btn-sm delete-row" data-id="<?= $modelDetail->pesandetail_id ?>" title="Hapus">
+                                    <button type="button" class="btn btn-danger btn-sm delete-row" id="delete-rows" data-id="<?= $modelDetail->pesandetail_id ?>" title="Hapus">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </div>
@@ -132,7 +136,7 @@ use yii\widgets\ActiveForm;
             <?= Html::hiddenInput('deleteRows', '', ['id' => 'deleteRows']) ?>
 
             <div class="form-group">
-                <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
+                <?= Html::submitButton('Save', ['class' => 'btn btn-success', 'id' => 'saveButtons']) ?>
 
             </div>
 
@@ -140,7 +144,12 @@ use yii\widgets\ActiveForm;
             <?php if ($modelDetail->isNewRecord): ?>
 
                 <!-- Mode Create: Tombol Back berfungsi sebagai tombol Cancel -->
-                <?= Html::a('Cancel', ['cancel', 'pemesanan_id' => $modelPemesanan->pemesanan_id], [
+                <?= Html::a('Cancel', [
+                    'cancel',
+                    'pemesanan_id' => $modelPemesanan->pemesanan_id,
+
+                ], [
+                    'id' => 'cancelButtons',
                     'class' => 'btn btn-danger',
                     'data' => [
                         'confirm' => 'Apakah Anda yakin ingin membatalkan pemesanan ini?',
@@ -161,7 +170,7 @@ use yii\widgets\ActiveForm;
 <?php
 // Dapatkan nilai `pemesanan_id` dari model
 $pemesananId = $modelPemesanan->pemesanan_id;
-
+$isNewRecord = $modelDetail->isNewRecord;
 $this->registerJs("
 
     
@@ -202,6 +211,31 @@ $this->registerJs("
         rowIndex++;
         toggleAddDeleteButtons();
     });
+
+    //fungsi untuk cek form kosong atau tidak
+    var formChanged = true;  // Anggap form belum diproses saat pertama kali dimuat
+    var isNewRecord = " . json_encode($isNewRecord) . ";
+
+    $(document).ready(function() {
+
+        // Menangani klik pada elemen button dan a
+        $('button, a').on('click', function(e) {
+            // Cek apakah form telah berubah dan apakah tombol yang diklik bukan #cancelButton, #saveButton
+            if (formChanged && isNewRecord && !$(e.currentTarget).is('#cancelButtons, #saveButtons, .cancel-class, .save-class, #add-rows')) {
+                // Debug: Cek apakah e.currentTarget adalah tombol yang tepat
+                console.log('Tombol yang diklik: ' + $(e.currentTarget).attr('id'));
+
+                e.preventDefault();  // Mencegah aksi default (misalnya klik tombol atau tautan)
+                
+                // Menampilkan dialog peringatan
+                krajeeDialog.alert('Selesaikan form dahulu atau cancel form pemesanan').setDefaults({
+                    'backdrop': 'static',  // Static berarti pengguna tidak bisa menutup modal dengan mengklik di luar modal
+                    'zIndex': 9999         // Pastikan zIndex modal cukup tinggi
+                });
+            }
+        });
+    });
+
 
     // Fungsi untuk menghapus baris
     $(document).on('click', '.delete-row', function() {
@@ -288,5 +322,17 @@ $this->registerJs("
         /* Tinggi maksimal dropdown */
         overflow-y: auto;
         /* Aktifkan scroll vertikal */
+    }
+
+    /* Pastikan modal muncul di atas elemen lain */
+    /* Pastikan modal berada di atas overlay */
+    .modal {
+        z-index: 1051;
+        /* Atur sesuai kebutuhan */
+    }
+
+    .modal-backdrop {
+        z-index: 1050;
+        /* Pastikan backdrop memiliki z-index lebih rendah */
     }
 </style>

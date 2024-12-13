@@ -63,9 +63,9 @@ $this->params['breadcrumbs'][] = $this->title;
                         <?= $form->field($model, 'rememberMe')->checkbox([
                             'template' => "<div class=\"custom-control custom-checkbox\">{input} {label}</div>\n<div class=\"col-lg-8\">{error}</div>",
                         ]) ?>
-                        <div class="form-group">
+                        <!-- <div class="form-group">
                             <?= Html::a('Forgot Password?', ['site/request-password-reset'], ['class' => 'text-primary f-w-400 mb-0']) ?>
-                        </div>
+                        </div> -->
                         <!-- <div class="form-group mb-3">
                             <input type="password" class="form-control" id="floatingInput1" placeholder="Password" required>
                         </div> -->

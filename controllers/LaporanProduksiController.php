@@ -15,7 +15,7 @@ use app\models\Shift;
 /**
  * LaporanProduksiController implements the CRUD actions for LaporanProduksi model.
  */
-class LaporanProduksiController extends Controller
+class LaporanProduksiController extends BaseController
 {
     /**
      * @inheritDoc
@@ -31,6 +31,16 @@ class LaporanProduksiController extends Controller
                         'delete' => ['POST'],
                     ],
                 ],
+                'access' => [
+                    'class' => \yii\filters\AccessControl::class,
+                    'only' => ['delete', 'update', 'create', 'index', 'view'], // Aksi yang diatur
+                    'rules' => [
+                        [
+                            'allow' => true,
+                            'roles' => ['@'], // Hanya pengguna yang sudah login
+                        ],
+                    ],
+                ]
             ]
         );
     }
@@ -83,7 +93,7 @@ class LaporanProduksiController extends Controller
             Yii::$app->session->remove('tanggal_kerja');
 
             Yii::$app->session->setFlash('success', 'Laporan Produksi berhasil disimpan.');
-            return $this->redirect(['view', 'laporan_id' => $model->laporan_id]); 
+            return $this->redirect(['view', 'laporan_id' => $model->laporan_id]);
         }
 
         return $this->render('create', [
@@ -101,8 +111,8 @@ class LaporanProduksiController extends Controller
     public function actionUpdate($laporan_id)
     {
         $model = $this->findModel($laporan_id);
-        
-        
+
+
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
             return $this->redirect(['view', 'laporan_id' => $model->laporan_id]);
         }
@@ -151,7 +161,7 @@ class LaporanProduksiController extends Controller
             $date = Yii::$app->request->post('date');
             $month = date('m', strtotime($date));
 
-            
+
             $dataShift = Shift::find()
                 ->where(['MONTH(tanggal)' => $month])
                 ->asArray()
@@ -169,16 +179,14 @@ class LaporanProduksiController extends Controller
     }
 
     public function actionGetKategori($id)
-{
-    Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+    {
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
-    $mesin = Mesin::findOne($id);
-    if ($mesin) {
-        return ['kategori' => $mesin->kategori];
+        $mesin = Mesin::findOne($id);
+        if ($mesin) {
+            return ['kategori' => $mesin->kategori];
+        }
+
+        return ['kategori' => null];
     }
-
-    return ['kategori' => null];
-}
-
-
 }

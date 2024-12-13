@@ -11,7 +11,7 @@ use yii\filters\VerbFilter;
 /**
  * SupplierController implements the CRUD actions for Supplier model.
  */
-class SupplierController extends Controller
+class SupplierController extends BaseController
 {
     /**
      * @inheritDoc
@@ -27,6 +27,16 @@ class SupplierController extends Controller
                         'delete' => ['POST'],
                     ],
                 ],
+                'access' => [
+                    'class' => \yii\filters\AccessControl::class,
+                    'only' => ['delete', 'update', 'create', 'index', 'view'], // Aksi yang diatur
+                    'rules' => [
+                        [
+                            'allow' => true,
+                            'roles' => ['@'], // Hanya pengguna yang sudah login
+                        ],
+                    ],
+                ]
             ]
         );
     }

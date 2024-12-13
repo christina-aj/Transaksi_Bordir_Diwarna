@@ -21,7 +21,7 @@ use yii\filters\VerbFilter;
 /**
  * PemesananController implements the CRUD actions for Pemesanan model.
  */
-class PemesananController extends Controller
+class PemesananController extends BaseController
 {
     /**
      * @inheritDoc
@@ -37,6 +37,16 @@ class PemesananController extends Controller
                         'delete' => ['POST'],
                     ],
                 ],
+                'access' => [
+                    'class' => \yii\filters\AccessControl::class,
+                    'only' => ['delete', 'update', 'create', 'index', 'view'], // Aksi yang diatur
+                    'rules' => [
+                        [
+                            'allow' => true,
+                            'roles' => ['@'], // Hanya pengguna yang sudah login
+                        ],
+                    ],
+                ]
             ]
         );
     }

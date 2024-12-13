@@ -12,7 +12,7 @@ use yii\filters\VerbFilter;
 /**
  * MesinController implements the CRUD actions for Mesin model.
  */
-class MesinController extends Controller
+class MesinController extends BaseController
 {
     /**
      * @inheritDoc
@@ -28,6 +28,16 @@ class MesinController extends Controller
                         'delete' => ['POST'],
                     ],
                 ],
+                'access' => [
+                    'class' => \yii\filters\AccessControl::class,
+                    'only' => ['delete', 'update', 'create', 'index', 'view'], // Aksi yang diatur
+                    'rules' => [
+                        [
+                            'allow' => true,
+                            'roles' => ['@'], // Hanya pengguna yang sudah login
+                        ],
+                    ],
+                ]
             ]
         );
     }
@@ -79,8 +89,7 @@ class MesinController extends Controller
             } else {
                 Yii::$app->session->setFlash('error', 'Terjadi kesalahan saat menyimpan Mesin.');
             }
-
-        } 
+        }
         return $this->render('create', [
             'model' => $model,
         ]);
@@ -117,18 +126,16 @@ class MesinController extends Controller
     {
         $model = $this->findModel($mesin_id);
 
-        
-        if($model->getLaporan()->exists()){
+
+        if ($model->getLaporan()->exists()) {
             Yii::$app->session->setFlash('error', 'Mesin ini tidak dapat dihapus karena sedang digunakan di laporan produksi.');
             return $this->redirect(['index']);
-        }else{
+        } else {
             $model->delete();
             Yii::$app->session->setFlash('success', 'Mesin berhasil dihapus.');
 
             return $this->redirect(['index']);
-
         }
-
     }
 
     /**
@@ -150,12 +157,12 @@ class MesinController extends Controller
     public function actionGetKategori($id)
     {
         Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-        
+
         $mesin = Mesin::findOne($id);
         if ($mesin) {
             return ['kategori' => $mesin->kategori];
         }
-        
+
         return ['kategori' => null];
     }
 }

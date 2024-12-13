@@ -20,7 +20,7 @@ use yii\base\Model;
 /**
  * PesanDetailController implements the CRUD actions for PesanDetail model.
  */
-class PesanDetailController extends Controller
+class PesanDetailController extends BaseController
 {
     /**
      * @inheritDoc
@@ -36,6 +36,16 @@ class PesanDetailController extends Controller
                         'delete' => ['POST'],
                     ],
                 ],
+                'access' => [
+                    'class' => \yii\filters\AccessControl::class,
+                    'only' => ['delete', 'update', 'create', 'index', 'view'], // Aksi yang diatur
+                    'rules' => [
+                        [
+                            'allow' => true,
+                            'roles' => ['@'], // Hanya pengguna yang sudah login
+                        ],
+                    ],
+                ]
             ]
         );
     }

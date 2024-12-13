@@ -18,6 +18,11 @@ $this->params['breadcrumbs'][] = $this->title;
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
 <html>
+<?php if (Yii::$app->session->hasFlash('error')): ?>
+    <div class="alert alert-danger">
+        <?= Yii::$app->session->getFlash('error') ?>
+    </div>
+<?php endif; ?>
 
 <head>
     <meta charset="UTF-8">

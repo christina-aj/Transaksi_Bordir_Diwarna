@@ -11,7 +11,7 @@ use yii\filters\VerbFilter;
 /**
  * UnitController implements the CRUD actions for Unit model.
  */
-class UnitController extends Controller
+class UnitController extends BaseController
 {
     /**
      * @inheritDoc
@@ -27,6 +27,16 @@ class UnitController extends Controller
                         'delete' => ['POST'],
                     ],
                 ],
+                'access' => [
+                    'class' => \yii\filters\AccessControl::class,
+                    'only' => ['delete', 'update', 'create', 'index', 'view'], // Aksi yang diatur
+                    'rules' => [
+                        [
+                            'allow' => true,
+                            'roles' => ['@'], // Hanya pengguna yang sudah login
+                        ],
+                    ],
+                ]
             ]
         );
     }

@@ -15,7 +15,7 @@ use yii\base\Model;
 /**
  * BarangController implements the CRUD actions for Barang model.
  */
-class BarangController extends Controller
+class BarangController extends BaseController
 {
     /**
      * @inheritDoc
@@ -31,6 +31,16 @@ class BarangController extends Controller
                         'delete' => ['POST'],
                     ],
                 ],
+                'access' => [
+                    'class' => \yii\filters\AccessControl::class,
+                    'only' => ['delete', 'update', 'create', 'index', 'view'], // Aksi yang diatur
+                    'rules' => [
+                        [
+                            'allow' => true,
+                            'roles' => ['@'], // Hanya pengguna yang sudah login
+                        ],
+                    ],
+                ]
             ]
         );
     }

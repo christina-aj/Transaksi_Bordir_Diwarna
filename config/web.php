@@ -26,7 +26,7 @@ $config = [
                 'httpOnly' => true,
             ],
             'name' => 'advance_session',
-            'timeout' => 15, // 1 jam
+            'timeout' => 3600, // 1 jam
         ],
         'request' => [
             'cookieValidationKey' => '2I2doEmMhGooS5mKkD9HxtR9tt5To-vK',

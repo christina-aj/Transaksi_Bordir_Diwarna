@@ -47,4 +47,9 @@ class Barangproduksi extends \yii\db\ActiveRecord
             'deskripsi' => 'Deskripsi',
         ];
     }
+
+    public function getbarangList()
+    {
+        return $this->hasMany(LaporanProduksi::class, ['barang_id' => 'barang_id']);
+    }
 }

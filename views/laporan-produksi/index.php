@@ -46,7 +46,13 @@ $this->params['breadcrumbs'][] = $this->title;
                 },
             ],
             'nama_kerjaan',
-            'nama_barang',
+            [
+                'attribute' => 'nama_barang',
+                'label' => 'Nama Barang',
+                'value' => function ($model) {
+                    return $model->barangProduksi ? $model->barangProduksi->nama : '(Tidak ada barang)';
+                },
+            ],
             'vs',
             'stitch',
             'kuantitas',

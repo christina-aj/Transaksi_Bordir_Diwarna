@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use Yii;
 use app\models\Barangproduksi;
 use app\models\Barangproduksisearch;
 use yii\web\Controller;
@@ -111,10 +112,35 @@ class BarangproduksiController extends Controller
      */
     public function actionDelete($barang_id)
     {
-        $this->findModel($barang_id)->delete();
+        $model = $this->findModel($barang_id);
+
+        // Periksa apakah tabel laporanproduksi ada
+        $db = Yii::$app->db;
+        $tableSchema = $db->getSchema()->getTableSchema('laporanproduksi');
+
+        if ($tableSchema === null) {
+            Yii::$app->session->setFlash('error', 'Tabel laporan produksi tidak ditemukan. Hubungi administrator.');
+            return $this->redirect(['index']);
+        }
+
+        $isBarangUsedInLaporanProduksi = (new \yii\db\Query())
+            ->from('laporanproduksi')
+            ->where(['nama_barang' => $barang_id]) 
+            ->exists();
+
+        if ($isBarangUsedInLaporanProduksi) {
+            Yii::$app->session->setFlash('error', 'Barang ini tidak dapat dihapus karena sedang digunakan di laporan produksi.');
+            return $this->redirect(['index']);
+        }
+
+        $model->delete();
+        Yii::$app->session->setFlash('success', 'Barang berhasil dihapus.');
 
         return $this->redirect(['index']);
     }
+
+
+
 
     /**
      * Finds the Barangproduksi model based on its primary key value.

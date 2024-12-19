@@ -13,8 +13,21 @@ use yii\grid\GridView;
 $this->title = 'Barang Produksi';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="pc-content">
 
+<?php if (Yii::$app->session->hasFlash('success')): ?>
+    <div class="alert alert-success" style="margin-top: 3px;">
+        <?= Yii::$app->session->getFlash('success') ?>
+    </div>
+<?php endif; ?>
+
+<?php if (Yii::$app->session->hasFlash('error')): ?>
+    <div class="alert alert-danger" style="margin-top: 3px;">
+        <?= Yii::$app->session->getFlash('error') ?>
+    </div>
+<?php endif; ?>
+
+<div class="pc-content">
+    
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>

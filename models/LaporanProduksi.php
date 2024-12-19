@@ -104,6 +104,11 @@ class laporanproduksi extends \yii\db\ActiveRecord
         return $this->hasOne(Mesin::class, ['mesin_id' => 'mesin_id']);
     }
 
+    public function getBarangProduksi()
+    {
+        return $this->hasOne(Barangproduksi::className(), ['barang_id' => 'nama_barang']);
+    }
+
     /**
      * Mengkonversi format tanggal dari d-m-Y ke Y-m-d sebelum disimpan ke database
      */

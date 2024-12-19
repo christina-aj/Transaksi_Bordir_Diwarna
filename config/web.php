@@ -22,7 +22,11 @@ $config = [
 
         'session' => [
             'class' => 'yii\web\Session',
-            'cookieParams' => ['httpOnly' => true],
+            'cookieParams' => [
+                'httpOnly' => true,
+            ],
+            'name' => 'advance_session',
+            'timeout' => 3600, // 1 jam
         ],
         'request' => [
             'cookieValidationKey' => '2I2doEmMhGooS5mKkD9HxtR9tt5To-vK',
@@ -37,8 +41,14 @@ $config = [
             'loginUrl' => ['site/login'],
         ],
         'errorHandler' => [
-            'errorAction' => 'site/error',
+            'errorAction' => 'site/error', // Tetap set ke action error
         ],
+        'on beforeRequest' => function ($event) {
+            $session = Yii::$app->session;
+            if (!Yii::$app->request->isAjax && Yii::$app->errorHandler->exception === null) {
+                $session->set('lastPage', Yii::$app->request->absoluteUrl); // Simpan halaman terakhir
+            }
+        },
         'mailer' => [
             'class' => \yii\symfonymailer\Mailer::class,
             'viewPath' => '@app/mail',

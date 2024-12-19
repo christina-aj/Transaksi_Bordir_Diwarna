@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "65c828f08d194417ce83e70c73398400",
+    "content-hash": "82290f6871bb10ded69042165f6e866c",
     "packages": [
         {
             "name": "bower-asset/bootstrap",
@@ -742,21 +742,22 @@
         },
         {
             "name": "kartik-v/yii2-dialog",
-            "version": "v1.0.6",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/kartik-v/yii2-dialog.git",
-                "reference": "510c3a35ffe79987cde9a9366cedbff545fd92d4"
+                "reference": "de5d8335231e7023f21e93c06bfa163743443a19"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kartik-v/yii2-dialog/zipball/510c3a35ffe79987cde9a9366cedbff545fd92d4",
-                "reference": "510c3a35ffe79987cde9a9366cedbff545fd92d4",
+                "url": "https://api.github.com/repos/kartik-v/yii2-dialog/zipball/de5d8335231e7023f21e93c06bfa163743443a19",
+                "reference": "de5d8335231e7023f21e93c06bfa163743443a19",
                 "shasum": ""
             },
             "require": {
                 "kartik-v/yii2-krajee-base": ">=3.0.0"
             },
+            "default-branch": true,
             "type": "yii2-extension",
             "extra": {
                 "branch-alias": {
@@ -791,9 +792,9 @@
             ],
             "support": {
                 "issues": "https://github.com/kartik-v/yii2-dialog/issues",
-                "source": "https://github.com/kartik-v/yii2-dialog/tree/v1.0.6"
+                "source": "https://github.com/kartik-v/yii2-dialog/tree/master"
             },
-            "time": "2021-09-02T08:26:37+00:00"
+            "time": "2022-05-09T04:47:43+00:00"
         },
         {
             "name": "kartik-v/yii2-grid",
@@ -7304,13 +7305,14 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "kartik-v/yii2-bootstrap5-dropdown": 20
+        "kartik-v/yii2-bootstrap5-dropdown": 20,
+        "kartik-v/yii2-dialog": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
         "php": ">=7.4.0"
     },
-    "platform-dev": {},
+    "platform-dev": [],
     "plugin-api-version": "2.6.0"
 }

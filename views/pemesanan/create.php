@@ -8,10 +8,15 @@ use yii\helpers\Html;
 $this->title = 'Create Pemesanan';
 $this->params['breadcrumbs'][] = ['label' => 'Pemesanans', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
+$combineVariables = [
+    'modelPemesanan' => $modelPemesanan,
+    'modelDetails' => $modelDetails,
+]
 ?>
 <div class="pc-content">
 
     <?= $this->render('_form', [
+        $combineVariables,
         'modelPemesanan' => $modelPemesanan,
         'modelDetails' => $modelDetails,
     ]) ?>

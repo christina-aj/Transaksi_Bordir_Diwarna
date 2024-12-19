@@ -12,7 +12,7 @@ use app\models\ContactForm;
 use app\models\laporanproduksi;
 use app\models\PesanDetail;
 
-class SiteController extends Controller
+class SiteController extends BaseController
 {
     /**
      * {@inheritdoc}
@@ -30,8 +30,9 @@ class SiteController extends Controller
                         'allow' => true,
                         'roles' => ['?'],
                     ],
+
                     [
-                        'actions' => ['index', 'logout', 'panduan'],
+                        'actions' => ['index', 'logout'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -222,5 +223,17 @@ class SiteController extends Controller
     public function actionAbout()
     {
         return $this->render('about');
+    }
+
+    public function actionError()
+    {
+        $exception = Yii::$app->errorHandler->exception;
+
+        if ($exception !== null) {
+            $lastPage = Yii::$app->session->get('lastPage', Yii::$app->homeUrl);
+            return $this->redirect($lastPage);
+        }
+
+        return $this->redirect(Yii::$app->homeUrl);
     }
 }

@@ -12,6 +12,7 @@ use yii\grid\GridView;
 
 $this->title = 'Mesin';
 $this->params['breadcrumbs'][] = $this->title;
+$user = Yii::$app->user->identity->role;
 ?>
 <div class="pc-content">
 
@@ -26,13 +27,15 @@ $this->params['breadcrumbs'][] = $this->title;
             <?= Yii::$app->session->getFlash('error') ?>
         </div>
     <?php endif; ?>
-    
-    <div class="card card-table">
-        <div class="card-header">
-            <h1><?= Html::encode($this->title) ?></h1>
-            <?= Html::a('Create Mesin', ['create'], ['class' => 'btn btn-success']) ?>
 
-        </div>
+    <div class="card card-table">
+        <?php if ($user !== 'Operator'): ?>
+            <div class="card-header">
+                <h1><?= Html::encode($this->title) ?></h1>
+                <?= Html::a('Create Mesin', ['create'], ['class' => 'btn btn-success']) ?>
+
+            </div>
+        <?php endif; ?>
         <div class="card-body">
             <div class="table-responsive">
                 <?= GridView::widget([
@@ -49,12 +52,19 @@ $this->params['breadcrumbs'][] = $this->title;
                             'filter' => [
                                 1 => 'Bordir',
                                 2 => 'Kaos Kaki',
-                            ], 
+                            ],
                         ],
                         'deskripsi:ntext',
                         [
                             'class' => ActionColumn::className(),
+                            'template' => '{view}',  // Hanya tampilkan tombol 'view' saja
                             'urlCreator' => function ($action, Mesin $model, $key, $index, $column) {
+                                if (Yii::$app->user->identity->role === 'Operator') {
+                                    // Jika Operator, hanya izinkan akses ke view
+                                    if ($action === 'update' || $action === 'delete') {
+                                        return null; // Mengembalikan null untuk mencegah akses ke edit dan delete
+                                    }
+                                }
                                 return Url::toRoute([$action, 'mesin_id' => $model->mesin_id]);
                             }
                         ],
@@ -62,5 +72,6 @@ $this->params['breadcrumbs'][] = $this->title;
                 ]); ?>
             </div>
         </div>
+
     </div>
 </div>

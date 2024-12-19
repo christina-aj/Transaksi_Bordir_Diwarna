@@ -1,27 +1,25 @@
 <?php
 
-/** @var yii\web\View $this */
-/** @var string $name */
-/** @var string $message */
-/** @var Exception$exception */
-
 use yii\helpers\Html;
 
-$this->title = $name;
-?>
-<div class="site-error">
+/** @var yii\web\View $this */
+/** @var $exception Exception */
+/** @var $lastPage string */
 
+$this->title = 'Error';
+
+?>
+
+<div class="site-error">
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <div class="alert alert-danger">
-        <?= nl2br(Html::encode($message)) ?>
-    </div>
+    <p>Terjadi kesalahan saat memproses permintaan Anda.</p>
+
+    <?php if (YII_DEBUG): ?>
+        <p><strong>Error:</strong> <?= Html::encode($exception->getMessage()) ?></p>
+    <?php endif; ?>
 
     <p>
-        The above error occurred while the Web server was processing your request.
+        <?= Html::a('Kembali ke halaman sebelumnya', $lastPage, ['class' => 'btn btn-primary']) ?>
     </p>
-    <p>
-        Please contact us if you think this is a server error. Thank you.
-    </p>
-
 </div>

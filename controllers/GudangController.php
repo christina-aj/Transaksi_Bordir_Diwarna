@@ -12,7 +12,7 @@ use Yii;
 /**
  * GudangController implements the CRUD actions for Gudang model.
  */
-class GudangController extends Controller
+class GudangController extends BaseController
 {
     /**
      * @inheritDoc
@@ -28,6 +28,16 @@ class GudangController extends Controller
                         'delete' => ['POST'],
                     ],
                 ],
+                'access' => [
+                    'class' => \yii\filters\AccessControl::class,
+                    'only' => ['delete', 'update', 'create', 'index', 'view'], // Aksi yang diatur
+                    'rules' => [
+                        [
+                            'allow' => true,
+                            'roles' => ['@'], // Hanya pengguna yang sudah login
+                        ],
+                    ],
+                ]
             ]
         );
     }

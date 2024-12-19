@@ -49,7 +49,11 @@ class PemesananSearch extends Pemesanan
     {
 
         $query = Pemesanan::find()->joinWith(['user']);
-
+        $query->orderBy([
+            'tanggal' => SORT_DESC,  // Atur default sorting descending berdasarkan 'tanggal'
+            // atau untuk kolom lain
+            'pemesanan_id' => SORT_DESC,
+        ]);
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([

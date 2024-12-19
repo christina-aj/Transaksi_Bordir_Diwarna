@@ -1,4 +1,5 @@
 <?php
+
 namespace app\controllers;
 
 
@@ -13,7 +14,7 @@ use yii\filters\VerbFilter;
 /**
  * ShiftController implements the CRUD actions for Shift model.
  */
-class ShiftController extends Controller
+class ShiftController extends BaseController
 {
     /**s
      * @inheritDoc
@@ -29,6 +30,16 @@ class ShiftController extends Controller
                         'delete' => ['POST'],
                     ],
                 ],
+                'access' => [
+                    'class' => \yii\filters\AccessControl::class,
+                    'only' => ['delete', 'update', 'create', 'index', 'view'], // Aksi yang diatur
+                    'rules' => [
+                        [
+                            'allow' => true,
+                            'roles' => ['@'], // Hanya pengguna yang sudah login
+                        ],
+                    ],
+                ]
             ]
         );
     }
@@ -43,7 +54,7 @@ class ShiftController extends Controller
         $searchModel = new ShiftSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
-        
+
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
@@ -60,9 +71,9 @@ class ShiftController extends Controller
     {
         $model = $this->findModel($shift_id);
 
-        
+
         Yii::$app->session->set('shift_id', $model->shift_id);
-        Yii::$app->session->set('tanggal_kerja', $model->tanggal); 
+        Yii::$app->session->set('tanggal_kerja', $model->tanggal);
 
         return $this->render('view', [
             'model' => $model,
@@ -143,28 +154,28 @@ class ShiftController extends Controller
     public function actionUpdate($shift_id)
     {
         $model = $this->findModel($shift_id);
-    
+
         if ($this->request->isPost) {
             $model->load($this->request->post());
-    
-            
+
+
             $model->user_id = Yii::$app->user->id;
-    
-            
+
+
             if ($model->waktu_kerja === 'custom') {
                 $startTime = $this->request->post('Shift')['start_time'];
                 $endTime = $this->request->post('Shift')['end_time'];
-    
+
                 if (!empty($startTime) && !empty($endTime)) {
                     $startTimeObj = \DateTime::createFromFormat('H:i', $startTime);
                     $endTimeObj = \DateTime::createFromFormat('H:i', $endTime);
-    
-                    
+
+
                     if ($startTimeObj && $endTimeObj) {
                         if ($startTimeObj < $endTimeObj) {
                             $interval = $startTimeObj->diff($endTimeObj);
                             $hours = $interval->h + ($interval->i / 60);
-                            $model->waktu_kerja = $hours / 9; 
+                            $model->waktu_kerja = $hours / 9;
                         } else {
                             $model->addError('end_time', 'End time must be after start time.');
                         }
@@ -177,7 +188,7 @@ class ShiftController extends Controller
                     $model->addError('end_time', 'End time is required.');
                 }
             }
-    
+
             if ($model->validate()) {
                 try {
                     if ($model->save()) {
@@ -190,12 +201,12 @@ class ShiftController extends Controller
                 }
             }
         }
-    
+
         return $this->render('update', [
             'model' => $model,
         ]);
     }
-    
+
 
 
     /**
@@ -209,17 +220,17 @@ class ShiftController extends Controller
     {
         $model = $this->findModel($shift_id);
 
-    
+
         if ($model->getLaporanProduksiList()->exists()) {
             Yii::$app->session->setFlash('error', 'Shift ini tidak dapat dihapus karena sedang digunakan di laporan produksi.');
             return $this->redirect(['index']);
         }
 
-        
+
         $model->delete();
         Yii::$app->session->setFlash('success', 'Shift berhasil dihapus.');
 
-        
+
         return $this->redirect(['index']);
     }
 

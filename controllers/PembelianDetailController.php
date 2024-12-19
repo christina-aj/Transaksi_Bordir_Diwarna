@@ -11,7 +11,7 @@ use yii\filters\VerbFilter;
 /**
  * PembelianDetailController implements the CRUD actions for PembelianDetail model.
  */
-class PembelianDetailController extends Controller
+class PembelianDetailController extends BaseController
 {
     /**
      * @inheritDoc
@@ -27,6 +27,16 @@ class PembelianDetailController extends Controller
                         'delete' => ['POST'],
                     ],
                 ],
+                'access' => [
+                    'class' => \yii\filters\AccessControl::class,
+                    'only' => ['delete', 'update', 'create', 'index', 'view'], // Aksi yang diatur
+                    'rules' => [
+                        [
+                            'allow' => true,
+                            'roles' => ['@'], // Hanya pengguna yang sudah login
+                        ],
+                    ],
+                ]
             ]
         );
     }

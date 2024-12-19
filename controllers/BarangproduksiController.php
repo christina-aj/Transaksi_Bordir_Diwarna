@@ -12,7 +12,7 @@ use yii\filters\VerbFilter;
 /**
  * BarangproduksiController implements the CRUD actions for Barangproduksi model.
  */
-class BarangproduksiController extends Controller
+class BarangproduksiController extends BaseController
 {
     /**
      * @inheritDoc
@@ -28,6 +28,16 @@ class BarangproduksiController extends Controller
                         'delete' => ['POST'],
                     ],
                 ],
+                'access' => [
+                    'class' => \yii\filters\AccessControl::class,
+                    'only' => ['delete', 'update', 'create', 'index', 'view'], // Aksi yang diatur
+                    'rules' => [
+                        [
+                            'allow' => true,
+                            'roles' => ['@'], // Hanya pengguna yang sudah login
+                        ],
+                    ],
+                ]
             ]
         );
     }

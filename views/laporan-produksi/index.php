@@ -34,14 +34,14 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
                 'attribute' => 'Nama Operator - Shift',
-                'value' => function($model) {
+                'value' => function ($model) {
                     $shiftTime = ($model['shift'] == "1") ? 'Pagi' : 'Sore';
-                    return $model->shift->nama_operator. ' (' . $shiftTime . ')';
+                    return $model->shift->nama_operator . ' (' . $shiftTime . ')';
                 }
             ],
             [
                 'attribute' => 'tanggal_kerja',
-                'value' => function($model) {
+                'value' => function ($model) {
                     return Yii::$app->formatter->asDate($model->tanggal_kerja, 'php:d-m-Y');
                 },
             ],
@@ -62,20 +62,22 @@ $this->params['breadcrumbs'][] = $this->title;
                 'class' => ActionColumn::className(),
                 'urlCreator' => function ($action, LaporanProduksi $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'laporan_id' => $model->laporan_id]);
-                 }
+                }
             ],
         ],
     ]); ?>
 
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-    const cells = document.querySelectorAll('td, th');
-    cells.forEach(cell => {
-        if (cell.textContent.trim() === '(not set)') {
-            cell.textContent = 'kosong';
-        }
-    });
-});
-</script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const cells = document.querySelectorAll('td, th');
+            cells.forEach(cell => {
+                if (cell.textContent.trim() === '(not set)') {
+                    cell.textContent = 'kosong';
+                }
+            });
+        });
+    </script>
+
+
 
 </div>

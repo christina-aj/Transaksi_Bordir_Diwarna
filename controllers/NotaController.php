@@ -10,10 +10,11 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use  yii\helpers\ArrayHelper;
 use Yii;
+
 /**
  * NotaController implements the CRUD actions for Nota model.
  */
-class NotaController extends Controller
+class NotaController extends BaseController
 {
     public function behaviors()
     {
@@ -26,6 +27,16 @@ class NotaController extends Controller
                         'delete' => ['POST'],
                     ],
                 ],
+                'access' => [
+                    'class' => \yii\filters\AccessControl::class,
+                    'only' => ['delete', 'update', 'create', 'index', 'view'], // Aksi yang diatur
+                    'rules' => [
+                        [
+                            'allow' => true,
+                            'roles' => ['@'], // Hanya pengguna yang sudah login
+                        ],
+                    ],
+                ]
             ]
         );
     }
@@ -51,13 +62,13 @@ class NotaController extends Controller
     public function actionCreate()
     {
         $model = new Nota();
-    
+
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
                 return $this->redirect(['view', 'nota_id' => $model->nota_id]);
             }
         }
-    
+
         return $this->render('create', [
             'model' => $model,
         ]);

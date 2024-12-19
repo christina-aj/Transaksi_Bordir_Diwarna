@@ -11,7 +11,7 @@ use yii\filters\VerbFilter;
 /**
  * JenisController implements the CRUD actions for Jenis model.
  */
-class JenisController extends Controller
+class JenisController extends BaseController
 {
     /**
      * @inheritDoc
@@ -27,6 +27,16 @@ class JenisController extends Controller
                         'delete' => ['POST'],
                     ],
                 ],
+                'access' => [
+                    'class' => \yii\filters\AccessControl::class,
+                    'only' => ['delete', 'update', 'create', 'index', 'view'], // Aksi yang diatur
+                    'rules' => [
+                        [
+                            'allow' => true,
+                            'roles' => ['@'], // Hanya pengguna yang sudah login
+                        ],
+                    ],
+                ]
             ]
         );
     }

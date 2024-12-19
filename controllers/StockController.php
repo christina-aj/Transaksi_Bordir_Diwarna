@@ -15,7 +15,7 @@ use yii\filters\VerbFilter;
 /**
  * StockController implements the CRUD actions for Stock model.
  */
-class StockController extends Controller
+class StockController extends BaseController
 {
     /**
      * @inheritDoc
@@ -31,6 +31,16 @@ class StockController extends Controller
                         'delete' => ['POST'],
                     ],
                 ],
+                'access' => [
+                    'class' => \yii\filters\AccessControl::class,
+                    'only' => ['delete', 'update', 'create', 'index', 'view'], // Aksi yang diatur
+                    'rules' => [
+                        [
+                            'allow' => true,
+                            'roles' => ['@'], // Hanya pengguna yang sudah login
+                        ],
+                    ],
+                ]
             ]
         );
     }

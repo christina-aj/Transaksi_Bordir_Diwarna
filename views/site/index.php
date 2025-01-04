@@ -167,11 +167,18 @@ $this->registerJsFile('https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.mi
                                 },
                             ],
                             'nama_kerjaan',
-                            'nama_barang',
+                            [
+                                'attribute' => 'nama_barang',
+                                'label' => 'Nama Barang',
+                                'value' => function ($model) {
+                                    return $model->barangProduksi ? $model->barangProduksi->nama : '(Tidak ada barang)';
+                                },
+                            ],
                             'vs',
                             'stitch',
                             'kuantitas',
                             'bs',
+                            'berat',
                         ],
                     ]); ?>
                 </div>

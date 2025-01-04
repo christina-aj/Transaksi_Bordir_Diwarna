@@ -9,6 +9,7 @@ use app\models\Shift;
 use app\models\ShiftSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\db\IntegrityException;
 use yii\filters\VerbFilter;
 
 /**

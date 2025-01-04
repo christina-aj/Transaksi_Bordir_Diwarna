@@ -27,7 +27,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <?php endif; ?>
 
 <div class="pc-content">
-    
+
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>

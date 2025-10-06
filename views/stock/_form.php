@@ -6,7 +6,7 @@ use kartik\date\DatePicker;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 use app\models\Barang;
-use app\models\Stock;
+use app\models\Gudang;
 use app\models\Unit;
 use app\models\User;
 use kartik\typeahead\Typeahead;

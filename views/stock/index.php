@@ -45,12 +45,12 @@ if (Yii::$app->session->hasFlash('success')) {
 
                         // 'stock_id',
                         [
-                            'attribute' => 'tambah_stock',
-                            'value' => 'tambah_stock', // Menampilkan kolom tanggal
+                            'attribute' => 'tanggal',
+                            'value' => 'tanggal', // Menampilkan kolom tanggal
                             'label' => 'Tanggal',
                             'filter' => DateRangePicker::widget([
                                 'model' => $searchModel,
-                                'attribute' => 'tambah_stock',
+                                'attribute' => 'tanggal',
                                 'convertFormat' => true,
                                 'pluginOptions' => [
                                     'locale' => [
@@ -69,7 +69,7 @@ if (Yii::$app->session->hasFlash('success')) {
                             'headerOptions' => ['style' => 'width:250px'], // Tambahkan lebar jika diperlukan
                             'enableSorting' => true, // Mengaktifkan sorting untuk kolom tanggal
                         ],
-                        // 'tambah_stock',
+                        // 'tanggal',
                         // 'barang_id',
                         'barang.kode_barang' => [
                             'attribute' => 'kode_barang',

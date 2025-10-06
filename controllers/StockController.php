@@ -5,15 +5,15 @@ namespace app\controllers;
 use app\helpers\ModelHelper;
 use app\models\Barang;
 use yii;
-use app\models\Stock;
-use app\models\StockSearch;
+use app\models\Gudang;
+use app\models\GudangSearch;
 use yii\base\Model;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * StockController implements the CRUD actions for Stock model.
+ * StockController implements the CRUD actions for Stock (using Gudang model with kode = 2).
  */
 class StockController extends BaseController
 {
@@ -46,14 +46,14 @@ class StockController extends BaseController
     }
 
     /**
-     * Lists all Stock models.
+     * Lists all Stock models (kode = 2 for penggunaan).
      *
      * @return string
      */
     public function actionIndex()
     {
-        $searchModel = new StockSearch();
-        $dataProvider = $searchModel->search($this->request->queryParams);
+        $searchModel = new GudangSearch();
+        $dataProvider = $searchModel->search($this->request->queryParams, Gudang::KODE_PENGGUNAAN);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -63,78 +63,81 @@ class StockController extends BaseController
 
     /**
      * Displays a single Stock model.
-     * @param int $stock_id Stock ID
+     * @param int $id_gudang Id Gudang
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($stock_id)
+    public function actionView($id_gudang)
     {
         return $this->render('view', [
-            'model' => $this->findModel($stock_id),
+            'model' => $this->findModel($id_gudang),
         ]);
     }
+
+    /**
+     * Creates new Stock models (multiple items with kode = 2).
+     * If creation is successful, the browser will be redirected to the 'index' page.
+     * @return string|\yii\web\Response
+     */
+
     public function actionCreate()
     {
-        $modelStocks = [new Stock()];
+        $modelStocks = [new Gudang()];
 
         if (Yii::$app->request->isPost) {
-            $modelStocks = ModelHelper::createMultiple(Stock::classname());
+            $modelStocks = ModelHelper::createMultiple(Gudang::classname());
+            Model::loadMultiple($modelStocks, Yii::$app->request->post());
 
-            // Load data dari POST ke model
-            if (Model::loadMultiple($modelStocks, Yii::$app->request->post())) {
+            // Isi semua field yang required sebelum validasi
+            foreach ($modelStocks as $modelStock) {
+                $modelStock->kode = Gudang::KODE_PENGGUNAAN;
+                $modelStock->area_gudang = 1;
+                $modelStock->quantity_masuk = 0;
+                $modelStock->quantity_awal = $modelStock->quantity_awal; // dari form
+                $modelStock->quantity_akhir = $modelStock->quantity_awal - $modelStock->quantity_keluar;
+                $modelStock->tanggal = date('Y-m-d');
+                $modelStock->user_id = $modelStock->user_id ?? Yii::$app->user->id;
 
-                // Set skenario create
-                foreach ($modelStocks as $modelStock) {
-                    $modelStock->scenario = Stock::SCENARIO_CREATE;
+                // Set catatan default
+                if (empty($modelStock->catatan)) {
+                    $modelStock->catatan = 'Penggunaan stock';
                 }
 
-                // Log data setelah load
-                foreach ($modelStocks as $index => $modelStock) {
-                    Yii::info("Model Stock #$index after load: " . json_encode($modelStock->attributes), 'debug');
+                // Validasi stok cukup
+                if ($modelStock->quantity_akhir < 0) {
+                    Yii::$app->session->setFlash('error', "Stock tidak mencukupi untuk barang ID: {$modelStock->barang_id}");
+                    return $this->redirect(['create']);
                 }
+            }
 
-                // Validasi model setelah skenario diterapkan
-                if (Model::validateMultiple($modelStocks)) {
-                    $transaction = Yii::$app->db->beginTransaction();
-                    try {
-                        foreach ($modelStocks as $index => $modelStock) {
-                            // Isi field otomatis sebelum menyimpan
-                            $modelStock->tambah_stock = date('Y-m-d');
-                            $modelStock->quantity_awal = $this->getCurrentStock($modelStock->barang_id);
-                            $modelStock->quantity_masuk = 0;
-                            $modelStock->quantity_akhir = $modelStock->quantity_awal + $modelStock->quantity_masuk - $modelStock->quantity_keluar;
-                            $modelStock->created_at = date('Y-m-d');
-                            $modelStock->updated_at = date('Y-m-d');
-
-                            if (!$modelStock->save()) {
-                                Yii::$app->session->setFlash('error', "Failed to save item #{$index}: " . json_encode($modelStock->getErrors()));
-                                throw new \yii\db\Exception('Failed to save items.');
-                            }
-                        }
-
-                        $transaction->commit();
-                        Yii::$app->session->setFlash('success', 'Semua Item telah disimpan.');
-                        return $this->redirect(['index']);
-                    } catch (\yii\db\Exception $e) {
-                        $transaction->rollBack();
-                        Yii::$app->session->setFlash('error', 'Database error: ' . $e->getMessage());
-                    } catch (\Exception $e) {
-                        $transaction->rollBack();
-                        Yii::$app->session->setFlash('error', 'Error: ' . $e->getMessage());
-                    }
-                } else {
-                    // Flash message untuk error validasi
-                    $allErrors = [];
-                    foreach ($modelStocks as $index => $modelStock) {
-                        $errors = $modelStock->getErrors();
-                        if (!empty($errors)) {
-                            $allErrors[] = "Item #{$index} errors: " . json_encode($errors);
+            if (Model::validateMultiple($modelStocks)) {
+                $transaction = Yii::$app->db->beginTransaction();
+                try {
+                    foreach ($modelStocks as $modelStock) {
+                        if (!$modelStock->save(false)) {
+                            throw new \Exception('Gagal menyimpan item stock');
                         }
                     }
-                    Yii::$app->session->setFlash('error', 'Validation failed: ' . implode(' | ', $allErrors));
+                    $transaction->commit();
+                    Yii::$app->session->setFlash('success', 'Semua item stock berhasil disimpan.');
+                    return $this->redirect(['index']);
+                } catch (\Exception $e) {
+                    $transaction->rollBack();
+                    Yii::$app->session->setFlash('error', $e->getMessage());
                 }
             } else {
-                Yii::$app->session->setFlash('error', "Data failed to load into modelStocks.");
+                // Debug validation error
+                foreach ($modelStocks as $index => $modelStock) {
+                    Yii::info("Item #$index errors: " . json_encode($modelStock->getErrors()), 'debug');
+                }
+            }
+        } else {
+            // Set default untuk form baru
+            foreach ($modelStocks as $model) {
+                $model->loadDefaultValues();
+                $model->tanggal = date('Y-m-d');
+                $model->kode = Gudang::KODE_PENGGUNAAN;
+                $model->quantity_masuk = 0;
             }
         }
 
@@ -146,72 +149,103 @@ class StockController extends BaseController
 
 
     /**
-     * Creates a new Stock model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return string|\yii\web\Response
-     */
-
-    /**
      * Updates an existing Stock model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param int $stock_id Stock ID
+     * @param int $id_gudang Id Gudang
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
+    public function actionUpdate($id_gudang)
+    {
+        $model = $this->findModel($id_gudang);
+
+        if ($this->request->isPost && $model->load($this->request->post())) {
+            // Pastikan kode tetap 2 untuk penggunaan
+            $model->kode = Gudang::KODE_PENGGUNAAN;
+            
+            // Recalculate quantity_akhir
+            $model->quantity_akhir = $model->quantity_awal + $model->quantity_masuk - $model->quantity_keluar;
+            
+            if ($model->save()) {
+                Yii::$app->session->setFlash('success', 'Data penggunaan stock berhasil diperbarui.');
+                return $this->redirect(['view', 'id_gudang' => $model->id_gudang]);
+            }
+        }
+
+        return $this->render('update', [
+            'model' => $model,
+        ]);
+    }
 
     /**
      * Deletes an existing Stock model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param int $stock_id Stock ID
+     * @param int $id_gudang Id Gudang
      * @return \yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
+    public function actionDelete($id_gudang)
+    {
+        $this->findModel($id_gudang)->delete();
+        Yii::$app->session->setFlash('success', 'Data penggunaan stock berhasil dihapus.');
+
+        return $this->redirect(['index']);
+    }
 
     /**
-     * Finds the Stock model based on its primary key value.
+     * Finds the Gudang model based on its primary key value (with kode = 2).
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param int $stock_id Stock ID
-     * @return Stock the loaded model
+     * @param int $id_gudang Id Gudang
+     * @return Gudang the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($stock_id)
+    protected function findModel($id_gudang)
     {
-        if (($model = Stock::findOne(['stock_id' => $stock_id])) !== null) {
+        if (($model = Gudang::findOne(['id_gudang' => $id_gudang, 'kode' => Gudang::KODE_PENGGUNAAN])) !== null) {
             return $model;
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
 
+    /**
+     * Get current stock dari gudang (kode = 1) untuk barang tertentu
+     */
     protected function getCurrentStock($barang_id)
     {
-        $currentStock = Stock::find()->where(['barang_id' => $barang_id])->orderBy(['created_at' => SORT_DESC])->one();
-        return $currentStock ? $currentStock->quantity_akhir : 0; // Jika tidak ada stok sebelumnya, mulai dari 0
+        return Gudang::getCurrentStock($barang_id, Gudang::KODE_PENGGUNAAN);
     }
 
+    /**
+     * Search barang untuk AJAX
+     */
     public function actionSearch($query)
     {
         $data = Barang::find()
-            ->select(['barang.barang_id', 'barang.kode_barang', 'barang.nama_barang', 'stock.quantity_akhir'])
-            ->innerJoin('stock', 'stock.barang_id = barang.barang_id') // Join inner untuk memastikan hanya stok yang ada
+            ->select(['barang.barang_id', 'barang.kode_barang', 'barang.nama_barang'])
+            ->leftJoin('gudang', 'gudang.barang_id = barang.barang_id AND gudang.kode = ' . Gudang::KODE_BARANG_GUDANG)
             ->where(['like', 'barang.nama_barang', $query])
             ->orWhere(['like', 'barang.kode_barang', $query])
-            ->andWhere(['>', 'stock.quantity_akhir', 0]) // Hanya ambil barang yang memiliki stok lebih dari 0
+            ->groupBy(['barang.barang_id', 'barang.kode_barang', 'barang.nama_barang'])
             ->asArray()
             ->all();
 
+        // Tambahkan informasi stock dari penggunaan/stock (kode = 2) untuk setiap barang
+        foreach ($data as &$item) {
+            $item['quantity_akhir'] = Gudang::getCurrentStock($item['barang_id'], Gudang::KODE_PENGGUNAAN, 1);
+        }
+
+
         Yii::info("Data Search Result: " . json_encode($data), 'debug');
-        return \yii\helpers\Json::encode($data); // Kembalikan dalam format JSON
+        return \yii\helpers\Json::encode($data);
     }
 
+    /**
+     * Get stock untuk barang tertentu (AJAX)
+     */
     public function actionGetStock($barang_id)
     {
-        $stock = Stock::find()
-            ->joinWith('barang') // Asumsi ada relasi ke tabel barang jika perlu
-            ->where(['barang.barang_id' => $barang_id])
-            ->orderBy(['stock.stock_id' => SORT_DESC])
-            ->one();
-
-        return \yii\helpers\Json::encode(['quantity_akhir' => $stock ? $stock->quantity_akhir : 0]);
+        $quantity_akhir = Gudang::getCurrentStock($barang_id, Gudang::KODE_PENGGUNAAN, 1);
+        return \yii\helpers\Json::encode(['quantity_akhir' => $quantity_akhir]);
     }
 }

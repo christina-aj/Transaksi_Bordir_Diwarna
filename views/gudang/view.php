@@ -20,12 +20,26 @@ $this->params['breadcrumbs'][] = $this->title;
         'attributes' => [
             'id_gudang',
             'tanggal',
-            'barang_id',
+            [
+                'attribute' => 'barang.nama_barang',
+                'label' => 'Nama Barang'
+            ],
             'user_id',
+            [
+                'attribute' => 'area_gudang',
+                'value' => $model->getAreaLabel(),
+                'label' => 'Area Gudang'
+            ],
             'quantity_awal',
             'quantity_masuk',
             'quantity_keluar',
-            'quantity_akhir',
+            [
+                'attribute' => 'quantity_akhir',
+                'value' => $model->quantity_akhir,
+                'contentOptions' => [
+                    'class' => $model->quantity_akhir <= 0 ? 'text-danger font-weight-bold' : 'text-success font-weight-bold'
+                ]
+            ],
             'catatan',
             'created_at:datetime',
             'update_at:datetime',
@@ -33,6 +47,11 @@ $this->params['breadcrumbs'][] = $this->title;
     ]) ?>
     <div>
         <?= Html::a('Update', ['update', 'id_gudang' => $model->id_gudang], ['class' => 'btn btn-primary']) ?>
+        
+        <?php if ($model->quantity_akhir > 0): ?>
+            <?= Html::a('Move Area', ['move-area', 'barang_id' => $model->barang_id, 'area_asal' => $model->area_gudang], ['class' => 'btn btn-warning']) ?>
+        <?php endif; ?>
+        
         <?= Html::a('Delete', ['delete', 'id_gudang' => $model->id_gudang], [
             'class' => 'btn btn-danger',
             'data' => [
@@ -44,3 +63,15 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
 
 </div>
+
+<style>
+.text-danger {
+    color: #dc3545 !important;
+}
+.text-success {
+    color: #28a745 !important;
+}
+.font-weight-bold {
+    font-weight: bold !important;
+}
+</style>

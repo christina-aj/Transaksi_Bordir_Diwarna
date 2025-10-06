@@ -54,6 +54,11 @@ use yii\helpers\Url;
 
     <?= $form->field($model, 'quantity_akhir')->textInput(['readonly' => true, 'id' => 'qty_akhir']) ?>
 
+    <?= $form->field($model, 'area_gudang')->dropDownList(
+        [1 => 'Area 1', 2 => 'Area 2', 3 => 'Area 3', 4 => 'Area 4'],
+        ['prompt' => 'Pilih Area Gudang', 'id' => 'area_gudang']
+    ) ?>
+
     <?= $form->field($model, 'catatan')->textInput(['maxlength' => true]) ?>
 
     <!-- <?= $form->field($model, 'created_at')->textInput() ?>

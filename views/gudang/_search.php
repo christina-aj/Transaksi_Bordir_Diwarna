@@ -25,6 +25,8 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'quantity_awal') ?>
 
+    <?= $form->field($model, 'area_gudang') ?>
+
     <?php // echo $form->field($model, 'quantity_masuk') ?>
 
     <?php // echo $form->field($model, 'quantity_keluar') ?>

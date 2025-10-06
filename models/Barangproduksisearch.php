@@ -17,7 +17,7 @@ class Barangproduksisearch extends Barangproduksi
     public function rules()
     {
         return [
-            [['barang_id'], 'integer'],
+            [['barang_produksi_id'], 'integer'],
             [['nama', 'nama_jenis', 'deskripsi','ukuran'], 'safe'],
         ];
     }
@@ -58,7 +58,7 @@ class Barangproduksisearch extends Barangproduksi
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'barang_id' => $this->barang_id,
+            'barang_produksi_id' => $this->barang_produksi_id,
         ]);
 
         $query->andFilterWhere(['like', 'nama', $this->nama])

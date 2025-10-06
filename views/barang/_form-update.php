@@ -57,6 +57,11 @@ use yii\grid\ActionColumn;
                 'id' => 'warna-field',
             ]) ?>
 
+            <!-- <?= $form->field($modelBarang, 'jenis_barang')->dropDownList(
+                ArrayHelper::map(Unit::find()->asArray()->all(), 'unit_id', 'satuan'),
+                ['prompt' => 'Pilih Satuan']
+            ) ?> -->
+
             <div class="form-group">
                 <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
                 <?= Html::a('Back', ['index'], ['class' => 'btn btn-secondary']) ?>

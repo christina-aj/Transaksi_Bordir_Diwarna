@@ -6,7 +6,7 @@ use yii\widgets\DetailView;
 /** @var yii\web\View $this */
 /** @var app\models\Barangproduksi $model */
 
-$this->title = $model->barang_id;
+$this->title = $model->barang_produksi_id;
 $this->params['breadcrumbs'][] = ['label' => 'Barang Produksi', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
@@ -18,7 +18,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
-            'barang_id',
+            'barang_produksi_id',
             'nama',
             'nama_jenis',
             'ukuran',
@@ -26,8 +26,8 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
     ]) ?>
     <p>
-        <?= Html::a('Update', ['update', 'barang_id' => $model->barang_id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Delete', ['delete', 'barang_id' => $model->barang_id], [
+        <?= Html::a('Update', ['update', 'barang_produksi_id' => $model->barang_produksi_id], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Delete', ['delete', 'barang_produksi_id' => $model->barang_produksi_id], [
             'class' => 'btn btn-danger',
             'data' => [
                 'confirm' => 'Are you sure you want to delete this item?',

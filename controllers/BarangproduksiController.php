@@ -60,14 +60,14 @@ class BarangproduksiController extends BaseController
 
     /**
      * Displays a single Barangproduksi model.
-     * @param int $barang_id Barang ID
+     * @param int $barang_produksi_id Barang ID
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($barang_id)
+    public function actionView($barang_produksi_id)
     {
         return $this->render('view', [
-            'model' => $this->findModel($barang_id),
+            'model' => $this->findModel($barang_produksi_id),
         ]);
     }
 
@@ -82,7 +82,7 @@ class BarangproduksiController extends BaseController
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'barang_id' => $model->barang_id]);
+                return $this->redirect(['view', 'barang_produksi_id' => $model->barang_produksi_id]);
             }
         } else {
             $model->loadDefaultValues();
@@ -96,16 +96,16 @@ class BarangproduksiController extends BaseController
     /**
      * Updates an existing Barangproduksi model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param int $barang_id Barang ID
+     * @param int $barang_produksi_id Barang ID
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($barang_id)
+    public function actionUpdate($barang_produksi_id)
     {
-        $model = $this->findModel($barang_id);
+        $model = $this->findModel($barang_produksi_id);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'barang_id' => $model->barang_id]);
+            return $this->redirect(['view', 'barang_produksi_id' => $model->barang_produksi_id]);
         }
 
         return $this->render('update', [
@@ -116,13 +116,13 @@ class BarangproduksiController extends BaseController
     /**
      * Deletes an existing Barangproduksi model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param int $barang_id Barang ID
+     * @param int $barang_produksi_id Barang ID
      * @return \yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete($barang_id)
+    public function actionDelete($barang_produksi_id)
     {
-        $model = $this->findModel($barang_id);
+        $model = $this->findModel($barang_produksi_id);
 
         // Periksa apakah tabel laporanproduksi ada
         $db = Yii::$app->db;
@@ -135,7 +135,7 @@ class BarangproduksiController extends BaseController
 
         $isBarangUsedInLaporanProduksi = (new \yii\db\Query())
             ->from('laporanproduksi')
-            ->where(['nama_barang' => $barang_id]) 
+            ->where(['nama_barang' => $barang_produksi_id]) 
             ->exists();
 
         if ($isBarangUsedInLaporanProduksi) {
@@ -152,13 +152,13 @@ class BarangproduksiController extends BaseController
     /**
      * Finds the Barangproduksi model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param int $barang_id Barang ID
+     * @param int $barang_produksi_id Barang ID
      * @return Barangproduksi the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($barang_id)
+    protected function findModel($barang_produksi_id)
     {
-        if (($model = Barangproduksi::findOne(['barang_id' => $barang_id])) !== null) {
+        if (($model = Barangproduksi::findOne(['barang_produksi_id' => $barang_produksi_id])) !== null) {
             return $model;
         }
 

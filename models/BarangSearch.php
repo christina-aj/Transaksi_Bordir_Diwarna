@@ -6,6 +6,7 @@ use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\models\Barang;
 use yii\data\Pagination;
+use Yii;
 use Attribute;
 
 /**
@@ -25,6 +26,7 @@ class BarangSearch extends Barang
             [['barang_id', 'unit_id'], 'integer'],
             [['kode_barang', 'nama_barang', 'tipe', 'warna', 'created_at', 'updated_at', 'satuan'], 'safe'],
             [['angka'], 'number'],
+            // [['jenis_barang'], 'safe'],
         ];
     }
 
@@ -82,6 +84,11 @@ class BarangSearch extends Barang
             return $dataProvider;
         }
 
+        $jenis = Yii::$app->request->get('jenis');
+        if ($jenis && $jenis !== 'all') {
+            $query->andWhere(['jenis_barang' => $jenis]);
+        }
+
         // grid filtering conditions
         $query->andFilterWhere([
             'barang_id' => $this->barang_id,
@@ -89,6 +96,7 @@ class BarangSearch extends Barang
             'angka' => $this->angka,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'jenis_barang' => $this->jenis_barang
         ]);
 
         $query->andFilterWhere(['like', 'unit.satuan', $this->satuan]);

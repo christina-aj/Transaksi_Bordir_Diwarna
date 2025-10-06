@@ -60,7 +60,7 @@ $config = [
             'targets' => [
                 [
                     'class' => 'yii\log\FileTarget',
-                    'levels' => ['error', 'warning', 'info'], // Pastikan 'debug' ada
+                    'levels' => ['error', 'warning', 'info', 'trace'], // Pastikan 'debug' ada
                     'logFile' => '@runtime/logs/app.log', // Tentukan file log
                 ],
             ],

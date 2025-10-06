@@ -548,16 +548,18 @@ class PemesananController extends BaseController
                             $gudang->quantity_masuk = $detail->qty_terima; // Sesuaikan dengan jumlah quantity masuk
                             $gudang->quantity_keluar = $detail->qty_terima; // Misalnya, tidak ada quantity keluar pada saat ini
                             $gudang->quantity_akhir = $gudang->quantity_awal + $gudang->quantity_masuk - $gudang->quantity_keluar;
-                            $stock = new Stock();
-                            $stock->tambah_stock = date('Y-m-d');
+                            $stock = new Gudang();
+                            $stock->tanggal = date('Y-m-d');
                             $stock->barang_id = $detail->barang_id;
                             $stock->user_id = Yii::$app->user->id;
                             $stock->quantity_awal = $this->getCurrentStockProduksi($detail->barang_id);
                             $stock->quantity_masuk = $detail->qty_terima; // Sesuaikan dengan jumlah quantity masuk
                             $stock->quantity_keluar = 0; // Misalnya, tidak ada quantity keluar pada saat ini
                             $stock->quantity_akhir = $stock->quantity_awal + $stock->quantity_masuk;
+                            $stock->kode = 2;
+                            $stock->area_gudang = null;
                             $stock->created_at = date('Y-m-d H:i:s');
-                            $stock->updated_at = date('Y-m-d H:i:s');
+                            $stock->update_at = date('Y-m-d H:i:s');
                             if (!$stock->save(false)) {
                                 Yii::$app->session->setFlash('error', 'Gagal menyimpan data stok Produksi untuk barang ID: ' . $detail->barang_id);
                             }
@@ -566,6 +568,8 @@ class PemesananController extends BaseController
                             $gudang->quantity_masuk = $detail->qty_terima; // Sesuaikan dengan jumlah quantity masuk
                             $gudang->quantity_keluar = 0; // Sesuaikan dengan jumlah quantity masuk
                             $gudang->quantity_akhir = $gudang->quantity_awal + $gudang->quantity_masuk;
+                            $gudang->kode = 1;
+                            $gudang->area_gudang = 2;
                         }
                         $gudang->catatan = 'Verifikasi pemesanan ID: ' . $pemesanan_id; // Catatan tambahan
                         $gudang->created_at = date('Y-m-d H:i:s');

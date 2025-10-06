@@ -1,313 +1,306 @@
 <?php
 
-use yii\helpers\Html;
-use yii\widgets\ActiveForm;
 use kartik\date\DatePicker;
-use yii\helpers\ArrayHelper;
-use yii\helpers\Url;
-use app\models\Barang;
-use app\models\Stock;
-use app\models\Unit;
-use app\models\User;
 use kartik\typeahead\Typeahead;
 use yii\grid\GridView;
+use yii\helpers\Html;
+use yii\helpers\Url;
+use yii\widgets\ActiveForm;
+use kartik\dialog\Dialog;
+
 
 /** @var yii\web\View $this */
-/** @var app\models\Penggunaan[] $models */ // Mengubah variabel untuk mewakili array model
+/** @var app\models\Penggunaan $model */
 /** @var yii\widgets\ActiveForm $form */
+echo Dialog::widget();
 ?>
 
 <div class="penggunaan-form">
     <div class="card table-card">
         <div class="card-header">
             <h1><?= Html::encode($this->title) ?></h1>
-            <?php $form = ActiveForm::begin(); ?>
-            <div id="penggunaan-gridview">
-                <?= GridView::widget([
-                    'dataProvider' => new \yii\data\ArrayDataProvider([
-                        'allModels' => $models, // Pastikan $models adalah array model Penggunaan
-                    ]),
-                    'columns' => [
-                        ['class' => 'yii\grid\SerialColumn'],
-                        [
-                            'attribute' => 'barang_id',
-                            'format' => 'raw',
-                            'headerOptions' => ['class' => 'warna-header'],
-                            'contentOptions' => ['class' => 'warna-column'],
-                            'value' => function ($model, $key, $index, $column) use ($form) {
-                                return $form->field($model, "[$index]barang_id")->textInput(['maxlength' => true, 'readonly' => true])->label(false);
-                            },
-                        ],
-                        [
-                            'attribute' => 'kode_barang',
-                            'format' => 'raw',
-                            'value' => function ($model, $key, $index, $column) use ($form) {
-                                return $form->field($model, "[$index]kode_barang")->textInput(['maxlength' => true, 'readonly' => true])->label(false);
-                            },
-                        ],
-                        [
-                            'attribute' => 'nama_barang',
-                            'format' => 'raw',
-                            'value' => function ($model, $key, $index, $column) use ($form) {
-                                return $form->field($model, "[$index]nama_barang")->widget(Typeahead::classname(), [
-                                    'options' => ['placeholder' => 'Ketik nama barang...'],
+        </div>
+        <div class="row mx-3 ">
+            <!-- Baris pertama: Kode Pembelian, Kode Penggunaan, Nama Pemesan -->
+            <div class="col-md-3">
+                <div><strong>Kode Penggunaan:</strong> <?= $modelPenggunaan ? $modelPenggunaan->getFormattedGunaId() : 'Kode Penggunaan Tidak Tersedia' ?></div>
+                <div><strong>Nama Pengguna:</strong> <?= $modelPenggunaan->user->nama_pengguna ?? 'Nama Pemesan Tidak Tersedia' ?></div>
+            </div>
+
+            <!-- Baris kedua: Tanggal Penggunaan, Total Item, Total Biaya, Aksi -->
+            <div class="col-md-3">
+                <div><strong>Total Item:</strong> <?= $modelPenggunaan->total_item_penggunaan ?? '-' ?></div>
+                <div><strong>Tanggal:</strong> <?= Yii::$app->formatter->asDate($modelPenggunaan->tanggal ?? 'Tanggal Tidak Tersedia') ?></div>
+
+            </div>
+        </div>
+        <br>
+        <hr>
+        <div class="card-body mx-4">
+            <!-- Tabel Detail Penggunaan -->
+            <?php $form = ActiveForm::begin([
+                'action' => ['update', 'penggunaan_id' => $modelPenggunaan->penggunaan_id],
+                'method' => 'post',
+            ]); ?>
+            <h3>Detail Penggunaan</h3>
+
+            <!-- Tabel Detail Penggunaan -->
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <!-- <th style="width: 25%;">Kode Penggunaan</th> -->
+                        <th style="width: 25%;" class="barang-header">Barang id</th>
+                        <th style="width: 25%;">Kode Barang</th>
+                        <th style="width: 25%;">Nama Barang</th>
+                        <th style="width: 15%;">jumlah_digunakan</th>
+                        <!-- <th style="width: 15%;" class="barang-header">jumlah_digunakan Terima</th> -->
+                        <th style="width: 30%;">Catatan</th>
+                        <th style="width: 15%;" class="barang-header">Area Pengambilan</th>
+                        <th style="width: 5%;">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+                    <?php foreach ($modelDetails as $index => $modelDetail): ?>
+                        <tr>
+                            <?= Html::activeHiddenInput($modelDetail, "[$index]penggunaan_id", ['value' => $modelPenggunaan->penggunaan_id]) ?>
+                            <td class="barang-column"><?= $form->field($modelDetail, "[$index]barang_id")->textInput([
+                                                            'readonly' => true,
+                                                        ])->label(false) ?></td>
+                            <td><?= $form->field($modelDetail, "[$index]kode_barang")->textInput(['readonly' => true])->label(false) ?></td>
+                            <td><?= $form->field($modelDetail, "[$index]nama_barang")->widget(Typeahead::classname(), [
+                                    'options' => [
+                                        'placeholder' => 'Cari Nama Barang...',
+                                        'id' => "penggunaandetail-{$index}-nama_barang",  // Menggunakan ID dinamis
+                                        'value' => $modelDetail->nama_barang,
+                                    ],
                                     'pluginOptions' => ['highlight' => true],
                                     'scrollable' => true,
                                     'dataset' => [
                                         [
                                             'datumTokenizer' => "Bloodhound.tokenizers.obj.whitespace('value')",
-                                            'display' => 'nama_barang',
+                                            'display' => 'value',
                                             'templates' => [
                                                 'notFound' => "<div class='text-danger'>Tidak ada hasil</div>",
                                                 'suggestion' => new \yii\web\JsExpression('function(data) {
-                                                    return "<div>" + data.kode_barang + " - " + data.nama_barang + "</div>";
+                                                    if (data.barang_id && data.kode_barang && data.nama_barang) {
+                                                        return "<div>" + data.kode_barang + " - " + data.nama_barang + "</div>";
+                                                    } else {
+                                                        return "<div>Barang tidak ditemukan</div>";
+                                                    }
                                                 }')
                                             ],
                                             'remote' => [
-                                                'url' => Url::to(['barang/search']) . '?query=%QUERY',
-                                                'wildcard' => '%QUERY'
-                                            ]
+                                                'url' => Url::to(['penggunaan-detail/search']) . '?q=%QUERY',
+                                                'wildcard' => '%QUERY',
+                                            ],
                                         ]
                                     ],
                                     'pluginEvents' => [
-                                        "typeahead:selected" => "function(event, suggestion) {
-                                            // Isi field barang_id dan kode_barang
-                                            var barangIdField = $('#" . Html::getInputId($model, "[$index]barang_id") . "');
-                                            var kodeBarangField = $('#" . Html::getInputId($model, "[$index]kode_barang") . "');
-                                            
-                                            barangIdField.val(suggestion.barang_id);
-                                            kodeBarangField.val(suggestion.kode_barang);
-                        
-                                            // AJAX untuk mengisi quantity_awal berdasarkan barang_id
-                                            $.get('" . Url::to(['get-stock']) . "?barang_id=' + suggestion.barang_id, function(data) {
-                                                var result = JSON.parse(data);
-                                                $('#" . Html::getInputId($model, "[$index]stock") . "').val(result.quantity_akhir);
-                                            });
-                                        }"
+                                        "typeahead:select" => new \yii\web\JsExpression("function(event, suggestion) {
+                                            $('#penggunaandetail-{$index}-barang_id').val(suggestion.barang_id);  // ID dinamis
+                                            $('#penggunaandetail-{$index}-kode_barang').val(suggestion.kode_barang);
+                                        }")
                                     ]
-                                ])->label(false);
-                            },
-                        ],
-                        [
-                            'attribute' => 'stock',
-                            'format' => 'raw',
-                            'label' => 'Stok',
-                            'value' => function ($model, $key, $index, $column) use ($form) {
-                                return $form->field($model, "[$index]stock")->textInput([
-                                    'class' => 'form-control stock-input', // Kelas untuk stok input
-                                    'readonly' => true, // Misalnya stok bersifat read-only
-                                ])->label(false);
-                            },
-                        ],
-                        [
-                            'attribute' => 'user_id',
-                            'format' => 'raw',
-                            'label' => 'Nama Pemakai',
-                            'value' => function ($model, $key, $index, $column) use ($form) {
-                                $dataPost = ArrayHelper::map(User::find()->asArray()->all(), 'user_id', 'nama_pengguna');
-                                return $form->field($model, "[$index]user_id")->dropDownList($dataPost, ['prompt' => 'Pilih User'])->label(false);
-                            },
-                        ],
-                        [
-                            'attribute' => 'jumlah_digunakan',
-                            'format' => 'raw',
-                            'label' => 'Jumlah',
-                            'value' => function ($model, $key, $index, $column) use ($form) {
-                                return $form->field($model, "[$index]jumlah_digunakan")->textInput([
-                                    'maxlength' => true,
-                                    'class' => 'form-control jumlah-digunakan-input', // Tambahkan kelas untuk referensi
-                                ])->label(false);
-                            },
-                        ],
-                        [
-                            'attribute' => 'catatan',
-                            'format' => 'raw',
-                            'label' => 'Catatan',
-                            'value' => function ($model, $key, $index, $column) use ($form) {
-                                return $form->field($model, "[$index]catatan")->textInput(['maxlength' => true])->label(false);
-                            },
-                        ],
-                        [
-                            'class' => 'yii\grid\ActionColumn',
-                            'template' => '{actions}',
-                            'buttons' => [
-                                'actions' => function ($url, $model) {
-                                    return Html::tag(
-                                        'div',
-                                        Html::a(Html::tag('i', '', ['class' => 'fas fa-plus fa-xs']), '#', [
-                                            'class' => 'btn btn-success btn-xs pb-1 px-2 add-row ',
-                                            'onclick' => 'return false;',
-                                        ]) .
-                                            Html::a(Html::tag('i', '', ['class' => 'fas fa-trash fa-xs']), '#', [
-                                                'class' => 'btn btn-danger btn-xs pb-1 px-2 delete-row ',
-                                                'onclick' => 'return false;',
-                                            ]),
-                                        ['class' => 'd-flex justify-content-between align-content-center align-items-center']
-                                    );
-                                },
-                            ],
-                        ],
-                    ],
-                ]); ?>
-                <div class="form-group">
-                    <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
-                    <?= Html::a('Back', ['penggunaan/index'], ['class' => 'btn btn-secondary']) ?>
-                </div>
-                <?php ActiveForm::end(); ?>
+                                ])->label(false); ?></td>
+                            <td><?= $form->field($modelDetail, "[$index]jumlah_digunakan")->textInput()->label(false) ?></td>
+                            <td class="barang-column"><?= $form->field($modelDetail, "[$index]area_gudang")->textInput(['readonly' => true])->label(false) ?></td>
+                            <td><?= $form->field($modelDetail, "[$index]catatan")->textInput()->label(false) ?></td>
+                           
+                            <td class="text-center">
+                                <div class="btn-group" role="group">
+                                    <button type="button" class="btn btn-success btn-sm add-row" id="add-rows" title="Tambah">
+                                        <i class="fas fa-plus"></i> <!-- Icon tambah -->
+                                    </button>
+                                    <button type="button" class="btn btn-danger btn-sm delete-row" id="delete-rows" data-id="<?= $modelDetail->gunadetail_id ?>" title="Hapus">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+            <!-- Hidden input untuk menyimpan ID detail yang akan dihapus -->
+            <?= Html::hiddenInput('deleteRows', '', ['id' => 'deleteRows']) ?>
+
+            <div class="form-group">
+                <?= Html::submitButton('Save', ['class' => 'btn btn-success', 'id' => 'saveButtons']) ?>
+
             </div>
+
+            <?php ActiveForm::end(); ?>
+            <?php if ($modelDetail->isNewRecord): ?>
+
+                <!-- Mode Create: Tombol Back berfungsi sebagai tombol Cancel -->
+                <?= Html::a('Cancel', [
+                    'cancel',
+                    'penggunaan_id' => $modelPenggunaan->penggunaan_id,
+
+                ], [
+                    'id' => 'cancelButtons',
+                    'class' => 'btn btn-danger',
+                    'data' => [
+                        'confirm' => 'Apakah Anda yakin ingin membatalkan Penggunaan ini?',
+                        'method' => 'post',
+                    ],
+                ]) ?>
+            <?php else: ?>
+                <!-- Mode Update: Tombol Back berfungsi untuk kembali ke halaman view -->
+                <?= Html::a('Back', ['view', 'penggunaan_id' => $modelPenggunaan->penggunaan_id], [
+                    'class' => 'btn btn-secondary',
+                ]) ?>
+            <?php endif; ?>
         </div>
     </div>
 </div>
 
+<!-- JavaScript untuk Menambah dan Menghapus Baris -->
 <?php
-$dataPengguna = ArrayHelper::map(User::find()->asArray()->all(), 'user_id', 'nama_pengguna');
-
-// Create options HTML
-$optionsHtml = '';
-foreach ($dataPengguna as $userId => $nama) {
-    $optionsHtml .= "<option value=\"{$userId}\">{$nama}</option>";
-}
-
+// Dapatkan nilai `penggunaan_id` dari model
+$PenggunaanId = $modelPenggunaan->penggunaan_id;
+$isNewRecord = $modelDetail->isNewRecord;
 $this->registerJs("
-    $(document).ready(function() {
-        // Fungsi untuk validasi jumlah
-        function validateQuantity(input, stock) {
-            var value = parseInt(input.value);
-            if (value > stock) {
-                alert('Jumlah yang dimasukkan tidak boleh melebihi stok yang tersedia (' + stock + ')');
-                input.value = stock; // Membatasi nilai yang dimasukkan ke stock
-            }
-        }
 
-        // Menggunakan event delegation untuk menangani input jumlah_digunakan pada baris yang ada dan baru
-        $('table').on('input', '.jumlah-digunakan-input', function() {
-            // Mengambil nilai stok dari input stok yang ada pada baris yang sama
-            var stockValue = $(this).closest('tr').find('.stock-input').val(); // Menemukan nilai stok di baris yang sama
-            validateQuantity(this, parseInt(stockValue)); // Panggil fungsi validateQuantity dengan stok yang sesuai
+    
+
+    var rowIndex = " . count($modelDetails) . ";
+    var PenggunaanId = " . json_encode($PenggunaanId) . "; // Menyimpan nilai penggunaan_id dari server
+    $('.barang-header').hide();
+    $('.barang-column').hide();
+    // Fungsi untuk menambah baris baru
+    $(document).on('click', '.add-row', function() {
+        var newRow = `
+            <tr>
+                <input type='hidden' name='PenggunaanDetail[` + rowIndex + `][penggunaan_id]' value='` + PenggunaanId + `'>
+                <td class='barang-column'><input type='text' name='PenggunaanDetail[` + rowIndex + `][barang_id]' id='penggunaandetail-` + rowIndex + `-barang_id' class='form-control' readonly></td>
+                <td><input type='text' name='PenggunaanDetail[` + rowIndex + `][kode_barang]' id='penggunaandetail-` + rowIndex + `-kode_barang' class='form-control' readonly></td>
+                <td><input type='text' name='PenggunaanDetail[` + rowIndex + `][nama_barang]' id='penggunaandetail-` + rowIndex + `-nama_barang' class='form-control typeahead-input' data-index='` + rowIndex + `' placeholder='Cari Nama Barang...'></td>
+                <td><input type='text' name='PenggunaanDetail[` + rowIndex + `][jumlah_digunakan]' class='form-control'></td>
+                <td><input type='text' name='PenggunaanDetail[` + rowIndex + `][catatan]' class='form-control'></td>
+                <td class='barang-column'><input type='text' name='PenggunaanDetail[` + rowIndex + `][area_gudang]' class='form-control' readonly></td>
+                <td class='text-center'>
+                    <div class='btn-group' role='group'>
+                        <button type='button' class='btn btn-success btn-sm add-row' title='Tambah'>
+                            <i class='fas fa-plus'></i>
+                        </button>
+                        <button type='button' class='btn btn-danger btn-sm delete-row' title='Hapus'>
+                            <i class='fas fa-trash'></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `;
+        $('#table-body').append(newRow);
+        initializeTypeahead('#penggunaandetail-' + rowIndex + '-nama_barang', rowIndex);
+        $('.barang-header').hide();
+        $('.barang-column').hide();
+        rowIndex++;
+        toggleAddDeleteButtons();
+    });
+
+    //fungsi untuk cek form kosong atau tidak
+    var formChanged = true;  // Anggap form belum diproses saat pertama kali dimuat
+    var isNewRecord = " . json_encode($isNewRecord) . ";
+
+    $(document).ready(function() {
+
+        // Menangani klik pada elemen button dan a
+        $('button, a').on('click', function(e) {
+            // Cek apakah form telah berubah dan apakah tombol yang diklik bukan #cancelButton, #saveButton
+            if (formChanged && isNewRecord && !$(e.currentTarget).is('#cancelButtons, #saveButtons, .cancel-class, .save-class, #add-rows')) {
+                // Debug: Cek apakah e.currentTarget adalah tombol yang tepat
+                console.log('Tombol yang diklik: ' + $(e.currentTarget).attr('id'));
+
+                e.preventDefault();  // Mencegah aksi default (misalnya klik tombol atau tautan)
+                
+                // Menampilkan dialog peringatan
+                krajeeDialog.alert('Selesaikan form dahulu atau cancel form Penggunaan').setDefaults({
+                    'backdrop': 'static',  // Static berarti pengguna tidak bisa menutup modal dengan mengklik di luar modal
+                    'zIndex': 9999         // Pastikan zIndex modal cukup tinggi
+                });
+            }
         });
     });
 
-    // Initializing the grid view and other elements
-    $('.warna-header').hide();
-    $('.warna-column').hide();
 
-    // Function to initialize typeahead
+    // Fungsi untuk menghapus baris
+    $(document).on('click', '.delete-row', function() {
+        var id = $(this).data('id');
+        if (id) {
+            // Tambahkan ID detail ke array deleteRows
+            var deleteRows = $('#deleteRows').val() ? JSON.parse($('#deleteRows').val()) : [];
+            deleteRows.push(id);
+            $('#deleteRows').val(JSON.stringify(deleteRows));
+        }
+        $(this).closest('tr').remove(); // Hapus baris dari tampilan form
+        toggleAddDeleteButtons();
+    });
+
+
+    // Fungsi untuk menambahkan input hidden dengan nilai 0 jika checkbox tidak dicentang
+    // $('form').on('submit', function() {
+    //     $('.langsung_pakai, .is_correct').each(function() {
+    //         var checkbox = $(this);
+    //         if (!checkbox.is(':checked')) {
+    //             checkbox.after('<input type=\"hidden\" name=\"' + checkbox.attr('name') + '\" value=\"0\">');
+    //         }
+    //     });
+    // });
+
+    // Fungsi untuk menginisialisasi typeahead pada input baru
     function initializeTypeahead(selector, index) {
         $(selector).typeahead({
-            hint: true,
             highlight: true,
             minLength: 1
         },
         {
-            name: 'nama-barang',
-            display: 'nama_barang', 
+            name: 'barang',
+            display: 'value',
             limit: 10,
             source: new Bloodhound({
                 datumTokenizer: Bloodhound.tokenizers.obj.whitespace('nama_barang'),
                 queryTokenizer: Bloodhound.tokenizers.whitespace,
                 remote: {
-                    url: '" . Url::to(['barang/search']) . "?query=%QUERY',
+                    url: '" . Url::to(['penggunaan-detail/search']) . "?q=%QUERY',
                     wildcard: '%QUERY'
                 }
             }),
             templates: {
                 notFound: '<div class=\"text-danger\">Tidak ada hasil</div>',
                 suggestion: function(data) {
-                    return `<div>\${data.kode_barang} - \${data.nama_barang} </div>`;
+                    return `<div>\${data . kode_barang} - \${data . nama_barang}</div>`;
                 }
             }
         }).bind('typeahead:select', function(ev, suggestion) {
-            // Update fields with selected suggestion
-            var barangIdField = $('input[name=\"Penggunaan[' + index + '][barang_id]\"]');
-            var kodeBarangField = $('input[name=\"Penggunaan[' + index + '][kode_barang]\"]');
-            var quantityAwalField = $('input[name=\"Penggunaan[' + index + '][stock]\"]');
-
-            barangIdField.val(suggestion.barang_id);
-            kodeBarangField.val(suggestion.kode_barang);
-
-            // AJAX call to get latest quantity_awal based on barang_id
-            $.get('" . Url::to(['get-stock']) . "?barang_id=' + suggestion.barang_id, function(data) {
-                var result = JSON.parse(data);
-                quantityAwalField.val(result.quantity_akhir);
-            });
+            $(`#penggunaandetail-\${index}-barang_id`).val(suggestion.barang_id);
+            $(`#penggunaandetail-\${index}-kode_barang`).val(suggestion.kode_barang);
         });
+
+        // Menambahkan placeholder pada input setelah typeahead diinisialisasi
+        $(selector).attr('placeholder', 'Cari Nama Barang...');
     }
 
-    // Function to update row buttons visibility
-    function updateRowButtons() {
-        var rows = $('#penggunaan-gridview table tbody tr');
+    // Fungsi untuk menampilkan/menyembunyikan tombol add dan delete
+    function toggleAddDeleteButtons() {
+        var rows = $('#table-body tr');
         var rowCount = rows.length;
 
-        rows.each(function(index) {
-            var isLastRow = index === rowCount - 1;
-            $(this).find('.add-row').toggle(isLastRow);
-            $(this).find('.delete-row').toggle(rowCount > 1);
-        });
+        // Sembunyikan semua tombol delete jika hanya ada satu baris, tampilkan jika lebih dari satu
+        if (rowCount > 1) {
+            $('.delete-row').show(); // Tampilkan semua tombol delete
+        } else {
+            $('.delete-row').hide(); // Sembunyikan tombol delete jika hanya satu baris
+        }
+
+        // Sembunyikan semua tombol add kecuali pada baris terakhir
+        $('.add-row').hide();
+        $('#table-body tr:last-child .add-row').show(); // Tampilkan tombol add hanya pada baris terakhir
     }
 
-    $(document).ready(function() {
-        updateRowButtons();
-
-        // Initialize Typeahead for existing inputs
-        $('.nama-barang').each(function(index) {
-            initializeTypeahead(this, index);
-        });
-
-        // Function to add a new row
-        $(document).on('click', '.add-row', function(e) {
-            e.preventDefault();
-            var index = $('#penggunaan-gridview table tbody tr').length;
-
-            var newRow = `<tr>
-                <td class='serial-number'>\${index + 1}</td>
-                <td class='warna-column'><input type='hidden' name='Penggunaan[\${index}][barang_id]' class='form-control warna-field' maxlength='true'></td>
-                <td><input type='text' name='Penggunaan[\${index}][kode_barang]' class='form-control' maxlength='true' readonly></td>
-                <td><input type='text' name='Penggunaan[\${index}][nama_barang]' class='form-control nama-barang' maxlength='true'></td>
-                <td><input type='text' name='Penggunaan[\${index}][stock]' class='form-control stock-input' maxlength='true' readonly></td>
-                <td>
-                    <select name='Penggunaan[\${index}][user_id]' class='form-control'>
-                        <option value=''>Pilih User</option>
-                        $optionsHtml
-                    </select>
-                </td>
-                <td><input type='text' name='Penggunaan[\${index}][jumlah_digunakan]' class='form-control jumlah-digunakan-input' maxlength='true'></td>
-                <td><input type='text' name='Penggunaan[\${index}][catatan]' class='form-control' maxlength='true'></td>
-                <td>
-                    <div class='d-flex justify-content-between align-content-center align-items-center'>
-                        <a href='#' class='btn btn-success btn-xs pb-1 px-2 add-row' title='Tambah Baris'>
-                            <i class='fas fa-plus'></i>
-                        </a>
-                        <a href='#' class='btn btn-danger btn-xs pb-1 px-2 delete-row' title='Hapus Baris'>
-                            <i class='fas fa-trash'></i>
-                        </a>
-                    </div>
-                </td>
-            </tr>`;
-
-            
-            $('#penggunaan-gridview table tbody').append(newRow);
-            updateRowButtons();
-            $('.warna-header').hide();
-            $('.warna-column').hide();
-
-            // Initialize Typeahead for the new input
-            initializeTypeahead(`#penggunaan-gridview input[name='Penggunaan[\${index}][nama_barang]']`, index);
-        });
-
-        // Function to delete selected row
-        $(document).on('click', '.delete-row', function(e) {
-            e.preventDefault();
-            $(this).closest('tr').remove();
-            $('#penggunaan-gridview table tbody tr').each(function(index) {
-                $(this).find('.serial-number').text(index + 1);
-            });
-            updateRowButtons();
-        });
-
-    });
+    // Inisialisasi awal untuk menampilkan/menyembunyikan tombol add dan delete
+    toggleAddDeleteButtons();
 ");
 ?>
-
 <style>
     /* CSS untuk membuat dropdown saran scrollable */
     .tt-menu {
@@ -315,5 +308,17 @@ $this->registerJs("
         /* Tinggi maksimal dropdown */
         overflow-y: auto;
         /* Aktifkan scroll vertikal */
+    }
+
+    /* Pastikan modal muncul di atas elemen lain */
+    /* Pastikan modal berada di atas overlay */
+    .modal {
+        z-index: 1051;
+        /* Atur sesuai kebutuhan */
+    }
+
+    .modal-backdrop {
+        z-index: 1050;
+        /* Pastikan backdrop memiliki z-index lebih rendah */
     }
 </style>

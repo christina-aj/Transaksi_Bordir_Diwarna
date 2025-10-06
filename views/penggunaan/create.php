@@ -3,16 +3,20 @@
 use yii\helpers\Html;
 
 /** @var yii\web\View $this */
-/** @var app\models\Penggunaan $modelPenggunaans */
+/** @var app\models\Penggunaan $model */
 
 $this->title = 'Create Penggunaan';
 $this->params['breadcrumbs'][] = ['label' => 'Penggunaans', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
+
 ?>
 <div class="pc-content">
 
     <?= $this->render('_form', [
-        'models' => $modelPenggunaans,
+        'modelPenggunaan' => $modelPenggunaan,
+        'modelDetails' => $modelDetails,
     ]) ?>
+    
 
 </div>
+

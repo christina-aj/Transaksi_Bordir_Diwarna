@@ -96,16 +96,25 @@ $this->params['breadcrumbs'][] = $this->title;
                 ]);
                 ?>
                 <div class="form-group mb-4">
+                    <?php
+                    $roleName = Yii::$app->user->identity->roleName; 
+                    ?>
                     <?php if ($model->pemesanan->status == 0): ?>
-                        <?= Html::a('Update', ['update', 'pembelian_id' => $model->pembelian_id], ['class' => 'btn btn-success']) ?>
+                        <?php if (in_array($roleName, ['Super Admin', 'Admin'])): ?>
+                            <?= Html::a('Update', ['update', 'pembelian_id' => $model->pembelian_id], ['class' => 'btn btn-success']) ?>
+                        
+                        <?php endif ?>
                         <?= Html::a('Back', ['index'], ['class' => 'btn btn-secondary']) ?>
-                        <?= Html::a('Verify', ['verify', 'pembelian_id' => $model->pembelian_id], [
-                            'class' => 'btn btn-warning',
-                            'data-confirm' => 'Apakah Anda yakin ingin melakukan verifikasi?',
-                            'data-method' => 'post',
-                            'id' => 'verify-button', // Tambahkan ID untuk JavaScript
-                        ])
-                        ?>
+                        <?php if (in_array($roleName, ['Super Admin', 'Admin'])): ?>
+                            <?= Html::a('Verify', ['verify', 'pembelian_id' => $model->pembelian_id], [
+                                'class' => 'btn btn-warning',
+                                'data-confirm' => 'Apakah Anda yakin ingin melakukan verifikasi?',
+                                'data-method' => 'post',
+                                'id' => 'verify-button', // Tambahkan ID untuk JavaScript
+                            ])
+                            ?>
+                        <?php endif ?>
+
                     <?php else: ?>
                         <?= Html::a('Back', ['index'], ['class' => 'btn btn-secondary']) ?>
                     <?php endif ?>
@@ -117,33 +126,35 @@ $this->params['breadcrumbs'][] = $this->title;
 </div>
 
 <?php
-$this->registerJs(
-    <<<JS
-    function checkAllCorrect() {
-        let allCorrect = true;
-        
-        // Loop melalui setiap ikon status
-        $('.status-icon').each(function() {
-            if (!$(this).hasClass('correct')) {
-                allCorrect = false;
-                return false; // Keluar dari loop jika ditemukan ikon merah
+if (in_array($roleName, ['Super Admin', 'Gudang']) && $model->pemesanan->status == 0):
+    $this->registerJs(
+        <<<JS
+        function checkAllCorrect() {
+            let allCorrect = true;
+            
+            // Loop melalui setiap ikon status
+            $('.status-icon').each(function() {
+                if (!$(this).hasClass('correct')) {
+                    allCorrect = false;
+                    return false; // Keluar dari loop jika ditemukan ikon merah
+                }
+            });
+            
+            // Atur status tombol berdasarkan hasil pengecekan
+            if (allCorrect) {
+                $('#verify-button').removeClass('disabled-button').prop('disabled', false);
+            } else {
+                $('#verify-button').addClass('disabled-button').prop('disabled', true);
             }
-        });
-        
-        // Atur status tombol berdasarkan hasil pengecekan
-        if (allCorrect) {
-            $('#verify-button').removeClass('disabled-button').prop('disabled', false);
-        } else {
-            $('#verify-button').addClass('disabled-button').prop('disabled', true);
         }
-    }
 
-    // Cek status saat halaman selesai di-render
-    $(document).ready(function() {
-        checkAllCorrect();
-    });
-JS
-);
+        // Cek status saat halaman selesai di-render
+        $(document).ready(function() {
+            checkAllCorrect();
+        });
+    JS
+    );
+endif;
 ?>
 
 <style>

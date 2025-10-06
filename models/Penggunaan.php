@@ -3,23 +3,37 @@
 namespace app\models;
 
 use Yii;
+use yii\behaviors\TimestampBehavior;
+use yii\db\Expression;
 
 /**
  * This is the model class for table "penggunaan".
  *
  * @property int $penggunaan_id
- * @property int $barang_id
  * @property int $user_id
- * @property int $jumlah_digunakan
- * @property string $tanggal_digunakan
+ * @property int $total_item_penggunaan
+ * @property int $status_penggunaan
+ * @property string|null $created_at
+ * @property string|null $updated_at
+ * @property string $tanggal
  *
- * @property Barang $barang
+ * @property PenggunaanDetail[] $penggunaanDetails
+ * @property User $user
  */
 class Penggunaan extends \yii\db\ActiveRecord
 {
+
+
     /**
      * {@inheritdoc}
      */
+
+    public $kode_penggunaan;
+    public $nama_pengguna;
+
+    const STATUS_PENDING = 0;
+    const STATUS_COMPLETE = 1;
+
     public static function tableName()
     {
         return 'penggunaan';
@@ -28,18 +42,42 @@ class Penggunaan extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
+    public static function getStatusLabels()
+    {
+        return [
+            self::STATUS_PENDING => '<span style="color: orange">Pending</span>',
+            self::STATUS_COMPLETE => '<span style="color: green">Complete</span>',
+        ];
+    }
 
-    public $stock;
-    public $nama_barang;
-    public $kode_barang;
+    // Metode untuk mendapatkan label status berdasarkan nilai
+    public function getStatusLabel()
+    {
+        $statusLabels = self::getStatusLabels();
+        return $statusLabels[$this->status_penggunaan] ?? 'Unknown';
+    }
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => TimestampBehavior::className(),
+                'attributes' => [
+                    \yii\db\ActiveRecord::EVENT_BEFORE_INSERT => ['created_at', 'updated_at'],
+                    \yii\db\ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
+                ],
+                'value' => new Expression('NOW()'), // or date('Y-m-d H:i:s')
+            ],
+        ];
+    }
     public function rules()
     {
         return [
-            [['barang_id', 'jumlah_digunakan', 'user_id'], 'required'],
-            [['barang_id', 'jumlah_digunakan', 'user_id'], 'integer'],
-            [['tanggal_digunakan', 'stock', 'nama_barang', 'kode_barang'], 'safe'],
-            [['catatan'], 'string', 'max' => 255],
-            [['barang_id'], 'exist', 'skipOnError' => true, 'targetClass' => Barang::class, 'targetAttribute' => ['barang_id' => 'barang_id']],
+            [['created_at', 'updated_at'], 'default', 'value' => null],
+            [['status_penggunaan'], 'default', 'value' => 0],
+            [['user_id', 'total_item_penggunaan', 'tanggal'], 'required'],
+            [['user_id', 'total_item_penggunaan', 'status_penggunaan'], 'integer'],
+            [['created_at', 'updated_at', 'tanggal', 'kode_penggunaan', 'nama_pengguna'], 'safe'],
+            [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'user_id']],
         ];
     }
 
@@ -50,47 +88,64 @@ class Penggunaan extends \yii\db\ActiveRecord
     {
         return [
             'penggunaan_id' => 'Penggunaan ID',
-            'barang_id' => 'Barang ID',
+            'kode_penggunaan' => 'Kode Penggunaan',
+            'nama_pengguna' => 'Nama Pengguna',
+
             'user_id' => 'User ID',
-            'catatan' => 'Catatan',
-            'jumlah_digunakan' => 'Jumlah Digunakan',
-            'tanggal_digunakan' => 'Tanggal Digunakan',
+            'total_item_penggunaan' => 'Total Item Penggunaan',
+            // 'status_penggunaan' => 'Status Penggunaan',
+            'created_at' => 'Created At',
+            'updated_at' => 'Updated At',
+            'tanggal' => 'Tanggal',
         ];
     }
 
     /**
-     * Gets query for [[Barang]].
+     * Gets query for [[PenggunaanDetails]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getBarang()
+    public function getPenggunaanDetails()
     {
-        return $this->hasOne(Barang::class, ['barang_id' => 'barang_id']);
+        return $this->hasMany(PenggunaanDetail::class, ['penggunaan_id' => 'penggunaan_id']);
     }
+
+    /**
+     * Gets query for [[User]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
     public function getUser()
     {
         return $this->hasOne(User::class, ['user_id' => 'user_id']);
     }
-    public function getGudang()
+    public function getFormattedGunaId()
     {
-        return $this->hasOne(Gudang::class, ['barang_id' => 'barang_id']);
+        if ($this->penggunaan_id === null) {
+            return null;
+        }
+        return 'PG-' . str_pad($this->penggunaan_id, 3, '0', STR_PAD_LEFT);
     }
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {
             // Mengubah format tanggal dari dd-mm-yyyy ke yyyy-mm-dd sebelum disimpan
-            $this->tanggal_digunakan = Yii::$app->formatter->asDate($this->tanggal_digunakan, 'php:Y-m-d');
+            $this->tanggal = Yii::$app->formatter->asDate($this->tanggal, 'php:Y-m-d');
             return true;
         } else {
             return false;
         }
     }
-
-    public function afterSave($insert, $changedAttributes)
+    public function updateTotalItem($penggunaan_id)
     {
-        parent::afterSave($insert, $changedAttributes);
-        $this->updateStock();
+        // Menghitung total item dari semua detail pembelian menggunakan relasi
+        $totalItem = $this->getPenggunaanDetails()
+            ->where(['penggunaan_id' => $penggunaan_id])
+            ->count();
+
+        // Update total item pada tabel pembelian
+        $this->total_item_penggunaan = $totalItem;
+        return $this->save();
     }
 
-    protected function updateStock() {}
 }

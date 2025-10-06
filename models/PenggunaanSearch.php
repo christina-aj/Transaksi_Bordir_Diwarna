@@ -2,7 +2,6 @@
 
 namespace app\models;
 
-use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\models\Penggunaan;
@@ -15,14 +14,11 @@ class PenggunaanSearch extends Penggunaan
     /**
      * {@inheritdoc}
      */
-    public $nama_pengguna;
-    public $nama_barang;
-    public $kode_barang;
     public function rules()
     {
         return [
-            [['penggunaan_id', 'barang_id', 'jumlah_digunakan'], 'integer'],
-            [['tanggal_digunakan', 'catatan', 'nama_pengguna', 'nama_barang', 'kode_barang'], 'safe'],
+            [['penggunaan_id', 'user_id', 'total_item_penggunaan', 'status_penggunaan'], 'integer'],
+            [['created_at', 'updated_at', 'tanggal'], 'safe'],
         ];
     }
 
@@ -39,49 +35,21 @@ class PenggunaanSearch extends Penggunaan
      * Creates data provider instance with search query applied
      *
      * @param array $params
+     * @param string|null $formName Form name to be used into `->load()` method.
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
+    public function search($params, $formName = null)
     {
+        $query = Penggunaan::find();
 
-
-        $query = Penggunaan::find()->joinWith(['user', 'barang']);
-        $query->orderBy([
-            'tanggal_digunakan' => SORT_DESC,  // Atur default sorting descending berdasarkan 'tanggal'
-            // atau untuk kolom lain
-            // 'kode_pembelian' => SORT_DESC,
-        ]);
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-            'pagination' => [
-                'pagesize' => 15,
-            ],
-            'sort' => [
-                'attributes' => [
-                    'penggunaan_id', // Aktifkan sorting untuk kolom tanggal
-                    'tanggal_digunakan', // Aktifkan sorting untuk kolom pembelian_id
-                    'nama_pengguna' => [
-                        'asc' => ['nama_pengguna' => SORT_ASC],  // Kolom user_name diurutkan berdasarkan nama di tabel user
-                        'desc' => ['nama_pengguna' => SORT_DESC],
-                    ],
-                    'kode_barang' => [
-                        'asc' => ['kode_barang' => SORT_ASC],  // Kolom supplier_name diurutkan berdasarkan nama di tabel supplier
-                        'desc' => ['kode_barang' => SORT_DESC],
-                    ],
-                    'nama_barang' => [
-                        'asc' => ['nama_barang' => SORT_ASC],  // Kolom supplier_name diurutkan berdasarkan nama di tabel supplier
-                        'desc' => ['nama_barang' => SORT_DESC],
-                    ],
-                    'jumlah_digunakan', // Aktifkan sorting untuk kolom kode_struk
-                    'catatan',
-                ],
-            ]
         ]);
 
-        $this->load($params);
+        $this->load($params, $formName);
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
@@ -89,28 +57,15 @@ class PenggunaanSearch extends Penggunaan
             return $dataProvider;
         }
 
-        if (!empty($this->tanggal_digunakan)) {
-            $dates = explode(' - ', $this->tanggal_digunakan);
-            if (count($dates) == 2) {
-                $startDate = \DateTime::createFromFormat('d-m-Y', trim($dates[0]));
-                $endDate = \DateTime::createFromFormat('d-m-Y', trim($dates[1]));
-
-                if ($startDate && $endDate) {
-                    $formattedStartDate = $startDate->format('Y-m-d');
-                    $formattedEndDate = $endDate->format('Y-m-d');
-                    $query->andFilterWhere(['between', 'DATE(tanggal_digunakan)', $formattedStartDate, $formattedEndDate]);
-                    Yii::debug('Date filter: ' . $formattedStartDate . ' to ' . $formattedEndDate);
-                }
-            }
-        }
-        $query->andFilterWhere(['like', 'barang.nama_barang', $this->nama_barang]);
-        $query->andFilterWhere(['like', 'barang.kode_barang', $this->kode_barang]);
-        $query->andFilterWhere(['like', 'user.nama_pengguna', $this->nama_pengguna]);
         // grid filtering conditions
         $query->andFilterWhere([
             'penggunaan_id' => $this->penggunaan_id,
-            'barang_id' => $this->barang_id,
-            'jumlah_digunakan' => $this->jumlah_digunakan,
+            'user_id' => $this->user_id,
+            'total_item_penggunaan' => $this->total_item_penggunaan,
+            'status_penggunaan' => $this->status_penggunaan,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
+            'tanggal' => $this->tanggal,
         ]);
 
         return $dataProvider;

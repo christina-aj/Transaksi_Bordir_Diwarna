@@ -6,6 +6,7 @@ use app\models\Pembelian;
 use app\models\PembelianDetail;
 use app\models\PembelianSearch;
 use app\models\Pemesanan;
+use app\models\Gudang;
 use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -165,6 +166,7 @@ class PembelianController extends BaseController
             'modelDetails' => $modelDetails,
         ]);
     }
+
     public function actionVerify($pembelian_id)
     {
         // Cari model Pembelian berdasarkan ID
@@ -199,6 +201,7 @@ class PembelianController extends BaseController
             } else {
                 Yii::$app->session->setFlash('error', 'Data pemesanan tidak ditemukan.');
             }
+
         } else {
             Yii::$app->session->setFlash('warning', 'Verifikasi gagal. Pastikan semua item sudah disetujui (is_correct == 1).');
         }

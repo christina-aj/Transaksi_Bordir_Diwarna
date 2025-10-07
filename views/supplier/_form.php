@@ -22,6 +22,8 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'kodepos')->textInput() ?>
 
+    <?= $form->field($model, 'lead_time')->textInput() ?>
+
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
         <?= Html::a('Back', ['supplier/index'], ['class' => 'btn btn-secondary']) ?>

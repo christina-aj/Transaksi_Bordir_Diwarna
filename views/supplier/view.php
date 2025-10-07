@@ -24,6 +24,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'alamat',
             'kota',
             'kodepos',
+            'lead_time',
         ],
     ]) ?>
     <div>

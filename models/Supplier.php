@@ -13,6 +13,7 @@ use Yii;
  * @property string $alamat
  * @property string $kota
  * @property int $kodepos
+ * @property int $lead_time
  *
  * @property Item[] $items
  * @property Pembelian[] $pembelians
@@ -34,7 +35,7 @@ class Supplier extends \yii\db\ActiveRecord
     {
         return [
             [['nama', 'notelfon', 'alamat', 'kota', 'kodepos'], 'required'],
-            [['kodepos'], 'integer'],
+            [['kodepos', 'lead_time'], 'integer'],
             [['nama', 'notelfon', 'alamat', 'kota'], 'string', 'max' => 200],
         ];
     }
@@ -51,6 +52,7 @@ class Supplier extends \yii\db\ActiveRecord
             'alamat' => 'Alamat',
             'kota' => 'Kota',
             'kodepos' => 'Kodepos',
+            'lead_time' => 'Waktu Pengiriman (hari)',
         ];
     }
 

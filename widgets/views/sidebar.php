@@ -33,6 +33,8 @@ $JenisUrl = Url::to(['/jenis/index']);
 $BarangProUrl = Url::to(['/barangproduksi/index']);
 $NotaUrl = Url::to(['/nota/index']);
 
+$BomUrl = Url::to(['/bom-barang/index']);
+
 
 
 $typographyUrl = Url::to(['site/typography']);
@@ -77,6 +79,7 @@ $samplePageUrl = Url::to(['site/sample-page']);
                             <li class="pc-item"><a class="pc-link" href="<?= $BarangUrl ?>">List Bahan Baku</a></li>
                             <!-- <li class="pc-item"><a class="pc-link" href="#!">List Barang Jadi</a></li> -->
                             <li class="pc-item"><a class="pc-link" href="<?= $BarangProUrl ?>">List Barang Jadi</a></li>
+                            <li class="pc-item"><a class="pc-link" href="<?= $BomUrl ?>">BOM Barang</a></li>
 
                         </ul>
                     </li>

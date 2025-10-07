@@ -21,10 +21,10 @@ $mesinList = ArrayHelper::map(
 
 $dataBarang = ArrayHelper::map(
     \app\models\Barangproduksi::find()
-        ->select(['barang_id', 'nama'])
+        ->select(['barang_produksi_id', 'nama'])
         ->asArray()
         ->all(), 
-    'barang_id', 
+    'barang_produksi_id', 
     'nama'
 );
 

@@ -106,7 +106,7 @@ class laporanproduksi extends \yii\db\ActiveRecord
 
     public function getBarangProduksi()
     {
-        return $this->hasOne(Barangproduksi::className(), ['barang_id' => 'nama_barang']);
+        return $this->hasOne(Barangproduksi::className(), ['barang_produksi_id' => 'nama_barang']);
     }
 
     /**

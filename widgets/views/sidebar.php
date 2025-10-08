@@ -34,6 +34,7 @@ $BarangProUrl = Url::to(['/barangproduksi/index']);
 $NotaUrl = Url::to(['/nota/index']);
 
 $BomUrl = Url::to(['/bom-barang/index']);
+$PermintaanUrl = Url::to(['/permintaan-penjualan/index']);
 
 
 
@@ -113,6 +114,13 @@ $samplePageUrl = Url::to(['site/sample-page']);
 
                         </ul>
                     </li>
+
+                    <li class="pc-item">
+                        <a href="<?= $PermintaanUrl ?>" class="pc-link">
+                            <span class="pc-micon"><i class="fi fi-ts-point-of-sale-bill"></i></span>
+                            <span class="pc-mtext">Permintaan Penjualan</span>
+                        </a>
+                    </li>                   
 
 
 

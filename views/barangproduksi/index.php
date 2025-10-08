@@ -40,6 +40,8 @@ $this->params['breadcrumbs'][] = $this->title;
         'dataProvider' => $dataProvider,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
+            // 'barang_produksi_id',
+            'kode_barang_produksi',
             'nama',
             'nama_jenis',
             'ukuran',

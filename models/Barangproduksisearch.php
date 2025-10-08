@@ -18,7 +18,7 @@ class Barangproduksisearch extends Barangproduksi
     {
         return [
             [['barang_produksi_id'], 'integer'],
-            [['nama', 'nama_jenis', 'deskripsi','ukuran'], 'safe'],
+            [['kode_barang_produksi', 'nama', 'nama_jenis', 'deskripsi','ukuran'], 'safe'],
         ];
     }
 
@@ -61,7 +61,8 @@ class Barangproduksisearch extends Barangproduksi
             'barang_produksi_id' => $this->barang_produksi_id,
         ]);
 
-        $query->andFilterWhere(['like', 'nama', $this->nama])
+        $query->andFilterWhere(['like', 'kode_barang_produksi', $this->kode_barang_produksi])
+            ->andFilterWhere(['like', 'nama', $this->nama])
             ->andFilterWhere(['like', 'nama_jenis', $this->nama_jenis])
             ->andFilterWhere(['like', 'deskripsi', $this->deskripsi])
             ->andFilterWhere(['like', 'ukuran', $this->ukuran]);

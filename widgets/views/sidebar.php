@@ -35,6 +35,10 @@ $NotaUrl = Url::to(['/nota/index']);
 
 $BomUrl = Url::to(['/bom-barang/index']);
 $PermintaanUrl = Url::to(['/permintaan-penjualan/index']);
+$RiwayatPenjualanUrl = Url::to(['/riwayat-penjualan/index']);
+$SupplierBarangUrl = Url::to(['/supplier-barang/index']);
+$DataPerhitunganUrl = Url::to(['/data-perhitungan/index']);
+$ForecastUrl = Url::to(['/forecast/index']);
 
 
 
@@ -71,6 +75,16 @@ $samplePageUrl = Url::to(['site/sample-page']);
                             <span class="pc-micon"><i class="ph ph-user"></i></span>
                             <span class="pc-mtext">Karyawan</span>
                         </a>
+                    </li>
+
+                    <li class="pc-item pc-hasmenu">
+                        <a href="#!" class="pc-link"><span class="pc-micon">
+                                <i class="fi fi-ts-supplier-alt"></i> </span><span class="pc-mtext">Supplier</span><span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
+                        <ul class="pc-submenu">
+                            <li class="pc-item"><a class="pc-link" href="<?= $SupplierUrl ?>">Data Supplier</a></li>
+                            <li class="pc-item"><a class="pc-link" href="<?= $SupplierBarangUrl ?>">Supplier Handle</a></li>
+
+                        </ul>
                     </li>
 
                     <li class="pc-item pc-hasmenu">
@@ -115,12 +129,23 @@ $samplePageUrl = Url::to(['site/sample-page']);
                         </ul>
                     </li>
 
-                    <li class="pc-item">
+                    <!-- <li class="pc-item">
                         <a href="<?= $PermintaanUrl ?>" class="pc-link">
                             <span class="pc-micon"><i class="fi fi-ts-point-of-sale-bill"></i></span>
                             <span class="pc-mtext">Permintaan Penjualan</span>
                         </a>
-                    </li>                   
+                    </li> -->
+
+                    <li class="pc-item pc-hasmenu">
+                        <a href="#!" class="pc-link"><span class="pc-micon">
+                                <i class="fi fi-ts-point-of-sale-bill"></i> </span><span class="pc-mtext">Penjualan</span><span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
+                        <ul class="pc-submenu">
+                            <li class="pc-item"><a class="pc-link" href="<?= $PermintaanUrl ?>">Permintaan Penjualan</a></li>
+                            <li class="pc-item"><a class="pc-link" href="<?= $RiwayatPenjualanUrl ?>">Riwayat Penjualan</a></li>
+
+                        </ul>
+                    </li>
+                                    
 
 
 
@@ -131,11 +156,23 @@ $samplePageUrl = Url::to(['site/sample-page']);
                         </a>
                     </li> -->
 
-                    <li class="pc-item">
+                    <!-- <li class="pc-item">
                         <a href="<?= $SupplierUrl ?>" class="pc-link">
                             <span class="pc-micon"><i class="fi fi-ts-supplier-alt"></i></i></span>
                             <span class="pc-mtext">Supplier</span>
                         </a>
+                    </li> -->
+
+
+
+                    <li class="pc-item pc-hasmenu">
+                        <a href="#!" class="pc-link"><span class="pc-micon">
+                                <i class="fi fi-ts-supplier-alt"></i> </span><span class="pc-mtext">Peramalan dan EOQ</span><span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
+                        <ul class="pc-submenu">
+                            <li class="pc-item"><a class="pc-link" href="<?= $DataPerhitunganUrl ?>">Data Perhitungan</a></li>
+                            <li class="pc-item"><a class="pc-link" href="<?= $ForecastUrl ?>">Forecasting</a></li>
+                            <li class="pc-item"><a class="pc-link" href="#">EOQ ROP</a></li>
+                        </ul>
                     </li>
 
                     <!-- <li class="pc-item">
@@ -163,6 +200,7 @@ $samplePageUrl = Url::to(['site/sample-page']);
                         <a href="#!" class="pc-link"><span class="pc-micon">
                                 <i class="fi fi-ts-ballot-check"></i> </span><span class="pc-mtext">Report</span><span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
                         <ul class="pc-submenu">
+                            <li class="pc-item"><a class="pc-link" href="<?= $RiwayatPenjualanUrl ?>">Riwayat Penjualan</a></li>
                             <li class="pc-item"><a class="pc-link" href="<?= $laproUrl ?>">Laporan Produksi</a></li>
                             <li class="pc-item"><a class="pc-link" href="<?= $lapagreUrl ?>">Laporan Agregat</a></li>
                             <li class="pc-item"><a class="pc-link" href="<?= $lapkelUrl ?>">Laporan Keluar</a></li>

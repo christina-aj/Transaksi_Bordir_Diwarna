@@ -13,12 +13,13 @@ use Yii;
  * @property int|null $qty_BOM
  * @property string|null $catatan
  *
- * @property BomBarang $bOMBarang
+ * @property BomBarang $bomBarang
  * @property Barang $barang
  */
 class BomDetail extends \yii\db\ActiveRecord
 {
-
+    public $nama_barang; // untuk keperluan view/update
+    public $kode_barang; // untuk keperluan view/update
 
     /**
      * {@inheritdoc}
@@ -34,12 +35,13 @@ class BomDetail extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['barang_id', 'qty_BOM', 'catatan'], 'default', 'value' => null],
-            [['BOM_barang_id'], 'default', 'value' => 0],
+            [['BOM_barang_id'], 'required'],
             [['BOM_barang_id', 'barang_id', 'qty_BOM'], 'integer'],
             [['catatan'], 'string', 'max' => 255],
             [['barang_id'], 'exist', 'skipOnError' => true, 'targetClass' => Barang::class, 'targetAttribute' => ['barang_id' => 'barang_id']],
             [['BOM_barang_id'], 'exist', 'skipOnError' => true, 'targetClass' => BomBarang::class, 'targetAttribute' => ['BOM_barang_id' => 'BOM_barang_id']],
+            [['qty_BOM'], 'required', 'message' => 'Jumlah harus diisi'],
+            [['qty_BOM'], 'integer', 'min' => 1, 'message' => 'Jumlah minimal 1'],
         ];
     }
 
@@ -49,16 +51,16 @@ class BomDetail extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'BOM_detail_id' => 'Bom Detail ID',
-            'BOM_barang_id' => 'Bom Barang ID',
-            'barang_id' => 'Barang ID',
-            'qty_BOM' => 'Qty Bom',
+            'BOM_detail_id' => 'BOM Detail ID',
+            'BOM_barang_id' => 'BOM Barang ID',
+            'barang_id' => 'Bahan Baku',
+            'qty_BOM' => 'Jumlah',
             'catatan' => 'Catatan',
         ];
     }
 
     /**
-     * Gets query for [[BOMBarang]].
+     * Gets query for [[BomBarang]].
      *
      * @return \yii\db\ActiveQuery
      */
@@ -67,10 +69,14 @@ class BomDetail extends \yii\db\ActiveRecord
         return $this->hasOne(BomBarang::class, ['BOM_barang_id' => 'BOM_barang_id']);
     }
 
+    /**
+     * Gets query for [[BarangProduksi]] via BomBarang
+     *
+     * @return \yii\db\ActiveQuery
+     */
     public function getBarangProduksi()
     {
-        // Lewat tabel bom_barang
-        return $this->hasOne(\app\models\BarangProduksi::class, ['barang_produksi_id' => 'barang_produksi_id'])
+        return $this->hasOne(BarangProduksi::class, ['barang_produksi_id' => 'barang_produksi_id'])
             ->via('bomBarang');
     }
 
@@ -84,4 +90,19 @@ class BomDetail extends \yii\db\ActiveRecord
         return $this->hasOne(Barang::class, ['barang_id' => 'barang_id']);
     }
 
+    /**
+     * Get nama barang (bahan baku)
+     */
+    public function getNamaBarang()
+    {
+        return $this->barang ? $this->barang->nama_barang : '-';
+    }
+
+    /**
+     * Get kode barang (bahan baku)
+     */
+    public function getKodeBarang()
+    {
+        return $this->barang ? $this->barang->kode_barang : '-';
+    }
 }

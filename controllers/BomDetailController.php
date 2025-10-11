@@ -1,12 +1,14 @@
 <?php
 
-namespace app\models;
+namespace app\controllers;
 
+use app\models\Barang;
 use app\models\BomDetail;
 use app\models\BomDetailSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use Yii;
 
 /**
  * BomDetailController implements the CRUD actions for BomDetail model.
@@ -114,6 +116,119 @@ class BomDetailController extends Controller
         $this->findModel($BOM_detail_id)->delete();
 
         return $this->redirect(['index']);
+    }
+
+    /**
+     * Search action untuk typeahead autocomplete
+     * Digunakan untuk mencari barang bahan baku
+     * 
+     * @param string|null $q Query string untuk pencarian
+     * @param bool $is_search_form Flag untuk format output berbeda
+     * @return array JSON response dengan data barang
+     */
+    public function actionSearch($q = null, $is_search_form = false)
+    {
+        // Set response format ke JSON
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        try {
+            // Log query untuk debugging
+            Yii::error("BomDetail Search called with q: " . $q, __METHOD__);
+
+            // Validasi query parameter
+            if (empty($q)) {
+                Yii::warning("Query parameter is missing.");
+                throw new \yii\web\BadRequestHttpException('Query parameter is missing');
+            }
+
+            // Query barang dari database
+            Yii::debug("Performing search query for: " . $q);
+            $items = Barang::find()
+                ->select(['barang_id', 'kode_barang', 'nama_barang', 'angka', 'warna', 'unit.satuan'])
+                ->leftJoin('unit', 'barang.unit_id = unit.unit_id')
+                ->where(['like', 'barang_id', $q])
+                ->orWhere(['like', 'nama_barang', $q])
+                ->orWhere(['like', 'kode_barang', $q])
+                ->orWhere(['like', 'angka', $q])
+                ->orWhere(['like', 'warna', $q])
+                ->orWhere(['like', 'unit.satuan', $q])
+                ->limit(10)
+                ->asArray()
+                ->all();
+
+            // Log hasil query
+            Yii::debug("Query result: " . json_encode($items));
+
+            // Jika tidak ada hasil
+            if (empty($items)) {
+                return [
+                    [
+                        'id' => null,
+                        'barang_id' => null,
+                        'kode_barang' => null,
+                        'nama_barang' => 'Barang tidak ditemukan',
+                        'angka' => null,
+                        'satuan' => null,
+                        'warna' => null,
+                        'value' => 'Barang tidak ditemukan'
+                    ]
+                ];
+            }
+
+            // Format hasil untuk typeahead
+            $result = [];
+            foreach ($items as $item) {
+                $result[] = [
+                    'id' => $item['barang_id'],
+                    'barang_id' => $item['barang_id'],
+                    'kode_barang' => $item['kode_barang'],
+                    'nama_barang' => $item['nama_barang'],
+                    'angka' => $item['angka'],
+                    'satuan' => $item['satuan'],
+                    'warna' => $item['warna'],
+                    // Format value sesuai kebutuhan
+                    'value' => $is_search_form 
+                        ? $item['nama_barang'] 
+                        : $item['kode_barang'] . " - " . $item['nama_barang'] . 
+                          ($item['angka'] ? " - " . $item['angka'] : "") . 
+                          ($item['satuan'] ? " - " . $item['satuan'] : "")
+                ];
+            }
+
+            // Log hasil akhir
+            Yii::debug("Final search result: " . json_encode($result));
+
+            return $result;
+
+        } catch (\yii\web\HttpException $e) {
+            Yii::error("HttpException occurred: " . $e->getMessage());
+            return ['error' => $e->getMessage()];
+        } catch (\Exception $e) {
+            Yii::error("Error in search: " . $e->getMessage());
+            throw new \yii\web\ServerErrorHttpException('Internal server error');
+        }
+    }
+
+    /**
+     * Test action untuk memastikan koneksi database dan model bekerja
+     * @return array
+     */
+    public function actionTestSearch()
+    {
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        
+        try {
+            $count = Barang::find()->count();
+            $sample = Barang::find()->limit(5)->asArray()->all();
+            
+            return [
+                'status' => 'OK', 
+                'barang_count' => $count,
+                'sample_data' => $sample
+            ];
+        } catch (\Exception $e) {
+            return ['error' => $e->getMessage()];
+        }
     }
 
     /**

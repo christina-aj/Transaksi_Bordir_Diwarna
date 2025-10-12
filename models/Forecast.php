@@ -80,6 +80,8 @@ class Forecast extends \yii\db\ActiveRecord
         ];
     }
 
+    
+
     /**
      * Gets query for [[BarangProduksi]].
      *
@@ -176,5 +178,21 @@ class Forecast extends \yii\db\ActiveRecord
             // Tambah 1 bulan
             return $tahun * 100 + ($bulan + 1);
         }
+    }
+
+    // Fungsi bantu untuk dapatkan periode sebelumnya
+    public static function getPreviousPeriode($periode)
+    {
+        $year = (int) substr($periode, 0, 4);
+        $month = (int) substr($periode, 4, 2);
+
+        if ($month == 1) {
+            $month = 12;
+            $year--;
+        } else {
+            $month--;
+        }
+
+        return sprintf("%04d%02d", $year, $month);
     }
 }

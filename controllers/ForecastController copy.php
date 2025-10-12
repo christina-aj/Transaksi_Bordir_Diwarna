@@ -10,7 +10,6 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use Yii;
-use app\models\ForecastHistory;
 
 class ForecastController extends Controller
 {
@@ -50,6 +49,7 @@ class ForecastController extends Controller
     public function actionCreate()
     {
         try {
+            // Ambil semua barang produksi
             $barangList = BarangProduksi::find()->all();
             
             if (empty($barangList)) {
@@ -61,10 +61,10 @@ class ForecastController extends Controller
             $errorCount = 0;
             $skippedCount = 0;
             $errorMessages = [];
-            $today = date('Y-m-d');
 
             foreach ($barangList as $barang) {
                 // Ambil data riwayat penjualan untuk barang ini
+                // Group by bulan_periode dan sum qty_penjualan
                 $riwayatData = RiwayatPenjualan::find()
                     ->select([
                         'bulan_periode',
@@ -98,28 +98,6 @@ class ForecastController extends Controller
                     ];
                 }
 
-                // ============================================
-                // PENTING: Tentukan periode yang mau di-forecast
-                // ============================================
-                $lastPeriode = $salesData[count($salesData) - 1]['periode'];
-                $nextPeriode = Forecast::getNextPeriode($lastPeriode);
-                
-                // ============================================
-                // CEK: Apakah forecast untuk periode ini sudah pernah dibuat?
-                // ============================================
-                $existingHistory = ForecastHistory::find()
-                    ->where([
-                        'barang_produksi_id' => $barang->barang_produksi_id,
-                        'periode_forecast' => $nextPeriode
-                    ])
-                    ->one();
-                
-                // JIKA SUDAH PERNAH DIBUAT, SKIP!
-                if ($existingHistory) {
-                    $skippedCount++;
-                    continue;  // ← PENTING: Jangan hitung ulang!
-                }
-
                 // Hitung alpha terbaik dan MAPE
                 $bestResult = $this->findBestAlpha($salesData);
 
@@ -132,55 +110,11 @@ class ForecastController extends Controller
                 // Hitung forecast untuk periode berikutnya
                 $nextForecast = $this->calculateNextPeriodForecast($salesData, $bestResult['alpha']);
 
-                // ============================================
-                // SIMPAN KE HISTORY (HANYA SEKALI!)
-                // ============================================
-                $forecastHistory = new ForecastHistory();
-                $forecastHistory->barang_produksi_id = $barang->barang_produksi_id;
-                $forecastHistory->periode_forecast = $nextPeriode;
-                $forecastHistory->tanggal_dibuat = $today;
-                $forecastHistory->nilai_alpha = $bestResult['alpha'];
-                $forecastHistory->mape_test = $bestResult['mape'];
-                $forecastHistory->hasil_forecast = $nextForecast;
-                $forecastHistory->data_aktual = null;
-                
-                if (!$forecastHistory->save()) {
-                    $errors = implode(', ', $forecastHistory->getErrorSummary(true));
-                    $errorMessages[] = "Gagal menyimpan history forecast untuk '{$barang->nama}': {$errors}";
-                    $errorCount++;
-                    continue;
-                } else {
-                    // ✅ Jika forecast bulan ini berhasil disimpan,
-                    // maka update record forecast sebelumnya (periode sebelumnya)
-                    $prevPeriode = Forecast::getPreviousPeriode($nextPeriode);
+                // Generate periode berikutnya (1 bulan setelah data terakhir)
+                $lastPeriode = $salesData[count($salesData) - 1]['periode'];
+                $nextPeriode = Forecast::getNextPeriode($lastPeriode);
 
-                    $prevForecast = ForecastHistory::find()
-                        ->where([
-                            'barang_produksi_id' => $barang->barang_produksi_id,
-                            'periode_forecast' => $prevPeriode
-                        ])
-                        ->one();
-
-                    if ($prevForecast) {
-                        // Cari data aktual penjualan bulan sebelumnya
-                        $actualData = RiwayatPenjualan::find()
-                            ->where([
-                                'barang_produksi_id' => $barang->barang_produksi_id,
-                                'bulan_periode' => $prevPeriode
-                            ])
-                            ->sum('qty_penjualan');
-
-                        if ($actualData) {
-                            $prevForecast->data_aktual = $actualData;
-                            $prevForecast->save(false); // save tanpa validasi
-                        }
-                    }
-                }
-
-
-                // ============================================
-                // UPDATE/CREATE FORECAST AKTIF
-                // ============================================
+                // Cek apakah forecast untuk barang dan periode ini sudah ada
                 $existingForecast = Forecast::find()
                     ->where([
                         'barang_produksi_id' => $barang->barang_produksi_id,
@@ -189,30 +123,30 @@ class ForecastController extends Controller
                     ->one();
 
                 if ($existingForecast) {
-                    // Jangan update jika sudah ada!
-                    // Atau bisa update dengan data terbaru
+                    // Update forecast yang sudah ada
                     $existingForecast->nilai_alpha = $bestResult['alpha'];
                     $existingForecast->mape_test = $bestResult['mape'];
                     $existingForecast->hasil_forecast = $nextForecast;
-                    $existingForecast->updated_at = date('Y-m-d H:i:s');
                     
                     if (!$existingForecast->save()) {
                         $errors = implode(', ', $existingForecast->getErrorSummary(true));
-                        $errorMessages[] = "Gagal update forecast aktif untuk '{$barang->nama}': {$errors}";
+                        $errorMessages[] = "Gagal update forecast untuk barang '{$barang->nama}': {$errors}";
                         $errorCount++;
+                    } else {
+                        $successCount++;
                     }
                 } else {
+                    // Buat forecast baru
                     $forecast = new Forecast();
                     $forecast->barang_produksi_id = $barang->barang_produksi_id;
                     $forecast->periode_forecast = $nextPeriode;
                     $forecast->nilai_alpha = $bestResult['alpha'];
                     $forecast->mape_test = $bestResult['mape'];
                     $forecast->hasil_forecast = $nextForecast;
-                    $forecast->created_at = date('Y-m-d H:i:s');
 
                     if (!$forecast->save()) {
                         $errors = implode(', ', $forecast->getErrorSummary(true));
-                        $errorMessages[] = "Gagal menyimpan forecast aktif untuk '{$barang->nama}': {$errors}";
+                        $errorMessages[] = "Gagal menyimpan forecast untuk barang '{$barang->nama}': {$errors}";
                         $errorCount++;
                     } else {
                         $successCount++;
@@ -224,11 +158,11 @@ class ForecastController extends Controller
             $messages = [];
             
             if ($successCount > 0) {
-                $messages[] = "✓ Berhasil membuat {$successCount} forecast baru.";
+                $messages[] = "✓ Berhasil membuat/update {$successCount} forecast.";
             }
             
             if ($skippedCount > 0) {
-                $messages[] = "⚠ {$skippedCount} barang dilewati (sudah ada forecast atau data kurang).";
+                $messages[] = "⚠ {$skippedCount} barang dilewati (tidak ada riwayat atau data kurang dari 12 bulan).";
             }
             
             if ($errorCount > 0) {
@@ -255,29 +189,36 @@ class ForecastController extends Controller
      * Mencari nilai alpha terbaik dengan MAPE terkecil
      * Menggunakan metode Single Exponential Smoothing
      */
-
     private function findBestAlpha($salesData)
     {
         if (count($salesData) < 3) {
             return false;
         }
 
-        $bestAlpha = null;
+        $bestAlpha = 0;
         $bestMAPE = PHP_FLOAT_MAX;
 
+        // Coba alpha dari 0.1 sampai 0.9 dengan step 0.1
         for ($alpha = 0.1; $alpha <= 0.9; $alpha += 0.1) {
             $mape = $this->calculateMAPE($salesData, $alpha);
-            Yii::info("Alpha: $alpha, MAPE: $mape", __METHOD__);
-
+            
             if ($mape < $bestMAPE) {
                 $bestMAPE = $mape;
                 $bestAlpha = $alpha;
             }
         }
 
-        // Jika tidak ditemukan alpha valid
-        if ($bestAlpha === null) {
-            $bestAlpha = 0.1; // default aman
+        // Refinement: coba di sekitar alpha terbaik dengan step lebih kecil
+        $startAlpha = max(0.01, $bestAlpha - 0.09);
+        $endAlpha = min(0.99, $bestAlpha + 0.09);
+        
+        for ($alpha = $startAlpha; $alpha <= $endAlpha; $alpha += 0.01) {
+            $mape = $this->calculateMAPE($salesData, $alpha);
+            
+            if ($mape < $bestMAPE) {
+                $bestMAPE = $mape;
+                $bestAlpha = $alpha;
+            }
         }
 
         return [
@@ -285,7 +226,6 @@ class ForecastController extends Controller
             'mape' => round($bestMAPE, 2)
         ];
     }
-
 
     /**
      * Menghitung MAPE (Mean Absolute Percentage Error)

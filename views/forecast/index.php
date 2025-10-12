@@ -47,6 +47,9 @@ $this->params['breadcrumbs'][] = $this->title;
                     'method' => 'post',
                 ],
             ]) ?>
+            <?= Html::a('Lihat Riwayat Forecast', ['forecast-history/index'], [
+                'class' => 'btn btn-primary',
+            ]) ?>
         </div>
         <div class="card-body">
             <div class="table-responsive">

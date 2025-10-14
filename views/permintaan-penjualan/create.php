@@ -9,12 +9,12 @@ $this->title = 'Create Permintaan Penjualan';
 $this->params['breadcrumbs'][] = ['label' => 'Permintaan Penjualans', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="permintaan-penjualan-create">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+<div class="pc-content">
 
     <?= $this->render('_form', [
-        'model' => $model,
+        'modelPermintaan' => $modelPermintaan,
+        'modelDetails' => $modelDetails,
     ]) ?>
 
 </div>

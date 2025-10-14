@@ -43,9 +43,6 @@ if (Yii::$app->session->hasFlash('success')) {
                 <?= Html::a('Barang Mentah', ['index', 'jenis' => Barang::KODE_BARANG_MENTAH], [
                     'class' => $jenis == Barang::KODE_BARANG_MENTAH ? 'btn btn-primary' : 'btn btn-outline-primary',
                 ]) ?>
-                <?= Html::a('Barang Set Jadi', ['index', 'jenis' => Barang::KODE_BARANG_SET_JADI], [
-                    'class' => $jenis == Barang::KODE_BARANG_SET_JADI ? 'btn btn-primary' : 'btn btn-outline-primary',
-                ]) ?>
                 <?= Html::a('Alat dan Mesin', ['index', 'jenis' => Barang::KODE_BARANG_NON_CONSUM], [
                     'class' => $jenis == Barang::KODE_BARANG_NON_CONSUM ? 'btn btn-primary' : 'btn btn-outline-primary',
                 ]) ?>
@@ -114,6 +111,7 @@ if (Yii::$app->session->hasFlash('success')) {
                         // ],
                         'unit.satuan' => [
                             'attribute' => 'satuan',
+                            'visible' => false,
                             'value' => 'unit.satuan',
                             'label' => 'Satuan',
                             'filterInputOptions' => [
@@ -133,14 +131,30 @@ if (Yii::$app->session->hasFlash('success')) {
                             ],
                         ],
                         [
+                            'attribute' => 'safety_stock',
+                            'label' => 'Safety Stock',
+                            'value' => function ($model) {
+                                $satuan = $model->unit ? $model->unit->satuan : '';
+                                return number_format($model->safety_stock, 0, ',', '.') . ' ' . $satuan;
+                            },
+                        ],
+                        [
+                            'attribute' => 'biaya_simpan_bulan',
+                            'label' => 'Biaya Simpan/Bulan',
+                            'value' => function ($model) {
+                                return 'Rp. '. number_format($model->biaya_simpan_bulan, 0, ',', '.');
+                            },
+                        ],
+
+                        [
                             'attribute' => 'jenis_barang',
+                            'visible' => false,
                             'label' => 'Jenis Barang',
                             'value' => function ($model) {
                                 return $model->getJenisBarangLabel();
                             },
                             'filter' => [
                                 Barang::KODE_BARANG_MENTAH => 'Barang Mentah',
-                                Barang::KODE_BARANG_SET_JADI => 'Barang Set Jadi',
                                 Barang::KODE_BARANG_NON_CONSUM => 'Alat dan Mesin',
                             ],
                             'headerOptions' => [

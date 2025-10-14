@@ -39,6 +39,7 @@ $RiwayatPenjualanUrl = Url::to(['/riwayat-penjualan/index']);
 $SupplierBarangUrl = Url::to(['/supplier-barang/index']);
 $DataPerhitunganUrl = Url::to(['/data-perhitungan/index']);
 $ForecastUrl = Url::to(['/forecast/index']);
+$EoqRopUrl = Url::to(['/eoq-rop/index']);
 
 
 
@@ -171,7 +172,7 @@ $samplePageUrl = Url::to(['site/sample-page']);
                         <ul class="pc-submenu">
                             <!-- <li class="pc-item"><a class="pc-link" href="<?= $DataPerhitunganUrl ?>">Data Perhitungan</a></li> -->
                             <li class="pc-item"><a class="pc-link" href="<?= $ForecastUrl ?>">Forecasting</a></li>
-                            <li class="pc-item"><a class="pc-link" href="#">EOQ ROP</a></li>
+                            <li class="pc-item"><a class="pc-link" href="<?= $EoqRopUrl ?>">EOQ ROP</a></li>
                         </ul>
                     </li>
 

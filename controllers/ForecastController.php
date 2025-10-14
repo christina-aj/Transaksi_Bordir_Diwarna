@@ -64,6 +64,10 @@ class ForecastController extends Controller
             $today = date('Y-m-d');
 
             foreach ($barangList as $barang) {
+                Yii::info("\n" . str_repeat("=", 80), __METHOD__);
+                Yii::info("MEMPROSES BARANG: {$barang->nama} (ID: {$barang->barang_produksi_id})", __METHOD__);
+                Yii::info(str_repeat("=", 80), __METHOD__);
+
                 // Ambil data riwayat penjualan untuk barang ini
                 $riwayatData = RiwayatPenjualan::find()
                     ->select([
@@ -78,6 +82,7 @@ class ForecastController extends Controller
 
                 // Skip jika tidak ada riwayat penjualan
                 if (empty($riwayatData)) {
+                    Yii::info("⚠ Tidak ada data riwayat penjualan\n", __METHOD__);
                     $skippedCount++;
                     continue;
                 }
@@ -85,6 +90,7 @@ class ForecastController extends Controller
                 // Cek apakah data sudah 12 bulan (1 tahun)
                 if (count($riwayatData) < 12) {
                     $errorMessages[] = "Barang '{$barang->nama}' belum memiliki data 12 bulan (hanya " . count($riwayatData) . " bulan). Dilewati.";
+                    Yii::info("⚠ Data kurang dari 12 bulan: " . count($riwayatData) . " bulan\n", __METHOD__);
                     $skippedCount++;
                     continue;
                 }
@@ -98,15 +104,20 @@ class ForecastController extends Controller
                     ];
                 }
 
-                // ============================================
-                // PENTING: Tentukan periode yang mau di-forecast
-                // ============================================
+                // Tampilkan data aktual
+                Yii::info("\nDATA AKTUAL PENJUALAN:", __METHOD__);
+                foreach ($salesData as $idx => $data) {
+                    Yii::info("Periode " . ($idx + 1) . " ({$data['periode']}): A = {$data['qty']}", __METHOD__);
+                }
+
+                // Tentukan periode yang mau di-forecast
                 $lastPeriode = $salesData[count($salesData) - 1]['periode'];
                 $nextPeriode = Forecast::getNextPeriode($lastPeriode);
                 
-                // ============================================
+                Yii::info("\nPeriode terakhir: {$lastPeriode}", __METHOD__);
+                Yii::info("Periode forecast: {$nextPeriode}\n", __METHOD__);
+
                 // CEK: Apakah forecast untuk periode ini sudah pernah dibuat?
-                // ============================================
                 $existingHistory = ForecastHistory::find()
                     ->where([
                         'barang_produksi_id' => $barang->barang_produksi_id,
@@ -116,12 +127,13 @@ class ForecastController extends Controller
                 
                 // JIKA SUDAH PERNAH DIBUAT, SKIP!
                 if ($existingHistory) {
+                    Yii::info("⚠ Forecast untuk periode {$nextPeriode} sudah ada. Dilewati.\n", __METHOD__);
                     $skippedCount++;
-                    continue;  // ← PENTING: Jangan hitung ulang!
+                    continue;
                 }
 
-                // Hitung alpha terbaik dan MAPE
-                $bestResult = $this->findBestAlpha($salesData);
+                // Hitung alpha terbaik dan MAPE dengan detail log
+                $bestResult = $this->findBestAlphaWithDetail($salesData, $barang->nama);
 
                 if ($bestResult === false) {
                     $errorMessages[] = "Gagal menghitung forecast untuk barang '{$barang->nama}'";
@@ -132,9 +144,14 @@ class ForecastController extends Controller
                 // Hitung forecast untuk periode berikutnya
                 $nextForecast = $this->calculateNextPeriodForecast($salesData, $bestResult['alpha']);
 
-                // ============================================
+                Yii::info("\n" . str_repeat("-", 80), __METHOD__);
+                Yii::info("HASIL AKHIR:", __METHOD__);
+                Yii::info("Alpha terbaik: {$bestResult['alpha']}", __METHOD__);
+                Yii::info("MAPE: {$bestResult['mape']}%", __METHOD__);
+                Yii::info("Forecast periode {$nextPeriode}: " . round($nextForecast) . " unit", __METHOD__);
+                Yii::info(str_repeat("-", 80) . "\n", __METHOD__);
+
                 // SIMPAN KE HISTORY (HANYA SEKALI!)
-                // ============================================
                 $forecastHistory = new ForecastHistory();
                 $forecastHistory->barang_produksi_id = $barang->barang_produksi_id;
                 $forecastHistory->periode_forecast = $nextPeriode;
@@ -150,8 +167,7 @@ class ForecastController extends Controller
                     $errorCount++;
                     continue;
                 } else {
-                    // ✅ Jika forecast bulan ini berhasil disimpan,
-                    // maka update record forecast sebelumnya (periode sebelumnya)
+                    // Update record forecast sebelumnya
                     $prevPeriode = Forecast::getPreviousPeriode($nextPeriode);
 
                     $prevForecast = ForecastHistory::find()
@@ -162,7 +178,6 @@ class ForecastController extends Controller
                         ->one();
 
                     if ($prevForecast) {
-                        // Cari data aktual penjualan bulan sebelumnya
                         $actualData = RiwayatPenjualan::find()
                             ->where([
                                 'barang_produksi_id' => $barang->barang_produksi_id,
@@ -172,15 +187,12 @@ class ForecastController extends Controller
 
                         if ($actualData) {
                             $prevForecast->data_aktual = $actualData;
-                            $prevForecast->save(false); // save tanpa validasi
+                            $prevForecast->save(false);
                         }
                     }
                 }
 
-
-                // ============================================
                 // UPDATE/CREATE FORECAST AKTIF
-                // ============================================
                 $existingForecast = Forecast::find()
                     ->where([
                         'barang_produksi_id' => $barang->barang_produksi_id,
@@ -189,8 +201,6 @@ class ForecastController extends Controller
                     ->one();
 
                 if ($existingForecast) {
-                    // Jangan update jika sudah ada!
-                    // Atau bisa update dengan data terbaru
                     $existingForecast->nilai_alpha = $bestResult['alpha'];
                     $existingForecast->mape_test = $bestResult['mape'];
                     $existingForecast->hasil_forecast = $nextForecast;
@@ -253,10 +263,9 @@ class ForecastController extends Controller
 
     /**
      * Mencari nilai alpha terbaik dengan MAPE terkecil
-     * Menggunakan metode Single Exponential Smoothing
+     * DENGAN DETAIL LOG SEPERTI TABEL EXPONENTIAL SMOOTHING
      */
-
-    private function findBestAlpha($salesData)
+    private function findBestAlphaWithDetail($salesData, $namaBarang)
     {
         if (count($salesData) < 3) {
             return false;
@@ -265,9 +274,20 @@ class ForecastController extends Controller
         $bestAlpha = null;
         $bestMAPE = PHP_FLOAT_MAX;
 
+        Yii::info("\n" . str_repeat("=", 80), __METHOD__);
+        Yii::info("MENCARI ALPHA TERBAIK UNTUK: {$namaBarang}", __METHOD__);
+        Yii::info(str_repeat("=", 80), __METHOD__);
+
         for ($alpha = 0.1; $alpha <= 0.9; $alpha += 0.1) {
-            $mape = $this->calculateMAPE($salesData, $alpha);
-            Yii::info("Alpha: $alpha, MAPE: $mape", __METHOD__);
+            $alpha = round($alpha, 1); // Pastikan presisi
+
+            Yii::info("\n" . str_repeat("-", 80), __METHOD__);
+            Yii::info("TESTING ALPHA = {$alpha}", __METHOD__);
+            Yii::info(str_repeat("-", 80), __METHOD__);
+
+            $mape = $this->calculateMAPEWithDetail($salesData, $alpha);
+
+            Yii::info("MAPE untuk α={$alpha}: " . round($mape, 2) . "%", __METHOD__);
 
             if ($mape < $bestMAPE) {
                 $bestMAPE = $mape;
@@ -286,11 +306,10 @@ class ForecastController extends Controller
         ];
     }
 
-
     /**
-     * Menghitung MAPE (Mean Absolute Percentage Error)
+     * Menghitung MAPE dengan menampilkan detail seperti tabel
      */
-    private function calculateMAPE($salesData, $alpha)
+    private function calculateMAPEWithDetail($salesData, $alpha)
     {
         $n = count($salesData);
         
@@ -303,27 +322,64 @@ class ForecastController extends Controller
         $totalAPE = 0;
         $validCount = 0;
 
+        // Header tabel
+        Yii::info("\nTabel Perhitungan Exponential Smoothing (α = {$alpha}):", __METHOD__);
+        Yii::info(sprintf("%-10s %-12s %-15s %-25s %-12s", 
+            "Periode", "A (Aktual)", "F (Forecast)", "Rumus F", "Error %"), __METHOD__);
+        Yii::info(str_repeat("-", 80), __METHOD__);
+
+        // Periode pertama (inisialisasi)
+        Yii::info(sprintf("%-10s %-12s %-15s %-25s %-12s", 
+            "1", 
+            $salesData[0]['qty'], 
+            $forecast,
+            "F1 = A1 (inisialisasi)",
+            "-"), __METHOD__);
+
         // Mulai dari data kedua
         for ($i = 1; $i < $n; $i++) {
             $actual = $salesData[$i]['qty'];
+            $prevActual = $salesData[$i-1]['qty'];
             
             // Hitung error hanya jika actual > 0
+            $errorPct = "-";
             if ($actual > 0) {
                 $error = abs($actual - $forecast) / $actual * 100;
+                $errorPct = round($error, 2) . "%";
                 $totalAPE += $error;
                 $validCount++;
             }
+
+            // Rumus untuk periode ini
+            $rumus = sprintf("%.1f×%d + %.1f×%.0f", 
+                $alpha, $prevActual, 
+                (1-$alpha), $forecast);
+
+            // Tampilkan baris tabel
+            Yii::info(sprintf("%-10s %-12s %-15s %-25s %-12s", 
+                ($i + 1), 
+                $actual, 
+                round($forecast),
+                $rumus,
+                $errorPct), __METHOD__);
 
             // Update forecast untuk periode berikutnya
             // F(t+1) = α * A(t) + (1 - α) * F(t)
             $forecast = $alpha * $actual + (1 - $alpha) * $forecast;
         }
 
+        Yii::info(str_repeat("-", 80), __METHOD__);
+
         if ($validCount == 0) {
             return PHP_FLOAT_MAX;
         }
 
-        return $totalAPE / $validCount;
+        $mape = $totalAPE / $validCount;
+        Yii::info("Total Error: " . round($totalAPE, 2) . "%", __METHOD__);
+        Yii::info("Jumlah periode valid: {$validCount}", __METHOD__);
+        Yii::info("MAPE = " . round($totalAPE, 2) . " / {$validCount} = " . round($mape, 2) . "%\n", __METHOD__);
+
+        return $mape;
     }
 
     /**

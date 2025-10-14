@@ -4,11 +4,11 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /** @var yii\web\View $this */
-/** @var app\models\DetailPermintaan $model */
+/** @var app\models\PermintaanDetail $model */
 /** @var yii\widgets\ActiveForm $form */
 ?>
 
-<div class="detail-permintaan-form">
+<div class="permintaan-detail-form">
 
     <?php $form = ActiveForm::begin(); ?>
 
@@ -18,7 +18,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'qty_permintaan')->textInput() ?>
 
-    <?= $form->field($model, 'catatan')->textInput() ?>
+    <?= $form->field($model, 'catatan')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'created_at')->textInput() ?>
 

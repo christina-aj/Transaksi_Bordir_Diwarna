@@ -86,6 +86,56 @@ use yii\grid\ActionColumn;
                             },
                         ],
                         [
+                            'attribute' => 'safety_stock',
+                            'format' => 'raw',
+                            'label' => 'Safety Stock',
+                            'headerOptions' => ['class' => 'biaya-header'],
+                            'contentOptions' => ['class' => 'biaya-column'],
+                            'value' => function ($model, $key, $index, $column) use ($form) {
+                                $value = ($model->safety_stock == 0) ? '' : $model->safety_stock;
+                                $inputId = "consumable-{$index}";
+                                return $form->field($model, "[$index]safety_stock")->textInput([
+                                    'class' => 'form-control safety-stock-field', 
+                                    'maxlength' => true, 
+                                    'placeholder' => 'Cth : 100',
+                                    'id' => $inputId,
+                                ])->label(false);
+                            },
+                        ],
+                        [
+                            'attribute' => 'biaya_simpan_bulan',
+                            'format' => 'raw',
+                            'label' => 'Biaya Simpan/Bulan',
+                            'headerOptions' => ['class' => 'biaya-header'],
+                            'contentOptions' => ['class' => 'biaya-column'],
+                            'value' => function ($model, $key, $index, $column) use ($form) {
+                                $value = ($model->biaya_simpan_bulan == 0) ? '' : $model->biaya_simpan_bulan;
+                                $inputId = "consumable-{$index}";
+                                return $form->field($model, "[$index]biaya_simpan_bulan")->textInput([
+                                    'class' => 'form-control biaya-simpan-field', 
+                                    'maxlength' => true,
+                                    'placeholder' => 'Cth : 5000',
+                                    'id' => $inputId,
+                                    ])
+                                ->label(false);
+                            },
+                        ],
+                        [
+                            'attribute' => 'jenis_barang',
+                            // 'visible' => false,
+                            'format' => 'raw',
+                            'headerOptions' => ['class' => 'jenis-header'],
+                            'contentOptions' => ['class' => 'jenis-column'],
+                            'value' => function ($model, $key, $index, $column) use ($form) {
+                                $inputId = "jenis-{$index}";
+                                return $form->field($model, "[$index]jenis_barang")->textInput([
+                                    'class' => 'form-control jenis-barang-field',
+                                    'readonly' => true,
+                                    'id' => $inputId,
+                                ])->label(false);
+                            },
+                        ],
+                        [
                             'attribute' => 'warna',
                             'format' => 'raw',
                             'headerOptions' => ['class' => 'warna-header'],
@@ -150,9 +200,15 @@ $js = <<<JS
     // Fungsi untuk menampilkan field "warna" dan header ketika tombol Consumable ditekan
     $('#toggle-consumable-button').on('click', function() {
         $('[id^="consumable-"]').show();  // Menampilkan semua field warna
+        $('[id^="jenis-"]').hide();  // hide jenis
         $('.warna-header').show();        // Menampilkan header kolom "warna"
         $('.warna-column').show();
-        $('.tipe-field').val('Consumable');        // Menampilkan kolom "warna" di setiap baris
+        $('.biaya-header').show();        
+        $('.biaya-column').show();
+        $('.jenis-column').hide();
+        $('.jenis-header').hide();  
+        $('.tipe-field').val('Consumable');
+        $('.jenis-barang-field').val(1);
         $(this).removeClass('btn-outline-primary').addClass('btn-primary');
         $('#toggle-non-consumable-button').removeClass('btn-secondary').addClass('btn-outline-secondary');
     });
@@ -160,9 +216,17 @@ $js = <<<JS
     // Fungsi untuk menyembunyikan field "warna" dan header ketika tombol Non Consumable ditekan
     $('#toggle-non-consumable-button').on('click', function() {
         $('[id^="consumable-"]').hide();  // Menyembunyikan semua field warna
+        $('[id^="jenis-"]').hide();  // hide jenis
         $('.warna-header').hide();        // Menyembunyikan header kolom "warna"
         $('.warna-column').hide();        // Menyembunyikan kolom "warna" di setiap baris
+        $('.biaya-header').hide();        
+        $('.biaya-column').hide();
+        $('.jenis-column').hide();
+        $('.jenis-header').hide();        
+        $('.safety-stock-field').val(0);
+        $('.biaya-simpan-field').val(0);
         $('.tipe-field').val('Non Consumable'); 
+        $('.jenis-barang-field').val(2);
         $('#toggle-consumable-button').removeClass('btn-primary').addClass('btn-outline-primary');
         $(this).removeClass('btn-outline-secondary').addClass('btn-secondary');
     });
@@ -203,10 +267,11 @@ $js = <<<JS
                     $optionsHtml <!-- Use the options generated in PHP -->
                 </select>
             </td>
-            <td>
-                <input type="text" name="Barang[\${index}][tipe]" class="form-control tipe-field" readonly>
-            </td>
-            <td class="warna-column"><input type="text" name="Barang[\${index}][warna]" class="form-control warna-field" id="consumable-\${index}" maxlength="true"></td>
+            <td><input type="text" name="Barang[\${index}][tipe]" class="form-control tipe-field" readonly></td>
+            <td class="biaya-column"><input type="text" id="consumable-\${index}" name="Barang[\${index}][safety_stock]" class="form-control safety-stock-field" maxlength="true"></td>
+            <td class="biaya-column"><input type="text" id="consumable-\${index}"  name="Barang[\${index}][biaya_simpan_bulan]" class="form-control biaya-simpan-field" maxlength="true"></td>
+            <td class="jenis-column"><input type="text" id="jenis-\${index}" name="Barang[\${index}][jenis_barang]" class="form-control jenis-barang-field" readonly></td>
+            <td class="warna-column"><input type="text" id="consumable-\${index}"  name="Barang[\${index}][warna]" class="form-control warna-field" maxlength="true"></td>
             <td>
                 <div class="d-flex justify-content-between align-content-center align-items-center">
                     <a href="#" class="btn btn-success btn-xs pb-1 px-2 add-row" title="Tambah Baris">

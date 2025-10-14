@@ -7,7 +7,7 @@ use yii\widgets\DetailView;
 
 /** @var yii\web\View $this */
 /** @var app\models\PermintaanPenjualan $model */
-/** @var app\models\DetailPermintaan[] $detailPermintaans */
+/** @var app\models\PermintaanDetail[] $permintaanDetails */
 
 $this->title = 'Detail Permintaan Kode: ' . $model->getFormattedPermintaanId();
 $this->params['breadcrumbs'][] = ['label' => 'Permintaan Penjualans', 'url' => ['index']];
@@ -31,9 +31,6 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="col-md-4">
                 <p><strong>Tanggal:</strong> <?= Yii::$app->formatter->asDate($model->tanggal_permintaan) ?></p>
             </div>
-            <div class="col-md-4">
-                <p><strong>Status:</strong> <?= $model->getStatusLabel() ?></p>
-            </div>
         </div>
         <br>
         <hr>
@@ -44,7 +41,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
                 <?= GridView::widget([
                     'dataProvider' => new \yii\data\ArrayDataProvider([
-                        'allModels' => $detailPermintaans,
+                        'allModels' => $permintaanDetails,
                         'pagination' => false, 
                     ]),
                     'columns' => [

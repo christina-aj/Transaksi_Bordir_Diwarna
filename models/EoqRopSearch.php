@@ -4,12 +4,12 @@ namespace app\models;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\DetailPermintaan;
+use app\models\EoqRop;
 
 /**
- * DetailPermintaanSearch represents the model behind the search form of `app\models\DetailPermintaan`.
+ * EoqRopSearch represents the model behind the search form of `app\models\EoqRop`.
  */
-class DetailPermintaanSearch extends DetailPermintaan
+class EoqRopSearch extends EoqRop
 {
     /**
      * {@inheritdoc}
@@ -17,8 +17,9 @@ class DetailPermintaanSearch extends DetailPermintaan
     public function rules()
     {
         return [
-            [['detail_permintaan_id', 'permintaan_penjualan_id', 'barang_produksi_id', 'qty_permintaan'], 'integer'],
-            [['catatan', 'created_at', 'updated_at'], 'safe'],
+            [['EOQ_ROP_id', 'barang_id', 'total_bom', 'lead_time_snapshot'], 'integer'],
+            [['biaya_pesan_snapshot', 'biaya_simpan_snapshot', 'safety_stock_snapshot', 'demand_snapshot', 'total_biaya_persediaan', 'hasil_eoq', 'hasil_rop'], 'number'],
+            [['periode', 'created_at'], 'safe'],
         ];
     }
 
@@ -41,7 +42,7 @@ class DetailPermintaanSearch extends DetailPermintaan
      */
     public function search($params, $formName = null)
     {
-        $query = DetailPermintaan::find();
+        $query = EoqRop::find();
 
         // add conditions that should always apply here
 
@@ -59,13 +60,19 @@ class DetailPermintaanSearch extends DetailPermintaan
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'detail_permintaan_id' => $this->detail_permintaan_id,
-            'permintaan_penjualan_id' => $this->permintaan_penjualan_id,
-            'barang_produksi_id' => $this->barang_produksi_id,
-            'qty_permintaan' => $this->qty_permintaan,
-            'catatan' => $this->catatan,
+            'EOQ_ROP_id' => $this->EOQ_ROP_id,
+            'barang_id' => $this->barang_id,
+            'total_bom' => $this->total_bom,
+            'biaya_pesan_snapshot' => $this->biaya_pesan_snapshot,
+            'biaya_simpan_snapshot' => $this->biaya_simpan_snapshot,
+            'safety_stock_snapshot' => $this->safety_stock_snapshot,
+            'lead_time_snapshot' => $this->lead_time_snapshot,
+            'demand_snapshot' => $this->demand_snapshot,
+            'total_biaya_persediaan' => $this->total_biaya_persediaan,
+            'hasil_eoq' => $this->hasil_eoq,
+            'hasil_rop' => $this->hasil_rop,
+            'periode' => $this->periode,
             'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
         ]);
 
         return $dataProvider;

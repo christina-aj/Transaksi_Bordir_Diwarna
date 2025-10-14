@@ -4,20 +4,20 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /** @var yii\web\View $this */
-/** @var app\models\DetailPermintaan $model */
+/** @var app\models\PermintaanDetail $model */
 
-$this->title = $model->detail_permintaan_id;
-$this->params['breadcrumbs'][] = ['label' => 'Detail Permintaans', 'url' => ['index']];
+$this->title = $model->permintaan_detail_id;
+$this->params['breadcrumbs'][] = ['label' => 'Permintaan Details', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
-<div class="detail-permintaan-view">
+<div class="permintaan-detail-view">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Update', ['update', 'detail_permintaan_id' => $model->detail_permintaan_id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Delete', ['delete', 'detail_permintaan_id' => $model->detail_permintaan_id], [
+        <?= Html::a('Update', ['update', 'permintaan_detail_id' => $model->permintaan_detail_id], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Delete', ['delete', 'permintaan_detail_id' => $model->permintaan_detail_id], [
             'class' => 'btn btn-danger',
             'data' => [
                 'confirm' => 'Are you sure you want to delete this item?',
@@ -29,7 +29,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
-            'detail_permintaan_id',
+            'permintaan_detail_id',
             'permintaan_penjualan_id',
             'barang_produksi_id',
             'qty_permintaan',

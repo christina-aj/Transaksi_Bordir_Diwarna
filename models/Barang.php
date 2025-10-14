@@ -26,9 +26,9 @@ use yii\db\Expression;
 class Barang extends \yii\db\ActiveRecord
 {
     const KODE_BARANG_MENTAH = 1;
-    const KODE_BARANG_SET_JADI = 2;
+    // const KODE_BARANG_SET_JADI = 2;
     // const KODE_BARANG_JADI = 3;
-    const KODE_BARANG_NON_CONSUM = 3;
+    const KODE_BARANG_NON_CONSUM = 2;
     
     /**
      * {@inheritdoc}
@@ -64,8 +64,9 @@ class Barang extends \yii\db\ActiveRecord
             [['created_at', 'updated_at'], 'safe'],
             [['kode_barang', 'nama_barang', 'tipe', 'warna'], 'string', 'max' => 255],
             [['kode_barang'], 'unique'],
+            [['biaya_simpan_bulan', 'safety_stock'], 'integer'],
             [['unit_id'], 'exist', 'skipOnError' => true, 'targetClass' => Unit::class, 'targetAttribute' => ['unit_id' => 'unit_id']],
-            [['jenis_barang'], 'in', 'range' => [self::KODE_BARANG_MENTAH, self::KODE_BARANG_SET_JADI, self::KODE_BARANG_NON_CONSUM]],
+            [['jenis_barang'], 'in', 'range' => [self::KODE_BARANG_MENTAH,  self::KODE_BARANG_NON_CONSUM]],
         ];
     }
 
@@ -82,6 +83,8 @@ class Barang extends \yii\db\ActiveRecord
             'unit_id' => 'Satuan',
             'tipe' => 'Tipe',
             'warna' => 'Warna',
+            'biaya_simpan_bulan' => 'Biaya Simpan/Bulan',
+            'safety_stock' => 'Safety Stock',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
         ];
@@ -125,13 +128,13 @@ class Barang extends \yii\db\ActiveRecord
         return self::find()->where(['jenis_barang' => self::KODE_BARANG_MENTAH]);
     }
 
-    /**
-     * Scope untuk BARANG SET JADI
-     */
-    public static function barangSetJadi()
-    {
-        return self::find()->where(['jenis_barang' => self::KODE_BARANG_SET_JADI]);
-    }
+    // /**
+    //  * Scope untuk BARANG SET JADI
+    //  */
+    // public static function barangSetJadi()
+    // {
+    //     return self::find()->where(['jenis_barang' => self::KODE_BARANG_SET_JADI]);
+    // }
 
     /**
      * Scope untuk BARANG NON CONSUMABLE
@@ -145,7 +148,7 @@ class Barang extends \yii\db\ActiveRecord
     {
         $labels = [
             self::KODE_BARANG_MENTAH => 'Barang Mentah',
-            self::KODE_BARANG_SET_JADI => 'Barang Set Jadi',
+            // self::KODE_BARANG_SET_JADI => 'Barang Set Jadi',
             self::KODE_BARANG_NON_CONSUM => 'Alat dan Mesin',
         ];
         return isset($labels[$this->jenis_barang]) ? $labels[$this->jenis_barang] : 'Unknown';

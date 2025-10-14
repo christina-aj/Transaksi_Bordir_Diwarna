@@ -116,14 +116,14 @@ DELETE FROM `detail_gudang`;
 
 -- Dumping structure for table inventaris_web.detail_permintaan
 CREATE TABLE IF NOT EXISTS `detail_permintaan` (
-  `detail_permintaan_id` int(11) NOT NULL AUTO_INCREMENT,
+  `permintaan_detail_id` int(11) NOT NULL AUTO_INCREMENT,
   `permintaan_penjualan_id` int(11) DEFAULT NULL,
   `barang_produksi_id` int(11) DEFAULT NULL,
   `qty_permintaan` int(11) DEFAULT NULL,
   `catatan` int(11) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`detail_permintaan_id`),
+  PRIMARY KEY (`permintaan_detail_id`),
   KEY `barang_produksi_id` (`barang_produksi_id`),
   KEY `permintaan_penjualan_id` (`permintaan_penjualan_id`),
   CONSTRAINT `FK_detail_permintaan_barangproduksi` FOREIGN KEY (`barang_produksi_id`) REFERENCES `barangproduksi` (`barang_produksi_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,

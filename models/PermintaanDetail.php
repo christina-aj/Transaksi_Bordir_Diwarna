@@ -5,29 +5,33 @@ namespace app\models;
 use Yii;
 
 /**
- * This is the model class for table "detail_permintaan".
+ * This is the model class for table "permintaan_detail".
  *
- * @property int $detail_permintaan_id
+ * @property int $permintaan_detail_id
  * @property int|null $permintaan_penjualan_id
  * @property int|null $barang_produksi_id
  * @property int|null $qty_permintaan
- * @property int|null $catatan
+ * @property string|null $catatan
  * @property string|null $created_at
  * @property string|null $updated_at
  *
  * @property Barangproduksi $barangProduksi
  * @property PermintaanPenjualan $permintaanPenjualan
  */
-class DetailPermintaan extends \yii\db\ActiveRecord
+class PermintaanDetail extends \yii\db\ActiveRecord
 {
 
 
     /**
      * {@inheritdoc}
      */
+
+    public $nama_barang;
+    public $kode_barang;
+
     public static function tableName()
     {
-        return 'detail_permintaan';
+        return 'permintaan_detail';
     }
 
     /**
@@ -36,7 +40,7 @@ class DetailPermintaan extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['permintaan_penjualan_id', 'barang_produksi_id', 'qty_permintaan', 'created_at', 'updated_at'], 'default', 'value' => null],
+            [['permintaan_penjualan_id', 'barang_produksi_id', 'qty_permintaan', 'catatan', 'created_at', 'updated_at'], 'default', 'value' => null],
             [['permintaan_penjualan_id', 'barang_produksi_id', 'qty_permintaan'], 'integer'],
             [['created_at', 'updated_at'], 'safe'],
             [['catatan'], 'string', 'max' => 255],
@@ -51,7 +55,7 @@ class DetailPermintaan extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'detail_permintaan_id' => 'Detail Permintaan ID',
+            'permintaan_detail_id' => 'Permintaan Detail ID',
             'permintaan_penjualan_id' => 'Permintaan Penjualan ID',
             'barang_produksi_id' => 'Barang Produksi ID',
             'qty_permintaan' => 'Qty Permintaan',
@@ -69,6 +73,22 @@ class DetailPermintaan extends \yii\db\ActiveRecord
     public function getBarangProduksi()
     {
         return $this->hasOne(Barangproduksi::class, ['barang_produksi_id' => 'barang_produksi_id']);
+    }
+    public function getNamaBarangProduksi()
+    {
+        if ($this->barang) {
+            return $this->barang_produksi->kode_barang_produksi . ' - ' . $this->barang_produksi->nama;
+        }
+
+        return null;
+    }
+    public function getKodeBarangProduksi()
+    {
+        if ($this->barang_produksi) {
+            return $this->barang_produksi->kode_barang_produksi;
+        }
+
+        return null;
     }
 
     /**

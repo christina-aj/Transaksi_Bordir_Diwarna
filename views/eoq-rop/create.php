@@ -3,13 +3,13 @@
 use yii\helpers\Html;
 
 /** @var yii\web\View $this */
-/** @var app\models\DetailPermintaan $model */
+/** @var app\models\EoqRop $model */
 
-$this->title = 'Create Detail Permintaan';
-$this->params['breadcrumbs'][] = ['label' => 'Detail Permintaans', 'url' => ['index']];
+$this->title = 'Create Eoq Rop';
+$this->params['breadcrumbs'][] = ['label' => 'Eoq Rops', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="detail-permintaan-create">
+<div class="eoq-rop-create">
 
     <h1><?= Html::encode($this->title) ?></h1>
 

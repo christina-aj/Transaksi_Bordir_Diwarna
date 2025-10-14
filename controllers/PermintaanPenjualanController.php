@@ -2,23 +2,20 @@
 
 namespace app\controllers;
 
+use app\helpers\ModelHelper;
 use app\models\PermintaanPenjualan;
 use app\models\PermintaanPenjualanSearch;
-use app\models\DetailPermintaan;
+use app\models\PermintaanDetail;
+use app\models\BarangProduksi;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use Yii;
 use yii\base\Model;
+use yii\helpers\ArrayHelper;
 
-/**
- * PermintaanPenjualanController implements the CRUD actions for PermintaanPenjualan model.
- */
 class PermintaanPenjualanController extends Controller
 {
-    /**
-     * @inheritDoc
-     */
     public function behaviors()
     {
         return array_merge(
@@ -34,11 +31,6 @@ class PermintaanPenjualanController extends Controller
         );
     }
 
-    /**
-     * Lists all PermintaanPenjualan models.
-     *
-     * @return string
-     */
     public function actionIndex()
     {
         $searchModel = new PermintaanPenjualanSearch();
@@ -50,72 +42,122 @@ class PermintaanPenjualanController extends Controller
         ]);
     }
 
-    /**
-     * Displays a single PermintaanPenjualan model.
-     * @param int $permintaan_penjualan_id Permintaan Penjualan ID
-     * @return string
-     * @throws NotFoundHttpException if the model cannot be found
-     */
     public function actionView($permintaan_penjualan_id)
     {
         $model = $this->findModel($permintaan_penjualan_id);
-        $detailPermintaans = $model->detailPermintaans;
         
         return $this->render('view', [
             'model' => $model,
-            'detailPermintaans' => $detailPermintaans,
+            'permintaanDetails' => $model->permintaanDetails, // Sesuaikan dengan nama variable di view.php
         ]);
     }
 
-    /**
-     * Creates a new PermintaanPenjualan model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return string|\yii\web\Response
-     */
     public function actionCreate()
     {
-        $model = new PermintaanPenjualan();
+        $modelPermintaan = new PermintaanPenjualan();
+        $modelDetails = [new PermintaanDetail()];
 
-        if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'permintaan_penjualan_id' => $model->permintaan_penjualan_id]);
+        // Set default values
+        $modelPermintaan->tanggal_permintaan = date('Y-m-d');
+        $modelPermintaan->total_item_permintaan = 0;
+
+        if ($modelPermintaan->load($this->request->post())) {
+            $modelDetails = ModelHelper::createMultiple(PermintaanDetail::class);
+            Model::loadMultiple($modelDetails, $this->request->post());
+            
+            $valid = $modelPermintaan->validate();
+            $valid = Model::validateMultiple($modelDetails) && $valid;
+
+            if ($valid) {
+                $transaction = Yii::$app->db->beginTransaction();
+                try {
+                    if ($modelPermintaan->save(false)) {
+                        foreach ($modelDetails as $detail) {
+                            $detail->permintaan_penjualan_id = $modelPermintaan->permintaan_penjualan_id;
+                            if (!$detail->save(false)) {
+                                $transaction->rollBack();
+                                break;
+                            }
+                        }
+                        
+                        // Update total item
+                        $modelPermintaan->total_item_permintaan = count($modelDetails);
+                        $modelPermintaan->save(false);
+                    }
+                    
+                    $transaction->commit();
+                    return $this->redirect(['view', 'permintaan_penjualan_id' => $modelPermintaan->permintaan_penjualan_id]);
+                } catch (\Exception $e) {
+                    $transaction->rollBack();
+                    throw $e;
+                }
             }
-        } else {
-            $model->loadDefaultValues();
         }
 
         return $this->render('create', [
-            'model' => $model,
+            'modelPermintaan' => $modelPermintaan,
+            'modelDetails' => (empty($modelDetails)) ? [new PermintaanDetail] : $modelDetails,
         ]);
     }
 
-    /**
-     * Updates an existing PermintaanPenjualan model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param int $permintaan_penjualan_id Permintaan Penjualan ID
-     * @return string|\yii\web\Response
-     * @throws NotFoundHttpException if the model cannot be found
-     */
     public function actionUpdate($permintaan_penjualan_id)
     {
-        $model = $this->findModel($permintaan_penjualan_id);
+        $modelPermintaan = $this->findModel($permintaan_penjualan_id);
+        $modelDetails = $modelPermintaan->permintaanDetails;
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'permintaan_penjualan_id' => $model->permintaan_penjualan_id]);
+        if ($modelPermintaan->load(Yii::$app->request->post())) {
+            // Ambil id lama detail
+            $oldIDs = ArrayHelper::map($modelDetails, 'permintaan_detail_id', 'permintaan_detail_id');
+            
+            $modelDetails = ModelHelper::createMultiple(PermintaanDetail::class, $modelDetails, 'permintaan_detail_id');
+            Model::loadMultiple($modelDetails, Yii::$app->request->post());
+            
+            // Cari ID yang dihapus
+            $deletedIDs = array_diff($oldIDs, array_filter(ArrayHelper::map($modelDetails, 'permintaan_detail_id', 'permintaan_detail_id')));
+
+            // Validasi master dan detail
+            $valid = $modelPermintaan->validate();
+            $valid = Model::validateMultiple($modelDetails) && $valid;
+
+            if ($valid) {
+                $transaction = Yii::$app->db->beginTransaction();
+                try {
+                    if ($modelPermintaan->save(false)) {
+                        // Hapus data detail yang dihapus
+                        if (!empty($deletedIDs)) {
+                            PermintaanDetail::deleteAll(['permintaan_detail_id' => $deletedIDs]);
+                        }
+
+                        // Simpan data detail
+                        foreach ($modelDetails as $detail) {
+                            $detail->permintaan_penjualan_id = $modelPermintaan->permintaan_penjualan_id;
+                            if (!$detail->save(false)) {
+                                $transaction->rollBack();
+                                Yii::error($detail->errors);
+                                break;
+                            }
+                        }
+
+                        // Update total item
+                        $modelPermintaan->total_item_permintaan = count($modelDetails);
+                        $modelPermintaan->save(false);
+
+                        $transaction->commit();
+                        return $this->redirect(['view', 'permintaan_penjualan_id' => $modelPermintaan->permintaan_penjualan_id]);
+                    }
+                } catch (\Exception $e) {
+                    $transaction->rollBack();
+                    throw $e;
+                }
+            }
         }
 
-        return $this->render('update', [
-            'model' => $model,
+        return $this->render('_form', [
+            'modelPermintaan' => $modelPermintaan,
+            'modelDetails' => empty($modelDetails) ? [new PermintaanDetail()] : $modelDetails,
         ]);
     }
 
-    /**
-     * Deletes an existing PermintaanPenjualan model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param int $permintaan_penjualan_id Permintaan Penjualan ID
-     * @return \yii\web\Response
-     * @throws NotFoundHttpException if the model cannot be found
-     */
     public function actionDelete($permintaan_penjualan_id)
     {
         $this->findModel($permintaan_penjualan_id)->delete();
@@ -123,17 +165,35 @@ class PermintaanPenjualanController extends Controller
         return $this->redirect(['index']);
     }
 
-    /**
-     * Finds the PermintaanPenjualan model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param int $permintaan_penjualan_id Permintaan Penjualan ID
-     * @return PermintaanPenjualan the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
+    public function actionSearch($q = null)
+    {
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        
+        $query = BarangProduksi::find()
+            ->select(['barang_produksi_id', 'nama', 'kode_barang_produksi']);
+        
+        if ($q) {
+            $query->where(['like', 'nama', $q]);
+        }
+        
+        $results = $query->limit(10)->asArray()->all();
+        
+        $output = [];
+        foreach ($results as $item) {
+            $output[] = [
+                'barang_produksi_id' => $item['barang_produksi_id'],
+                'nama_barang' => $item['nama'],
+                'kode_barang' => $item['kode_barang_produksi'] ?? ''
+            ];
+        }
+        
+        return $output;
+    }
+
     protected function findModel($permintaan_penjualan_id)
     {
-        if (($model = PermintaanPenjualan::findOne(['permintaan_penjualan_id' => $permintaan_penjualan_id])) !== null) {
-            return $model;
+        if (($modelPermintaan = PermintaanPenjualan::findOne(['permintaan_penjualan_id' => $permintaan_penjualan_id])) !== null) {
+            return $modelPermintaan;
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');

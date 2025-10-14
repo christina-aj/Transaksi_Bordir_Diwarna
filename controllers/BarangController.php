@@ -88,7 +88,7 @@ class BarangController extends BaseController
             $modelBarangs = ModelHelper::createMultiple(Barang::classname());
             if (Model::loadMultiple($modelBarangs, Yii::$app->request->post())) {
                 foreach ($modelBarangs as $index => $modelBarang) {
-                    Yii::info("Loaded ModelBarang #$index: " . json_encode($modelBarang->attributes), 'modelData');
+                    Yii::info("Loaded Model Barang #$index: " . json_encode($modelBarang->attributes), 'modelData');
                 }
             } else {
                 Yii::info("Data failed to load into modelBarangs.", 'loadError');

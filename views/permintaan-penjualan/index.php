@@ -69,20 +69,18 @@ $this->params['breadcrumbs'][] = $this->title;
                             'headerOptions' => ['style' => 'width:250px'], // Tambahkan lebar jika diperlukan
                             'enableSorting' => true, // Mengaktifkan sorting untuk kolom tanggal
                         ],
+                        [
+                            'attribute' => 'nama_pelanggan',
+                            'label' => 'Nama Pelanggan',
+                            'filterInputOptions' => [
+                                'class' => 'form-control',
+                                'placeholder' => 'Cari nama pelanggan',
+                            ],
+                        ],
                         'total_item_permintaan' => [
                             'label' => 'Total Item',
                             'attribute' => 'total_item_permintaan',
                             'filter' => false
-                        ],
-                        // 'tanggal_permintaan',
-                        'status_permintaan' => [
-                            'label' => 'Status Permintaan',
-                            'attribute' => 'status_permintaan',
-                            'value' => function ($model) {
-                                return $model->getStatusLabel();
-                            },
-                            'format' => 'raw',
-                            'filter' => false,
                         ],
                         // 'created_at',
                         //'updated_at',

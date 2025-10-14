@@ -4,12 +4,12 @@ namespace app\models;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\PermintaanPenjualan;
+use app\models\PermintaanDetail;
 
 /**
- * PermintaanPenjualanSearch represents the model behind the search form of `app\models\PermintaanPenjualan`.
+ * PermintaanDetailSearch represents the model behind the search form of `app\models\PermintaanDetail`.
  */
-class PermintaanPenjualanSearch extends PermintaanPenjualan
+class PermintaanDetailSearch extends PermintaanDetail
 {
     /**
      * {@inheritdoc}
@@ -17,9 +17,8 @@ class PermintaanPenjualanSearch extends PermintaanPenjualan
     public function rules()
     {
         return [
-            [['permintaan_penjualan_id', 'total_item_permintaan'], 'integer'],
-            [['nama_pelanggan'], 'string', 'max' => 255],
-            [['tanggal_permintaan', 'created_at', 'updated_at'], 'safe'],
+            [['permintaan_detail_id', 'permintaan_penjualan_id', 'barang_produksi_id', 'qty_permintaan'], 'integer'],
+            [['catatan', 'created_at', 'updated_at'], 'safe'],
         ];
     }
 
@@ -42,7 +41,7 @@ class PermintaanPenjualanSearch extends PermintaanPenjualan
      */
     public function search($params, $formName = null)
     {
-        $query = PermintaanPenjualan::find();
+        $query = PermintaanDetail::find();
 
         // add conditions that should always apply here
 
@@ -60,13 +59,15 @@ class PermintaanPenjualanSearch extends PermintaanPenjualan
 
         // grid filtering conditions
         $query->andFilterWhere([
+            'permintaan_detail_id' => $this->permintaan_detail_id,
             'permintaan_penjualan_id' => $this->permintaan_penjualan_id,
-            'total_item_permintaan' => $this->total_item_permintaan,
-            'tanggal_permintaan' => $this->tanggal_permintaan,
-            'nama_pelanggan' => $this->nama_pelanggan,
+            'barang_produksi_id' => $this->barang_produksi_id,
+            'qty_permintaan' => $this->qty_permintaan,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ]);
+
+        $query->andFilterWhere(['like', 'catatan', $this->catatan]);
 
         return $dataProvider;
     }

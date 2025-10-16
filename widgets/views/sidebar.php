@@ -40,6 +40,7 @@ $SupplierBarangUrl = Url::to(['/supplier-barang/index']);
 $DataPerhitunganUrl = Url::to(['/data-perhitungan/index']);
 $ForecastUrl = Url::to(['/forecast/index']);
 $EoqRopUrl = Url::to(['/eoq-rop/index']);
+$StockRopUrl = Url::to(['/stock-rop/index']);
 
 
 
@@ -173,6 +174,7 @@ $samplePageUrl = Url::to(['site/sample-page']);
                             <!-- <li class="pc-item"><a class="pc-link" href="<?= $DataPerhitunganUrl ?>">Data Perhitungan</a></li> -->
                             <li class="pc-item"><a class="pc-link" href="<?= $ForecastUrl ?>">Forecasting</a></li>
                             <li class="pc-item"><a class="pc-link" href="<?= $EoqRopUrl ?>">EOQ ROP</a></li>
+
                         </ul>
                     </li>
 
@@ -201,6 +203,7 @@ $samplePageUrl = Url::to(['site/sample-page']);
                         <a href="#!" class="pc-link"><span class="pc-micon">
                                 <i class="fi fi-ts-ballot-check"></i> </span><span class="pc-mtext">Report</span><span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
                         <ul class="pc-submenu">
+                            <li class="pc-item"><a class="pc-link" href="<?= $StockRopUrl ?>">Laporan Stok Gudang</a></li>
                             <li class="pc-item"><a class="pc-link" href="<?= $RiwayatPenjualanUrl ?>">Riwayat Penjualan</a></li>
                             <li class="pc-item"><a class="pc-link" href="<?= $laproUrl ?>">Laporan Produksi</a></li>
                             <li class="pc-item"><a class="pc-link" href="<?= $lapagreUrl ?>">Laporan Agregat</a></li>

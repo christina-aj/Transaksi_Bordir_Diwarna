@@ -19,6 +19,18 @@ $config = [
         '@npm'   => '@vendor/npm-asset',
     ],
     'components' => [
+        // Tambahkan AssetManager untuk optimasi loading
+        'assetManager' => [
+            'bundles' => [
+                'yii\web\JqueryAsset' => [
+                    'jsOptions' => ['position' => \yii\web\View::POS_HEAD],
+                ],
+                'yii\bootstrap5\BootstrapAsset' => [
+                    'css' => [],
+                ],
+            ],
+            'appendTimestamp' => true, // Tambahkan timestamp untuk cache busting
+        ],
 
         'session' => [
             'class' => 'yii\web\Session',
@@ -85,9 +97,6 @@ $config = [
                 'gudang/get-gudang' => 'gudang/get-gudang',
             ],
         ],
-
-
-
     ],
     'params' => $params,
 ];
@@ -108,7 +117,5 @@ if (YII_ENV_DEV) {
         'allowedIPs' => ['127.0.0.1', '::1'],
     ];
 }
-
-
 
 return $config;

@@ -4,12 +4,12 @@ namespace app\models;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\SupplierBarang;
+use app\models\StockRop;
 
 /**
- * SupplierBarangSearch represents the model behind the search form of `app\models\SupplierBarang`.
+ * StockRopSearch represents the model behind the search form of `app\models\StockRop`.
  */
-class SupplierBarangSearch extends SupplierBarang
+class StockRopSearch extends StockRop
 {
     /**
      * {@inheritdoc}
@@ -17,7 +17,8 @@ class SupplierBarangSearch extends SupplierBarang
     public function rules()
     {
         return [
-            [['supplier_barang_id', 'barang_id', 'total_supplier_barang', 'created_at', 'updated_at'], 'integer'],
+            [['stock_rop_id', 'barang_id', 'stock_barang', 'safety_stock', 'jumlah_eoq', 'jumlah_rop', 'pesan_barang'], 'integer'],
+            [['periode'], 'safe'],
         ];
     }
 
@@ -40,7 +41,7 @@ class SupplierBarangSearch extends SupplierBarang
      */
     public function search($params, $formName = null)
     {
-        $query = SupplierBarang::find();
+        $query = StockRop::find();
 
         // add conditions that should always apply here
 
@@ -58,12 +59,16 @@ class SupplierBarangSearch extends SupplierBarang
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'supplier_barang_id' => $this->supplier_barang_id,
+            'stock_rop_id' => $this->stock_rop_id,
             'barang_id' => $this->barang_id,
-            'total_supplier_barang' => $this->total_supplier_barang,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'stock_barang' => $this->stock_barang,
+            'safety_stock' => $this->safety_stock,
+            'jumlah_eoq' => $this->jumlah_eoq,
+            'jumlah_rop' => $this->jumlah_rop,
+            'pesan_barang' => $this->pesan_barang,
         ]);
+
+        $query->andFilterWhere(['like', 'periode', $this->periode]);
 
         return $dataProvider;
     }

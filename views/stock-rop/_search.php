@@ -4,26 +4,32 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /** @var yii\web\View $this */
-/** @var app\models\SupplierBarangSearch $model */
+/** @var app\models\StockRopSearch $model */
 /** @var yii\widgets\ActiveForm $form */
 ?>
 
-<div class="supplier-barang-search">
+<div class="stock-rop-search">
 
     <?php $form = ActiveForm::begin([
         'action' => ['index'],
         'method' => 'get',
     ]); ?>
 
-    <?= $form->field($model, 'supplier_barang_id') ?>
+    <?= $form->field($model, 'stock_rop_id') ?>
 
     <?= $form->field($model, 'barang_id') ?>
 
-    <?= $form->field($model, 'total_supplier_barang') ?>
+    <?= $form->field($model, 'periode') ?>
 
-    <?= $form->field($model, 'created_at') ?>
+    <?= $form->field($model, 'stock_barang') ?>
 
-    <?= $form->field($model, 'updated_at') ?>
+    <?= $form->field($model, 'safety_stock') ?>
+
+    <?php // echo $form->field($model, 'jumlah_eoq') ?>
+
+    <?php // echo $form->field($model, 'jumlah_rop') ?>
+
+    <?php // echo $form->field($model, 'pesan_barang') ?>
 
     <div class="form-group">
         <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>

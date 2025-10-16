@@ -4,12 +4,12 @@ namespace app\models;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\SupplierBarang;
+use app\models\SupplierBarangDetail;
 
 /**
- * SupplierBarangSearch represents the model behind the search form of `app\models\SupplierBarang`.
+ * SupplierBarangDetailSearch represents the model behind the search form of `app\models\SupplierBarangDetail`.
  */
-class SupplierBarangSearch extends SupplierBarang
+class SupplierBarangDetailSearch extends SupplierBarangDetail
 {
     /**
      * {@inheritdoc}
@@ -17,7 +17,9 @@ class SupplierBarangSearch extends SupplierBarang
     public function rules()
     {
         return [
-            [['supplier_barang_id', 'barang_id', 'total_supplier_barang', 'created_at', 'updated_at'], 'integer'],
+            [['supplier_barang_detail_id', 'supplier_barang_id', 'supplier_id'], 'integer'],
+            [['lead_time', 'harga_per_kg'], 'number'],
+            [['created_at', 'updated_at'], 'safe'],
         ];
     }
 
@@ -40,7 +42,7 @@ class SupplierBarangSearch extends SupplierBarang
      */
     public function search($params, $formName = null)
     {
-        $query = SupplierBarang::find();
+        $query = SupplierBarangDetail::find();
 
         // add conditions that should always apply here
 
@@ -58,9 +60,11 @@ class SupplierBarangSearch extends SupplierBarang
 
         // grid filtering conditions
         $query->andFilterWhere([
+            'supplier_barang_detail_id' => $this->supplier_barang_detail_id,
             'supplier_barang_id' => $this->supplier_barang_id,
-            'barang_id' => $this->barang_id,
-            'total_supplier_barang' => $this->total_supplier_barang,
+            'supplier_id' => $this->supplier_id,
+            'lead_time' => $this->lead_time,
+            'harga_per_kg' => $this->harga_per_kg,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ]);

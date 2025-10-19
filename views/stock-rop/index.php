@@ -14,7 +14,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="card-header d-flex justify-content-between align-items-center">
             <h1><?= Html::encode($this->title) ?></h1>
             <div>
-                <?= Html::a('🔄 Generate Data', ['generate'], [
+                <?= Html::a('<i class="fas fa-sync-alt"></i> Generate Data', ['generate'], [
                     'class' => 'btn btn-primary me-2',
                     'data' => [
                         'confirm' => 'Generate data Stock ROP dari tabel EOQ_ROP?',
@@ -61,26 +61,46 @@ $this->params['breadcrumbs'][] = $this->title;
                                 return $model->barang ? $model->barang->nama_barang : '-';
                             }
                         ],
-                        'periode',
+                        // 'periode',
+                        [
+                            'attribute' => 'periode',
+                            'label' => 'Periode',
+                            'format' => 'raw',
+                            'value' => function($model) {
+                                return $model->getPeriodeFormatted();
+                            }
+                        ],
                         [
                             'label' => 'Stock Barang',
                             'attribute' => 'stock_barang',
-                            'format' => ['decimal', 0],
+                            'value' => function($model) {
+                                $satuan = $model->barang->unit->satuan;
+                                return number_format($model->stock_barang, 0, ',', '.') . ' ' . $satuan;
+                            },
                         ],
                         [
                             'label' => 'Safety Stock',
                             'attribute' => 'safety_stock',
-                            'format' => ['decimal', 0],
+                            'value' => function($model) {
+                                $satuan = $model->barang->unit->satuan;
+                                return number_format($model->safety_stock, 0, ',', '.') . ' ' . $satuan;
+                            },
                         ],
                         [
                             'label' => 'EOQ',
                             'attribute' => 'jumlah_eoq',
-                            // 'format' => ['decimal', 2],
+                            'value' => function($model) {
+                                $satuan = $model->barang->unit->satuan;
+                                return number_format($model->jumlah_eoq, 0, ',', '.') . ' ' . $satuan;
+                            },
                         ],
                         [
                             'label' => 'ROP',
                             'attribute' => 'jumlah_rop',
-                            // 'format' => ['decimal', 2],
+                            'value' => function($model) {
+                                $satuan = $model->barang->unit->satuan;
+                                return number_format($model->jumlah_rop, 0, ',', '.') . ' ' . $satuan;
+                            },
                         ],
                         [
                             'label' => 'Status',
@@ -98,12 +118,12 @@ $this->params['breadcrumbs'][] = $this->title;
                                 return '<span class="badge bg-' . $class . '">' . htmlspecialchars($status) . '</span>';
                             },
                         ],
-                        [
-                            'class' => ActionColumn::className(),
-                            'urlCreator' => function ($action, $model, $key, $index, $column) {
-                                return Url::toRoute([$action, 'stock_rop_id' => $model->stock_rop_id]);
-                            }
-                        ],
+                        // [
+                        //     'class' => ActionColumn::className(),
+                        //     'urlCreator' => function ($action, $model, $key, $index, $column) {
+                        //         return Url::toRoute([$action, 'stock_rop_id' => $model->stock_rop_id]);
+                        //     }
+                        // ],
                     ],
                 ]); ?>
             </div>

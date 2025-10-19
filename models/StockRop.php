@@ -80,4 +80,28 @@ class StockRop extends \yii\db\ActiveRecord
         return 'Aman';
     }
 
+    /**
+     * Konversi periode forecast ke format yang mudah dibaca
+     * Contoh: 202508 menjadi "Agustus 2025"
+     * 
+     * @return string
+     */
+    public function getPeriodeFormatted()
+    {
+        if (empty($this->periode)) {
+            return '-';
+        }
+
+        $bulan = $this->periode % 100;
+        $tahun = floor($this->periode / 100);
+
+        $namaBulan = [
+            1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
+            5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus',
+            9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
+        ];
+
+        return ($namaBulan[$bulan] ?? '') . ' ' . $tahun;
+    }
+
 }

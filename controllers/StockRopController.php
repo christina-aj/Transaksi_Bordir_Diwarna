@@ -22,7 +22,7 @@ class StockRopController extends Controller
                     'class' => VerbFilter::className(),
                     'actions' => [
                         'delete' => ['POST'],
-                        'generate' => ['POST'], // Tambahkan ini
+                        'generate' => ['POST'],
                     ],
                 ],
             ]
@@ -45,71 +45,80 @@ class StockRopController extends Controller
             ")->queryAll();
 
             $generated = 0;
+            $updated = 0;
             
             foreach ($eoqRopData as $data) {
-                // Cek apakah sudah ada di stock_rop
-                $exists = StockRop::find()
-                    ->where([
-                        'barang_id' => $data['barang_id'],
-                        'periode' => $data['periode']
-                    ])
-                    ->exists();
-                
-                if ($exists) continue;
-                
-                // Ambil data EOQ_ROP
-                $eoqRop = Yii::$app->db->createCommand("
-                    SELECT * FROM eoq_rop WHERE EOQ_ROP_id = :id
-                ", [':id' => $data['latest_id']])->queryOne();
+                // Cari EOQ_ROP yang sesuai
+                $eoqRop = EoqRop::findOne($data['latest_id']);
                 
                 if (!$eoqRop) continue;
                 
-                // Hitung stock barang dari gudang
+                // Hitung stock barang dari gudang (data terbaru per area)
                 $stockBarang = Yii::$app->db->createCommand("
                     SELECT COALESCE(SUM(g.quantity_akhir), 0)
                     FROM gudang g
                     INNER JOIN (
                         SELECT barang_id, area_gudang, MAX(tanggal) AS tanggal_terakhir
                         FROM gudang
+                        WHERE barang_id = :barang_id
                         GROUP BY barang_id, area_gudang
                     ) latest
                     ON g.barang_id = latest.barang_id
                     AND g.area_gudang = latest.area_gudang
                     AND g.tanggal = latest.tanggal_terakhir
                     WHERE g.barang_id = :barang_id
-                ", [':barang_id' => $eoqRop['barang_id']])->queryScalar();
+                ", [':barang_id' => $eoqRop->barang_id])->queryScalar();
                 
-                // Get safety stock dari barang
-                $barang = Yii::$app->db->createCommand("
-                    SELECT safety_stock FROM barang WHERE barang_id = :id
-                ", [':id' => $eoqRop['barang_id']])->queryOne();
+                // Ambil safety stock dari snapshot EOQ_ROP
+                $safetyStock = $eoqRop->safety_stock_snapshot;
                 
-                $safetyStock = $barang ? $barang['safety_stock'] : 0;
-                
-                // Tentukan status pesan_barang
+                // Tentukan status pesan_barang berdasarkan stock vs ROP
                 $pesanBarang = 'Aman';
-                if ($stockBarang <= $eoqRop['hasil_rop']) {
+                if ($stockBarang <= $eoqRop->hasil_rop) {
                     $pesanBarang = 'Pesan Sekarang';
                 } elseif ($stockBarang <= $safetyStock) {
                     $pesanBarang = 'Perlu Diperhatikan';
                 }
                 
-                // Insert ke stock_rop
-                Yii::$app->db->createCommand()->insert('stock_rop', [
-                    'barang_id' => $eoqRop['barang_id'],
-                    'periode' => $eoqRop['periode'],
-                    'stock_barang' => $stockBarang,
-                    'safety_stock' => $safetyStock,
-                    'jumlah_eoq' => $eoqRop['hasil_eoq'],
-                    'jumlah_rop' => $eoqRop['hasil_rop'],
-                    'pesan_barang' => $pesanBarang,
-                ])->execute();
+                // Cek apakah data sudah ada di stock_rop
+                $stockRop = StockRop::find()
+                    ->where([
+                        'barang_id' => $eoqRop->barang_id,
+                        'periode' => $eoqRop->periode
+                    ])
+                    ->one();
                 
-                $generated++;
+                if ($stockRop) {
+                    // Update data yang sudah ada
+                    $stockRop->stock_barang = round($stockBarang, 2);
+                    $stockRop->safety_stock = $safetyStock;
+                    $stockRop->jumlah_eoq = round($eoqRop->hasil_eoq);
+                    $stockRop->jumlah_rop = round($eoqRop->hasil_rop);
+                    $stockRop->pesan_barang = $pesanBarang;
+                    $stockRop->save(false);
+                    $updated++;
+                } else {
+                    // Insert data baru
+                    $stockRop = new StockRop();
+                    $stockRop->barang_id = $eoqRop->barang_id;
+                    $stockRop->periode = $eoqRop->periode;
+                    $stockRop->stock_barang = round($stockBarang, 2);
+                    $stockRop->safety_stock = $safetyStock;
+                    $stockRop->jumlah_eoq = round($eoqRop->hasil_eoq);
+                    $stockRop->jumlah_rop = round($eoqRop->hasil_rop);
+                    $stockRop->pesan_barang = $pesanBarang;
+                    $stockRop->save(false);
+                    $generated++;
+                }
             }
             
             $transaction->commit();
-            Yii::$app->session->setFlash('success', "Berhasil generate {$generated} data Stock ROP");
+            
+            $message = [];
+            if ($generated > 0) $message[] = "generate {$generated} data baru";
+            if ($updated > 0) $message[] = "update {$updated} data existing";
+            
+            Yii::$app->session->setFlash('success', "Berhasil " . implode(' dan ', $message) . " Stock ROP");
             
         } catch (\Exception $e) {
             $transaction->rollBack();

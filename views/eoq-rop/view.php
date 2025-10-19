@@ -31,7 +31,6 @@ $this->params['breadcrumbs'][] = $this->title;
         'attributes' => [
             'EOQ_ROP_id',
             'barang_id',
-            'total_bom',
             'biaya_pesan_snapshot',
             'biaya_simpan_snapshot',
             'safety_stock_snapshot',

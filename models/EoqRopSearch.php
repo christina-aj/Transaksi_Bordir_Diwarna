@@ -17,7 +17,7 @@ class EoqRopSearch extends EoqRop
     public function rules()
     {
         return [
-            [['EOQ_ROP_id', 'barang_id', 'total_bom', 'lead_time_snapshot'], 'integer'],
+            [['EOQ_ROP_id', 'barang_id', 'lead_time_snapshot'], 'integer'],
             [['biaya_pesan_snapshot', 'biaya_simpan_snapshot', 'safety_stock_snapshot', 'demand_snapshot', 'total_biaya_persediaan', 'hasil_eoq', 'hasil_rop'], 'number'],
             [['periode', 'created_at'], 'safe'],
         ];
@@ -62,7 +62,6 @@ class EoqRopSearch extends EoqRop
         $query->andFilterWhere([
             'EOQ_ROP_id' => $this->EOQ_ROP_id,
             'barang_id' => $this->barang_id,
-            'total_bom' => $this->total_bom,
             'biaya_pesan_snapshot' => $this->biaya_pesan_snapshot,
             'biaya_simpan_snapshot' => $this->biaya_simpan_snapshot,
             'safety_stock_snapshot' => $this->safety_stock_snapshot,

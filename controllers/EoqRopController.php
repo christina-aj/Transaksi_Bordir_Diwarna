@@ -4,9 +4,16 @@ namespace app\controllers;
 
 use app\models\EoqRop;
 use app\models\EoqRopSearch;
+use app\models\Barang;
+use app\models\Forecast;
+use app\models\BomBarang;
+use app\models\BomDetail;
+use app\models\SupplierBarang;
+use app\models\SupplierBarangDetail;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use Yii;
 
 /**
  * EoqRopController implements the CRUD actions for EoqRop model.
@@ -67,19 +74,171 @@ class EoqRopController extends Controller
      */
     public function actionCreate()
     {
-        $model = new EoqRop();
-
-        if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'EOQ_ROP_id' => $model->EOQ_ROP_id]);
-            }
-        } else {
-            $model->loadDefaultValues();
+        //ambil semua periode forecasting
+        $periodes = Forecast::find()
+            ->select('periode_forecast')
+            ->distinct()
+            ->orderBy(['periode_forecast' => SORT_DESC])
+            ->column();
+        if (empty($periodes)) {
+            Yii::$app->session->setFlash('error', 'Tidak ada data forecasting. Silakan lakukan forecasting terlebih dahulu.');
+            return $this->redirect(['index']);
         }
 
-        return $this->render('create', [
-            'model' => $model,
-        ]);
+        $successCount = 0;
+        $errorCount = 0;
+        $errors = [];
+        $warningMessages = [];
+
+        //loop per periodenya
+        foreach ($periodes as $periode) {
+            // query buat total demand yg diperlukan (total bom)
+            // join forecast, bom barang,bom detail
+            $sql = "
+                SELECT
+                    bd.barang_id,
+                    f.periode_forecast,
+                    SUM(f.hasil_forecast * bd.qty_BOM) AS demand_snapshot
+                FROM forecast f
+                INNER JOIN BOM_barang bb on f.barang_produksi_id = bb.barang_produksi_id
+                INNER JOIN BOM_detail bd on bb.BOM_barang_id = bd.BOM_barang_id
+                WHERE f.periode_forecast = :periode
+                GROUP BY bd.barang_id, f.periode_forecast
+            ";
+
+            $demandData = Yii::$app->db->createCommand($sql)
+                ->bindValue(':periode', $periode)
+                ->queryAll();
+
+            //loop per bahan bakunya
+            foreach ($demandData as $data) {
+                try {
+                    $barangId = $data['barang_id'];
+                    $demandSnapshot = $data['demand_snapshot'];
+                    // $QtyBom = $data['qty_BOM'];
+
+                    //ambil data barang (bahan baku)
+                    $barang = Barang::findOne($barangId);
+                    if (!$barang) {
+                        $errors[] = "Barang dengan ID $barangId tidak ditemukan.";
+                        $errorCount++;
+                        continue;
+                    }
+
+                    $namaBarang = $barang->nama_barang ?? "Barang ID {$barangId}";
+                    $safetyStock = $barang->safety_stock ?? 0;
+                    $biayaSimpan = $barang->biaya_simpan_bulan ?? 0;
+
+                    // ambil data supp utama untuk barang tersebut
+                    //alur - barang - supplier_barang - supplier_barang_detail (supp_utama = 1)
+                    $supplierBarang = SupplierBarang::find()
+                        ->where(['barang_id' => $barangId])
+                        ->one();
+                    if (!$supplierBarang) {
+                        $warningMessages[] = "Barang '{$namaBarang}' (ID: {$barangId}) belum memiliki data supplier. Silakan isi data supplier terlebih dahulu.";
+                        $errorCount++;
+                        continue;
+                    }
+
+                    //ambil supp detail yang supp_utama = 1 
+                    $supplierBarangDetail = SupplierBarangDetail::find()
+                        ->where([
+                            'supplier_barang_id' => $supplierBarang->supplier_barang_id,
+                            'supp_utama' => 1
+                        ])
+                        ->one();
+                    if (!$supplierBarangDetail) {
+                        $warningMessages[] = "Barang '{$namaBarang}' (ID: {$barangId}) belum memiliki supplier utama (supp_utama = 1). Silakan tentukan supplier utama terlebih dahulu.";
+                        $errorCount++;
+                        continue;
+                    }
+
+                    $lead_time = $supplierBarangDetail->lead_time ?? 0;
+                    $biayaPesan = $supplierBarangDetail->biaya_pesan ?? 0;
+
+                    // validasi data yang dibutuhkan buat itung eoq dan rop
+                    if ($biayaPesan <= 0) {
+                        $warningMessages[] = "Barang '{$namaBarang}' (ID: {$barangId}) memiliki biaya pesan yang tidak valid (<= 0). Silakan periksa data supplier.";
+                        $errorCount++;
+                        continue;
+                    }
+
+                    if ($biayaSimpan <= 0) {
+                        $warningMessages[] = "Barang '{$namaBarang}' (ID: {$barangId}) memiliki biaya simpan yang tidak valid (<= 0). Silakan periksa data barang.";
+                        $errorCount++;
+                        continue;
+                    }
+
+                    if ($demandSnapshot <= 0) {
+                        $warningMessages[] = "Barang '{$namaBarang}' (ID: {$barangId}) memiliki demand yang tidak valid (<= 0). Silakan periksa data forecasting dan BOM.";
+                        $errorCount++;
+                        continue;
+                    }
+
+                    //hitung EOQ dan ROP
+                    // rumus EOQ = sqrt((2DS)/H)
+                    // D = demand per bulam, S = biaya simpan per bulan, H = biaya simpan per unit per bulan
+                    $eoq = sqrt((2 * $demandSnapshot * $biayaPesan) / $biayaSimpan);
+
+                    // rumus ROP = (demand harian x lead time) + safety stock
+                    $rop = (($demandSnapshot / 30) * $lead_time) + $safetyStock;
+
+                    // cek apakah data untuk barang dan periode tersebut sudah ada
+                    $existingEoqRop = EoqRop::find()
+                        ->where([
+                            'barang_id' => $barangId,
+                            'periode' => $periode,
+                        ])
+                        ->one();
+                    if ($existingEoqRop) {
+                        //update data ang sudah ada
+                        $model = $existingEoqRop;
+                    } else {
+                        // buat data baru
+                        $model = new EoqRop();
+                        $model->barang_id = $barangId;
+                        $model->periode = $periode;
+                    }
+
+                    //set nilai snapshot dan hasil
+                    $model->biaya_pesan_snapshot = $biayaPesan;
+                    $model->biaya_simpan_snapshot = $biayaSimpan;
+                    $model->safety_stock_snapshot = $safetyStock;
+                    $model->lead_time_snapshot = $lead_time;
+                    $model->demand_snapshot = $demandSnapshot;
+                    $model->hasil_eoq = round($eoq,2);
+                    $model->hasil_rop = round($rop, 2);
+
+                    if ($model->save()) {
+                        $successCount++;
+                    } else {
+                        $errorCount++;
+                        $errors[] = "Gagal simpan EOQ ROP untuk barang '{$namaBarang}' (ID: {$barangId}) pada periode '{$periode}'.";
+                    }
+
+                } catch (\Exception $e) {
+                    $errorCount++;
+                    $errors[] = "Error pada barang ID {$barangId}: " . $e->getMessage();
+                }
+            }
+        }
+
+        // set flash message hasil proses
+        if ($successCount > 0) {
+            Yii::$app->session->setFlash('success', "Berhasil generate EOQ ROP untuk {$successCount} item.");
+        }
+
+        if (!empty($warningMessages)) {
+            // Gabungkan semua warning message
+            $warningHtml = "<strong>Data tidak lengkap:</strong><br>" . implode('<br>', array_unique($warningMessages));
+            Yii::$app->session->setFlash('warning', $warningHtml);
+        }
+        
+        if ($errorCount > 0 && empty($warningMessages)) {
+            Yii::$app->session->setFlash('error', "Gagal generate {$errorCount} data. Detail: " . implode(', ', array_slice($errors, 0, 3)));
+        }
+
+        return $this->redirect(['index']);
     }
 
     /**

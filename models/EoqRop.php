@@ -9,7 +9,6 @@ use Yii;
  *
  * @property int $EOQ_ROP_id
  * @property int $barang_id
- * @property int|null $total_bom
  * @property float $biaya_pesan_snapshot
  * @property float $biaya_simpan_snapshot
  * @property float $safety_stock_snapshot
@@ -41,10 +40,10 @@ class EoqRop extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['total_bom', 'hasil_eoq', 'hasil_rop', 'periode'], 'default', 'value' => null],
+            [['hasil_eoq', 'hasil_rop', 'periode'], 'default', 'value' => null],
             [['total_biaya_persediaan'], 'default', 'value' => 0],
             [['barang_id', 'lead_time_snapshot'], 'required'],
-            [['barang_id', 'total_bom', 'lead_time_snapshot'], 'integer'],
+            [['barang_id', 'lead_time_snapshot'], 'integer'],
             [['biaya_pesan_snapshot', 'biaya_simpan_snapshot', 'safety_stock_snapshot', 'demand_snapshot', 'total_biaya_persediaan', 'hasil_eoq', 'hasil_rop'], 'number'],
             [['periode', 'created_at'], 'safe'],
             [['barang_id'], 'exist', 'skipOnError' => true, 'targetClass' => Barang::class, 'targetAttribute' => ['barang_id' => 'barang_id']],
@@ -59,7 +58,6 @@ class EoqRop extends \yii\db\ActiveRecord
         return [
             'EOQ_ROP_id' => 'Eoq Rop ID',
             'barang_id' => 'Barang ID',
-            'total_bom' => 'Total Bom',
             'biaya_pesan_snapshot' => 'Biaya Pesan Snapshot',
             'biaya_simpan_snapshot' => 'Biaya Simpan Snapshot',
             'safety_stock_snapshot' => 'Safety Stock Snapshot',

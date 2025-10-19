@@ -56,6 +56,7 @@ $isUpdate = !$model->isNewRecord;
                             <th style="width: 30%;">Nama Supplier <span class="text-danger">*</span></th>
                             <th style="width: 15%;">Lead Time (hari)</th>
                             <th style="width: 20%;">Harga per Kg</th>
+                            <th style="width: 15%;">Biaya Pesan</th>
                             <th style="width: 15%;">Supplier Utama</th>
                             <th style="width: 15%;">Aksi</th>
                         </tr>
@@ -86,6 +87,11 @@ $isUpdate = !$model->isNewRecord;
 
                                 <td>
                                     <?= $form->field($detail, "[{$index}]harga_per_kg", ['template' => "{input}\n{error}"])
+                                        ->textInput(['type' => 'number', 'min' => 0, 'step' => '0.01', 'placeholder' => 'Rp']) ?>
+                                </td>
+
+                                <td>
+                                    <?= $form->field($detail, "[{$index}]biaya_pesan", ['template' => "{input}\n{error}"])
                                         ->textInput(['type' => 'number', 'min' => 0, 'step' => '0.01', 'placeholder' => 'Rp']) ?>
                                 </td>
 
@@ -122,21 +128,20 @@ $isUpdate = !$model->isNewRecord;
             <!-- Hidden input untuk row yang dihapus -->
             <?= Html::hiddenInput('deleteRows', '', ['id' => 'deleteRows']) ?>
 
-            
-
-            <?php ActiveForm::end(); ?>
-
             <div class="form-group text-center mt-3">
                 <?= Html::submitButton('<i class="fas fa-save"></i> Simpan', ['class' => 'btn btn-success', 'id' => 'saveButton']) ?>
 
                 <?php if (!$isUpdate): ?>
                     <!-- Tombol Batal untuk Create: redirect ke index, tidak pakai supplier_barang_id -->
-                    <?= Html::a('<i class="fas fa-times"></i> Batal', ['index'], [
+                    <!-- <?= Html::a('<i class="fas fa-times"></i> Batal', ['index'], [
                         'class' => 'btn btn-danger',
                         'data' => [
                             'confirm' => 'Data belum disimpan akan dihapus. Lanjutkan?',
                         ],
-                    ]) ?>
+                    ]) ?> -->
+                    <a href="<?= \yii\helpers\Url::to(['index']) ?>" id="cancelButton" class="btn btn-danger" onclick="return confirmCancel();">
+                        <i class="fas fa-times"></i> Batal
+                    </a>
                 <?php else: ?>
                     <!-- Tombol Kembali/Batal untuk Update: kirim supplier_barang_id ke cancel -->
                     <?= Html::a('<i class="fas fa-arrow-left"></i> Kembali', ['view', 'supplier_barang_id' => $model->supplier_barang_id], [
@@ -144,6 +149,10 @@ $isUpdate = !$model->isNewRecord;
                     ]) ?>
                 <?php endif; ?>
             </div>
+
+            <?php ActiveForm::end(); ?>
+
+
 
 
         </div>
@@ -181,6 +190,9 @@ $(document).on('click', '.add-row', function() {
             </td>
             <td>
                 <input type='number' name='SupplierBarangDetail[\${rowIndex}][harga_per_kg]' class='form-control' min='0' step='0.01' placeholder='Rp'>
+            </td>
+            <td>
+                <input type='number' name='SupplierBarangDetail[\${rowIndex}][biaya_pesan]' class='form-control' min='0' step='0.01' placeholder='Rp'>
             </td>
             <td style='text-align:center;'>
                 <input type='radio' name='supp_utama_selected' value='\${rowIndex}' class='radio-supp-utama' id='radio_utama_\${rowIndex}' data-index='\${rowIndex}'>

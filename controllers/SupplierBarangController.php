@@ -117,7 +117,7 @@ class SupplierBarangController extends Controller
             }
         }
 
-        return $this->render('_form', [
+        return $this->render('create', [
             'model' => $model,
             'supplierBarangDetails' => $supplierBarangDetails,
         ]);
@@ -168,6 +168,7 @@ class SupplierBarangController extends Controller
             $modelDetail->supplier_id = $data['supplier_id'];
             $modelDetail->lead_time = $data['lead_time'] ?? null;
             $modelDetail->harga_per_kg = $data['harga_per_kg'] ?? null;
+            $modelDetail->biaya_pesan = $data['biaya_pesan'] ?? null;
             $modelDetail->supp_utama = $data['supp_utama'] ?? 0;
 
             if ($modelDetail->validate()) {
@@ -260,6 +261,7 @@ class SupplierBarangController extends Controller
                     $modelDetail->supplier_id = $data['supplier_id'];
                     $modelDetail->lead_time = $data['lead_time'] ?? null;
                     $modelDetail->harga_per_kg = $data['harga_per_kg'] ?? null;
+                    $modelDetail->biaya_pesan = $data['biaya_pesan'] ?? null;
                     $modelDetail->supp_utama = $data['supp_utama'] ?? 0;
                     $isValid = $modelDetail->validate() && $isValid;
                     $updatedDetails[] = $modelDetail;
@@ -270,6 +272,7 @@ class SupplierBarangController extends Controller
                     $newDetail->supplier_id = $data['supplier_id'];
                     $newDetail->lead_time = $data['lead_time'] ?? null;
                     $newDetail->harga_per_kg = $data['harga_per_kg'] ?? null;
+                    $newDetail->biaya_pesan = $data['biaya_pesan'] ?? null;
                     $newDetail->supp_utama = $data['supp_utama'] ?? 0;
                     $isValid = $newDetail->validate() && $isValid;
                     $updatedDetails[] = $newDetail;

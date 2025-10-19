@@ -58,6 +58,13 @@ $this->params['breadcrumbs'][] = $this->title;
                                 return 'Rp ' . number_format($model->harga_per_kg, 2, ',', '.') . ' / kg';
                             },
                         ],
+                        [
+                            'label' => 'Biaya Pesan',
+                            'attribute' => 'biaya_pesan',
+                            'value' => function ($model) {
+                                return 'Rp ' . number_format($model->biaya_pesan, 2, ',', '.');
+                            },
+                        ],
                         'supp_utama:boolean',
                     ],
                 ]) ?>

@@ -256,28 +256,22 @@ $samplePageUrl = Url::to(['site/sample-page']);
 
                     <li class="pc-item pc-hasmenu">
                         <a href="#!" class="pc-link"><span class="pc-micon">
+                                <i class="fi fi-ts-supplier-alt"></i> </span><span class="pc-mtext">Supplier</span><span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
+                        <ul class="pc-submenu">
+                            <li class="pc-item"><a class="pc-link" href="<?= $SupplierUrl ?>">Data Supplier</a></li>
+                            <li class="pc-item"><a class="pc-link" href="<?= $SupplierBarangUrl ?>">Supplier Handle</a></li>
+
+                        </ul>
+                    </li>
+
+                    <li class="pc-item pc-hasmenu">
+                        <a href="#!" class="pc-link"><span class="pc-micon">
                                 <i class="fi fi-ts-box-alt"></i> </span><span class="pc-mtext">Barang</span><span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
                         <ul class="pc-submenu">
                             <li class="pc-item"><a class="pc-link" href="<?= $BarangUrl ?>">List Bahan Baku</a></li>
-                            <li class="pc-item"><a class="pc-link" href="#!">List Barang Jadi</a></li>
-
-                        </ul>
-                    </li>
-
-                    <li class="pc-item pc-hasmenu">
-                        <a href="#!" class="pc-link"><span class="pc-micon">
-                                <i class="fi fi-ts-dolly-flatbed-alt"></i> </span><span class="pc-mtext">Pembelian</span><span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
-                        <ul class="pc-submenu">
-                            <li class="pc-item"><a class="pc-link" href="<?= $PembelianUrl ?>">Riwayat Pembelian Bahan Produksi</a></li>
-                        </ul>
-                    </li>
-
-                    <li class="pc-item pc-hasmenu">
-                        <a href="#!" class="pc-link"><span class="pc-micon">
-                                <i class="fi fi-ts-box-alt"></i> </span><span class="pc-mtext">Gudang</span><span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
-                        <ul class="pc-submenu">
-                            <li class="pc-item"><a class="pc-link" href="<?= $PemesananUrl ?>">Riwayat Pemesanan Bahan Produksi</a></li>
-                            <li class="pc-item"><a class="pc-link" href="<?= $GudangUrl ?>">Stock Gudang</a></li>
+                            <!-- <li class="pc-item"><a class="pc-link" href="#!">List Barang Jadi</a></li> -->
+                            <li class="pc-item"><a class="pc-link" href="<?= $BarangProUrl ?>">List Barang Jadi</a></li>
+                            <li class="pc-item"><a class="pc-link" href="<?= $BomUrl ?>">BOM Barang</a></li>
 
                         </ul>
                     </li>
@@ -291,10 +285,57 @@ $samplePageUrl = Url::to(['site/sample-page']);
                             <li class="pc-item"><a class="pc-link" href="<?= $StockUrl ?>">Stock Produksi</a></li>
                         </ul>
                     </li>
-                    
+                    <li class="pc-item pc-hasmenu">
+                        <a href="#!" class="pc-link"><span class="pc-micon">
+                                <i class="fi fi-ts-box-alt"></i> </span><span class="pc-mtext">Gudang</span><span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
+                        <ul class="pc-submenu">
+                            <li class="pc-item"><a class="pc-link" href="<?= $PemesananUrl ?>">Riwayat Pemesanan Bahan Produksi</a></li>
+                            <li class="pc-item"><a class="pc-link" href="<?= $GudangUrl ?>">Stock Gudang</a></li>
 
-                    
-                    
+                        </ul>
+                    </li>
+
+                    <li class="pc-item pc-hasmenu">
+                        <a href="#!" class="pc-link"><span class="pc-micon">
+                                <i class="fi fi-ts-point-of-sale-bill"></i> </span><span class="pc-mtext">Penjualan</span><span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
+                        <ul class="pc-submenu">
+                            <li class="pc-item"><a class="pc-link" href="<?= $PermintaanUrl ?>">Permintaan Penjualan</a></li>
+                            <li class="pc-item"><a class="pc-link" href="<?= $RiwayatPenjualanUrl ?>">Riwayat Penjualan</a></li>
+
+                        </ul>
+                    </li>
+
+                    <li class="pc-item pc-hasmenu">
+                        <a href="#!" class="pc-link"><span class="pc-micon">
+                                <i class="fi fi-ts-supplier-alt"></i> </span><span class="pc-mtext">Peramalan dan EOQ</span><span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
+                        <ul class="pc-submenu">
+                            <!-- <li class="pc-item"><a class="pc-link" href="<?= $DataPerhitunganUrl ?>">Data Perhitungan</a></li> -->
+                            <li class="pc-item"><a class="pc-link" href="<?= $ForecastUrl ?>">Forecasting</a></li>
+                            <li class="pc-item"><a class="pc-link" href="<?= $EoqRopUrl ?>">EOQ ROP</a></li>
+
+                        </ul>
+                    </li>
+
+                    <li class="pc-item pc-hasmenu">
+                        <a href="#!" class="pc-link"><span class="pc-micon">
+                                <i class="fi fi-ts-ballot-check"></i> </span><span class="pc-mtext">Report</span><span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
+                        <ul class="pc-submenu">
+                            <li class="pc-item"><a class="pc-link" href="<?= $StockRopUrl ?>">Laporan Stok Gudang</a></li>
+                            <li class="pc-item"><a class="pc-link" href="<?= $RiwayatPenjualanUrl ?>">Riwayat Penjualan</a></li>
+                            <li class="pc-item"><a class="pc-link" href="<?= $laproUrl ?>">Laporan Produksi</a></li>
+                            <li class="pc-item"><a class="pc-link" href="<?= $lapagreUrl ?>">Laporan Agregat</a></li>
+                            <li class="pc-item"><a class="pc-link" href="<?= $lapkelUrl ?>">Laporan Keluar</a></li>
+                            <li class="pc-item"><a class="pc-link" href="<?= $JenisUrl ?>">Jenis</a></li>
+                            <li class="pc-item"><a class="pc-link" href="<?= $NotaUrl ?>">Nota</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="pc-item">
+                        <a href="<?= $PanduanUrl ?>" class="pc-link">
+                            <span class="pc-micon"><i class="fi fi-ts-book"></i></span>
+                            <span class="pc-mtext">Panduan</span>
+                        </a>
+                    </li>
                 <?php endif; ?>
 
 

@@ -17,7 +17,8 @@ class SupplierBarangSearch extends SupplierBarang
     public function rules()
     {
         return [
-            [['supplier_barang_id', 'barang_id', 'total_supplier_barang', 'created_at', 'updated_at'], 'integer'],
+            [['supplier_barang_id', 'barang_id', 'total_supplier_barang'], 'integer'],
+            [['created_at', 'updated_at'], 'safe'],
         ];
     }
 

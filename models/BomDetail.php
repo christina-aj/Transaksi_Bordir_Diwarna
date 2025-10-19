@@ -90,19 +90,19 @@ class BomDetail extends \yii\db\ActiveRecord
         return $this->hasOne(Barang::class, ['barang_id' => 'barang_id']);
     }
 
-    /**
-     * Get nama barang (bahan baku)
-     */
-    public function getNamaBarang()
-    {
-        return $this->barang ? $this->barang->nama_barang : '-';
-    }
+    // /**
+    //  * Get nama barang (bahan baku)
+    //  */
+    // public function getNamaBarang()
+    // {
+    //     return $this->barang ? $this->barang->nama_barang : '-';
+    // }
 
-    /**
-     * Get kode barang (bahan baku)
-     */
-    public function getKodeBarang()
-    {
-        return $this->barang ? $this->barang->kode_barang : '-';
-    }
+    // /**
+    //  * Get kode barang (bahan baku)
+    //  */
+    // public function getKodeBarang()
+    // {
+    //     return $this->barang ? $this->barang->kode_barang : '-';
+    // }
 }

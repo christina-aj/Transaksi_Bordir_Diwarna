@@ -30,13 +30,13 @@ $this->params['breadcrumbs'][] = $this->title;
                     'columns' => [
                         ['class' => 'yii\grid\SerialColumn' , 'header' => 'No'],
 
-                        [
-                            'label' => "Nama Barang Produksi",
-                            'attribute' => 'barang_produksi_id',
-                            'value' => function ($model) {
-                                return $model->barangProduksi->nama;
-                            },
-                        ],
+                        // [
+                        //     'label' => "Nama Barang Produksi",
+                        //     'attribute' => 'barang_produksi_id',
+                        //     'value' => function ($model) {
+                        //         return $model->barangProduksi->nama;
+                        //     },
+                        // ],
                         [
                             'label' => "Nama Bahan Baku",
                             'attribute' => 'barang_id',

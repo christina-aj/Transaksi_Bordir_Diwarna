@@ -113,6 +113,25 @@ AppAsset::register($this);
 
     <!-- Main Content -->
     <main class="pc-container" id="main">
+        <!-- Flash Messages -->
+        <?php
+        $alertTypes = [
+            'error' => 'danger',
+            'success' => 'success',
+            'warning' => 'warning',
+            'info' => 'info'
+        ];
+        ?>
+
+        <?php foreach (Yii::$app->session->getAllFlashes() as $type => $message): ?>
+            <?php $class = $alertTypes[$type] ?? $type; ?>
+            <div class="alert alert-<?= $class ?> alert-dismissible fade show mt-3 mx-3" role="alert">
+                <?= $message ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <?php endforeach; ?>
+        <!-- End Flash Messages -->
+
         <?= $content ?>
     </main>
 

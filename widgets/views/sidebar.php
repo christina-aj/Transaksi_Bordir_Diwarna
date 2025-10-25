@@ -34,7 +34,8 @@ $BarangProUrl = Url::to(['/barangproduksi/index']);
 $NotaUrl = Url::to(['/nota/index']);
 
 $BomUrl = Url::to(['/bom-barang/index']);
-$PermintaanUrl = Url::to(['/permintaan-penjualan/index']);
+$PermintaanUrl = Url::to(['/permintaan-pelanggan/index']);
+$PelangganUrl = Url::to(['/master-pelanggan/index']);
 $RiwayatPenjualanUrl = Url::to(['/riwayat-penjualan/index']);
 $SupplierBarangUrl = Url::to(['/supplier-barang/index']);
 $DataPerhitunganUrl = Url::to(['/data-perhitungan/index']);
@@ -142,7 +143,8 @@ $samplePageUrl = Url::to(['site/sample-page']);
                         <a href="#!" class="pc-link"><span class="pc-micon">
                                 <i class="fi fi-ts-point-of-sale-bill"></i> </span><span class="pc-mtext">Penjualan</span><span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
                         <ul class="pc-submenu">
-                            <li class="pc-item"><a class="pc-link" href="<?= $PermintaanUrl ?>">Permintaan Penjualan</a></li>
+                            <li class="pc-item"><a class="pc-link" href="<?= $PelangganUrl ?>">Data Pelanggan</a></li>
+                            <li class="pc-item"><a class="pc-link" href="<?= $PermintaanUrl ?>">Permintaan Pelanggan</a></li>
                             <li class="pc-item"><a class="pc-link" href="<?= $RiwayatPenjualanUrl ?>">Riwayat Penjualan</a></li>
 
                         </ul>
@@ -299,7 +301,8 @@ $samplePageUrl = Url::to(['site/sample-page']);
                         <a href="#!" class="pc-link"><span class="pc-micon">
                                 <i class="fi fi-ts-point-of-sale-bill"></i> </span><span class="pc-mtext">Penjualan</span><span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
                         <ul class="pc-submenu">
-                            <li class="pc-item"><a class="pc-link" href="<?= $PermintaanUrl ?>">Permintaan Penjualan</a></li>
+                            <li class="pc-item"><a class="pc-link" href="<?= $PelangganUrl ?>">Data Pelanggan</a></li>
+                            <li class="pc-item"><a class="pc-link" href="<?= $PermintaanUrl ?>">Permintaan Pelanggan</a></li>
                             <li class="pc-item"><a class="pc-link" href="<?= $RiwayatPenjualanUrl ?>">Riwayat Penjualan</a></li>
 
                         </ul>

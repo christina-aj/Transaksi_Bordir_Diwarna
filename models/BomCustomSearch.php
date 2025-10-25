@@ -4,12 +4,12 @@ namespace app\models;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\PermintaanDetail;
+use app\models\BomCustom;
 
 /**
- * PermintaanDetailSearch represents the model behind the search form of `app\models\PermintaanDetail`.
+ * BomCustomSearch represents the model behind the search form of `app\models\BomCustom`.
  */
-class PermintaanDetailSearch extends PermintaanDetail
+class BomCustomSearch extends BomCustom
 {
     /**
      * {@inheritdoc}
@@ -17,8 +17,8 @@ class PermintaanDetailSearch extends PermintaanDetail
     public function rules()
     {
         return [
-            [['permintaan_detail_id', 'permintaan_id', 'barang_produksi_id', 'barang_custom_pelanggan_id', 'qty_permintaan'], 'integer'],
-            [['catatan'], 'safe'],
+            [['BOM_custom_id', 'barang_custom_pelanggan_id', 'barang_id', 'qty_per_unit'], 'integer'],
+            [['created_at', 'updated_at'], 'safe'],
         ];
     }
 
@@ -41,7 +41,7 @@ class PermintaanDetailSearch extends PermintaanDetail
      */
     public function search($params, $formName = null)
     {
-        $query = PermintaanDetail::find();
+        $query = BomCustom::find();
 
         // add conditions that should always apply here
 
@@ -59,14 +59,13 @@ class PermintaanDetailSearch extends PermintaanDetail
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'permintaan_detail_id' => $this->permintaan_detail_id,
-            'permintaan_id' => $this->permintaan_id,
-            'barang_produksi_id' => $this->barang_produksi_id,
+            'BOM_custom_id' => $this->BOM_custom_id,
             'barang_custom_pelanggan_id' => $this->barang_custom_pelanggan_id,
-            'qty_permintaan' => $this->qty_permintaan,
+            'barang_id' => $this->barang_id,
+            'qty_per_unit' => $this->qty_per_unit,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
         ]);
-
-        $query->andFilterWhere(['like', 'catatan', $this->catatan]);
 
         return $dataProvider;
     }

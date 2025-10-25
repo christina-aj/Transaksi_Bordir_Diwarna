@@ -4,12 +4,12 @@ namespace app\models;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\PermintaanPenjualan;
+use app\models\BarangCustomPelanggan;
 
 /**
- * PermintaanPenjualanSearch represents the model behind the search form of `app\models\PermintaanPenjualan`.
+ * BarangCustomPelangganSearch represents the model behind the search form of `app\models\BarangCustomPelanggan`.
  */
-class PermintaanPenjualanSearch extends PermintaanPenjualan
+class BarangCustomPelangganSearch extends BarangCustomPelanggan
 {
     /**
      * {@inheritdoc}
@@ -17,9 +17,8 @@ class PermintaanPenjualanSearch extends PermintaanPenjualan
     public function rules()
     {
         return [
-            [['permintaan_penjualan_id', 'total_item_permintaan'], 'integer'],
-            [['nama_pelanggan'], 'string', 'max' => 255],
-            [['tanggal_permintaan', 'created_at', 'updated_at'], 'safe'],
+            [['barang_custom_pelanggan_id', 'pelanggan_id', 'created_at', 'updated_at'], 'integer'],
+            [['kode_barang_custom', 'nama_barang_custom'], 'safe'],
         ];
     }
 
@@ -42,7 +41,7 @@ class PermintaanPenjualanSearch extends PermintaanPenjualan
      */
     public function search($params, $formName = null)
     {
-        $query = PermintaanPenjualan::find();
+        $query = BarangCustomPelanggan::find();
 
         // add conditions that should always apply here
 
@@ -60,13 +59,14 @@ class PermintaanPenjualanSearch extends PermintaanPenjualan
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'permintaan_penjualan_id' => $this->permintaan_penjualan_id,
-            'total_item_permintaan' => $this->total_item_permintaan,
-            'tanggal_permintaan' => $this->tanggal_permintaan,
-            'nama_pelanggan' => $this->nama_pelanggan,
+            'barang_custom_pelanggan_id' => $this->barang_custom_pelanggan_id,
+            'pelanggan_id' => $this->pelanggan_id,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ]);
+
+        $query->andFilterWhere(['like', 'kode_barang_custom', $this->kode_barang_custom])
+            ->andFilterWhere(['like', 'nama_barang_custom', $this->nama_barang_custom]);
 
         return $dataProvider;
     }

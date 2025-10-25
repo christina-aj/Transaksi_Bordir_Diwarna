@@ -13,6 +13,13 @@ use kartik\dialog\Dialog;
 /** @var app\models\Penggunaan $model */
 /** @var yii\widgets\ActiveForm $form */
 echo Dialog::widget();
+// 🔥 DEBUG: Cek permintaan_id
+// $permintaanId = Yii::$app->request->get('permintaan_id');
+// if (!empty($permintaanId)) {
+//     echo "<div class='alert alert-info'>DEBUG: permintaan_id = {$permintaanId}</div>";
+// } else {
+//     echo "<div class='alert alert-warning'>DEBUG: permintaan_id KOSONG</div>";
+// }
 ?>
 
 <div class="penggunaan-form">
@@ -31,8 +38,22 @@ echo Dialog::widget();
             <div class="col-md-3">
                 <div><strong>Total Item:</strong> <?= $modelPenggunaan->total_item_penggunaan ?? '-' ?></div>
                 <div><strong>Tanggal:</strong> <?= Yii::$app->formatter->asDate($modelPenggunaan->tanggal ?? 'Tanggal Tidak Tersedia') ?></div>
-
             </div>
+
+            <!-- TAMBAHAN INFO PERMINTAAN -->
+            <?php if (!empty($model->permintaan_id)): ?>
+            <div class="col-md-3">
+                <div><strong>Dari Permintaan:</strong> 
+                    <?= Html::a(
+                        $model->permintaanPelanggan->generateKodePermintaan(), 
+                        ['permintaan-pelanggan/view', 'permintaan_id' => $model->permintaan_id],
+                        ['class' => 'btn btn-sm btn-info']
+                    ) ?>
+                </div>
+                <div><strong>Status Permintaan:</strong> <?= $model->permintaanPelanggan->getStatusLabel() ?></div>
+            </div>
+            <?php endif; ?>
+
         </div>
         <br>
         <hr>
@@ -159,6 +180,12 @@ echo Dialog::widget();
 // Dapatkan nilai `penggunaan_id` dari model
 $PenggunaanId = $modelPenggunaan->penggunaan_id;
 $isNewRecord = $modelDetail->isNewRecord;
+
+// 🔥 TAMBAHAN UNTUK AUTO-FILL BOM
+$permintaanId = Yii::$app->request->get('permintaan_id');
+$urlGetBom = !empty($permintaanId) ? Url::to(['penggunaan/get-bom-data', 'permintaan_id' => $permintaanId]) : '';
+
+
 $this->registerJs("
 
     
@@ -299,8 +326,50 @@ $this->registerJs("
 
     // Inisialisasi awal untuk menampilkan/menyembunyikan tombol add dan delete
     toggleAddDeleteButtons();
+
+    // 🔥🔥🔥 AUTO-FILL BOM 🔥🔥🔥
+    " . (!empty($permintaanId) ? "
+    \$(document).ready(function() {
+        setTimeout(function() {
+            \$.ajax({
+                url: '" . $urlGetBom . "',
+                type: 'GET',
+                success: function(res) {
+                    if (res.success && res.data.length > 0) {
+                        \$('#table-body').empty();
+                        rowIndex = 0;
+                        \$.each(res.data, function(i, b) {
+                            var row = '<tr>' +
+                                '<input type=\"hidden\" name=\"PenggunaanDetail['+i+'][penggunaan_id]\" value=\"'+PenggunaanId+'\">' +
+                                '<td class=\"barang-column\"><input type=\"text\" name=\"PenggunaanDetail['+i+'][barang_id]\" id=\"penggunaandetail-'+i+'-barang_id\" class=\"form-control\" value=\"'+b.barang_id+'\" readonly></td>' +
+                                '<td><input type=\"text\" name=\"PenggunaanDetail['+i+'][kode_barang]\" id=\"penggunaandetail-'+i+'-kode_barang\" class=\"form-control\" value=\"'+b.kode_barang+'\" readonly></td>' +
+                                '<td><input type=\"text\" name=\"PenggunaanDetail['+i+'][nama_barang]\" id=\"penggunaandetail-'+i+'-nama_barang\" class=\"form-control typeahead-input\" data-index=\"'+i+'\" value=\"'+b.nama_barang+'\" placeholder=\"Cari Nama Barang...\"></td>' +
+                                '<td><input type=\"number\" name=\"PenggunaanDetail['+i+'][jumlah_digunakan]\" class=\"form-control\" value=\"'+b.qty+'\" min=\"1\" required></td>' +
+                                '<td><input type=\"text\" name=\"PenggunaanDetail['+i+'][catatan]\" class=\"form-control\" value=\"'+b.catatan+'\"></td>' +
+                                '<td class=\"text-center\"><div class=\"btn-group\"><button type=\"button\" class=\"btn btn-success btn-sm add-row\"><i class=\"fas fa-plus\"></i></button><button type=\"button\" class=\"btn btn-danger btn-sm delete-row\"><i class=\"fas fa-trash\"></i></button></div></td>' +
+                                '</tr>';
+                            \$('#table-body').append(row);
+                            initializeTypeahead('#penggunaandetail-'+i+'-nama_barang', i);
+                            rowIndex++;
+                        });
+                        \$('.barang-header').hide();
+                        \$('.barang-column').hide();
+                        toggleAddDeleteButtons();
+                        alert('Form akan diisi dengan '+res.data.length+' item dari BOM ('+res.kode_permintaan+'). Silakan review dan Save.');
+                    } else {
+                        alert(res.message || 'Tidak ada BOM');
+                    }
+                },
+                error: function() {
+                    alert('Gagal memuat data BOM');
+                }
+            });
+        }, 500);
+    });
+    " : "") . "
 ");
 ?>
+
 <style>
     /* CSS untuk membuat dropdown saran scrollable */
     .tt-menu {

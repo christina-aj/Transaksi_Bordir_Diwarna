@@ -126,7 +126,7 @@ class BomBarangController extends Controller
             
             if (empty($barangProduksiId)) {
                 Yii::$app->session->setFlash('error', 'Barang Produksi harus dipilih.');
-                return $this->render('_form', [
+                return $this->render('create', [
                     'modelBom' => $modelBom,
                     'modelDetails' => $modelDetails,
                 ]);
@@ -199,7 +199,7 @@ class BomBarangController extends Controller
             }
         }
 
-        return $this->render('_form', [
+        return $this->render('create', [
             'modelBom' => $modelBom,
             'modelDetails' => $modelDetails,
         ]);
@@ -303,7 +303,7 @@ class BomBarangController extends Controller
             }
         }
 
-        return $this->render('_form', [
+        return $this->render('update', [
             'modelBom' => $modelBom,
             'modelDetails' => $modelDetails,
         ]);

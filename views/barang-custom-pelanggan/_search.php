@@ -4,24 +4,24 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /** @var yii\web\View $this */
-/** @var app\models\PermintaanPenjualanSearch $model */
+/** @var app\models\BarangCustomPelangganSearch $model */
 /** @var yii\widgets\ActiveForm $form */
 ?>
 
-<div class="permintaan-penjualan-search">
+<div class="barang-custom-pelanggan-search">
 
     <?php $form = ActiveForm::begin([
         'action' => ['index'],
         'method' => 'get',
     ]); ?>
 
-    <?= $form->field($model, 'permintaan_penjualan_id') ?>
+    <?= $form->field($model, 'barang_custom_pelanggan_id') ?>
 
-    <?= $form->field($model, 'total_item_permintaan') ?>
+    <?= $form->field($model, 'pelanggan_id') ?>
 
-    <?= $form->field($model, 'tanggal_permintaan') ?>
+    <?= $form->field($model, 'kode_barang_custom') ?>
 
-    <?= $form->field($model, 'status') ?>
+    <?= $form->field($model, 'nama_barang_custom') ?>
 
     <?= $form->field($model, 'created_at') ?>
 

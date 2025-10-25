@@ -8,27 +8,21 @@ use Yii;
  * This is the model class for table "permintaan_detail".
  *
  * @property int $permintaan_detail_id
- * @property int|null $permintaan_penjualan_id
+ * @property int|null $permintaan_id
  * @property int|null $barang_produksi_id
+ * @property int|null $barang_custom_pelanggan_id
  * @property int|null $qty_permintaan
  * @property string|null $catatan
- * @property string|null $created_at
- * @property string|null $updated_at
  *
+ * @property PermintaanPelanggan $permintaan
  * @property Barangproduksi $barangProduksi
- * @property PermintaanPenjualan $permintaanPenjualan
+ * @property BarangCustomPelanggan $barangCustomPelanggan
  */
 class PermintaanDetail extends \yii\db\ActiveRecord
 {
-
-
     /**
      * {@inheritdoc}
      */
-
-    public $nama_barang;
-    public $kode_barang;
-
     public static function tableName()
     {
         return 'permintaan_detail';
@@ -40,12 +34,19 @@ class PermintaanDetail extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['permintaan_penjualan_id', 'barang_produksi_id', 'qty_permintaan', 'catatan', 'created_at', 'updated_at'], 'default', 'value' => null],
-            [['permintaan_penjualan_id', 'barang_produksi_id', 'qty_permintaan'], 'integer'],
-            [['created_at', 'updated_at'], 'safe'],
+            [['permintaan_id', 'barang_produksi_id', 'barang_custom_pelanggan_id', 'qty_permintaan'], 'integer'],
             [['catatan'], 'string', 'max' => 255],
+            [['qty_permintaan'], 'required'],
+            // Validasi: salah satu harus diisi (barang_produksi_id atau barang_custom_pelanggan_id)
+            ['barang_produksi_id', 'required', 'when' => function($model) {
+                return empty($model->barang_custom_pelanggan_id);
+            }, 'message' => 'Produk Custom Pelanggan ID cannot be blank.'],
+            ['barang_custom_pelanggan_id', 'required', 'when' => function($model) {
+                return empty($model->barang_produksi_id);
+            }, 'message' => 'Produk Polosan Ready ID cannot be blank.'],
+            [['permintaan_id'], 'exist', 'skipOnError' => true, 'targetClass' => PermintaanPelanggan::class, 'targetAttribute' => ['permintaan_id' => 'permintaan_id']],
             [['barang_produksi_id'], 'exist', 'skipOnError' => true, 'targetClass' => Barangproduksi::class, 'targetAttribute' => ['barang_produksi_id' => 'barang_produksi_id']],
-            [['permintaan_penjualan_id'], 'exist', 'skipOnError' => true, 'targetClass' => PermintaanPenjualan::class, 'targetAttribute' => ['permintaan_penjualan_id' => 'permintaan_penjualan_id']],
+            [['barang_custom_pelanggan_id'], 'exist', 'skipOnError' => true, 'targetClass' => BarangCustomPelanggan::class, 'targetAttribute' => ['barang_custom_pelanggan_id' => 'barang_custom_pelanggan_id']],
         ];
     }
 
@@ -56,49 +57,33 @@ class PermintaanDetail extends \yii\db\ActiveRecord
     {
         return [
             'permintaan_detail_id' => 'Permintaan Detail ID',
-            'permintaan_penjualan_id' => 'Permintaan Penjualan ID',
+            'permintaan_id' => 'Permintaan ID',
             'barang_produksi_id' => 'Barang Produksi ID',
+            'barang_custom_pelanggan_id' => 'Barang Custom Pelanggan ID',
             'qty_permintaan' => 'Qty Permintaan',
             'catatan' => 'Catatan',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
         ];
     }
 
     /**
-     * Gets query for [[BarangProduksi]].
+     * Gets query for [[Permintaan]].
      *
      * @return \yii\db\ActiveQuery
      */
+    public function getPermintaan()
+    {
+        return $this->hasOne(PermintaanPelanggan::class, ['permintaan_id' => 'permintaan_id']);
+    }
+
+    // Di model PermintaanDetail.php
+    public function getBarangCustomPelanggan()
+    {
+        return $this->hasOne(BarangCustomPelanggan::class, ['barang_custom_pelanggan_id' => 'barang_custom_pelanggan_id']);
+    }
+
     public function getBarangProduksi()
     {
-        return $this->hasOne(Barangproduksi::class, ['barang_produksi_id' => 'barang_produksi_id']);
-    }
-    public function getNamaBarangProduksi()
-    {
-        if ($this->barang) {
-            return $this->barang_produksi->kode_barang_produksi . ' - ' . $this->barang_produksi->nama;
-        }
-
-        return null;
-    }
-    public function getKodeBarangProduksi()
-    {
-        if ($this->barang_produksi) {
-            return $this->barang_produksi->kode_barang_produksi;
-        }
-
-        return null;
-    }
-
-    /**
-     * Gets query for [[PermintaanPenjualan]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getPermintaanPenjualan()
-    {
-        return $this->hasOne(PermintaanPenjualan::class, ['permintaan_penjualan_id' => 'permintaan_penjualan_id']);
+        return $this->hasOne(BarangProduksi::class, ['barang_produksi_id' => 'barang_produksi_id']);
     }
 
 }

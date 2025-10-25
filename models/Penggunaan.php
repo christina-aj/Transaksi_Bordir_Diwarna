@@ -72,12 +72,14 @@ class Penggunaan extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['created_at', 'updated_at'], 'default', 'value' => null],
+            [['created_at', 'updated_at', 'permintaan_id'], 'default', 'value' => null],
             [['status_penggunaan'], 'default', 'value' => 0],
             [['user_id', 'total_item_penggunaan', 'tanggal'], 'required'],
-            [['user_id', 'total_item_penggunaan', 'status_penggunaan'], 'integer'],
+            [['user_id', 'total_item_penggunaan', 'status_penggunaan', 'permintaan_id'], 'integer'],
             [['created_at', 'updated_at', 'tanggal', 'kode_penggunaan', 'nama_pengguna'], 'safe'],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'user_id']],
+
+            [['permintaan_id'], 'exist', 'skipOnError' => true, 'targetClass' => \app\models\PermintaanPelanggan::class, 'targetAttribute' => ['permintaan_id' => 'permintaan_id']],
         ];
     }
 
@@ -119,6 +121,18 @@ class Penggunaan extends \yii\db\ActiveRecord
     {
         return $this->hasOne(User::class, ['user_id' => 'user_id']);
     }
+
+    /**
+     * Gets query for [[PermintaanPelanggan]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getPermintaanPelanggan()
+    {
+        return $this->hasOne(\app\models\PermintaanPelanggan::class, ['permintaan_id' => 'permintaan_id']);
+    }
+
+
     public function getFormattedGunaId()
     {
         if ($this->penggunaan_id === null) {

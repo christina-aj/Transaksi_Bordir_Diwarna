@@ -30,12 +30,11 @@ $this->params['breadcrumbs'][] = $this->title;
         'model' => $model,
         'attributes' => [
             'permintaan_detail_id',
-            'permintaan_penjualan_id',
+            'permintaan_id',
             'barang_produksi_id',
+            'barang_custom_pelanggan_id',
             'qty_permintaan',
             'catatan',
-            'created_at',
-            'updated_at',
         ],
     ]) ?>
 

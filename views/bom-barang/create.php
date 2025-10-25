@@ -9,12 +9,11 @@ $this->title = 'Create Bom Barang';
 $this->params['breadcrumbs'][] = ['label' => 'Bom Barangs', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="bom-barang-create">
-
-    <h1><?= Html::encode($this->title) ?></h1>
+<div class="pc-content">
 
     <?= $this->render('_form', [
-        'model' => $model,
+        'modelBom' => $modelBom,
+        'modelDetails' => $modelDetails,
     ]) ?>
 
 </div>

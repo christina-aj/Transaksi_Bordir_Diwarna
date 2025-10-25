@@ -88,8 +88,9 @@ class PenggunaanController extends Controller
 
     public function actionCreate()
     {
-        // die('actionCreate berhasil dipanggil!');
-        // Yii::error('actionCreate dipanggil', __METHOD__); 
+         // Ambil permintaan_id dari URL (jika ada)
+        $permintaanId = Yii::$app->request->get('permintaan_id');
+        
         $modelPenggunaan = new Penggunaan();
 
         // Set default data
@@ -103,6 +104,9 @@ class PenggunaanController extends Controller
         $modelPenggunaan->status_penggunaan = 0;
         // $modelPenggunaan->created_at = date('Y-m-d H:i:s');
         // $modelPenggunaan->updated_at = date('Y-m-d H:i:s');
+
+        // SIMPAN PERMINTAAN_ID
+        $modelPenggunaan->permintaan_id = $permintaanId;
 
         // Generate kode penggunaan
         $kodeSementara = Penggunaan::find()->max('penggunaan_id') + 1;
@@ -123,9 +127,19 @@ class PenggunaanController extends Controller
             // // Debug - cek session
             // var_dump('Session set:', Yii::$app->session->get('temporaryPenggunaanId'));
             // die(); // temporary untuk testing
+            
+            //Set flash message jika dari permintaan
+            if ($permintaanId) {
+                Yii::$app->session->setFlash('info', 'Form ini diisi berdasar kebutuhan permintaan. Review dulu dan klik Save.');
+            }
 
-            Yii::$app->session->setFlash('success', 'Penggunaan berhasil dibuat.');
-            return $this->redirect(['add-details', 'penggunaan_id' => $modelPenggunaan->penggunaan_id]);
+            // Yii::$app->session->setFlash('success', 'Penggunaan berhasil dibuat.');
+            
+            return $this->redirect([
+                'add-details', 
+                'penggunaan_id' => $modelPenggunaan->penggunaan_id,
+                'permintaan_id' => $permintaanId // Kirim permintaan_id ke add-details
+            ]);
             var_dump('Redirect URL:', $redirectUrl);
             die();
         } else {
@@ -151,6 +165,8 @@ class PenggunaanController extends Controller
     public function actionAddDetails($penggunaan_id)
     {
         
+        // Ambil permintaan_id dari URL (jika ada)
+        $permintaanId = Yii::$app->request->get('permintaan_id');
         // Ambil ID Penggunaan dari session untuk validasi
         $temporaryId = Yii::$app->session->get('temporaryPenggunaanId');
 
@@ -207,6 +223,7 @@ class PenggunaanController extends Controller
         return $this->render('create', [
             'modelPenggunaan' => $modelPenggunaan,
             'modelDetails' => $modelDetails,
+            'permintaanId' => $permintaanId,
         ]);
     }
 
@@ -509,146 +526,157 @@ class PenggunaanController extends Controller
     //         }
     //     }
     public function actionUpdateQty($penggunaan_id)
-{
-    $modelPenggunaan = Penggunaan::findOne($penggunaan_id);
-    if (!$modelPenggunaan) {
-        throw new NotFoundHttpException("Data penggunaan tidak ditemukan.");
-    }
-
-    if ($modelPenggunaan->status_penggunaan != 0) {
-        Yii::$app->session->setFlash('warning', 'Penggunaan ini sudah tidak dapat diupdate.');
-        return $this->redirect(['view', 'penggunaan_id' => $penggunaan_id]);
-    }
-
-    $modelDetails = PenggunaanDetail::findAll(['penggunaan_id' => $penggunaan_id]);
-    $stockPerArea = []; // ... existing stock code
-
-    foreach ($modelDetails as $detail) {
-        $stocks = Gudang::find()
-            ->where(['barang_id' => $detail->barang_id])
-            ->andWhere(['>', 'quantity_akhir', 0])
-            ->orderBy(['area_gudang' => SORT_ASC, 'created_at' => SORT_DESC])
-            ->all();
-        
-        $areaStock = [];
-        $processedAreas = [];
-        
-        foreach ($stocks as $stock) {
-            // Ambil hanya record terbaru per area
-            if (!in_array($stock->area_gudang, $processedAreas)) {
-                $areaStock[$stock->area_gudang] = [
-                    'id_gudang' => $stock->id_gudang,
-                    'quantity_akhir' => $stock->quantity_akhir,
-                    'tanggal' => $stock->tanggal
-                ];
-                $processedAreas[] = $stock->area_gudang;
-            }
+    {
+        $modelPenggunaan = Penggunaan::findOne($penggunaan_id);
+        if (!$modelPenggunaan) {
+            throw new NotFoundHttpException("Data penggunaan tidak ditemukan.");
         }
-        
-        $stockPerArea[$detail->barang_id] = $areaStock;
-    }
 
-
-    if (Yii::$app->request->isPost) {
-        echo "<h3>DEBUG: Processing POST...</h3>";
-        
-        $detailsData = Yii::$app->request->post('details', []);
-        echo "<pre>detailsData: "; print_r($detailsData); echo "</pre>";
-        
-        $transaction = Yii::$app->db->beginTransaction();
-        try {
-            echo "<p>Starting transaction...</p>";
-            
-            // Hapus detail lama
-            $deleteResult = PenggunaanDetail::deleteAll(['penggunaan_id' => $penggunaan_id]);
-            echo "<p>Deleted {$deleteResult} old records</p>";
-            
-            foreach ($detailsData as $index => $detailData) {
-                echo "<h4>Processing detail #{$index}</h4>";
-                
-                $originalBarangId = $detailData['barang_id'];
-                $originalQuantity = $detailData['jumlah_digunakan'];
-                $catatan = $detailData['catatan'] ?? '';
-                $areas = $detailData['areas'] ?? [];
-                
-                echo "<p>Barang ID: {$originalBarangId}, Original Qty: {$originalQuantity}</p>";
-                echo "<pre>Areas: "; print_r($areas); echo "</pre>";
-                
-                // Validasi total quantity
-                $totalSelected = array_sum(array_column($areas, 'quantity'));
-                echo "<p>Total selected: {$totalSelected}</p>";
-                
-                if ($totalSelected != $originalQuantity) {
-                    throw new \Exception("Total quantity tidak sesuai untuk barang ID: {$originalBarangId}. Expected: {$originalQuantity}, Got: {$totalSelected}");
-                }
-                
-                // Buat detail baru per area
-                foreach ($areas as $areaIndex => $areaData) {
-                    echo "<h5>Processing area #{$areaIndex}</h5>";
-                    
-                    $areaGudang = $areaData['area_gudang'];
-                    $quantity = $areaData['quantity'];
-                    
-                    echo "<p>Area: {$areaGudang}, Quantity: {$quantity}</p>";
-                    
-                    if ($quantity <= 0) {
-                        echo "<p>Skipping zero quantity</p>";
-                        continue;
-                    }
-                    
-                    // Buat penggunaan detail baru
-                    $newDetail = new PenggunaanDetail();
-                    $newDetail->penggunaan_id = $penggunaan_id;
-                    $newDetail->barang_id = $originalBarangId;
-                    $newDetail->kode_barang = Barang::findOne($originalBarangId)->kode_barang;
-                    $newDetail->nama_barang = Barang::findOne($originalBarangId)->nama_barang;
-                    $newDetail->jumlah_digunakan = $quantity;
-                    $newDetail->area_gudang = $areaGudang;
-                    $newDetail->catatan = $catatan;
-                    $newDetail->created_at = date('Y-m-d H:i:s');
-                    
-                    echo "<pre>New detail attributes: "; print_r($newDetail->attributes); echo "</pre>";
-                    
-                    if (!$newDetail->save()) {
-                        echo "<pre>Save failed. Errors: "; print_r($newDetail->errors); echo "</pre>";
-                        throw new \Exception("Gagal menyimpan detail: " . json_encode($newDetail->errors));
-                    }
-                    
-                    echo "<p>Detail saved with ID: {$newDetail->gunadetail_id}</p>";
-                    
-                    // PERBAIKAN: Panggil updateGudangStock setelah save berhasil
-                    echo "<p>Updating stock gudang...</p>";
-                    $this->updateGudangStock($originalBarangId, $areaGudang, $quantity, $penggunaan_id, $newDetail->gunadetail_id);
-                    echo "<p>Stock updated successfully</p>";
-                }
-            }
-            
-            // echo "<p>All details processed successfully</p>";
-            
-            // Update status penggunaan
-            $modelPenggunaan->status_penggunaan = 1;
-            $modelPenggunaan->updated_at = date('Y-m-d H:i:s');
-            
-            if (!$modelPenggunaan->save(false)) {
-                throw new \Exception('Gagal update status penggunaan');
-            }
-            
-            echo "<p>Status updated to complete</p>";
-            
-            $transaction->commit();
-            // echo "<p>Transaction committed!</p>";
-            Yii::$app->session->setFlash('success', 'Penggunaan berhasil diupdate dan stock berhasil dikurangi.');
+        if ($modelPenggunaan->status_penggunaan != 0) {
+            Yii::$app->session->setFlash('warning', 'Penggunaan ini sudah tidak dapat diupdate.');
             return $this->redirect(['view', 'penggunaan_id' => $penggunaan_id]);
-            
-            // exit("SUCCESS - Now redirecting..."); // Stop here to see if we reach this point
-            
-        } catch (\Exception $e) {
-            $transaction->rollBack();
-            echo "<p style='color: red;'>ERROR: " . $e->getMessage() . "</p>";
-            echo "<pre>Stack trace: " . $e->getTraceAsString() . "</pre>";
-            exit("FAILED");
         }
-    }
+
+        $modelDetails = PenggunaanDetail::findAll(['penggunaan_id' => $penggunaan_id]);
+        $stockPerArea = []; // ... existing stock code
+
+        foreach ($modelDetails as $detail) {
+            $stocks = Gudang::find()
+                ->where(['barang_id' => $detail->barang_id])
+                ->andWhere(['>', 'quantity_akhir', 0])
+                ->andWhere(['kode' => 1])
+                ->orderBy(['area_gudang' => SORT_ASC, 'created_at' => SORT_DESC])
+                ->all();
+            
+            $areaStock = [];
+            $processedAreas = [];
+            
+            foreach ($stocks as $stock) {
+                // Ambil hanya record terbaru per area
+                if (!in_array($stock->area_gudang, $processedAreas)) {
+                    $areaStock[$stock->area_gudang] = [
+                        'id_gudang' => $stock->id_gudang,
+                        'quantity_akhir' => $stock->quantity_akhir,
+                        'tanggal' => $stock->tanggal
+                    ];
+                    $processedAreas[] = $stock->area_gudang;
+                }
+            }
+            
+            $stockPerArea[$detail->barang_id] = $areaStock;
+        }
+
+
+        if (Yii::$app->request->isPost) {
+            echo "<h3>DEBUG: Processing POST...</h3>";
+            
+            $detailsData = Yii::$app->request->post('details', []);
+            echo "<pre>detailsData: "; print_r($detailsData); echo "</pre>";
+            
+            $transaction = Yii::$app->db->beginTransaction();
+            try {
+                echo "<p>Starting transaction...</p>";
+                
+                // Hapus detail lama
+                $deleteResult = PenggunaanDetail::deleteAll(['penggunaan_id' => $penggunaan_id]);
+                echo "<p>Deleted {$deleteResult} old records</p>";
+                
+                foreach ($detailsData as $index => $detailData) {
+                    echo "<h4>Processing detail #{$index}</h4>";
+                    
+                    $originalBarangId = $detailData['barang_id'];
+                    $originalQuantity = $detailData['jumlah_digunakan'];
+                    $catatan = $detailData['catatan'] ?? '';
+                    $areas = $detailData['areas'] ?? [];
+                    
+                    echo "<p>Barang ID: {$originalBarangId}, Original Qty: {$originalQuantity}</p>";
+                    echo "<pre>Areas: "; print_r($areas); echo "</pre>";
+                    
+                    // Validasi total quantity
+                    $totalSelected = array_sum(array_column($areas, 'quantity'));
+                    echo "<p>Total selected: {$totalSelected}</p>";
+                    
+                    if ($totalSelected != $originalQuantity) {
+                        throw new \Exception("Total quantity tidak sesuai untuk barang ID: {$originalBarangId}. Expected: {$originalQuantity}, Got: {$totalSelected}");
+                    }
+                    
+                    // Buat detail baru per area
+                    foreach ($areas as $areaIndex => $areaData) {
+                        echo "<h5>Processing area #{$areaIndex}</h5>";
+                        
+                        $areaGudang = $areaData['area_gudang'];
+                        $quantity = $areaData['quantity'];
+                        
+                        echo "<p>Area: {$areaGudang}, Quantity: {$quantity}</p>";
+                        
+                        if ($quantity <= 0) {
+                            echo "<p>Skipping zero quantity</p>";
+                            continue;
+                        }
+                        
+                        // Buat penggunaan detail baru
+                        $newDetail = new PenggunaanDetail();
+                        $newDetail->penggunaan_id = $penggunaan_id;
+                        $newDetail->barang_id = $originalBarangId;
+                        $newDetail->kode_barang = Barang::findOne($originalBarangId)->kode_barang;
+                        $newDetail->nama_barang = Barang::findOne($originalBarangId)->nama_barang;
+                        $newDetail->jumlah_digunakan = $quantity;
+                        $newDetail->area_gudang = $areaGudang;
+                        $newDetail->catatan = $catatan;
+                        $newDetail->created_at = date('Y-m-d H:i:s');
+                        
+                        echo "<pre>New detail attributes: "; print_r($newDetail->attributes); echo "</pre>";
+                        
+                        if (!$newDetail->save()) {
+                            echo "<pre>Save failed. Errors: "; print_r($newDetail->errors); echo "</pre>";
+                            throw new \Exception("Gagal menyimpan detail: " . json_encode($newDetail->errors));
+                        }
+                        
+                        echo "<p>Detail saved with ID: {$newDetail->gunadetail_id}</p>";
+                        
+                        // PERBAIKAN: Panggil updateGudangStock setelah save berhasil
+                        echo "<p>Updating stock gudang...</p>";
+                        $this->updateGudangStock($originalBarangId, $areaGudang, $quantity, $penggunaan_id, $newDetail->gunadetail_id);
+                        echo "<p>Stock updated successfully</p>";
+                    }
+                }
+                
+                // echo "<p>All details processed successfully</p>";
+                
+                // Update status penggunaan
+                $modelPenggunaan->status_penggunaan = 1;
+                $modelPenggunaan->updated_at = date('Y-m-d H:i:s');
+                
+                if (!$modelPenggunaan->save(false)) {
+                    throw new \Exception('Gagal update status penggunaan');
+                }
+                
+                echo "<p>Status updated to complete</p>";
+                
+                $transaction->commit();
+                // echo "<p>Transaction committed!</p>";
+
+                // UPDATE STATUS PERMINTAAN JADI "ON PROGRESS" (1)
+                if (!empty($modelPenggunaan->permintaan_id)) {
+                    $permintaan = \app\models\PermintaanPelanggan::findOne($modelPenggunaan->permintaan_id);
+                    if ($permintaan && $permintaan->status_permintaan == 0) {
+                        $permintaan->status_permintaan = 1; // On Progress
+                        $permintaan->save(false);
+                    }
+                }
+
+                Yii::$app->session->setFlash('success', 'Status : Complete. Barang dari gudang dipindahkan ke area produksi.');
+                return $this->redirect(['view', 'penggunaan_id' => $penggunaan_id]);
+                
+                // exit("SUCCESS - Now redirecting..."); // Stop here to see if we reach this point
+                
+            } catch (\Exception $e) {
+                $transaction->rollBack();
+                echo "<p style='color: red;'>ERROR: " . $e->getMessage() . "</p>";
+                echo "<pre>Stack trace: " . $e->getTraceAsString() . "</pre>";
+                exit("FAILED");
+            }
+        }
 
         return $this->render('update-qty', [
             'modelPenggunaan' => $modelPenggunaan,
@@ -941,7 +969,7 @@ class PenggunaanController extends Controller
                     Yii::$app->session->remove('temporaryPenggunaanId');
                 }
                 $transaction->commit();
-                Yii::$app->session->setFlash('success', 'Penggunaan telah dibatalkan.');
+                // Yii::$app->session->setFlash('success', 'Penggunaan telah dibatalkan.');
             } catch (\Exception $e) {
                 $transaction->rollBack();
                 Yii::$app->session->setFlash('error', 'Gagal membatalkan penggunaan: ' . $e->getMessage());
@@ -970,6 +998,76 @@ class PenggunaanController extends Controller
     {
         $this->findModel($penggunaan_id)->delete();
         return $this->redirect(['index']);
+    }
+
+    /**
+     * Get BOM data untuk auto-fill form (AJAX)
+     */
+    public function actionGetBomData($permintaan_id)
+    {
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        
+        try {
+            $permintaan = \app\models\PermintaanPelanggan::findOne($permintaan_id);
+            if (!$permintaan || $permintaan->tipe_pelanggan != 2) {
+                return ['success' => false, 'message' => 'Hanya untuk Polosan Ready'];
+            }
+            
+            $kodePermintaan = $permintaan->generateKodePermintaan();
+            $permintaanDetails = \app\models\PermintaanDetail::find()
+                ->where(['permintaan_id' => $permintaan_id])
+                ->andWhere(['IS NOT', 'barang_produksi_id', null])
+                ->all();
+            
+            if (empty($permintaanDetails)) {
+                return ['success' => false, 'message' => 'Tidak ada barang produksi'];
+            }
+            
+            $bahanTotal = [];
+            
+            foreach ($permintaanDetails as $detail) {
+                $bomBarang = \app\models\BomBarang::find()
+                    ->where(['barang_produksi_id' => $detail->barang_produksi_id])
+                    ->one();
+                
+                if (!$bomBarang) continue;
+                
+                $bomDetails = \app\models\BomDetail::find()
+                    ->where(['BOM_barang_id' => $bomBarang->BOM_barang_id])
+                    ->all();
+                
+                foreach ($bomDetails as $bomDetail) {
+                    $barangId = $bomDetail->barang_id;
+                    $totalQty = $bomDetail->qty_BOM * $detail->qty_permintaan;
+                    
+                    if (isset($bahanTotal[$barangId])) {
+                        $bahanTotal[$barangId]['qty'] += $totalQty;
+                    } else {
+                        $barang = \app\models\Barang::findOne($barangId);
+                        $bahanTotal[$barangId] = [
+                            'barang_id' => $barangId,
+                            'kode_barang' => $barang->kode_barang,
+                            'nama_barang' => $barang->nama_barang,
+                            'qty' => $totalQty,
+                            'catatan' => "Digunakan Untuk Permintaan : {$kodePermintaan}"
+                        ];
+                    }
+                }
+            }
+            
+            if (empty($bahanTotal)) {
+                return ['success' => false, 'message' => 'Tidak ada BOM'];
+            }
+            
+            return [
+                'success' => true,
+                'data' => array_values($bahanTotal),
+                'kode_permintaan' => $kodePermintaan
+            ];
+            
+        } catch (\Exception $e) {
+            return ['success' => false, 'message' => $e->getMessage()];
+        }
     }
 
     /**

@@ -1,24 +1,24 @@
 <?php
 
-use app\models\PermintaanDetail;
+use app\models\BomCustom;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
 
 /** @var yii\web\View $this */
-/** @var app\models\PermintaanDetailSearch $searchModel */
+/** @var app\models\BomCustomSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = 'Permintaan Details';
+$this->title = 'Bom Customs';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="permintaan-detail-index">
+<div class="bom-custom-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Create Permintaan Detail', ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Create Bom Custom', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
@@ -29,16 +29,16 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-            'permintaan_detail_id',
-            'permintaan_id',
-            'barang_produksi_id',
+            'BOM_custom_id',
             'barang_custom_pelanggan_id',
-            'qty_permintaan',
-            //'catatan',
+            'barang_id',
+            'qty_per_unit',
+            'created_at',
+            //'updated_at',
             [
                 'class' => ActionColumn::className(),
-                'urlCreator' => function ($action, PermintaanDetail $model, $key, $index, $column) {
-                    return Url::toRoute([$action, 'permintaan_detail_id' => $model->permintaan_detail_id]);
+                'urlCreator' => function ($action, BomCustom $model, $key, $index, $column) {
+                    return Url::toRoute([$action, 'BOM_custom_id' => $model->BOM_custom_id]);
                  }
             ],
         ],

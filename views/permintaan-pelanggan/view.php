@@ -77,9 +77,11 @@ $this->params['breadcrumbs'][] = $this->title;
                     <?php if ($model -> status_permintaan == 1): ?>
                         <?= Html::a('Back', ['index'], ['class' => 'btn btn-secondary']) ?>
                         <p style="color: rgba(192, 51, 51, 1);">Note : Status On Progress. Sedang dikerjakan oleh tim produksi. Tekan complete apabila produksi telah selesai </p>
-                    <?php elseif ($model -> status_permintaan == 0 && $model -> tipe_pelanggan == 1): ?>
+                    <?php elseif ($model->status_permintaan == 0 && $model->tipe_pelanggan == 1): ?>
                         <?= Html::a('Back', ['index'], ['class' => 'btn btn-secondary']) ?>
-                        <?= Html::a('Lakukan Pemesanan Untuk Permintaan', ['pemesanan/create'], ['class' => 'btn btn-danger']) ?>
+                        <?= Html::a('Lakukan Pemesanan Untuk Permintaan',
+                            ['pemesanan/create','permintaan_id' => $model->permintaan_id],
+                            ['class' => 'btn btn-danger']) ?>
                         <p style="color: rgba(192, 51, 51, 1);">Note : Status Pending. Bahan harus di pesan lalu langsung disalurkan ke tim produksi dan status otomatis berubah menjadi ON Progress. </p>
                     <?php elseif ($model -> status_permintaan == 0 && $model -> tipe_pelanggan == 2): ?>
                         <?= Html::a('Back', ['index'], ['class' => 'btn btn-secondary']) ?>

@@ -34,6 +34,15 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
             <div class="col-md-4">
                 <p><strong>Status:</strong> <?= $model->getStatusLabel() ?></p>
+                <?php if (!empty($model->permintaan_id)): ?>
+                    <div><strong>Dari Permintaan:</strong> 
+                        <?= Html::a(
+                            $model->permintaanPelanggan->generateKodePermintaan(), 
+                            ['permintaan-pelanggan/view', 'permintaan_id' => $model->permintaan_id],
+                            ['class' => 'btn btn-sm btn-info']
+                        ) ?>
+                    </div>
+                <?php endif; ?>
             </div>
         </div>
         <br>

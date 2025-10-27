@@ -74,8 +74,9 @@ class Pemesanan extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
+            [['created_at', 'updated_at', 'permintaan_id'], 'default', 'value' => null],
             [['user_id', 'tanggal', 'total_item'], 'required'],
-            [['user_id', 'status'], 'integer'],
+            [['user_id', 'status', 'permintaan_id'], 'integer'],
             [['tanggal', 'created_at', 'updated_at', 'kode_pemesanan', 'nama_pemesan'], 'safe'],
             [['total_item'], 'number'],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'user_id']],
@@ -144,5 +145,10 @@ class Pemesanan extends \yii\db\ActiveRecord
         // Update total item pada tabel pembelian
         $this->total_item = $totalItem;
         return $this->save();
+    }
+
+    public function getPermintaanPelanggan()
+    {
+        return $this->hasOne(\app\models\PermintaanPelanggan::class, ['permintaan_id' => 'permintaan_id']);
     }
 }

@@ -1000,6 +1000,7 @@ class PenggunaanController extends Controller
         return $this->redirect(['index']);
     }
 
+    
     /**
      * Get BOM data untuk auto-fill form (AJAX)
      */

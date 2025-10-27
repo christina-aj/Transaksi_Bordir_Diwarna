@@ -75,6 +75,7 @@ class PemesananController extends BaseController
      */
     public function actionView($pemesanan_id)
     {
+        
         // Temukan model Pemesanan berdasarkan pemesanan_id
         $model = $this->findModel($pemesanan_id);
 
@@ -109,6 +110,8 @@ class PemesananController extends BaseController
      */
     public function actionCreate()
     {
+        $permintaanId = Yii::$app->request->get('permintaan_id');
+
         $modelPemesanan = new Pemesanan();
 
         // Set default data
@@ -118,6 +121,8 @@ class PemesananController extends BaseController
         $modelPemesanan->status = Pemesanan::STATUS_PENDING;
         $modelPemesanan->created_at = date('Y-m-d H:i:s');
         $modelPemesanan->updated_at = date('Y-m-d H:i:s');
+
+        $modelPemesanan->permintaan_id = $permintaanId;
 
         // Retrieve the user's name
         $user = User::findOne($modelPemesanan->user_id);
@@ -133,7 +138,7 @@ class PemesananController extends BaseController
             Yii::$app->session->set('temporaryOrderId', $modelPemesanan->pemesanan_id);
 
             // Redirect ke `CreatePembelian`
-            return $this->redirect(['create-pembelian']);
+            return $this->redirect(['create-pembelian', 'permintaan_id' => $permintaanId]);
         } else {
             Yii::$app->session->setFlash('error', 'Gagal membuat pemesanan.');
             return $this->redirect(['index']);
@@ -149,6 +154,9 @@ class PemesananController extends BaseController
             return $this->redirect(['index']);
         }
 
+        // Ambil permintaan_id dari URL
+        $permintaanId = Yii::$app->request->get('permintaan_id');
+
         // Buat pembelian baru
         $pembelian = new Pembelian();
         $pembelian->pemesanan_id = $pemesananId; // Mengaitkan dengan pemesanan
@@ -160,7 +168,12 @@ class PemesananController extends BaseController
             Yii::debug("Pembelian berhasil dibuat dengan ID: " . $pembelian->pembelian_id, __METHOD__);
 
             // Redirect ke `AddDetails` untuk menambahkan detail pesanan
-            return $this->redirect(['add-details', 'pemesanan_id' => $pemesananId, 'pembelian_id' => $pembelian->pembelian_id]);
+            return $this->redirect([
+                'add-details',
+                'pemesanan_id' => $pemesananId,
+                'pembelian_id' => $pembelian->pembelian_id,
+                'permintaan_id' => $permintaanId,
+            ]);
         } else {
             Yii::error("Gagal membuat pembelian: " . json_encode($pembelian->getErrors()), __METHOD__);
             Yii::$app->session->setFlash('error', 'Gagal membuat pembelian.');
@@ -170,6 +183,9 @@ class PemesananController extends BaseController
 
     public function actionAddDetails($pemesanan_id, $pembelian_id)
     {
+        // Ambil permintaan_id dari URL
+        $permintaanId = Yii::$app->request->get('permintaan_id');
+        
         $modelPemesanan = Pemesanan::findOne($pemesanan_id);
         if (!$modelPemesanan) {
             throw new NotFoundHttpException("Data pemesanan tidak ditemukan.");
@@ -184,6 +200,9 @@ class PemesananController extends BaseController
             if (Model::validateMultiple($modelDetails)) {
                 $transaction = Yii::$app->db->beginTransaction();
                 try {
+                    // Hapus detail lama
+                    PesanDetail::deleteAll(['pemesanan_id' => $pemesanan_id]);
+                    
                     foreach ($modelDetails as $index => $modelDetail) {
                         $barang = Barang::findOne($modelDetail->barang_id);
                         $modelDetail->kode_pemesanan = $barang->kode_barang;
@@ -198,6 +217,10 @@ class PemesananController extends BaseController
                         }
                     }
 
+                    // Update total item
+                    $modelPemesanan->total_item = count($modelDetails);
+                    $modelPemesanan->save(false);
+                    
                     $transaction->commit();
 
                     // Simpan modelDetails ke session
@@ -217,6 +240,7 @@ class PemesananController extends BaseController
             'modelPemesanan' => $modelPemesanan,
             'modelDetails' => $modelDetails,
             'isReadonly' => true,
+            'permintaanId' => $permintaanId,
         ]);
     }
 
@@ -410,6 +434,7 @@ class PemesananController extends BaseController
                     }
                 }
                 $transaction->commit();
+
                 Yii::$app->session->setFlash('success', 'Pemesanan detail berhasil diperbarui.');
             } catch (\Exception $e) {
                 $transaction->rollBack();
@@ -479,6 +504,71 @@ class PemesananController extends BaseController
         return $this->redirect(['index']);
     }
 
+    /**
+     * Get BOM data untuk auto-fill form (AJAX)
+     */
+    public function actionGetBomData($permintaan_id)
+    {
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        
+        try {
+            $permintaan = \app\models\PermintaanPelanggan::findOne($permintaan_id);
+            if (!$permintaan || $permintaan->tipe_pelanggan != 1) {
+                return ['success' => false, 'message' => 'Hanya untuk Custom Order'];
+            }
+            
+            $kodePermintaan = $permintaan->generateKodePermintaan();
+            $permintaanDetails = \app\models\PermintaanDetail::find()
+                ->where(['permintaan_id' => $permintaan_id])
+                ->andWhere(['IS NOT', 'barang_custom_pelanggan_id', null])
+                ->all();
+            
+            if (empty($permintaanDetails)) {
+                return ['success' => false, 'message' => 'Tidak ada barang produksi'];
+            }
+            
+            $bahanTotal = [];
+            
+            foreach ($permintaanDetails as $detail) {
+                $bomCustoms = \app\models\BomCustom::find()
+                    ->where(['barang_custom_pelanggan_id' => $detail->barang_custom_pelanggan_id])
+                    ->all();
+                
+                foreach ($bomCustoms as $bomCustom) {
+                    $barangId = $bomCustom->barang_id;
+                    $totalQty = $bomCustom->qty_per_unit * $detail->qty_permintaan;
+                    
+                    if (isset($bahanTotal[$barangId])) {
+                        $bahanTotal[$barangId]['qty'] += $totalQty;
+                    } else {
+                        $barang = \app\models\Barang::findOne($barangId);
+                        $bahanTotal[$barangId] = [
+                            'barang_id' => $barangId,
+                            'kode_barang' => $barang->kode_barang,
+                            'nama_barang' => $barang->nama_barang,
+                            'qty' => $totalQty,
+                            'catatan' => "Digunakan Untuk Permintaan : {$kodePermintaan}",
+                            'langsung_pakai' => 1,
+                        ];
+                    }
+                }
+            }
+            
+            if (empty($bahanTotal)) {
+                return ['success' => false, 'message' => 'Tidak ada BOM'];
+            }
+            
+            return [
+                'success' => true,
+                'data' => array_values($bahanTotal),
+                'kode_permintaan' => $kodePermintaan
+            ];
+            
+        } catch (\Exception $e) {
+            return ['success' => false, 'message' => $e->getMessage()];
+        }
+    }
+    
     /**
      * Finds the Pemesanan model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
@@ -578,6 +668,15 @@ class PemesananController extends BaseController
                         if (!$gudang->save(false)) {
                             Yii::$app->session->setFlash('error', 'Gagal menyimpan data stok Gudang untuk barang ID: ' . $detail->barang_id);
                             return $this->redirect(['view', 'pemesanan_id' => $pemesanan_id]);
+                        }
+                    }
+
+                    // UPDATE STATUS PERMINTAAN JADI "ON PROGRESS" (1)
+                    if (!empty($modelPemesanan->permintaan_id)) {
+                        $permintaan = \app\models\PermintaanPelanggan::findOne($modelPemesanan->permintaan_id);
+                        if ($permintaan && $permintaan->status_permintaan == 0) {
+                            $permintaan->status_permintaan = 1; // On Progress
+                            $permintaan->save(false);
                         }
                     }
 

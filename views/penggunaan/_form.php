@@ -41,16 +41,16 @@ echo Dialog::widget();
             </div>
 
             <!-- TAMBAHAN INFO PERMINTAAN -->
-            <?php if (!empty($model->permintaan_id)): ?>
+            <?php if (!empty($modelPenggunaan->permintaan_id)): ?>
             <div class="col-md-3">
                 <div><strong>Dari Permintaan:</strong> 
                     <?= Html::a(
-                        $model->permintaanPelanggan->generateKodePermintaan(), 
-                        ['permintaan-pelanggan/view', 'permintaan_id' => $model->permintaan_id],
+                        $modelPenggunaan->permintaanPelanggan->generateKodePermintaan(), 
+                        ['permintaan-pelanggan/view', 'permintaan_id' => $modelPenggunaan->permintaan_id],
                         ['class' => 'btn btn-sm btn-info']
                     ) ?>
                 </div>
-                <div><strong>Status Permintaan:</strong> <?= $model->permintaanPelanggan->getStatusLabel() ?></div>
+                <div><strong>Status Permintaan:</strong> <?= $modelPenggunaan->permintaanPelanggan->getStatusLabel() ?></div>
             </div>
             <?php endif; ?>
 

@@ -34,6 +34,21 @@ echo Dialog::widget();
                 <div><strong>Tanggal:</strong> <?= Yii::$app->formatter->asDate($modelPemesanan->tanggal ?? 'Tanggal Tidak Tersedia') ?></div>
 
             </div>
+
+            <!-- TAMBAHAN INFO PERMINTAAN -->
+            <?php if (!empty($modelPemesanan->permintaan_id)): ?>
+            <div class="col-md-3">
+                <div><strong>Dari Permintaan:</strong> 
+                    <?= Html::a(
+                        $modelPemesanan->permintaanPelanggan->generateKodePermintaan(), 
+                        ['permintaan-pelanggan/view', 'permintaan_id' => $modelPemesanan->permintaan_id],
+                        ['class' => 'btn btn-sm btn-info']
+                    ) ?>
+                </div>
+                <div><strong>Status Permintaan:</strong> <?= $modelPemesanan->permintaanPelanggan->getStatusLabel() ?></div>
+            </div>
+            <?php endif; ?>
+
         </div>
         <br>
         <hr>
@@ -171,6 +186,12 @@ echo Dialog::widget();
 // Dapatkan nilai `pemesanan_id` dari model
 $pemesananId = $modelPemesanan->pemesanan_id;
 $isNewRecord = $modelDetail->isNewRecord;
+
+// 🔥 TAMBAHAN UNTUK AUTO-FILL BOM
+$permintaanId = Yii::$app->request->get('permintaan_id');
+$urlGetBom = !empty($permintaanId) ? Url::to(['pemesanan/get-bom-data', 'permintaan_id' => $permintaanId]) : '';
+
+
 $this->registerJs("
 
     
@@ -313,6 +334,53 @@ $this->registerJs("
 
     // Inisialisasi awal untuk menampilkan/menyembunyikan tombol add dan delete
     toggleAddDeleteButtons();
+
+    // AUTO-FILL BOM 
+    " . (!empty($permintaanId) ? "
+        \$(document).ready(function() {
+            setTimeout(function() {
+                \$.ajax({
+                    url: '" . $urlGetBom . "',
+                    type: 'GET',
+                    success: function(res) {
+                        if (res.success && res.data.length > 0) {
+                            \$('#table-body').empty();
+                            rowIndex = 0;
+                            \$.each(res.data, function(i, b) {
+                                var row = '<tr>' +
+                                    '<input type=\"hidden\" name=\"PesanDetail['+i+'][pemesanan_id]\" value=\"'+pemesananId+'\">' +
+                                    '<td class=\"barang-column\"><input type=\"text\" name=\"PesanDetail['+i+'][barang_id]\" id=\"pesandetail-'+i+'-barang_id\" class=\"form-control\" value=\"'+(b.barang_id ?? '')+'\" readonly></td>' +
+                                    '<td><input type=\"text\" name=\"PesanDetail['+i+'][kode_barang]\" id=\"pesandetail-'+i+'-kode_barang\" class=\"form-control\" value=\"'+(b.kode_barang ?? '')+'\" readonly></td>' +
+                                    '<td><input type=\"text\" name=\"PesanDetail['+i+'][nama_barang]\" id=\"pesandetail-'+i+'-nama_barang\" class=\"form-control typeahead-input\" data-index=\"'+i+'\" value=\"'+(b.nama_barang ?? '')+'\" placeholder=\"Cari Nama Barang...\"></td>' +
+                                    '<td><input type=\"number\" name=\"PesanDetail['+i+'][qty]\" class=\"form-control\" value=\"'+(b.qty ?? 1)+'\" min=\"1\" required></td>' +
+                                    '<td class=\"barang-column\"><input type=\"text\" name=\"PesanDetail['+i+'][qty_terima]\" class=\"form-control\" value=\"\" readonly></td>' +
+                                    '<td><input type=\"text\" name=\"PesanDetail['+i+'][catatan]\" class=\"form-control\" value=\"'+(b.catatan ?? '')+'\"></td>' +
+                                    '<td class=\"text-center\"><input type=\"checkbox\" name=\"PesanDetail['+i+'][langsung_pakai]\" class=\"form-check-input langsung_pakai\" value=\"1\" '+((b.langsung_pakai == 1) ? 'checked' : '')+'></td>' +
+                                    '<td class=\"text-center barang-column\"><input type=\"checkbox\" name=\"PesanDetail['+i+'][is_correct]\" class=\"form-check-input is_correct\" value=\"1\" disabled></td>' +
+                                    '<td class=\"text-center\"><div class=\"btn-group\" role=\"group\">' +
+                                        '<button type=\"button\" class=\"btn btn-success btn-sm add-row\" title=\"Tambah\"><i class=\"fas fa-plus\"></i></button>' +
+                                        '<button type=\"button\" class=\"btn btn-danger btn-sm delete-row\" title=\"Hapus\"><i class=\"fas fa-trash\"></i></button>' +
+                                    '</div></td>' +
+                                '</tr>';
+                                \$('#table-body').append(row);
+                                initializeTypeahead('#pesandetail-'+i+'-nama_barang', i);
+                                rowIndex++;
+                            });
+                            \$('.barang-header').hide();
+                            \$('.barang-column').hide();
+                            toggleAddDeleteButtons();
+                            alert('Form akan diisi dengan '+res.data.length+' item dari BOM ('+res.kode_permintaan+'). Silakan review dan Save.');
+                        } else {
+                            alert(res.message || 'Tidak ada BOM');
+                        }
+                    },
+                    error: function() {
+                        alert('Gagal memuat data BOM');
+                    }
+                });
+            }, 500);
+        });
+    " : "") . "
 ");
 ?>
 <style>

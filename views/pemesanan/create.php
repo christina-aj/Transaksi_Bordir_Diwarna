@@ -19,6 +19,7 @@ $combineVariables = [
         $combineVariables,
         'modelPemesanan' => $modelPemesanan,
         'modelDetails' => $modelDetails,
+        'permintaanId' => $permintaanId,
     ]) ?>
 
 </div>

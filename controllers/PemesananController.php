@@ -112,6 +112,8 @@ class PemesananController extends BaseController
     {
         $permintaanId = Yii::$app->request->get('permintaan_id');
 
+        $stockRopId = Yii::$app->request->get('stock_rop_id');
+
         $modelPemesanan = new Pemesanan();
 
         // Set default data
@@ -123,6 +125,8 @@ class PemesananController extends BaseController
         $modelPemesanan->updated_at = date('Y-m-d H:i:s');
 
         $modelPemesanan->permintaan_id = $permintaanId;
+
+        $modelPemesanan->stock_rop_id = $stockRopId;
 
         // Retrieve the user's name
         $user = User::findOne($modelPemesanan->user_id);
@@ -138,7 +142,12 @@ class PemesananController extends BaseController
             Yii::$app->session->set('temporaryOrderId', $modelPemesanan->pemesanan_id);
 
             // Redirect ke `CreatePembelian`
-            return $this->redirect(['create-pembelian', 'permintaan_id' => $permintaanId]);
+            return $this->redirect([
+                'create-pembelian',
+                'permintaan_id' => $permintaanId,
+                'stock_rop_id' => $stockRopId
+            ]);
+
         } else {
             Yii::$app->session->setFlash('error', 'Gagal membuat pemesanan.');
             return $this->redirect(['index']);
@@ -156,6 +165,7 @@ class PemesananController extends BaseController
 
         // Ambil permintaan_id dari URL
         $permintaanId = Yii::$app->request->get('permintaan_id');
+        $stockRopId = Yii::$app->request->get('stock_rop_id');
 
         // Buat pembelian baru
         $pembelian = new Pembelian();
@@ -173,6 +183,7 @@ class PemesananController extends BaseController
                 'pemesanan_id' => $pemesananId,
                 'pembelian_id' => $pembelian->pembelian_id,
                 'permintaan_id' => $permintaanId,
+                'stock_rop_id' => $stockRopId
             ]);
         } else {
             Yii::error("Gagal membuat pembelian: " . json_encode($pembelian->getErrors()), __METHOD__);
@@ -562,6 +573,44 @@ class PemesananController extends BaseController
                 'success' => true,
                 'data' => array_values($bahanTotal),
                 'kode_permintaan' => $kodePermintaan
+            ];
+            
+        } catch (\Exception $e) {
+            return ['success' => false, 'message' => $e->getMessage()];
+        }
+    }
+
+    /**
+     * Get ROP data untuk auto-fill form (AJAX)
+     */
+    public function actionGetRopData($stock_rop_id)
+    {
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        
+        try {
+            $stockRop = \app\models\StockRop::findOne($stock_rop_id);
+            if (!$stockRop) {
+                return ['success' => false, 'message' => 'Data Stock ROP tidak ditemukan'];
+            }
+            
+            // Ambil data barang
+            $barang = $stockRop->barang;
+            if (!$barang) {
+                return ['success' => false, 'message' => 'Barang tidak ditemukan'];
+            }
+            
+            // Return data untuk auto-fill
+            return [
+                'success' => true,
+                'data' => [[
+                    'barang_id' => $barang->barang_id,
+                    'kode_barang' => $barang->kode_barang,
+                    'nama_barang' => $barang->nama_barang,
+                    'qty' => $stockRop->jumlah_eoq, // Jumlah yang harus dipesan (EOQ)
+                    'catatan' => "Pemesanan berdasarkan ROP periode " . $stockRop->getPeriodeFormatted() . " (Stock: " . $stockRop->stock_barang . ", ROP: " . $stockRop->jumlah_rop . ")",
+                    'langsung_pakai' => 0, // Default tidak langsung pakai
+                ]],
+                'kode_rop' => 'ROP ID-' . str_pad($stock_rop_id, 3, '0', STR_PAD_LEFT)
             ];
             
         } catch (\Exception $e) {

@@ -105,19 +105,45 @@ $this->params['breadcrumbs'][] = $this->title;
                         [
                             'label' => 'Status',
                             'format' => 'raw',
+                            'headerOptions' => ['style' => 'width: 150px; text-align: center;'],
+                            'contentOptions' => ['style' => 'text-align: center;'],
                             'value' => function($model) {
-                                $status = $model->statusPesan; // Pakai method dari model
+                                $status = $model->statusPesan;
                                 
                                 $class = 'success';
+                                $icon = 'check-circle';
                                 if ($status == 'Pesan Sekarang') {
                                     $class = 'danger';
+                                    $icon = 'exclamation-circle';
                                 } elseif ($status == 'Perlu Diperhatikan') {
                                     $class = 'warning';
+                                    $icon = 'exclamation-triangle';
                                 }
                                 
-                                return '<span class="badge bg-' . $class . '">' . htmlspecialchars($status) . '</span>';
+                                return '<span class="badge bg-' . $class . '"><i class="fas fa-' . $icon . '"></i> ' . htmlspecialchars($status) . '</span>';
                             },
                         ],
+                        [
+                            'label' => 'Aksi',
+                            'format' => 'raw',
+                            'headerOptions' => ['style' => 'width: 100px; text-align: center;'],
+                            'contentOptions' => ['style' => 'text-align: center;'],
+                            'value' => function($model) {
+                                if ($model->statusPesan == 'Pesan Sekarang') {
+                                    return Html::a(
+                                        '<i class="fas fa-cart-plus"></i>', 
+                                        ['pemesanan/create', 'stock_rop_id' => $model->stock_rop_id],
+                                        [
+                                            'class' => 'btn btn-sm btn-danger',
+                                            'title' => 'Buat Pemesanan',
+                                            'data-bs-toggle' => 'tooltip'
+                                        ]
+                                    );
+                                }
+                                return '<span class="text-muted text-center d-block">-</span>';
+                            },
+                        ],
+
                         // [
                         //     'class' => ActionColumn::className(),
                         //     'urlCreator' => function ($action, $model, $key, $index, $column) {

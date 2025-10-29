@@ -35,15 +35,27 @@ $this->params['breadcrumbs'][] = $this->title;
                 <p><strong>Status:</strong> <?= $model->getStatusLabel() ?></p>
                 <!-- TAMBAHAN INFO PERMINTAAN -->
                 <?php if (!empty($model->permintaan_id)): ?>
-                    <div><strong>Dari Permintaan:</strong>
+                <div> <strong>Dari Permintaan:</strong> 
+                    <?= Html::a(
+                        $model->permintaanPelanggan->generateKodePermintaan(), 
+                        ['permintaan-pelanggan/view', 'permintaan_id' => $model->permintaan_id],
+                        ['class' => 'btn btn-sm btn-info']
+                    ) ?>
+                </div>
+                <?php elseif (!empty($model->stock_rop_id)): ?>
+                    <div><strong>Dari : </strong> 
                         <?= Html::a(
-                            $model->permintaanPelanggan->generateKodePermintaan(), 
-                            ['permintaan-pelanggan/view', 'permintaan_id' => $model->permintaan_id],
-                            ['class' => 'btn btn-sm btn-info']
+                            'Data ROP', 
+                            ['stock-rop/index', 'stock_rop_id' => $model->stock_rop_id],
+                            ['class' => 'btn btn-sm btn-warning'],
                         ) ?>
+                        <?= $model->stockRop ? $model->stockRop->getPeriodeFormatted() : '-' ?>
                     </div>
-                    <!-- <div><strong>Status Permintaan:</strong> <?= $model->permintaanPelanggan->getStatusLabel() ?></div> -->
-                <!-- </div> -->
+                        <!-- <div><strong>Periode:</strong> <?= $model->stockRop ? $model->stockRop->getPeriodeFormatted() : '-' ?></div>
+                    </div> -->
+                <?php else: ?>
+                    <div class="text-muted"><em>Pemesanan Manual</em></div>
+                    <!-- </div> -->
                 <?php endif; ?>
             </div>
 

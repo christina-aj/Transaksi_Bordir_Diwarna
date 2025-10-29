@@ -35,7 +35,7 @@ echo Dialog::widget();
 
             </div>
 
-            <!-- TAMBAHAN INFO PERMINTAAN -->
+            <!-- TAMBAHAN INFO ASAL PERMINTAAN -->
             <?php if (!empty($modelPemesanan->permintaan_id)): ?>
             <div class="col-md-3">
                 <div><strong>Dari Permintaan:</strong> 
@@ -47,6 +47,21 @@ echo Dialog::widget();
                 </div>
                 <div><strong>Status Permintaan:</strong> <?= $modelPemesanan->permintaanPelanggan->getStatusLabel() ?></div>
             </div>
+            <?php elseif (!empty($modelPemesanan->stock_rop_id)): ?>
+                <div class="col-md-3">
+                    <div><strong>Dari : </strong> 
+                        <?= Html::a(
+                            'Data ROP', 
+                            ['stock-rop/index', 'stock_rop_id' => $modelPemesanan->stock_rop_id],
+                            ['class' => 'btn btn-sm btn-warning']
+                        ) ?>
+                    </div>
+                    <div><strong>Periode:</strong> <?= $modelPemesanan->stockRop ? $modelPemesanan->stockRop->getPeriodeFormatted() : '-' ?></div>
+                </div>
+            <?php else: ?>
+                <div class="col-md-3">
+                    <div class="text-muted"><em>Pemesanan Manual</em></div>
+                </div>
             <?php endif; ?>
 
         </div>
@@ -187,10 +202,29 @@ echo Dialog::widget();
 $pemesananId = $modelPemesanan->pemesanan_id;
 $isNewRecord = $modelDetail->isNewRecord;
 
-// 🔥 TAMBAHAN UNTUK AUTO-FILL BOM
+// 🔥 TAMBAHAN UNTUK AUTO-FILL 
 $permintaanId = Yii::$app->request->get('permintaan_id');
-$urlGetBom = !empty($permintaanId) ? Url::to(['pemesanan/get-bom-data', 'permintaan_id' => $permintaanId]) : '';
+$stockRopId = Yii::$app->request->get('stock_rop_id');
 
+// Generate URL berdasarkan sumber data
+// if (!empty($permintaanId)) {
+//     $urlGetData = Url::to(['pemesanan/get-bom-data', 'permintaan_id' => $permintaanId]);
+//     $sourceType = 'permintaan';
+// } elseif (!empty($stockRopId)) {
+//     $urlGetData = Url::to(['pemesanan/get-rop-data', 'stock_rop_id' => $stockRopId]);
+//     $sourceType = 'rop';
+// } else {
+//     $urlGetData = '';
+//     $sourceType = '';
+// }
+
+$urlGetData  = !empty($permintaanId)
+    ? Url::to(['pemesanan/get-bom-data', 'permintaan_id' => $permintaanId])
+    : (!empty($stockRopId)
+        ? Url::to(['pemesanan/get-rop-data', 'stock_rop_id' => $stockRopId])
+        : '');
+
+$sourceType  = !empty($permintaanId) ? 'permintaan' : (!empty($stockRopId) ? 'rop' : '');
 
 $this->registerJs("
 
@@ -335,13 +369,16 @@ $this->registerJs("
     // Inisialisasi awal untuk menampilkan/menyembunyikan tombol add dan delete
     toggleAddDeleteButtons();
 
-    // AUTO-FILL BOM 
-    " . (!empty($permintaanId) ? "
+    // AUTO-FILL (BOM atau ROP)
+    // <?php if (!empty($urlGetData)): ?>
+    " . (!empty($urlGetData) ? "
         \$(document).ready(function() {
             setTimeout(function() {
                 \$.ajax({
-                    url: '" . $urlGetBom . "',
+                    // url: '<?= $urlGetData ?>',
+                    url: '" . $urlGetData . "',
                     type: 'GET',
+                    dataType: 'json',
                     success: function(res) {
                         if (res.success && res.data.length > 0) {
                             \$('#table-body').empty();
@@ -369,18 +406,24 @@ $this->registerJs("
                             \$('.barang-header').hide();
                             \$('.barang-column').hide();
                             toggleAddDeleteButtons();
-                            alert('Form akan diisi dengan '+res.data.length+' item dari BOM ('+res.kode_permintaan+'). Silakan review dan Save.');
+
+                            var msg = '<?= $sourceType ?>' === 'permintaan' 
+                            ? 'Form berhasil diisi dengan '+res.data.length+' item dari BOM ('+res.kode_permintaan+')'
+                            : 'Form berhasil diisi dengan '+res.data.length+' item dari ROP ('+res.kode_rop+')';
+                            alert(msg + '. Silakan review dan Save.');
+
                         } else {
-                            alert(res.message || 'Tidak ada BOM');
+                            alert(res.message || 'Tidak ada data');
                         }
                     },
                     error: function() {
-                        alert('Gagal memuat data BOM');
+                        alert('Gagal memuat data');
                     }
                 });
             }, 500);
         });
     " : "") . "
+    // <?php endif; ?>
 ");
 ?>
 <style>

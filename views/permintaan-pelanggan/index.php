@@ -13,6 +13,17 @@ use kartik\daterange\DateRangePicker;
 
 $this->title = 'Permintaan Pelanggan';
 $this->params['breadcrumbs'][] = $this->title;
+
+// --- Logika tombol finalisasi ---
+$currentDate = new DateTime();
+$day = (int)$currentDate->format('d');
+$isActivePeriod = $day <= 10; // hanya aktif di 5 hari pertama bulan ini
+
+$session = Yii::$app->session;
+$monthKey = 'finalisasi_' . $currentDate->format('Ym');
+$alreadyFinalized = $session->get($monthKey, false);
+$buttonDisabled = !$isActivePeriod || $alreadyFinalized;
+
 ?>
 
 <div class="pc-content">
@@ -20,9 +31,34 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <h1><?= Html::encode($this->title) ?></h1>
 
-        <div>
+
+        <div class="mb-3">
             <?= Html::a('Buat Permintaan Pelanggan', ['create'], ['class' => 'btn btn-success']) ?>
+
+            <!-- Tombol Finalisasi Bulan Lalu -->
+            <?php if ($buttonDisabled): ?>
+                <?= Html::button('Permintaan Bulan Lalu Sudah Difinalkan', [
+                    'class' => 'btn btn-secondary',
+                    'disabled' => true,
+                ]) ?>
+            <?php else: ?>
+                <?= Html::a('Finalkan Permintaan Bulan Lalu', ['permintaan-pelanggan/finalkan-bulan-lalu'], [
+                    'class' => 'btn btn-warning',
+                    'data' => [
+                        'confirm' => 'Setelah difinalkan, data bulan lalu tidak dapat diedit atau dihapus. Yakin ingin melanjutkan?',
+                        'method' => 'post',
+                    ],
+                ]) ?>
+            <?php endif; ?>
+
+            <?php
+            // Simpan flag bahwa sudah difinalkan (contoh pakai session)
+            if (Yii::$app->request->get('done') == 1) {
+                $session->set($monthKey, true);
+            }
+            ?>
         </div>
+
         <div style="margin-top: 5px; margin-bottom: 10px;">
             <?php
             $tipe_pelanggan = Yii::$app->request->get('tipe_pelanggan', 'all');
@@ -104,11 +140,29 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
                 //'created_at',
                 //'updated_at',
+                // [
+                //     'class' => ActionColumn::className(),
+                //     'urlCreator' => function ($action, PermintaanPelanggan $model, $key, $index, $column) {
+                //         return Url::toRoute([$action, 'permintaan_id' => $model->permintaan_id]);
+                //     }
+                // ],
+
                 [
                     'class' => ActionColumn::className(),
                     'urlCreator' => function ($action, PermintaanPelanggan $model, $key, $index, $column) {
                         return Url::toRoute([$action, 'permintaan_id' => $model->permintaan_id]);
-                    }
+                    },
+                    'visibleButtons' => [
+                        // Edit & Hapus hanya muncul kalau status bukan Archived
+                        'update' => function ($model) {
+                            return $model->status_permintaan != 3;
+                        },
+                        'delete' => function ($model) {
+                            return $model->status_permintaan != 3;
+                        },
+                        // Tombol view tetap muncul untuk semua
+                        'view' => true,
+                    ],
                 ],
             ],
         ]); ?>

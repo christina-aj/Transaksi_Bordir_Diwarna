@@ -149,6 +149,54 @@ class PermintaanPelangganController extends Controller
         ]);
     }
 
+
+
+    public function actionFinalkanBulanLalu()
+    {
+        $bulanLalu = date('m', strtotime('-1 month'));
+        $tahunLalu = date('Y', strtotime('-1 month'));
+        $namaBulanLalu = date('F Y', strtotime('-1 month'));
+        $kodeBulanLalu = date('Ym', strtotime('-1 month'));
+
+        $permintaanList = \app\models\PermintaanPelanggan::find()
+            ->where(['status_permintaan' => 2])
+            ->andWhere(['MONTH(tanggal_permintaan)' => $bulanLalu, 'YEAR(tanggal_permintaan)' => $tahunLalu])
+            ->all();
+
+        if (empty($permintaanList)) {
+            Yii::$app->session->setFlash('warning', "Tidak ada permintaan berstatus Complete di bulan $namaBulanLalu.");
+            return $this->redirect(['index']);
+        }
+
+        foreach ($permintaanList as $permintaan) {
+            foreach ($permintaan->permintaanDetails as $detail) {
+                $riwayat = new \app\models\RiwayatPenjualan();
+                $riwayat->bulan_periode = $kodeBulanLalu;
+                $riwayat->qty_penjualan = $detail->qty_permintaan;
+                $riwayat->created_at = date('Y-m-d H:i:s');
+
+                // Pilih kolom ID yang relevan
+                if (!empty($detail->barang_produksi_id)) {
+                    $riwayat->barang_produksi_id = $detail->barang_produksi_id;
+                } elseif (!empty($detail->barang_custom_pelanggan_id)) {
+                    $riwayat->barang_custom_pelanggan_id = $detail->barang_custom_pelanggan_id;
+                }
+
+                $riwayat->save(false);
+            }
+
+            // Update status permintaan jadi archived
+            $permintaan->status_permintaan = 3;
+            $permintaan->save(false);
+        }
+
+        Yii::$app->session->setFlash('success', "Permintaan bulan $namaBulanLalu berhasil difinalkan ke Riwayat Penjualan!");
+        return $this->redirect(['index']);
+    }
+
+
+
+
     /**
      * Get barang data by pelanggan via AJAX
      */

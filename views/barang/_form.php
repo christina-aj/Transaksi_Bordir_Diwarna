@@ -121,6 +121,27 @@ use yii\grid\ActionColumn;
                             },
                         ],
                         [
+                            'attribute' => 'kategori_barang',
+                            'format' => 'raw',
+                            'label' => 'Kategori Barang',
+                            'headerOptions' => ['class' => 'biaya-header'],
+                            'contentOptions' => ['class' => 'biaya-column'],
+                            'value' => function ($model, $key, $index, $column) use ($form) {
+                                $kategoriOptions = [
+                                    \app\models\Barang::KATEGORI_FAST_MOVING => 'Fast Moving',
+                                    \app\models\Barang::KATEGORI_SLOW_MOVING => 'Slow Moving',
+                                    \app\models\Barang::KATEGORI_NON_MOVING => 'Non Moving',
+                                ];
+                                return $form->field($model, "[$index]kategori_barang")->dropDownList(
+                                    $kategoriOptions, 
+                                    [
+                                        'prompt' => 'Pilih Kategori',
+                                        'class' => 'form-control kategori-barang-field',
+                                    ]
+                                )->label(false);
+                            },
+                        ],
+                        [
                             'attribute' => 'jenis_barang',
                             // 'visible' => false,
                             'format' => 'raw',
@@ -196,6 +217,17 @@ foreach ($dataSatuan as $unitId => $satuan) {
     $optionsHtml .= "<option value=\"{$unitId}\">{$satuan}</option>";
 }
 
+$kategoriOptions = [
+    \app\models\Barang::KATEGORI_SLOW_MOVING => 'Slow Moving',
+    \app\models\Barang::KATEGORI_FAST_MOVING => 'Fast Moving',
+    \app\models\Barang::KATEGORI_NON_MOVING => 'Non Moving',
+];
+
+$kategoriOptionsHtml = '';
+foreach ($kategoriOptions as $key => $label) {
+    $kategoriOptionsHtml .= "<option value=\"{$key}\">{$label}</option>";
+}
+
 $js = <<<JS
     // Fungsi untuk menampilkan field "warna" dan header ketika tombol Consumable ditekan
     $('#toggle-consumable-button').on('click', function() {
@@ -227,6 +259,7 @@ $js = <<<JS
         $('.biaya-simpan-field').val(0);
         $('.tipe-field').val('Non Consumable'); 
         $('.jenis-barang-field').val(2);
+        $('.kategori-barang-field').val(3);
         $('#toggle-consumable-button').removeClass('btn-primary').addClass('btn-outline-primary');
         $(this).removeClass('btn-outline-secondary').addClass('btn-secondary');
     });
@@ -270,7 +303,12 @@ $js = <<<JS
             <td><input type="text" name="Barang[\${index}][tipe]" class="form-control tipe-field" readonly></td>
             <td class="biaya-column"><input type="text" id="consumable-\${index}" name="Barang[\${index}][safety_stock]" class="form-control safety-stock-field" maxlength="true"></td>
             <td class="biaya-column"><input type="text" id="consumable-\${index}"  name="Barang[\${index}][biaya_simpan_bulan]" class="form-control biaya-simpan-field" maxlength="true"></td>
-            <td class="jenis-column"><input type="text" id="jenis-\${index}" name="Barang[\${index}][jenis_barang]" class="form-control jenis-barang-field" readonly></td>
+            <td>
+                <select name="Barang[\${index}][kategori_barang]" class="form-control kategori-barang-field">
+                    <option value="">Pilih Kategori</option>
+                    $kategoriOptionsHtml
+                </select>
+            </td>
             <td class="warna-column"><input type="text" id="consumable-\${index}"  name="Barang[\${index}][warna]" class="form-control warna-field" maxlength="true"></td>
             <td>
                 <div class="d-flex justify-content-between align-content-center align-items-center">

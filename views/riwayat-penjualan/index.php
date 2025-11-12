@@ -29,10 +29,28 @@ $this->params['breadcrumbs'][] = $this->title;
                         ['class' => 'yii\grid\SerialColumn'],
 
                         // 'riwayat_penjualan_id',
+                        // [
+                        //     'label' => 'Nama Barang',
+                        //     'attribute' => 'nama',
+                        //     'value' => 'barangProduksi.nama',
+                        //     'filterInputOptions' => [
+                        //         'class' => 'form-control',
+                        //         'placeholder' => 'Cari Nama Barang',
+                        //     ],
+                        // ],
                         [
+                            'attribute' => 'nama_barang',
                             'label' => 'Nama Barang',
-                            'attribute' => 'nama',
-                            'value' => 'barangProduksi.nama',
+                            'format' => 'raw',
+                            'value' => function ($model) {
+                                if ($model->barangProduksi) {
+                                    return Html::encode($model->barangProduksi->nama);
+                                } elseif ($model->barangCustomPelanggan) {
+                                    return Html::encode($model->barangCustomPelanggan->nama_barang_custom);
+                                } else {
+                                    return '<span class="text-muted">Tidak ada</span>';
+                                }
+                            },
                             'filterInputOptions' => [
                                 'class' => 'form-control',
                                 'placeholder' => 'Cari Nama Barang',

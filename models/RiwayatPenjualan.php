@@ -63,9 +63,9 @@ class RiwayatPenjualan extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['created_at', 'updated_at'], 'default', 'value' => null],
+            [['created_at', 'updated_at', 'barang_produksi_id', 'barang_custom_pelanggan_id'], 'default', 'value' => null],
             [['barang_produksi_id', 'qty_penjualan', 'bulan_periode'], 'required'],
-            [['barang_produksi_id', 'qty_penjualan'], 'integer'],
+            [['barang_produksi_id', 'barang_custom_pelanggan_id', 'qty_penjualan'], 'integer'],
             [['created_at', 'updated_at'], 'safe'],
             [['bulan_periode'], 'string', 'max' => 7],
             [['barang_produksi_id'], 'exist', 'skipOnError' => true, 'targetClass' => Barangproduksi::class, 'targetAttribute' => ['barang_produksi_id' => 'barang_produksi_id']],
@@ -80,6 +80,7 @@ class RiwayatPenjualan extends \yii\db\ActiveRecord
         return [
             'riwayat_penjualan_id' => 'Riwayat Penjualan ID',
             'barang_produksi_id' => 'Barang Produksi ID',
+            'barang_custom_pelanggan_id' => 'Barang Custom Pelanggan ID',
             'qty_penjualan' => 'Qty Penjualan',
             'bulan_periode' => 'Bulan Periode',
             'created_at' => 'Created At',
@@ -95,6 +96,11 @@ class RiwayatPenjualan extends \yii\db\ActiveRecord
     public function getBarangProduksi()
     {
         return $this->hasOne(Barangproduksi::class, ['barang_produksi_id' => 'barang_produksi_id']);
+    }
+
+    public function getBarangCustomPelanggan()
+    {
+        return $this->hasOne(BarangCustomPelanggan::class, ['barang_custom_pelanggan_id' => 'barang_custom_pelanggan_id']);
     }
 
     /**

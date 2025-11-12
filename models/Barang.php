@@ -26,9 +26,11 @@ use yii\db\Expression;
 class Barang extends \yii\db\ActiveRecord
 {
     const KODE_BARANG_MENTAH = 1;
-    // const KODE_BARANG_SET_JADI = 2;
-    // const KODE_BARANG_JADI = 3;
     const KODE_BARANG_NON_CONSUM = 2;
+
+    const KATEGORI_FAST_MOVING = 1;
+    const KATEGORI_SLOW_MOVING = 2;
+    const KATEGORI_NON_MOVING = 3;
     
     /**
      * {@inheritdoc}
@@ -58,15 +60,16 @@ class Barang extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['kode_barang', 'nama_barang', 'unit_id', 'tipe'], 'required'],
+            [['kode_barang', 'nama_barang', 'unit_id', 'tipe', 'kategori_barang'], 'required'],
             [['unit_id'], 'integer'],
             [['angka'], 'number'],
             [['created_at', 'updated_at'], 'safe'],
-            [['kode_barang', 'nama_barang', 'tipe', 'warna'], 'string', 'max' => 255],
+            [['kode_barang', 'nama_barang', 'tipe','warna'], 'string', 'max' => 255],
             [['kode_barang'], 'unique'],
             [['biaya_simpan_bulan', 'safety_stock'], 'integer'],
             [['unit_id'], 'exist', 'skipOnError' => true, 'targetClass' => Unit::class, 'targetAttribute' => ['unit_id' => 'unit_id']],
             [['jenis_barang'], 'in', 'range' => [self::KODE_BARANG_MENTAH,  self::KODE_BARANG_NON_CONSUM]],
+            [['kategori_barang'], 'in', 'range' => [self::KATEGORI_FAST_MOVING,  self::KATEGORI_SLOW_MOVING, self::KATEGORI_NON_MOVING]],
         ];
     }
 
@@ -82,6 +85,7 @@ class Barang extends \yii\db\ActiveRecord
             'angka' => 'Angka',
             'unit_id' => 'Satuan',
             'tipe' => 'Tipe',
+            'kategori_barang' => 'Kategori Barang',
             'warna' => 'Warna',
             'biaya_simpan_bulan' => 'Biaya Simpan/Bulan',
             'safety_stock' => 'Safety Stock',
@@ -152,5 +156,15 @@ class Barang extends \yii\db\ActiveRecord
             self::KODE_BARANG_NON_CONSUM => 'Alat dan Mesin',
         ];
         return isset($labels[$this->jenis_barang]) ? $labels[$this->jenis_barang] : 'Unknown';
+    }
+
+    public function getKategoriBarangLabel()
+    {
+        $labels = [
+            self::KATEGORI_FAST_MOVING => 'Fast Moving',
+            self::KATEGORI_SLOW_MOVING => 'Slow Moving',
+            self::KATEGORI_NON_MOVING => 'Non Moving',
+        ];
+        return isset($labels[$this->kategori_barang]) ? $labels[$this->kategori_barang] : 'Unknown';
     }
 }

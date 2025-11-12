@@ -24,7 +24,7 @@ class BarangSearch extends Barang
     {
         return [
             [['barang_id', 'unit_id'], 'integer'],
-            [['kode_barang', 'nama_barang', 'tipe', 'warna', 'created_at', 'updated_at', 'satuan'], 'safe'],
+            [['kode_barang', 'nama_barang', 'tipe', 'warna', 'created_at', 'updated_at', 'satuan', 'kategori_barang'], 'safe'],
             [['angka'], 'number'],
             // [['jenis_barang'], 'safe'],
         ];
@@ -68,6 +68,7 @@ class BarangSearch extends Barang
                     'angka',
                     'tipe',
                     'warna',
+                    'kategori_barang',
                     'satuan' => [
                         'asc' => ['unit.satuan' => SORT_ASC],
                         'desc' => ['unit.satuan' => SORT_DESC],
@@ -96,7 +97,8 @@ class BarangSearch extends Barang
             'angka' => $this->angka,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-            'jenis_barang' => $this->jenis_barang
+            'jenis_barang' => $this->jenis_barang,
+            'kategori_barang' => $this->kategori_barang
         ]);
 
         $query->andFilterWhere(['like', 'unit.satuan', $this->satuan]);
@@ -104,7 +106,8 @@ class BarangSearch extends Barang
         $query->andFilterWhere(['like', 'kode_barang', $this->kode_barang])
             ->andFilterWhere(['like', 'nama_barang', $this->nama_barang])
             ->andFilterWhere(['like', 'tipe', $this->tipe])
-            ->andFilterWhere(['like', 'warna', $this->warna]);
+            ->andFilterWhere(['like', 'warna', $this->warna])
+            ->andFilterWhere(['like', 'kategori_barang', $this->kategori_barang]);
 
         if (!empty($this->tipe)) {
             $query->andFilterWhere(['tipe' => $this->tipe]);

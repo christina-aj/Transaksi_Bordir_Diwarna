@@ -309,7 +309,7 @@ class PenggunaanController extends Controller
                     $newDetail->save(false);
                 }
 
-                Yii::$app->session->setFlash('success', 'Penggunaan berhasil diperbarui.');
+                Yii::$app->session->setFlash('success', 'Penggunaan berhasil dibuat, menunggu approval orang gudang.');
                 return $this->redirect(['view', 'penggunaan_id' => $modelPenggunaan->penggunaan_id]);
             } else {
                 Yii::$app->session->setFlash('error', 'Gagal memperbarui data penggunaan. Harap periksa kembali data yang dimasukkan.');
@@ -1004,72 +1004,189 @@ class PenggunaanController extends Controller
     /**
      * Get BOM data untuk auto-fill form (AJAX)
      */
+    // public function actionGetBomData($permintaan_id)
+    // {
+    //     Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        
+    //     try {
+    //         $permintaan = \app\models\PermintaanPelanggan::findOne($permintaan_id);
+    //         if (!$permintaan || $permintaan->tipe_pelanggan != 2) {
+    //             return ['success' => false, 'message' => 'Hanya untuk Polosan Ready'];
+    //         }
+            
+    //         $kodePermintaan = $permintaan->generateKodePermintaan();
+    //         $permintaanDetails = \app\models\PermintaanDetail::find()
+    //             ->where(['permintaan_id' => $permintaan_id])
+    //             ->andWhere(['IS NOT', 'barang_produksi_id', null])
+    //             ->all();
+            
+    //         if (empty($permintaanDetails)) {
+    //             return ['success' => false, 'message' => 'Tidak ada barang produksi'];
+    //         }
+            
+    //         $bahanTotal = [];
+            
+    //         foreach ($permintaanDetails as $detail) {
+    //             $bomBarang = \app\models\BomBarang::find()
+    //                 ->where(['barang_produksi_id' => $detail->barang_produksi_id])
+    //                 ->one();
+                
+    //             if (!$bomBarang) continue;
+                
+    //             $bomDetails = \app\models\BomDetail::find()
+    //                 ->where(['BOM_barang_id' => $bomBarang->BOM_barang_id])
+    //                 ->all();
+                
+    //             foreach ($bomDetails as $bomDetail) {
+    //                 $barangId = $bomDetail->barang_id;
+    //                 $totalQty = $bomDetail->qty_BOM * $detail->qty_permintaan;
+                    
+    //                 if (isset($bahanTotal[$barangId])) {
+    //                     $bahanTotal[$barangId]['qty'] += $totalQty;
+    //                 } else {
+    //                     $barang = \app\models\Barang::findOne($barangId);
+    //                     $bahanTotal[$barangId] = [
+    //                         'barang_id' => $barangId,
+    //                         'kode_barang' => $barang->kode_barang,
+    //                         'nama_barang' => $barang->nama_barang,
+    //                         'qty' => $totalQty,
+    //                         'catatan' => "Digunakan Untuk Permintaan : {$kodePermintaan}"
+    //                     ];
+    //                 }
+    //             }
+    //         }
+            
+    //         if (empty($bahanTotal)) {
+    //             return ['success' => false, 'message' => 'Tidak ada BOM'];
+    //         }
+            
+    //         return [
+    //             'success' => true,
+    //             'data' => array_values($bahanTotal),
+    //             'kode_permintaan' => $kodePermintaan
+    //         ];
+            
+    //     } catch (\Exception $e) {
+    //         return ['success' => false, 'message' => $e->getMessage()];
+    //     }
+    // }
+
+    /**
+     * Get BOM data untuk auto-fill form (AJAX)
+     */
     public function actionGetBomData($permintaan_id)
     {
         Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-        
+
         try {
             $permintaan = \app\models\PermintaanPelanggan::findOne($permintaan_id);
-            if (!$permintaan || $permintaan->tipe_pelanggan != 2) {
-                return ['success' => false, 'message' => 'Hanya untuk Polosan Ready'];
+
+            if (!$permintaan) {
+                return ['success' => false, 'message' => 'Permintaan tidak ditemukan'];
             }
-            
+
             $kodePermintaan = $permintaan->generateKodePermintaan();
-            $permintaanDetails = \app\models\PermintaanDetail::find()
-                ->where(['permintaan_id' => $permintaan_id])
-                ->andWhere(['IS NOT', 'barang_produksi_id', null])
-                ->all();
-            
-            if (empty($permintaanDetails)) {
-                return ['success' => false, 'message' => 'Tidak ada barang produksi'];
-            }
-            
             $bahanTotal = [];
-            
-            foreach ($permintaanDetails as $detail) {
-                $bomBarang = \app\models\BomBarang::find()
-                    ->where(['barang_produksi_id' => $detail->barang_produksi_id])
-                    ->one();
-                
-                if (!$bomBarang) continue;
-                
-                $bomDetails = \app\models\BomDetail::find()
-                    ->where(['BOM_barang_id' => $bomBarang->BOM_barang_id])
+
+            // CASE 1: Custom Order (tipe_pelanggan = 1)
+            if ($permintaan->tipe_pelanggan == 1) {
+                $permintaanDetails = \app\models\PermintaanDetail::find()
+                    ->where(['permintaan_id' => $permintaan_id])
+                    ->andWhere(['IS NOT', 'barang_custom_pelanggan_id', null])
                     ->all();
-                
-                foreach ($bomDetails as $bomDetail) {
-                    $barangId = $bomDetail->barang_id;
-                    $totalQty = $bomDetail->qty_BOM * $detail->qty_permintaan;
-                    
-                    if (isset($bahanTotal[$barangId])) {
-                        $bahanTotal[$barangId]['qty'] += $totalQty;
-                    } else {
-                        $barang = \app\models\Barang::findOne($barangId);
-                        $bahanTotal[$barangId] = [
-                            'barang_id' => $barangId,
-                            'kode_barang' => $barang->kode_barang,
-                            'nama_barang' => $barang->nama_barang,
-                            'qty' => $totalQty,
-                            'catatan' => "Digunakan Untuk Permintaan : {$kodePermintaan}"
-                        ];
+
+                if (empty($permintaanDetails)) {
+                    return ['success' => false, 'message' => 'Tidak ada barang custom'];
+                }
+
+                foreach ($permintaanDetails as $detail) {
+                    $bomCustoms = \app\models\BomCustom::find()
+                        ->where(['barang_custom_pelanggan_id' => $detail->barang_custom_pelanggan_id])
+                        ->all();
+
+                    foreach ($bomCustoms as $bomCustom) {
+                        $barangId = $bomCustom->barang_id;
+                        $totalQty = $bomCustom->qty_per_unit * $detail->qty_permintaan;
+
+                        if (isset($bahanTotal[$barangId])) {
+                            $bahanTotal[$barangId]['qty'] += $totalQty;
+                        } else {
+                            $barang = \app\models\Barang::findOne($barangId);
+                            $bahanTotal[$barangId] = [
+                                'barang_id' => $barangId,
+                                'kode_barang' => $barang->kode_barang,
+                                'nama_barang' => $barang->nama_barang,
+                                'qty' => $totalQty,
+                                'catatan' => "Digunakan Untuk Permintaan : {$kodePermintaan}",
+                            ];
+                        }
                     }
                 }
             }
-            
+
+            // CASE 2: Polosan Ready (tipe_pelanggan = 2)
+            elseif ($permintaan->tipe_pelanggan == 2) {
+                $permintaanDetails = \app\models\PermintaanDetail::find()
+                    ->where(['permintaan_id' => $permintaan_id])
+                    ->andWhere(['IS NOT', 'barang_produksi_id', null])
+                    ->all();
+
+                if (empty($permintaanDetails)) {
+                    return ['success' => false, 'message' => 'Tidak ada barang produksi'];
+                }
+
+                foreach ($permintaanDetails as $detail) {
+                    $bomBarang = \app\models\BomBarang::find()
+                        ->where(['barang_produksi_id' => $detail->barang_produksi_id])
+                        ->one();
+
+                    if (!$bomBarang) continue;
+
+                    $bomDetails = \app\models\BomDetail::find()
+                        ->where(['BOM_barang_id' => $bomBarang->BOM_barang_id])
+                        ->all();
+
+                    foreach ($bomDetails as $bomDetail) {
+                        $barangId = $bomDetail->barang_id;
+                        $totalQty = $bomDetail->qty_BOM * $detail->qty_permintaan;
+
+                        if (isset($bahanTotal[$barangId])) {
+                            $bahanTotal[$barangId]['qty'] += $totalQty;
+                        } else {
+                            $barang = \app\models\Barang::findOne($barangId);
+                            $bahanTotal[$barangId] = [
+                                'barang_id' => $barangId,
+                                'kode_barang' => $barang->kode_barang,
+                                'nama_barang' => $barang->nama_barang,
+                                'qty' => $totalQty,
+                                'catatan' => "Digunakan Untuk Permintaan : {$kodePermintaan}"
+                            ];
+                        }
+                    }
+                }
+            }
+
+            // 🔹 CASE selain tipe 1 & 2
+            else {
+                return ['success' => false, 'message' => 'Tipe pelanggan tidak dikenali'];
+            }
+
+            // 🔹 Validasi hasil akhir
             if (empty($bahanTotal)) {
                 return ['success' => false, 'message' => 'Tidak ada BOM'];
             }
-            
+
             return [
                 'success' => true,
                 'data' => array_values($bahanTotal),
                 'kode_permintaan' => $kodePermintaan
             ];
-            
+
         } catch (\Exception $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
+
 
     /**
      * Get current stock untuk barang_id dan area_gudang tertentu

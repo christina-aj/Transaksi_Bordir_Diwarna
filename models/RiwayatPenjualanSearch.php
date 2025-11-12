@@ -16,12 +16,13 @@ class RiwayatPenjualanSearch extends RiwayatPenjualan
      */
 
     public $nama;
+    public $nama_barang;
 
     public function rules()
     {
         return [
             [['riwayat_penjualan_id', 'barang_produksi_id', 'qty_penjualan'], 'integer'],
-            [['bulan_periode', 'created_at', 'updated_at', 'nama'], 'safe'],
+            [['bulan_periode', 'created_at', 'updated_at', 'nama', 'nama_barang'], 'safe'],
         ];
     }
 
@@ -44,8 +45,37 @@ class RiwayatPenjualanSearch extends RiwayatPenjualan
      */
     public function search($params, $formName = null)
     {
-        $query = RiwayatPenjualan::find()
-            ->joinWith(['barangProduksi']);
+        $query = RiwayatPenjualan::find();
+        // join relasi supaya bisa cari berdasarkan nama barang
+        $query->joinWith(['barangProduksi', 'barangCustomPelanggan']);
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+
+        // enable sorting di kolom "nama_barang"
+        $dataProvider->sort->attributes['nama_barang'] = [
+            'asc' => ['barang_produksi.nama' => SORT_ASC, 'barang_custom_pelanggan.nama_barang_custom' => SORT_ASC],
+            'desc' => ['barang_produksi.nama' => SORT_DESC, 'barang_custom_pelanggan.nama_barang_custom' => SORT_DESC],
+        ];
+
+        $this->load($params);
+
+        if (!$this->validate()) {
+            return $dataProvider;
+        }
+
+        // filter lain (kalau ada)
+        $query->andFilterWhere([
+            'riwayat_penjualan_id' => $this->riwayat_penjualan_id,
+            'qty_penjualan' => $this->qty_penjualan,
+            'bulan_periode' => $this->bulan_periode,
+        ]);
+
+        $query->andFilterWhere(['or',
+            ['like', 'barangProduksi.nama', $this->nama_barang],
+            ['like', 'barang_custom_pelanggan.nama_barang_custom', $this->nama_barang]
+        ]);
 
         // add conditions that should always apply here
 

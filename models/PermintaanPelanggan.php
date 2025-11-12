@@ -33,6 +33,7 @@ class PermintaanPelanggan extends \yii\db\ActiveRecord
     const STATUS_PENDING = 0;
     const STATUS_ON_PROGRESS = 1;
     const STATUS_COMPLETE = 2;
+    const STATUS_ARCHIVED = 3;
 
     const KODE_CUSTOM = 1;
     const KODE_READY = 2;
@@ -51,6 +52,7 @@ class PermintaanPelanggan extends \yii\db\ActiveRecord
             self::STATUS_PENDING => '<span style="color: orange">Pending</span>',
             self::STATUS_ON_PROGRESS => '<span style="color: blue">On Progress</span>',
             self::STATUS_COMPLETE => '<span style="color: green">Complete</span>',
+            self::STATUS_ARCHIVED => '<span style="color: gray">Archived</span>',
         ];
     }
     public function getStatusLabel()

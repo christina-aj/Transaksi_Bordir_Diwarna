@@ -161,6 +161,28 @@ if (Yii::$app->session->hasFlash('success')) {
                                 'class' => 'text-primary'
                             ],
                         ],
+
+                        [
+                            'attribute' => 'kategori_barang',
+                            // 'visible' => false,
+                            'label' => 'Kategori Barang',
+                            'value' => function ($model) {
+                                return $model->getKategoriBarangLabel();
+                            },
+                            'filter' => [
+                                Barang::KATEGORI_FAST_MOVING => 'Fast Moving',
+                                Barang::KATEGORI_SLOW_MOVING => 'Slow Moving',
+                                Barang::KATEGORI_NON_MOVING => 'Non Moving',
+                            ],
+                            'filterInputOptions' => [
+                                'class' => 'form-control',
+                                'prompt' => 'Pilih Kategori',
+                            ],
+                            'headerOptions' => [
+                                'class' => 'text-primary'
+                            ],
+                        ],
+
                         [
                             'class' => ActionColumn::className(),
                             'template' => '{update}',

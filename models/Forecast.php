@@ -35,8 +35,9 @@ class Forecast extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['barang_produksi_id', 'periode_forecast', 'nilai_alpha', 'mape_test', 'hasil_forecast'], 'required'],
-            [['barang_produksi_id', 'periode_forecast'], 'integer'],
+            [['barang_produksi_id', 'barang_custom_pelanggan_id'], 'default', 'value' => null],
+            [['periode_forecast', 'nilai_alpha', 'mape_test', 'hasil_forecast'], 'required'],
+            [['barang_produksi_id', 'barang_custom_pelanggan_id', 'periode_forecast'], 'integer'],
             [['nilai_alpha', 'mape_test'], 'number'],
             [['hasil_forecast'], 'integer'],
             [['created_at', 'updated_at'], 'safe'],
@@ -44,13 +45,30 @@ class Forecast extends \yii\db\ActiveRecord
             ['periode_forecast', 'match', 'pattern' => '/^\d{6}$/', 'message' => 'Periode harus dalam format YYYYMM (contoh: 202508)'],
             // Validasi range bulan (01-12)
             ['periode_forecast', 'validatePeriode'],
-            [['barang_produksi_id'], 'exist', 'skipOnError' => true, 'targetClass' => BarangProduksi::class, 'targetAttribute' => ['barang_produksi_id' => 'barang_produksi_id']],
-            // Unique constraint untuk barang dan periode
-            [['barang_produksi_id', 'periode_forecast'], 'unique', 'targetAttribute' => ['barang_produksi_id', 'periode_forecast'], 'message' => 'Forecast untuk barang dan periode ini sudah ada.'],
+            
+            ['barang_produksi_id', 'exist', 'skipOnError' => true, 'targetClass' => BarangProduksi::class, 'targetAttribute' => ['barang_produksi_id' => 'barang_produksi_id']],
+            ['barang_custom_pelanggan_id', 'exist', 'skipOnError' => true, 'targetClass' => BarangCustomPelanggan::class, 'targetAttribute' => ['barang_custom_pelanggan_id' => 'barang_custom_pelanggan_id']],
+
+            // Minimal satu dari dua kolom harus diisi
+            ['barang_produksi_id', 'validateBarangPilihan'],
+
+            // Unique per kombinasi (barang_produksi atau custom) + periode
+            [['barang_produksi_id', 'periode_forecast'], 'unique', 'targetAttribute' => ['barang_produksi_id', 'periode_forecast'], 'message' => 'Forecast barang produksi dan periode ini sudah ada.'],
+            [['barang_custom_pelanggan_id', 'periode_forecast'], 'unique', 'targetAttribute' => ['barang_custom_pelanggan_id', 'periode_forecast'], 'message' => 'Forecast barang custom dan periode ini sudah ada.'],
         ];
     }
 
     /**
+     * Validasi: minimal satu barang harus diisi
+     */
+    public function validateBarangPilihan($attribute, $params)
+    {
+        if (empty($this->barang_produksi_id) && empty($this->barang_custom_pelanggan_id)) {
+            $this->addError($attribute, 'Pilih salah satu: Barang Produksi atau Barang Custom Pelanggan.');
+        }
+    }
+
+/**
      * Validasi periode forecast
      */
     public function validatePeriode($attribute, $params)
@@ -90,6 +108,11 @@ class Forecast extends \yii\db\ActiveRecord
     public function getBarangProduksi()
     {
         return $this->hasOne(BarangProduksi::class, ['barang_produksi_id' => 'barang_produksi_id']);
+    }
+
+    public function getBarangCustomPelanggan()
+    {
+        return $this->hasOne(BarangCustomPelanggan::class, ['barang_custom_pelanggan_id' => 'barang_custom_pelanggan_id']);
     }
 
     /**

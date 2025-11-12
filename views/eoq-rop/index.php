@@ -1,6 +1,7 @@
 <?php
 
 use app\models\EoqRop;
+use app\models\Barang;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
@@ -28,18 +29,40 @@ $this->params['breadcrumbs'][] = $this->title;
                 ]]) ?>
             </div>
         </div>
+        
+        <!-- Info Warna -->
+        <div class="card-body pb-0">
+            <div class="alert alert-light d-flex justify-content-start gap-2 mb-2">
+                <div><strong>Info Warna:</strong></div>
+                <div><span class="badge" style="background-color: #dcf1e0ff; color: #155724; padding: 5px 10px;">Fast Moving</span></div>
+                <!-- <div><span class="badge" style="background-color: #fff3cd; color: #856404; padding: 5px 10px;">Slow Moving</span></div> -->
+                <div><span class="badge" style="background-color: #f9dddfff; color: #721c24; padding: 5px 10px;">Slow Moving</span></div>
+            </div>
+        </div>
+
         <div class="card-body">
             <div class="table-responsive">
                 <?= GridView::widget([
                     'dataProvider' => $dataProvider,
                     'filterModel' => $searchModel,
-
+                    // Tambahkan rowOptions untuk memberikan warna berbeda per baris
+                    'rowOptions' => function ($model, $key, $index, $grid) {
+                        $kategori = $model->barang->kategori_barang ?? null;
+                        
+                        switch ($kategori) {
+                            case Barang::KATEGORI_FAST_MOVING:
+                                return ['class' => 'fast-moving-row'];
+                            case Barang::KATEGORI_SLOW_MOVING:
+                                return ['class' => 'slow-moving-row'];
+                            // case Barang::KATEGORI_NON_MOVING:
+                            //     return ['class' => 'non-moving-row'];
+                            default:
+                                return [];
+                        }
+                    },
                     'columns' => [
                         ['class' => 'yii\grid\SerialColumn'],
 
-                        // 'EOQ_ROP_id',
-
-                        // 'barang_id',
                         [
                             'attribute' => 'barang_id',
                             'label' => 'Nama Barang',
@@ -58,8 +81,6 @@ $this->params['breadcrumbs'][] = $this->title;
                             }
                         ],
                         
-                        // 'periode',
-                        // 'demand_snapshot',
                         [
                             'attribute' => 'demand_snapshot',
                             'label' => 'Demand',
@@ -115,18 +136,59 @@ $this->params['breadcrumbs'][] = $this->title;
                                 return '<strong>' . number_format($model->hasil_rop, 0, ',', '.') . ' ' . $satuan . '</strong>';
                             },
                         ],  
-
-                        // 'total_biaya_persediaan',
-                        //'created_at',
-                        // [
-                        //     'class' => ActionColumn::className(),
-                        //     'urlCreator' => function ($action, EoqRop $model, $key, $index, $column) {
-                        //         return Url::toRoute([$action, 'EOQ_ROP_id' => $model->EOQ_ROP_id]);
-                        //      }
-                        // ],
                     ],
                 ]); ?>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+/* Fast Moving - Hijau muda */
+.fast-moving-row {
+    background-color: #dcf1e0ff !important;
+}
+
+.fast-moving-row:hover {
+    background-color: #cde8d3ff !important;
+}
+
+/* Slow Moving - Kuning muda */
+.slow-moving-row {
+    background-color: #f9dddfff !important;
+}
+
+.slow-moving-row:hover {
+    background-color: #f8d5d8ff !important;
+}
+
+/* Non Moving - Merah muda */
+/* .non-moving-row {
+    background-color: #f8d7da !important;
+} */
+
+/* .non-moving-row:hover {
+    background-color: #f5c6cb !important;
+} */
+
+/* Badge styling */
+/* .badge {
+    font-size: 0.75rem;
+    padding: 0.25em 0.6em;
+}
+
+.badge-success {
+    background-color: #28a745;
+    color: white;
+}
+
+.badge-warning {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+.badge-danger {
+    background-color: #dc3545;
+    color: white;
+} */
+</style>

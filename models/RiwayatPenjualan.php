@@ -29,6 +29,7 @@ class RiwayatPenjualan extends \yii\db\ActiveRecord
     public $nama;
     public $kode_barang_produksi;
 
+
     // /**
     //  * {@inheritdoc}
     //  */
@@ -86,6 +87,7 @@ class RiwayatPenjualan extends \yii\db\ActiveRecord
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
         ];
+
     }
 
     /**
@@ -141,5 +143,6 @@ class RiwayatPenjualan extends \yii\db\ActiveRecord
         
         return $namaBulan[$bulan] . ' ' . $tahun;
     }
+
 
 }

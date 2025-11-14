@@ -11,6 +11,7 @@ use app\models\Forecast;
  */
 class ForecastSearch extends Forecast
 {
+    
     /**
      * {@inheritdoc}
      */
@@ -72,4 +73,5 @@ class ForecastSearch extends Forecast
 
         return $dataProvider;
     }
+
 }

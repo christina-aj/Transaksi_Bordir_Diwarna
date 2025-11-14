@@ -17,12 +17,15 @@ class RiwayatPenjualanSearch extends RiwayatPenjualan
 
     public $nama;
     public $nama_barang;
+    
+    public $filter_tahun;
+    public $filter_bulan;
 
     public function rules()
     {
         return [
             [['riwayat_penjualan_id', 'barang_produksi_id', 'qty_penjualan'], 'integer'],
-            [['bulan_periode', 'created_at', 'updated_at', 'nama', 'nama_barang'], 'safe'],
+            [['bulan_periode', 'created_at', 'updated_at', 'nama', 'nama_barang', 'filter_tahun', 'filter_bulan'], 'safe'],
         ];
     }
 
@@ -69,7 +72,7 @@ class RiwayatPenjualanSearch extends RiwayatPenjualan
         $query->andFilterWhere([
             'riwayat_penjualan_id' => $this->riwayat_penjualan_id,
             'qty_penjualan' => $this->qty_penjualan,
-            'bulan_periode' => $this->bulan_periode,
+            // 'bulan_periode' => $this->bulan_periode,
         ]);
 
         $query->andFilterWhere(['or',
@@ -117,6 +120,22 @@ class RiwayatPenjualanSearch extends RiwayatPenjualan
         ]);
 
         $query->andFilterWhere(['like', 'bulan_periode', $this->bulan_periode]);
+
+        
+        // ===============================
+        // FILTER TAHUN & BULAN (YYYYMM)
+        // ===============================
+
+        // Filter Tahun
+        if (!empty($this->filter_tahun)) {
+            $query->andWhere('LEFT(bulan_periode,4) = :tahun', [':tahun' => $this->filter_tahun]);
+        }
+
+        // Filter Bulan
+        if (!empty($this->filter_bulan)) {
+            $bulan = str_pad($this->filter_bulan, 2, '0', STR_PAD_LEFT);
+            $query->andWhere('RIGHT(bulan_periode,2) = :bulan', [':bulan' => $bulan]);
+        }
 
         return $dataProvider;
     }

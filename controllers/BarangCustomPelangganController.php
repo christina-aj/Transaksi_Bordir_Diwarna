@@ -222,29 +222,37 @@ class BarangCustomPelangganController extends Controller
                 $success = true;
                 $errors = [];
 
-                // Hapus semua produk custom lama beserta BOM-nya
-                foreach ($existingProducts as $oldProduct) {
-                    // Hapus BOM dulu
-                    \app\models\BomCustom::deleteAll(['barang_custom_pelanggan_id' => $oldProduct->barang_custom_pelanggan_id]);
-                    // Hapus produk
-                    $oldProduct->delete();
+                // JANGAN HAPUS! Ambil ID yang sudah ada
+                $existingIds = [];
+                foreach ($existingProducts as $existing) {
+                    $existingIds[] = $existing->barang_custom_pelanggan_id;
                 }
 
-                // Simpan produk baru (sama seperti create)
+                $processedIds = [];
+
+                // Update atau create produk
                 if (isset($post['products']) && is_array($post['products'])) {
                     foreach ($post['products'] as $index => $product) {
-                        // Skip jika kode dan nama kosong
                         if (empty($product['kode_barang']) && empty($product['nama_barang'])) {
                             continue;
                         }
 
-                        // Simpan Barang Custom Pelanggan
-                        $barangCustom = new \app\models\BarangCustomPelanggan();
-                        $barangCustom->pelanggan_id = $pelanggan_id;
-                        $barangCustom->kode_barang_custom = $product['kode_barang'] ?? '';
-                        $barangCustom->nama_barang_custom = $product['nama_barang'] ?? '';
-                        $barangCustom->created_at = time();
-                        $barangCustom->updated_at = time();
+                        // Update produk yang sudah ada atau buat baru
+                        if (isset($existingIds[$index]) && isset($existingProducts[$index])) {
+                            // UPDATE yang sudah ada
+                            $barangCustom = $existingProducts[$index];
+                            $barangCustom->kode_barang_custom = $product['kode_barang'] ?? '';
+                            $barangCustom->nama_barang_custom = $product['nama_barang'] ?? '';
+                            $barangCustom->updated_at = date('Y-m-d H:i:s'); 
+                        } else {
+                            // CREATE baru
+                            $barangCustom = new \app\models\BarangCustomPelanggan();
+                            $barangCustom->pelanggan_id = $pelanggan_id;
+                            $barangCustom->kode_barang_custom = $product['kode_barang'] ?? '';
+                            $barangCustom->nama_barang_custom = $product['nama_barang'] ?? '';
+                            $barangCustom->created_at = date('Y-m-d H:i:s'); 
+                            $barangCustom->updated_at = date('Y-m-d H:i:s');
+                        }
                         
                         if (!$barangCustom->save()) {
                             $errors[] = "Produk #" . ($index + 1) . ": " . json_encode($barangCustom->errors);
@@ -252,11 +260,16 @@ class BarangCustomPelangganController extends Controller
                             continue;
                         }
 
-                        // Simpan BOM Custom untuk produk ini
+                        $processedIds[] = $barangCustom->barang_custom_pelanggan_id;
+
+                        // Hapus BOM lama untuk produk ini
+                        \app\models\BomCustom::deleteAll(['barang_custom_pelanggan_id' => $barangCustom->barang_custom_pelanggan_id]);
+
+                        // Simpan BOM baru
                         if (isset($product['bom']) && is_array($product['bom'])) {
                             foreach ($product['bom'] as $bomIndex => $bomData) {
                                 if (empty($bomData['barang_id']) || empty($bomData['qty'])) {
-                                    continue; // Skip jika kosong
+                                    continue;
                                 }
 
                                 $bomCustom = new \app\models\BomCustom();
@@ -272,6 +285,20 @@ class BarangCustomPelangganController extends Controller
                                 }
                             }
                         }
+                    }
+                }
+
+                // Hapus produk yang tidak di-submit (HANYA jika tidak ada di permintaan_detail)
+                $idsToDelete = array_diff($existingIds, $processedIds);
+                foreach ($idsToDelete as $deleteId) {
+                    // Cek dulu apakah dipakai di permintaan_detail
+                    $isUsed = \app\models\PermintaanDetail::find()
+                        ->where(['barang_custom_pelanggan_id' => $deleteId])
+                        ->exists();
+                    
+                    if (!$isUsed) {
+                        \app\models\BomCustom::deleteAll(['barang_custom_pelanggan_id' => $deleteId]);
+                        \app\models\BarangCustomPelanggan::deleteAll(['barang_custom_pelanggan_id' => $deleteId]);
                     }
                 }
 

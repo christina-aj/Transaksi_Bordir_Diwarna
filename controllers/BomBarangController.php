@@ -149,7 +149,11 @@ class BomBarangController extends Controller
                 $modelDetail = new BomDetail();
                 $modelDetail->BOM_barang_id = $BOM_barang_id;
                 $modelDetail->barang_id = $data['barang_id'] ?? null;
-                $modelDetail->qty_BOM = $data['qty_BOM'] ?? null;
+
+                // KONVERSI GRAM KE KG (bagi 1000)
+                $qtyGram = $data['qty_BOM'] ?? 0;
+                $modelDetail->qty_BOM = $qtyGram / 1000; 
+
                 $modelDetail->catatan = $data['catatan'] ?? '';
 
                 if ($modelDetail->validate()) {
@@ -251,7 +255,10 @@ class BomBarangController extends Controller
                     // Update existing detail
                     $modelDetail = $existingDetailIds[$detailId];
                     $modelDetail->barang_id = $data['barang_id'] ?? $modelDetail->barang_id;
-                    $modelDetail->qty_BOM = $data['qty_BOM'] ?? $modelDetail->qty_BOM;
+                    
+                    $qtyGram = $data['qty_BOM'] ?? $modelDetail->qty_BOM * 1000; // Konversi balik ke gram dulu
+                    $modelDetail->qty_BOM = $qtyGram / 1000;
+
                     $modelDetail->catatan = $data['catatan'] ?? '';
                     $isValid = $modelDetail->validate() && $isValid;
                     $updatedDetails[] = $modelDetail;
@@ -260,7 +267,10 @@ class BomBarangController extends Controller
                     $newDetail = new BomDetail();
                     $newDetail->BOM_barang_id = $modelBom->BOM_barang_id;
                     $newDetail->barang_id = $data['barang_id'] ?? null;
-                    $newDetail->qty_BOM = $data['qty_BOM'] ?? null;
+
+                    $qtyGram = $data['qty_BOM'] ?? 0;
+                    $newDetail->qty_BOM = $qtyGram / 1000;
+
                     $newDetail->catatan = $data['catatan'] ?? '';
                     $isValid = $newDetail->validate() && $isValid;
                     $updatedDetails[] = $newDetail;

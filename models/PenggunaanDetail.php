@@ -58,12 +58,14 @@ class PenggunaanDetail extends \yii\db\ActiveRecord
     {
         return [
             [['catatan', 'created_at', 'updated_at'], 'default', 'value' => null],
-            [['penggunaan_id', 'barang_id', 'jumlah_digunakan'], 'required'],
-            [['penggunaan_id', 'barang_id', 'jumlah_digunakan'], 'integer'],
+            [['penggunaan_id', 'barang_id'], 'required'],
+            [['penggunaan_id', 'barang_id'], 'integer'],
+            [['jumlah_digunakan'], 'number', 'min' => 0.001, 'max' => 1000], // ← Float/number
             [['created_at', 'updated_at'], 'safe'],
             [['catatan'], 'string', 'max' => 255],
             [['barang_id'], 'exist', 'skipOnError' => true, 'targetClass' => Barang::class, 'targetAttribute' => ['barang_id' => 'barang_id']],
             [['penggunaan_id'], 'exist', 'skipOnError' => true, 'targetClass' => Penggunaan::class, 'targetAttribute' => ['penggunaan_id' => 'penggunaan_id']],
+            [['jumlah_digunakan'], 'required', 'message' => 'Jumlah harus diisi'],
         ];
     }
 

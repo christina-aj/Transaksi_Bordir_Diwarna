@@ -60,7 +60,7 @@ $isUpdate = !$modelDetails[0]->isNewRecord;
                             <th style="width: 5%;">No</th>
                             <th style="width: 10%;">Kode Barang</th>
                             <th style="width: 35%;">Nama Barang <span class="text-danger">*</span></th>
-                            <th style="width: 15%;">Jumlah <span class="text-danger">*</span></th>
+                            <th style="width: 15%;">Jumlah (Gram) <span class="text-danger">*</span></th>
                             <th style="width: 25%;">Catatan</th>
                             <th style="width: 10%;">Aksi</th>
                         </tr>
@@ -130,7 +130,7 @@ $isUpdate = !$modelDetails[0]->isNewRecord;
                                         'type' => 'number',
                                         'min' => 1,
                                         'required' => true,
-                                        'placeholder' => 'Jumlah'
+                                        'placeholder' => 'Cth: 25 (gram)"'
                                     ]) ?>
                                 </td>
                                 

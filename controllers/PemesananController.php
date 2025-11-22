@@ -272,12 +272,21 @@ class PemesananController extends BaseController
                     throw new \Exception('Objek dalam modelDetails bukan instance dari PesanDetail.');
                 }
 
+                // AMBIL SUPPLIER UTAMA =====
+                $supplierUtamaId = $this->getSupplierUtama($pesanDetail->barang_id);
+
+                //AMBIL HARGA SUPP UTAMA
+                $hargaSuppUtama = $this->getHargaSupplierUtama($pesanDetail->barang_id, $supplierUtamaId);
+
+                // Hitung total biaya = qty × harga
+                $totalBiaya = $pesanDetail->qty * $hargaSuppUtama;
+
                 $pembelianDetail = new PembelianDetail();
                 $pembelianDetail->pembelian_id = $pembelianId;
                 $pembelianDetail->pesandetail_id = $pesanDetail->pesandetail_id;
-                $pembelianDetail->cek_barang = 0;
-                $pembelianDetail->total_biaya = 0;
-                $pembelianDetail->supplier_id = 0;
+                $pembelianDetail->cek_barang = $hargaSuppUtama;
+                $pembelianDetail->total_biaya = $totalBiaya;
+                $pembelianDetail->supplier_id = $supplierUtamaId;
                 $pembelianDetail->is_correct = 0;
                 $pembelianDetail->created_at = date('Y-m-d H:i:s');
 
@@ -385,13 +394,19 @@ class PemesananController extends BaseController
                 $pembelian = Pembelian::findOne(['pemesanan_id' => $modelPemesanan->pemesanan_id]);
                 foreach ($newDetails as $newDetail) {
                     if ($newDetail->save(false)) { // Simpan PesanDetail terlebih dahulu tanpa validasi
+                        // AMBIL SUPPLIER UTAMA 
+                        $supplierUtamaId = $this->getSupplierUtama($newDetail->barang_id);
+                        //AMBIL HARGA SUPP UTAMA
+                        $hargaSuppUtama = $this->getHargaSupplierUtama($newDetail->barang_id, $supplierUtamaId);
+                        // Hitung total biaya = qty × harga
+                        $totalBiaya = $newDetail->qty * $hargaSuppUtama;
                         // Buat PembelianDetail baru untuk setiap PesanDetail yang baru disimpan
                         $pembelianDetail = new PembelianDetail([
                             'pembelian_id' => $pembelian->pembelian_id,
                             'pesandetail_id' => $newDetail->pesandetail_id, // Gunakan pesandetail_id dari PesanDetail yang baru disimpan
-                            'cek_barang' => 0,
-                            'total_biaya' => 0,
-                            'supplier_id' => 0,
+                            'cek_barang' => $hargaSuppUtama,
+                            'total_biaya' => $totalBiaya,
+                            'supplier_id' => $supplierUtamaId,
                             'is_correct' => 0,
                         ]);
                         $pembelianDetail->save(false); // Simpan PembelianDetail tanpa validasi
@@ -753,5 +768,77 @@ class PemesananController extends BaseController
     {
         $currentStock = Stock::find()->where(['barang_id' => $barang_id])->orderBy(['created_at' => SORT_DESC])->one();
         return $currentStock ? $currentStock->quantity_akhir : 0; // Jika tidak ada stok sebelumnya, mulai dari 0
+    }
+
+    /**
+     * Helper function untuk mendapatkan supplier utama dari barang
+     * Menggunakan JOIN untuk query 
+     */
+    protected function getSupplierUtama($barangId)
+    {
+        // Query langsung ke supplier_barang_detail
+        $result = (new \yii\db\Query())
+            ->select('sbd.supplier_id')
+            ->from('supplier_barang sb')
+            ->innerJoin('supplier_barang_detail sbd', 'sbd.supplier_barang_id = sb.supplier_barang_id')
+            ->where(['sb.barang_id' => $barangId])
+            ->andWhere(['sbd.supp_utama' => 1])
+            ->one();
+        
+        if ($result) {
+            return $result['supplier_id'];
+        }
+        
+        // Fallback: Ambil supplier pertama jika tidak ada yang utama
+        $fallback = (new \yii\db\Query())
+            ->select('sbd.supplier_id')
+            ->from('supplier_barang sb')
+            ->innerJoin('supplier_barang_detail sbd', 'sbd.supplier_barang_id = sb.supplier_barang_id')
+            ->where(['sb.barang_id' => $barangId])
+            ->orderBy(['sbd.supplier_barang_detail_id' => SORT_ASC])
+            ->limit(1)
+            ->one();
+        
+        return $fallback ? $fallback['supplier_id'] : 0;
+    }
+
+    /**
+     * Helper function untuk mendapatkan harga dari supplier tertentu
+     * @param int $barangId
+     * @param int $supplierId (optional) - jika null, ambil dari supplier utama
+     */
+    protected function getHargaSupplierUtama($barangId, $supplierId = null)
+    {
+        $query = (new \yii\db\Query())
+            ->select('sbd.harga_per_kg')
+            ->from('supplier_barang sb')
+            ->innerJoin('supplier_barang_detail sbd', 'sbd.supplier_barang_id = sb.supplier_barang_id')
+            ->where(['sb.barang_id' => $barangId]);
+        
+        if ($supplierId !== null) {
+            // Ambil harga dari supplier tertentu
+            $query->andWhere(['sbd.supplier_id' => $supplierId]);
+        } else {
+            // Ambil dari supplier utama
+            $query->andWhere(['sbd.supp_utama' => 1]);
+        }
+        
+        $result = $query->one();
+        
+        if ($result) {
+            return $result['harga_per_kg'];
+        }
+        
+        // Fallback: Ambil harga pertama jika tidak ada
+        $fallback = (new \yii\db\Query())
+            ->select('sbd.harga_per_kg')
+            ->from('supplier_barang sb')
+            ->innerJoin('supplier_barang_detail sbd', 'sbd.supplier_barang_id = sb.supplier_barang_id')
+            ->where(['sb.barang_id' => $barangId])
+            ->orderBy(['sbd.supplier_barang_detail_id' => SORT_ASC])
+            ->limit(1)
+            ->one();
+        
+        return $fallback ? $fallback['harga_per_kg'] : 0;
     }
 }

@@ -199,6 +199,10 @@ class PenggunaanController extends Controller
                     foreach ($modelDetails as $index => $modelDetail) {
                         $barang = Barang::findOne($modelDetail->barang_id);
                         $modelDetail->penggunaan_id = $penggunaan_id;
+
+                        $jumlahGram = $modelDetail->jumlah_digunakan ?? 0;
+                        $modelDetail->jumlah_digunakan = $jumlahGram / 1000;
+
                         $modelDetail->created_at = date('Y-m-d H:i:s');
                         $modelDetail->gudang_id = null; // FK ke record gudang yang akan dikurangi
 
@@ -257,21 +261,31 @@ class PenggunaanController extends Controller
             $detailData = Yii::$app->request->post('PenggunaanDetail', []); // NAMA HARUS SAMA DENGAN JS
             $isValid = $modelPenggunaan->validate();
 
-            // Loop untuk menyimpan atau memperbarui detail yang ada
+            // Loop untuk update detail yang ada
             foreach ($modelDetails as $index => $modelDetail) {
                 if (isset($detailData[$index])) {
-                    $modelDetail->setAttributes($detailData[$index]);
+                    $modelDetail->barang_id = $detailData[$index]['barang_id'] ?? $modelDetail->barang_id;
+                    
+                    $jumlahGram = $detailData[$index]['jumlah_digunakan'] ?? $modelDetail->jumlah_digunakan * 1000;
+                    $modelDetail->jumlah_digunakan = $jumlahGram / 1000;
+                    
+                    $modelDetail->catatan = $detailData[$index]['catatan'] ?? '';
                     $isValid = $modelDetail->validate() && $isValid;
                 }
             }
 
-            // Loop untuk menambah detail baru jika ada data baru
+            // Loop untuk menambah detail baru
             $newDetails = [];
             foreach ($detailData as $index => $data) {
-                if (!isset($modelDetails[$index])) { // Detail baru
+                if (!isset($modelDetails[$index])) {
                     $newDetail = new PenggunaanDetail();
                     $newDetail->penggunaan_id = $modelPenggunaan->penggunaan_id;
-                    $newDetail->setAttributes($data);
+                    $newDetail->barang_id = $data['barang_id'] ?? null;
+                    
+                    $jumlahGram = $data['jumlah_digunakan'] ?? 0;
+                    $newDetail->jumlah_digunakan = $jumlahGram / 1000;
+                    
+                    $newDetail->catatan = $data['catatan'] ?? '';
                     $newDetails[] = $newDetail;
                     $isValid = $newDetail->validate() && $isValid;
                 }
@@ -538,7 +552,7 @@ class PenggunaanController extends Controller
         }
 
         $modelDetails = PenggunaanDetail::findAll(['penggunaan_id' => $penggunaan_id]);
-        $stockPerArea = []; // ... existing stock code
+        $stockPerArea = [];
 
         foreach ($modelDetails as $detail) {
             $stocks = Gudang::find()
@@ -566,51 +580,40 @@ class PenggunaanController extends Controller
             $stockPerArea[$detail->barang_id] = $areaStock;
         }
 
-
         if (Yii::$app->request->isPost) {
-            echo "<h3>DEBUG: Processing POST...</h3>";
-            
             $detailsData = Yii::$app->request->post('details', []);
-            echo "<pre>detailsData: "; print_r($detailsData); echo "</pre>";
             
             $transaction = Yii::$app->db->beginTransaction();
             try {
-                echo "<p>Starting transaction...</p>";
-                
                 // Hapus detail lama
-                $deleteResult = PenggunaanDetail::deleteAll(['penggunaan_id' => $penggunaan_id]);
-                echo "<p>Deleted {$deleteResult} old records</p>";
+                PenggunaanDetail::deleteAll(['penggunaan_id' => $penggunaan_id]);
                 
                 foreach ($detailsData as $index => $detailData) {
-                    echo "<h4>Processing detail #{$index}</h4>";
-                    
                     $originalBarangId = $detailData['barang_id'];
-                    $originalQuantity = $detailData['jumlah_digunakan'];
+
+                    $originalQuantityGram = $detailData['jumlah_digunakan'];
+                    $originalQuantity = $originalQuantityGram / 1000;
+                    
                     $catatan = $detailData['catatan'] ?? '';
                     $areas = $detailData['areas'] ?? [];
                     
-                    echo "<p>Barang ID: {$originalBarangId}, Original Qty: {$originalQuantity}</p>";
-                    echo "<pre>Areas: "; print_r($areas); echo "</pre>";
+                    // Validasi total quantity dengan konversi ke KG
+                    $totalSelectedGram = array_sum(array_column($areas, 'quantity'));
+                    $totalSelected = $totalSelectedGram / 1000;
                     
-                    // Validasi total quantity
-                    $totalSelected = array_sum(array_column($areas, 'quantity'));
-                    echo "<p>Total selected: {$totalSelected}</p>";
-                    
-                    if ($totalSelected != $originalQuantity) {
-                        throw new \Exception("Total quantity tidak sesuai untuk barang ID: {$originalBarangId}. Expected: {$originalQuantity}, Got: {$totalSelected}");
+                    // Gunakan toleransi untuk floating point comparison
+                    if (abs($totalSelected - $originalQuantity) > 0.001) {
+                        throw new \Exception("Total quantity tidak sesuai untuk barang ID: {$originalBarangId}. Expected: {$originalQuantity} kg, Got: {$totalSelected} kg");
                     }
                     
                     // Buat detail baru per area
                     foreach ($areas as $areaIndex => $areaData) {
-                        echo "<h5>Processing area #{$areaIndex}</h5>";
-                        
                         $areaGudang = $areaData['area_gudang'];
-                        $quantity = $areaData['quantity'];
                         
-                        echo "<p>Area: {$areaGudang}, Quantity: {$quantity}</p>";
+                        $quantityGram = $areaData['quantity'];
+                        $quantity = $quantityGram / 1000;
                         
                         if ($quantity <= 0) {
-                            echo "<p>Skipping zero quantity</p>";
                             continue;
                         }
                         
@@ -620,28 +623,19 @@ class PenggunaanController extends Controller
                         $newDetail->barang_id = $originalBarangId;
                         $newDetail->kode_barang = Barang::findOne($originalBarangId)->kode_barang;
                         $newDetail->nama_barang = Barang::findOne($originalBarangId)->nama_barang;
-                        $newDetail->jumlah_digunakan = $quantity;
+                        $newDetail->jumlah_digunakan = $quantity; //  Sudah dalam KG
                         $newDetail->area_gudang = $areaGudang;
                         $newDetail->catatan = $catatan;
                         $newDetail->created_at = date('Y-m-d H:i:s');
                         
-                        echo "<pre>New detail attributes: "; print_r($newDetail->attributes); echo "</pre>";
-                        
                         if (!$newDetail->save()) {
-                            echo "<pre>Save failed. Errors: "; print_r($newDetail->errors); echo "</pre>";
                             throw new \Exception("Gagal menyimpan detail: " . json_encode($newDetail->errors));
                         }
                         
-                        echo "<p>Detail saved with ID: {$newDetail->gunadetail_id}</p>";
-                        
-                        // PERBAIKAN: Panggil updateGudangStock setelah save berhasil
-                        echo "<p>Updating stock gudang...</p>";
+                        // Update stock gudang setelah save berhasil
                         $this->updateGudangStock($originalBarangId, $areaGudang, $quantity, $penggunaan_id, $newDetail->gunadetail_id);
-                        echo "<p>Stock updated successfully</p>";
                     }
                 }
-                
-                // echo "<p>All details processed successfully</p>";
                 
                 // Update status penggunaan
                 $modelPenggunaan->status_penggunaan = 1;
@@ -651,10 +645,7 @@ class PenggunaanController extends Controller
                     throw new \Exception('Gagal update status penggunaan');
                 }
                 
-                echo "<p>Status updated to complete</p>";
-                
                 $transaction->commit();
-                // echo "<p>Transaction committed!</p>";
 
                 // UPDATE STATUS PERMINTAAN JADI "ON PROGRESS" (1)
                 if (!empty($modelPenggunaan->permintaan_id)) {
@@ -668,13 +659,9 @@ class PenggunaanController extends Controller
                 Yii::$app->session->setFlash('success', 'Status : Complete. Barang dari gudang dipindahkan ke area produksi.');
                 return $this->redirect(['view', 'penggunaan_id' => $penggunaan_id]);
                 
-                // exit("SUCCESS - Now redirecting..."); // Stop here to see if we reach this point
-                
             } catch (\Exception $e) {
                 $transaction->rollBack();
-                echo "<p style='color: red;'>ERROR: " . $e->getMessage() . "</p>";
-                echo "<pre>Stack trace: " . $e->getTraceAsString() . "</pre>";
-                exit("FAILED");
+                Yii::$app->session->setFlash('error', 'Error: ' . $e->getMessage());
             }
         }
 

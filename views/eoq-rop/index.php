@@ -30,7 +30,14 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
         </div>
         
-        <!-- Info Warna -->
+        <!-- info detail itung eoq rop -->
+        <div class="card-body pb-0">
+            <div class="alert alert-light d-flex justify-content-start gap-2 mb-2">
+                <div><strong>Info Perhitungan:</strong></div>
+                <div>Perhitungan di generate untuk 4 bulan kedepan, untuk barang fast moving, untuk slow moving perhitungan EOQ adalah ROP x 2 dimana ROP == Safety Stock</div>
+            </div>
+        </div>
+                <!-- Info Warna -->
         <div class="card-body pb-0">
             <div class="alert alert-light d-flex justify-content-start gap-2 mb-2">
                 <div><strong>Info Warna:</strong></div>
@@ -39,6 +46,10 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div><span class="badge" style="background-color: #f9dddfff; color: #721c24; padding: 5px 10px;">Slow Moving</span></div>
             </div>
         </div>
+        
+
+
+        
 
         <div class="card-body">
             <div class="table-responsive">

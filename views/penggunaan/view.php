@@ -81,7 +81,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         ],
                         [
                             'attribute' => 'jumlah_digunakan',
-                            'label' => 'Quantity Penggunaan',
+                            'label' => 'Quantity Penggunaan (KG)',
                         ],
                         // [
                         //     'attribute' => 'qty_terima',
@@ -152,24 +152,12 @@ $this->params['breadcrumbs'][] = $this->title;
                         <!-- Gudang hanya bisa update/complete jika status masih pending -->
                         <?= Html::a('Update', ['update-qty', 'penggunaan_id' => $model->penggunaan_id], ['class' => 'btn btn-danger']) ?>
                         <?= Html::a('Back', ['index'], ['class' => 'btn btn-secondary']) ?>
-                        <?= Html::a('Complete', ['verify', 'penggunaan_id' => $model->penggunaan_id], [
-                            'class' => 'btn btn-warning',
-                            'data-confirm' => 'Apakah Anda yakin ingin melakukan verifikasi?',
-                            'data-method' => 'post',
-                            'id' => 'verify-button',
-                        ]) ?>
                     
                     <?php elseif ($roleName == "Super Admin" && $model->status_penggunaan == 0): ?>
                         <!-- Gudang hanya bisa update/complete jika status masih pending -->
                         <?= Html::a('Edit', ['update', 'penggunaan_id' => $model->penggunaan_id], ['class' => 'btn btn-danger']) ?>
                         <?= Html::a('Update', ['update-qty', 'penggunaan_id' => $model->penggunaan_id], ['class' => 'btn btn-danger']) ?>
                         <?= Html::a('Back', ['index'], ['class' => 'btn btn-secondary']) ?>
-                        <?= Html::a('Complete', ['verify', 'penggunaan_id' => $model->penggunaan_id], [
-                            'class' => 'btn btn-warning',
-                            'data-confirm' => 'Apakah Anda yakin ingin melakukan verifikasi?',
-                            'data-method' => 'post',
-                            'id' => 'verify-button',
-                        ]) ?>
                         
                     <?php else: ?>
                         <!-- Untuk semua role jika status complete, atau role lain -->

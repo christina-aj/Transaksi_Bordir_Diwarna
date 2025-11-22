@@ -18,6 +18,12 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="card card-table">
             <div class="card-header">
                 <h1><?= Html::encode($this->title) ?></h1>
+                <p>
+                    <?= \yii\helpers\Html::a('Update Data Aktual', ['forecast/update-actual'], [
+                        'class' => 'btn btn-warning',
+                        'data-confirm' => 'Yakin mau update data aktual bulan lalu?',
+                    ]) ?>
+                </p>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -28,13 +34,13 @@ $this->params['breadcrumbs'][] = $this->title;
                             ['class' => 'yii\grid\SerialColumn'],
 
                             // 'forecast_history_id',
-                            [
-                                'attribute' => 'barang_produksi_id',
-                                'label' => 'Nama Barang',
-                                'value' => function($model) {
-                                    return $model->barangProduksi->nama ?? '';
-                                }
-                            ],
+                            // [
+                            //     'attribute' => 'barang_produksi_id',
+                            //     'label' => 'Nama Barang',
+                            //     'value' => function($model) {
+                            //         return $model->barangProduksi->nama ?? '';
+                            //     }
+                            // ],
                             // 'barang_produksi_id',
                             // 'periode_forecast',
                             [
@@ -45,10 +51,12 @@ $this->params['breadcrumbs'][] = $this->title;
                                 }
                             ],
                             'nilai_alpha',
+                            'nilai_beta',
+                            'nilai_gamma',
                             'mape_test',
                             'hasil_forecast',
                             'data_aktual',
-                            // 'selisih',
+                            'selisih',
                             // 'tanggal_dibuat',
                             // [
                             //     'class' => ActionColumn::className(),

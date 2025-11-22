@@ -150,17 +150,92 @@ class PermintaanPelangganController extends Controller
     }
 
 
+    /**
+     * Finalkan permintaan bulan lalu ke riwayat penjualan
+     * Hanya bisa dijalankan tanggal 1-10 setiap bulan
+     */
+    // public function actionFinalkanBulanLalu()
+    // {
+    //     $bulanLalu = date('m', strtotime('-1 month'));
+    //     $tahunLalu = date('Y', strtotime('-1 month'));
+    //     $namaBulanLalu = date('F Y', strtotime('-1 month'));
+    //     $kodeBulanLalu = date('Ym', strtotime('-1 month'));
 
+    //     $permintaanList = \app\models\PermintaanPelanggan::find()
+    //         ->where(['status_permintaan' => 2])
+    //         ->andWhere(['MONTH(tanggal_permintaan)' => $bulanLalu, 'YEAR(tanggal_permintaan)' => $tahunLalu])
+    //         ->all();
+
+    //     if (empty($permintaanList)) {
+    //         Yii::$app->session->setFlash('warning', "Tidak ada permintaan berstatus Complete di bulan $namaBulanLalu.");
+    //         return $this->redirect(['index']);
+    //     }
+
+    //     foreach ($permintaanList as $permintaan) {
+    //         foreach ($permintaan->permintaanDetails as $detail) {
+    //             $riwayat = new \app\models\RiwayatPenjualan();
+    //             $riwayat->bulan_periode = $kodeBulanLalu;
+    //             $riwayat->qty_penjualan = $detail->qty_permintaan;
+    //             $riwayat->created_at = date('Y-m-d H:i:s');
+
+    //             // Pilih kolom ID yang relevan
+    //             if (!empty($detail->barang_produksi_id)) {
+    //                 $riwayat->barang_produksi_id = $detail->barang_produksi_id;
+    //             } elseif (!empty($detail->barang_custom_pelanggan_id)) {
+    //                 $riwayat->barang_custom_pelanggan_id = $detail->barang_custom_pelanggan_id;
+    //             }
+
+    //             $riwayat->save(false);
+    //         }
+
+    //         // Update status permintaan jadi archived
+    //         $permintaan->status_permintaan = 3;
+    //         $permintaan->save(false);
+    //     }
+
+    //     Yii::$app->session->setFlash('success', "Permintaan bulan $namaBulanLalu berhasil difinalkan ke Riwayat Penjualan!");
+    //     return $this->redirect(['index']);
+    // }
+
+
+    /**
+     * TEST MODE
+     * Finalkan permintaan bulan lalu ke riwayat penjualan
+     * Hanya bisa dijalankan tanggal 1-10 setiap bulan
+     */
     public function actionFinalkanBulanLalu()
     {
+        // Ambil data bulan lalu
         $bulanLalu = date('m', strtotime('-1 month'));
         $tahunLalu = date('Y', strtotime('-1 month'));
         $namaBulanLalu = date('F Y', strtotime('-1 month'));
         $kodeBulanLalu = date('Ym', strtotime('-1 month'));
 
+        // // Cek apakah dalam test mode
+        // $isTestMode = Yii::$app->request->get('test_mode') == 1;
+        
+        // // Validasi periode aktif (kecuali test mode)
+        // if (!$isTestMode) {
+        //     $currentDay = (int)date('d');
+        //     if ($currentDay > 25) {
+        //         Yii::$app->session->setFlash('error', 'Finalisasi hanya dapat dilakukan pada tanggal 1-10 setiap bulan.');
+        //         return $this->redirect(['index']);
+        //     }
+            
+        //     // Cek apakah sudah pernah difinalkan bulan ini
+        //     $session = Yii::$app->session;
+        //     $monthKey = 'finalisasi_' . date('Ym');
+        //     if ($session->get($monthKey, false)) {
+        //         Yii::$app->session->setFlash('warning', 'Finalisasi bulan ini sudah dilakukan sebelumnya.');
+        //         return $this->redirect(['index']);
+        //     }
+        // }
+
+        // Ambil semua permintaan Complete di bulan lalu
         $permintaanList = \app\models\PermintaanPelanggan::find()
-            ->where(['status_permintaan' => 2])
-            ->andWhere(['MONTH(tanggal_permintaan)' => $bulanLalu, 'YEAR(tanggal_permintaan)' => $tahunLalu])
+            ->where(['status_permintaan' => 2]) // Status Complete
+            ->andWhere(['MONTH(tanggal_permintaan)' => $bulanLalu])
+            ->andWhere(['YEAR(tanggal_permintaan)' => $tahunLalu])
             ->all();
 
         if (empty($permintaanList)) {
@@ -168,33 +243,88 @@ class PermintaanPelangganController extends Controller
             return $this->redirect(['index']);
         }
 
-        foreach ($permintaanList as $permintaan) {
-            foreach ($permintaan->permintaanDetails as $detail) {
-                $riwayat = new \app\models\RiwayatPenjualan();
-                $riwayat->bulan_periode = $kodeBulanLalu;
-                $riwayat->qty_penjualan = $detail->qty_permintaan;
-                $riwayat->created_at = date('Y-m-d H:i:s');
+        // Mulai transaksi database
+        $transaction = Yii::$app->db->beginTransaction();
+        
+        try {
+            $totalPermintaan = 0;
+            $totalItem = 0;
+            
+            foreach ($permintaanList as $permintaan) {
+                $totalPermintaan++;
+                
+                foreach ($permintaan->permintaanDetails as $detail) {
+                    // Buat record di riwayat_penjualan
+                    $riwayat = new \app\models\RiwayatPenjualan();
+                    $riwayat->bulan_periode = $kodeBulanLalu;
+                    $riwayat->qty_penjualan = $detail->qty_permintaan;
+                    $riwayat->created_at = date('Y-m-d H:i:s');
 
-                // Pilih kolom ID yang relevan
-                if (!empty($detail->barang_produksi_id)) {
-                    $riwayat->barang_produksi_id = $detail->barang_produksi_id;
-                } elseif (!empty($detail->barang_custom_pelanggan_id)) {
-                    $riwayat->barang_custom_pelanggan_id = $detail->barang_custom_pelanggan_id;
+                    // Set ID barang sesuai tipe
+                    if (!empty($detail->barang_produksi_id)) {
+                        $riwayat->barang_produksi_id = $detail->barang_produksi_id;
+                    } elseif (!empty($detail->barang_custom_pelanggan_id)) {
+                        $riwayat->barang_custom_pelanggan_id = $detail->barang_custom_pelanggan_id;
+                    }
+
+                    if (!$riwayat->save(false)) {
+                        throw new \Exception('Gagal menyimpan riwayat penjualan.');
+                    }
+                    
+                    $totalItem++;
                 }
 
-                $riwayat->save(false);
+                // Update status permintaan jadi Archived
+                $permintaan->status_permintaan = 3;
+                if (!$permintaan->save(false)) {
+                    throw new \Exception('Gagal update status permintaan.');
+                }
             }
 
-            // Update status permintaan jadi archived
-            $permintaan->status_permintaan = 3;
-            $permintaan->save(false);
+            $transaction->commit();
+            
+            // Set flash success dengan detail
+            Yii::$app->session->setFlash('success', 
+                "Berhasil memfinalkan $totalPermintaan permintaan dengan total $totalItem item dari bulan $namaBulanLalu ke Riwayat Penjualan!"
+            );
+            
+            // Redirect dengan parameter done=1 untuk set session flag
+            // return $this->redirect(['index', 'done' => 1, 'test_mode' => $isTestMode ? 1 : null]);
+            
+        } catch (\Exception $e) {
+            $transaction->rollBack();
+            Yii::$app->session->setFlash('error', 'Gagal finalkan: ' . $e->getMessage());
+            return $this->redirect(['index']);
         }
-
-        Yii::$app->session->setFlash('success', "Permintaan bulan $namaBulanLalu berhasil difinalkan ke Riwayat Penjualan!");
-        return $this->redirect(['index']);
     }
 
 
+    /**
+     * ubah permintaan jadi complete
+     * @param int $permintaan_id
+     * @return \yii\web\Response
+     */
+    public function actionComplete($permintaan_id)
+    {
+        $model = $this->findModel($permintaan_id);
+        
+        // Validasi: hanya bisa complete jika status On Progress
+        if ($model->status_permintaan != PermintaanPelanggan::STATUS_ON_PROGRESS) {
+            Yii::$app->session->setFlash('error', 'Hanya permintaan dengan status On Progress yang bisa di-complete.');
+            return $this->redirect(['view', 'permintaan_id' => $permintaan_id]);
+        }
+        
+        // Update status jadi Complete
+        $model->status_permintaan = PermintaanPelanggan::STATUS_COMPLETE;
+        
+        if ($model->save(false)) {
+            Yii::$app->session->setFlash('success', 'Permintaan berhasil ditandai sebagai Complete!');
+        } else {
+            Yii::$app->session->setFlash('error', 'Gagal update status.');
+        }
+        
+        return $this->redirect(['view', 'permintaan_id' => $permintaan_id]);
+    }
 
 
     /**
@@ -240,6 +370,12 @@ class PermintaanPelangganController extends Controller
     public function actionUpdate($permintaan_id)
     {
         $model = $this->findModel($permintaan_id);
+
+        if ($model->status_permintaan != PermintaanPelanggan::STATUS_PENDING) {
+            Yii::$app->session->setFlash('error', 'Tidak dapat mengubah permintaan yang sudah On Progress, Complete, atau Archived.');
+            return $this->redirect(['view', 'permintaan_id' => $permintaan_id]);
+        }
+
         $pelangganList = MasterPelanggan::find()->all();
 
         if ($this->request->isPost) {
@@ -316,6 +452,13 @@ class PermintaanPelangganController extends Controller
     // }
     public function actionDelete($permintaan_id)
     {
+        $model = $this->findModel($permintaan_id);
+    
+        if ($model->status_permintaan != PermintaanPelanggan::STATUS_PENDING) {
+            Yii::$app->session->setFlash('error', 'Tidak dapat menghapus permintaan yang sudah On Progress, Complete, atau Archived.');
+            return $this->redirect(['index']);
+        }
+        
         $transaction = Yii::$app->db->beginTransaction();
         try {
             // Hapus dulu detail yang terkait

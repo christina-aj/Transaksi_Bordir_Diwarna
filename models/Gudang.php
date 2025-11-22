@@ -251,4 +251,33 @@ class Gudang extends \yii\db\ActiveRecord
             4 => 'Area 4',
         ];
     }
+
+    /**
+     * Auto-update Stock ROP setiap kali ada perubahan stock gudang
+     * Hanya trigger untuk kode=1 (Barang Gudang) dan jika quantity berubah
+     */
+    public function afterSave($insert, $changedAttributes)
+    {
+        parent::afterSave($insert, $changedAttributes);
+        
+        // Hanya update Stock ROP untuk barang gudang (bukan penggunaan)
+        if ($this->kode == self::KODE_BARANG_GUDANG) {
+            // Trigger jika insert baru atau quantity_akhir berubah
+            $shouldUpdate = $insert || 
+                        (isset($changedAttributes['quantity_akhir']) && 
+                            $changedAttributes['quantity_akhir'] != $this->quantity_akhir);
+            
+            if ($shouldUpdate) {
+                try {
+                    // Update Stock ROP untuk barang ini
+                    \app\controllers\StockRopController::updateStockForBarang($this->barang_id);
+                    
+                    Yii::info("Stock ROP updated for barang_id: {$this->barang_id}", __METHOD__);
+                } catch (\Exception $e) {
+                    // Log error tapi jangan gagalkan transaksi utama
+                    Yii::error("Failed to update Stock ROP for barang_id {$this->barang_id}: " . $e->getMessage(), __METHOD__);
+                }
+            }
+        }
+    }
 }

@@ -29,15 +29,11 @@ class StockRopController extends Controller
         );
     }
 
-    /**
-     * Auto-generate Stock ROP dari data EOQ_ROP
-     */
     public function actionGenerate()
     {
         $transaction = Yii::$app->db->beginTransaction();
         
         try {
-            // Ambil semua data EOQ_ROP terbaru per barang dan periode
             $eoqRopData = Yii::$app->db->createCommand("
                 SELECT barang_id, periode, MAX(EOQ_ROP_id) as latest_id
                 FROM eoq_rop
@@ -48,31 +44,34 @@ class StockRopController extends Controller
             $updated = 0;
             
             foreach ($eoqRopData as $data) {
-                // Cari EOQ_ROP yang sesuai
                 $eoqRop = EoqRop::findOne($data['latest_id']);
                 
                 if (!$eoqRop) continue;
                 
-                // Hitung stock barang dari gudang (data terbaru per area)
-                $stockBarang = Yii::$app->db->createCommand("
-                    SELECT COALESCE(SUM(g.quantity_akhir), 0)
+                $stockBarang = Yii::$app->db->createCommand(" 
+                    SELECT COALESCE(SUM(g.quantity_akhir), 0) AS total_stok
                     FROM gudang g
-                    INNER JOIN (
-                        SELECT barang_id, area_gudang, MAX(tanggal) AS tanggal_terakhir
-                        FROM gudang
-                        WHERE barang_id = :barang_id
-                        GROUP BY barang_id, area_gudang
-                    ) latest
-                    ON g.barang_id = latest.barang_id
-                    AND g.area_gudang = latest.area_gudang
-                    AND g.tanggal = latest.tanggal_terakhir
                     WHERE g.barang_id = :barang_id
+                    AND g.kode = 1
+                    AND g.id_gudang IN (
+                        SELECT MAX(g2.id_gudang)
+                        FROM gudang g2
+                        WHERE g2.barang_id = :barang_id
+                        AND g2.kode = 1
+                        AND g2.area_gudang = g.area_gudang
+                        AND g2.created_at = (
+                            SELECT MAX(g3.created_at)
+                            FROM gudang g3
+                            WHERE g3.barang_id = :barang_id
+                            AND g3.kode = 1
+                            AND g3.area_gudang = g.area_gudang
+                        )
+                        GROUP BY g2.area_gudang
+                    )
                 ", [':barang_id' => $eoqRop->barang_id])->queryScalar();
                 
-                // Ambil safety stock dari snapshot EOQ_ROP
                 $safetyStock = $eoqRop->safety_stock_snapshot;
                 
-                // Tentukan status pesan_barang berdasarkan stock vs ROP
                 $pesanBarang = 'Aman';
                 if ($stockBarang <= $eoqRop->hasil_rop) {
                     $pesanBarang = 'Pesan Sekarang';
@@ -80,7 +79,6 @@ class StockRopController extends Controller
                     $pesanBarang = 'Perlu Diperhatikan';
                 }
                 
-                // Cek apakah data sudah ada di stock_rop
                 $stockRop = StockRop::find()
                     ->where([
                         'barang_id' => $eoqRop->barang_id,
@@ -89,7 +87,6 @@ class StockRopController extends Controller
                     ->one();
                 
                 if ($stockRop) {
-                    // Update data yang sudah ada
                     $stockRop->stock_barang = round($stockBarang, 2);
                     $stockRop->safety_stock = $safetyStock;
                     $stockRop->jumlah_eoq = round($eoqRop->hasil_eoq);
@@ -98,7 +95,6 @@ class StockRopController extends Controller
                     $stockRop->save(false);
                     $updated++;
                 } else {
-                    // Insert data baru
                     $stockRop = new StockRop();
                     $stockRop->barang_id = $eoqRop->barang_id;
                     $stockRop->periode = $eoqRop->periode;
@@ -196,5 +192,104 @@ class StockRopController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    /**
+     * Update stock_barang untuk barang tertentu secara real-time
+     * Dipanggil otomatis dari Model Gudang afterSave event
+     * 
+     * @param int $barangId
+     * @return bool
+     */
+    public static function updateStockForBarang($barangId)
+    {
+        try {
+            // Hitung stock barang terbaru
+            $stockBarang = Yii::$app->db->createCommand("
+                SELECT COALESCE(SUM(g.quantity_akhir), 0) AS total_stok
+                FROM gudang g
+                WHERE g.barang_id = :barang_id
+                AND g.kode = 1
+                AND g.id_gudang IN (
+                    SELECT MAX(g2.id_gudang)
+                    FROM gudang g2
+                    WHERE g2.barang_id = :barang_id
+                    AND g2.kode = 1
+                    AND g2.area_gudang = g.area_gudang
+                    AND g2.created_at = (
+                        SELECT MAX(g3.created_at)
+                        FROM gudang g3
+                        WHERE g3.barang_id = :barang_id
+                        AND g3.kode = 1
+                        AND g3.area_gudang = g.area_gudang
+                    )
+                    GROUP BY g2.area_gudang
+                )
+            ", [':barang_id' => $barangId])->queryScalar();
+            
+            // Update semua periode StockRop
+            $stockRops = \app\models\StockRop::find()
+                ->where(['barang_id' => $barangId])
+                ->all();
+            
+            if (empty($stockRops)) {
+                Yii::info("No StockRop data found for barang_id: {$barangId}", __METHOD__);
+                return true;
+            }
+            
+            foreach ($stockRops as $stockRop) {
+                // Simpan status lama
+                $oldStatus = $stockRop->pesan_barang;
+                
+                // Update stock
+                $stockRop->stock_barang = round($stockBarang, 2);
+                
+                // Update status
+                if ($stockBarang <= $stockRop->jumlah_rop) {
+                    $stockRop->pesan_barang = 'Pesan Sekarang';
+                } elseif ($stockBarang <= $stockRop->safety_stock) {
+                    $stockRop->pesan_barang = 'Perlu Diperhatikan';
+                } else {
+                    $stockRop->pesan_barang = 'Aman';
+                }
+                
+                $stockRop->save(false);
+                
+                // ===== KIRIM EMAIL JIKA STATUS BERUBAH JADI "PESAN SEKARANG" =====
+                if ($stockRop->pesan_barang == 'Pesan Sekarang' && $oldStatus != 'Pesan Sekarang') {
+                    
+                    // Cache key untuk mencegah spam email
+                    $cacheKey = "rop_email_sent_{$barangId}_{$stockRop->periode}";
+                    
+                    // Cek apakah email sudah pernah dikirim dalam 1 jam terakhir
+                    if (!Yii::$app->cache->get($cacheKey)) {
+                        // Load relasi barang
+                        $barang = $stockRop->barang;
+                        
+                        // Kirim email notifikasi
+                        $emailSent = \app\components\EmailHelper::sendRopNotification([
+                            'stockRop' => $stockRop,
+                            'barang' => $barang,
+                            'currentStock' => $stockBarang,
+                        ]);
+                        
+                        if ($emailSent) {
+                            // Set cache 1 jam agar tidak kirim email berulang
+                            Yii::$app->cache->set($cacheKey, true, 3600);
+                            Yii::info("ROP notification email sent for barang_id: {$barangId}", __METHOD__);
+                        }
+                    } else {
+                        Yii::info("ROP email skipped (already sent) for barang_id: {$barangId}", __METHOD__);
+                    }
+                }
+            }
+            
+            Yii::info("Stock ROP updated for barang_id: {$barangId}, new stock: {$stockBarang}", __METHOD__);
+            return true;
+            
+        } catch (\Exception $e) {
+            Yii::error("Failed to update Stock ROP: " . $e->getMessage(), __METHOD__);
+            return false;
+        }
     }
 }

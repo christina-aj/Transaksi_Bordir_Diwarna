@@ -73,7 +73,7 @@ echo Dialog::widget();
                         <th style="width: 25%;" class="barang-header">Barang id</th>
                         <th style="width: 25%;">Kode Barang</th>
                         <th style="width: 25%;">Nama Barang</th>
-                        <th style="width: 15%;">jumlah_digunakan</th>
+                        <th style="width: 15%;">Jumlah (gram)</th>
                         <!-- <th style="width: 15%;" class="barang-header">jumlah_digunakan Terima</th> -->
                         <th style="width: 30%;">Catatan</th>
                         <th style="width: 15%;" class="barang-header">Area Pengambilan</th>
@@ -181,19 +181,16 @@ echo Dialog::widget();
 $PenggunaanId = $modelPenggunaan->penggunaan_id;
 $isNewRecord = $modelDetail->isNewRecord;
 
-// 🔥 TAMBAHAN UNTUK AUTO-FILL BOM
+// TAMBAHAN UNTUK AUTO-FILL BOM
 $permintaanId = Yii::$app->request->get('permintaan_id');
 $urlGetBom = !empty($permintaanId) ? Url::to(['penggunaan/get-bom-data', 'permintaan_id' => $permintaanId]) : '';
 
-
 $this->registerJs("
-
-    
-
     var rowIndex = " . count($modelDetails) . ";
-    var PenggunaanId = " . json_encode($PenggunaanId) . "; // Menyimpan nilai penggunaan_id dari server
+    var PenggunaanId = " . json_encode($PenggunaanId) . ";
     $('.barang-header').hide();
     $('.barang-column').hide();
+
     // Fungsi untuk menambah baris baru
     $(document).on('click', '.add-row', function() {
         var newRow = `
@@ -202,7 +199,7 @@ $this->registerJs("
                 <td class='barang-column'><input type='text' name='PenggunaanDetail[` + rowIndex + `][barang_id]' id='penggunaandetail-` + rowIndex + `-barang_id' class='form-control' readonly></td>
                 <td><input type='text' name='PenggunaanDetail[` + rowIndex + `][kode_barang]' id='penggunaandetail-` + rowIndex + `-kode_barang' class='form-control' readonly></td>
                 <td><input type='text' name='PenggunaanDetail[` + rowIndex + `][nama_barang]' id='penggunaandetail-` + rowIndex + `-nama_barang' class='form-control typeahead-input' data-index='` + rowIndex + `' placeholder='Cari Nama Barang...'></td>
-                <td><input type='text' name='PenggunaanDetail[` + rowIndex + `][jumlah_digunakan]' class='form-control'></td>
+                <td><input type='number' name='PenggunaanDetail[` + rowIndex + `][jumlah_digunakan]' class='form-control' step='0.01' min='0'></td>
                 <td><input type='text' name='PenggunaanDetail[` + rowIndex + `][catatan]' class='form-control'></td>
                 <td class='barang-column'><input type='text' name='PenggunaanDetail[` + rowIndex + `][area_gudang]' class='form-control' readonly></td>
                 <td class='text-center'>
@@ -225,54 +222,33 @@ $this->registerJs("
         toggleAddDeleteButtons();
     });
 
-    //fungsi untuk cek form kosong atau tidak
-    var formChanged = true;  // Anggap form belum diproses saat pertama kali dimuat
+    var formChanged = true;
     var isNewRecord = " . json_encode($isNewRecord) . ";
 
     $(document).ready(function() {
-
-        // Menangani klik pada elemen button dan a
         $('button, a').on('click', function(e) {
-            // Cek apakah form telah berubah dan apakah tombol yang diklik bukan #cancelButton, #saveButton
             if (formChanged && isNewRecord && !$(e.currentTarget).is('#cancelButtons, #saveButtons, .cancel-class, .save-class, #add-rows')) {
-                // Debug: Cek apakah e.currentTarget adalah tombol yang tepat
                 console.log('Tombol yang diklik: ' + $(e.currentTarget).attr('id'));
-
-                e.preventDefault();  // Mencegah aksi default (misalnya klik tombol atau tautan)
-                
-                // Menampilkan dialog peringatan
+                e.preventDefault();
                 krajeeDialog.alert('Selesaikan form dahulu atau cancel form Penggunaan').setDefaults({
-                    'backdrop': 'static',  // Static berarti pengguna tidak bisa menutup modal dengan mengklik di luar modal
-                    'zIndex': 9999         // Pastikan zIndex modal cukup tinggi
+                    'backdrop': 'static',
+                    'zIndex': 9999
                 });
             }
         });
     });
 
-
     // Fungsi untuk menghapus baris
     $(document).on('click', '.delete-row', function() {
         var id = $(this).data('id');
         if (id) {
-            // Tambahkan ID detail ke array deleteRows
             var deleteRows = $('#deleteRows').val() ? JSON.parse($('#deleteRows').val()) : [];
             deleteRows.push(id);
             $('#deleteRows').val(JSON.stringify(deleteRows));
         }
-        $(this).closest('tr').remove(); // Hapus baris dari tampilan form
+        $(this).closest('tr').remove();
         toggleAddDeleteButtons();
     });
-
-
-    // Fungsi untuk menambahkan input hidden dengan nilai 0 jika checkbox tidak dicentang
-    // $('form').on('submit', function() {
-    //     $('.langsung_pakai, .is_correct').each(function() {
-    //         var checkbox = $(this);
-    //         if (!checkbox.is(':checked')) {
-    //             checkbox.after('<input type=\"hidden\" name=\"' + checkbox.attr('name') + '\" value=\"0\">');
-    //         }
-    //     });
-    // });
 
     // Fungsi untuk menginisialisasi typeahead pada input baru
     function initializeTypeahead(selector, index) {
@@ -295,7 +271,7 @@ $this->registerJs("
             templates: {
                 notFound: '<div class=\"text-danger\">Tidak ada hasil</div>',
                 suggestion: function(data) {
-                    return `<div>\${data . kode_barang} - \${data . nama_barang}</div>`;
+                    return `<div>\${data.kode_barang} - \${data.nama_barang}</div>`;
                 }
             }
         }).bind('typeahead:select', function(ev, suggestion) {
@@ -303,7 +279,6 @@ $this->registerJs("
             $(`#penggunaandetail-\${index}-kode_barang`).val(suggestion.kode_barang);
         });
 
-        // Menambahkan placeholder pada input setelah typeahead diinisialisasi
         $(selector).attr('placeholder', 'Cari Nama Barang...');
     }
 
@@ -312,22 +287,19 @@ $this->registerJs("
         var rows = $('#table-body tr');
         var rowCount = rows.length;
 
-        // Sembunyikan semua tombol delete jika hanya ada satu baris, tampilkan jika lebih dari satu
         if (rowCount > 1) {
-            $('.delete-row').show(); // Tampilkan semua tombol delete
+            $('.delete-row').show();
         } else {
-            $('.delete-row').hide(); // Sembunyikan tombol delete jika hanya satu baris
+            $('.delete-row').hide();
         }
 
-        // Sembunyikan semua tombol add kecuali pada baris terakhir
         $('.add-row').hide();
-        $('#table-body tr:last-child .add-row').show(); // Tampilkan tombol add hanya pada baris terakhir
+        $('#table-body tr:last-child .add-row').show();
     }
 
-    // Inisialisasi awal untuk menampilkan/menyembunyikan tombol add dan delete
     toggleAddDeleteButtons();
 
-    // 🔥🔥🔥 AUTO-FILL BOM 🔥🔥🔥
+    // AUTO-FILL BOM - DENGAN KONVERSI KG KE GRAM 
     " . (!empty($permintaanId) ? "
     \$(document).ready(function() {
         setTimeout(function() {
@@ -339,13 +311,17 @@ $this->registerJs("
                         \$('#table-body').empty();
                         rowIndex = 0;
                         \$.each(res.data, function(i, b) {
+                            // KONVERSI KG KE GRAM (kali 1000)
+                            var qtyGram = parseFloat(b.qty) * 1000;
+                            
                             var row = '<tr>' +
                                 '<input type=\"hidden\" name=\"PenggunaanDetail['+i+'][penggunaan_id]\" value=\"'+PenggunaanId+'\">' +
                                 '<td class=\"barang-column\"><input type=\"text\" name=\"PenggunaanDetail['+i+'][barang_id]\" id=\"penggunaandetail-'+i+'-barang_id\" class=\"form-control\" value=\"'+b.barang_id+'\" readonly></td>' +
                                 '<td><input type=\"text\" name=\"PenggunaanDetail['+i+'][kode_barang]\" id=\"penggunaandetail-'+i+'-kode_barang\" class=\"form-control\" value=\"'+b.kode_barang+'\" readonly></td>' +
                                 '<td><input type=\"text\" name=\"PenggunaanDetail['+i+'][nama_barang]\" id=\"penggunaandetail-'+i+'-nama_barang\" class=\"form-control typeahead-input\" data-index=\"'+i+'\" value=\"'+b.nama_barang+'\" placeholder=\"Cari Nama Barang...\"></td>' +
-                                '<td><input type=\"number\" name=\"PenggunaanDetail['+i+'][jumlah_digunakan]\" class=\"form-control\" value=\"'+b.qty+'\" min=\"1\" required></td>' +
+                                '<td><input type=\"number\" name=\"PenggunaanDetail['+i+'][jumlah_digunakan]\" class=\"form-control\" value=\"'+qtyGram+'\" min=\"0\" step=\"0.01\" required></td>' +
                                 '<td><input type=\"text\" name=\"PenggunaanDetail['+i+'][catatan]\" class=\"form-control\" value=\"'+b.catatan+'\"></td>' +
+                                '<td class=\"barang-column\"><input type=\"text\" name=\"PenggunaanDetail['+i+'][area_gudang]\" class=\"form-control\" readonly></td>' +
                                 '<td class=\"text-center\"><div class=\"btn-group\"><button type=\"button\" class=\"btn btn-success btn-sm add-row\"><i class=\"fas fa-plus\"></i></button><button type=\"button\" class=\"btn btn-danger btn-sm delete-row\"><i class=\"fas fa-trash\"></i></button></div></td>' +
                                 '</tr>';
                             \$('#table-body').append(row);

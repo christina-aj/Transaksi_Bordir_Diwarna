@@ -80,31 +80,52 @@ $this->params['breadcrumbs'][] = $this->title;
                         'qty_permintaan',
                     ],
                 ]) ?>
+
                 <div class="form-group mb-4">
-                    <?php if ($model -> status_permintaan == 1): ?>
-                        <?= Html::a('Back', ['index'], ['class' => 'btn btn-secondary']) ?>
-                        <p style="color: rgba(192, 51, 51, 1);">Note : Status On Progress. Sedang dikerjakan oleh tim produksi. Tekan complete apabila produksi telah selesai </p>
+                    <?= Html::a('Back', ['index'], ['class' => 'btn btn-secondary']) ?>
+                    
+                    <?php if ($model->status_permintaan == 1): ?>
+                        <!-- Tombol Mark as Complete untuk status On Progress -->
+                        <?= Html::a('Complete', ['complete', 'permintaan_id' => $model->permintaan_id], [
+                            'class' => 'btn btn-success',
+                            'data' => [
+                                'confirm' => 'Apakah Anda yakin permintaan ini sudah selesai dan ingin menandai sebagai Complete?',
+                                'method' => 'post',
+                            ],
+                        ]) ?>
+                        <p style="color: rgba(192, 51, 51, 1);">
+                            Note : Status On Progress. Sedang dikerjakan oleh tim produksi. Tekan complete apabila produksi telah selesai
+                        </p>
+                        
                     <?php elseif ($model->status_permintaan == 0 && $model->tipe_pelanggan == 1): ?>
-                        <?= Html::a('Back', ['index'], ['class' => 'btn btn-secondary']) ?>
                         <?= Html::a('Berikan Bahan Untuk Produksi', 
                             ['penggunaan/create', 'permintaan_id' => $model->permintaan_id], 
                             ['class' => 'btn btn-danger']
                         ) ?>
-                        <!-- <?= Html::a('Lakukan Pemesanan Untuk Permintaan',
-                            ['pemesanan/create','permintaan_id' => $model->permintaan_id],
-                            ['class' => 'btn btn-danger']
-                        ) ?> -->
-                        <p style="color: rgba(192, 51, 51, 1);">Note : Status Pending. Bahan harus di pesan lalu langsung disalurkan ke tim produksi dan status otomatis berubah menjadi ON Progress. </p>
-                    <?php elseif ($model -> status_permintaan == 0 && $model -> tipe_pelanggan == 2): ?>
-                        <?= Html::a('Back', ['index'], ['class' => 'btn btn-secondary']) ?>
+                        <p style="color: rgba(192, 51, 51, 1);">
+                            Note : Status Pending. Bahan harus di pesan lalu langsung disalurkan ke tim produksi dan status otomatis berubah menjadi ON Progress.
+                        </p>
+                        
+                    <?php elseif ($model->status_permintaan == 0 && $model->tipe_pelanggan == 2): ?>
                         <?= Html::a('Berikan Bahan Untuk Produksi', 
                             ['penggunaan/create', 'permintaan_id' => $model->permintaan_id], 
                             ['class' => 'btn btn-danger']
                         ) ?>
-                        <p style="color: rgba(192, 51, 51, 1);">Note : Status Pending. Bahan harus disalurkan ke tim produksi dan status otomatis berubah menjadi ON Progress. </p>
-                    <?php else: ?>
-                        <!-- Untuk semua role jika status complete, atau role lain -->
-                        <?= Html::a('Back', ['index'], ['class' => 'btn btn-secondary']) ?>
+                        <p style="color: rgba(192, 51, 51, 1);">
+                            Note : Status Pending. Bahan harus disalurkan ke tim produksi dan status otomatis berubah menjadi ON Progress.
+                        </p>
+                        
+                    <?php elseif ($model->status_permintaan == 2): ?>
+                        <!-- Status Complete -->
+                        <p style="color: rgba(34, 139, 34, 1);">
+                            Note : Status Complete. Produksi telah selesai dan siap dikirim/diambil pelanggan.
+                        </p>
+                        
+                    <?php elseif ($model->status_permintaan == 3): ?>
+                        <!-- Status Archived -->
+                        <p style="color: rgba(128, 128, 128, 1);">
+                            Note : Status Archived. Data telah difinalkan dan tidak dapat diubah.
+                        </p>
                     <?php endif ?>
                 </div>
                 

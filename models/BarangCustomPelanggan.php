@@ -39,7 +39,7 @@ class BarangCustomPelanggan extends \yii\db\ActiveRecord
             [['created_at', 'updated_at'], 'safe'],
             [['nama_barang_custom'], 'default', 'value' => ''],
             [['pelanggan_id'], 'required'],
-            [['pelanggan_id', 'created_at', 'updated_at'], 'integer'],
+            [['pelanggan_id'], 'integer'],
             [['kode_barang_custom', 'nama_barang_custom'], 'string', 'max' => 255],
             [['pelanggan_id'], 'exist', 'skipOnError' => true, 'targetClass' => MasterPelanggan::class, 'targetAttribute' => ['pelanggan_id' => 'pelanggan_id']],
         ];

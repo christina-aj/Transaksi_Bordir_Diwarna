@@ -76,4 +76,9 @@ class SupplierBarang extends \yii\db\ActiveRecord
         return $this->hasMany(SupplierBarangDetail::class, ['supplier_barang_id' => 'supplier_barang_id']);
     }
 
+    public function getSupplier()
+    {
+        return $this->hasOne(Supplier::class, ['supplier_id' => 'supplier_id']);
+    }
+
 }

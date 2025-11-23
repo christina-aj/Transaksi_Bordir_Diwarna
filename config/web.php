@@ -61,11 +61,25 @@ $config = [
                 $session->set('lastPage', Yii::$app->request->absoluteUrl); // Simpan halaman terakhir
             }
         },
+        // 'mailer' => [
+        //     'class' => \yii\symfonymailer\Mailer::class,
+        //     'viewPath' => '@app/mail',
+        //     // send all mails to a file by default.
+        //     'useFileTransport' => true,
+        // ],
         'mailer' => [
             'class' => \yii\symfonymailer\Mailer::class,
             'viewPath' => '@app/mail',
-            // send all mails to a file by default.
-            'useFileTransport' => true,
+            'useFileTransport' => false, // Set false untuk kirim email real, true untuk testing (email disimpan di file)
+            'transport' => [
+                'scheme' => 'smtp',
+                'host' => 'smtp.gmail.com',
+                'username' => 'diwarnainventory@gmail.com', // GANTI dengan email Anda
+                'password' => 'evlbyaxqmkfzfjba',     // GANTI dengan App Password Gmail
+                'port' => 587,
+                'encryption' => 'tls',
+                // 'dsn' => 'smtp://your-email@gmail.com:your-app-password@smtp.gmail.com:587',
+            ],
         ],
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,

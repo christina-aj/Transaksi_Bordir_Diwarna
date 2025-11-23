@@ -244,6 +244,7 @@ class StockRopController extends Controller
                 // Update stock
                 $stockRop->stock_barang = round($stockBarang, 2);
                 
+
                 // Update status
                 if ($stockBarang <= $stockRop->jumlah_rop) {
                     $stockRop->pesan_barang = 'Pesan Sekarang';
@@ -252,36 +253,47 @@ class StockRopController extends Controller
                 } else {
                     $stockRop->pesan_barang = 'Aman';
                 }
-                
+
                 $stockRop->save(false);
-                
-                // ===== KIRIM EMAIL JIKA STATUS BERUBAH JADI "PESAN SEKARANG" =====
-                if ($stockRop->pesan_barang == 'Pesan Sekarang' && $oldStatus != 'Pesan Sekarang') {
+
+                // Kirim email jika status "Pesan Sekarang"
+                if ($stockRop->pesan_barang == 'Pesan Sekarang') {
+                    $barang = $stockRop->barang;
                     
-                    // Cache key untuk mencegah spam email
-                    $cacheKey = "rop_email_sent_{$barangId}_{$stockRop->periode}";
-                    
-                    // Cek apakah email sudah pernah dikirim dalam 1 jam terakhir
-                    if (!Yii::$app->cache->get($cacheKey)) {
-                        // Load relasi barang
-                        $barang = $stockRop->barang;
-                        
-                        // Kirim email notifikasi
-                        $emailSent = \app\components\EmailHelper::sendRopNotification([
-                            'stockRop' => $stockRop,
-                            'barang' => $barang,
-                            'currentStock' => $stockBarang,
-                        ]);
-                        
-                        if ($emailSent) {
-                            // Set cache 1 jam agar tidak kirim email berulang
-                            Yii::$app->cache->set($cacheKey, true, 3600);
-                            Yii::info("ROP notification email sent for barang_id: {$barangId}", __METHOD__);
-                        }
-                    } else {
-                        Yii::info("ROP email skipped (already sent) for barang_id: {$barangId}", __METHOD__);
-                    }
+                    \app\components\EmailHelper::sendRopNotification([
+                        'stockRop' => $stockRop,
+                        'barang' => $barang,
+                        'currentStock' => $stockBarang,
+                    ]);
                 }
+                
+                // ===== OLD TPI BISA 1X TEST AJA, KIRIM EMAIL JIKA STATUS BERUBAH JADI "PESAN SEKARANG" =====
+                // if ($stockRop->pesan_barang == 'Pesan Sekarang' && $oldStatus != 'Pesan Sekarang') {
+                    
+                //     // Cache key untuk mencegah spam email
+                //     $cacheKey = "rop_email_sent_{$barangId}_{$stockRop->periode}";
+                    
+                //     // Cek apakah email sudah pernah dikirim dalam 1 jam terakhir
+                //     if (!Yii::$app->cache->get($cacheKey)) {
+                //         // Load relasi barang
+                //         $barang = $stockRop->barang;
+                        
+                //         // Kirim email notifikasi
+                //         $emailSent = \app\components\EmailHelper::sendRopNotification([
+                //             'stockRop' => $stockRop,
+                //             'barang' => $barang,
+                //             'currentStock' => $stockBarang,
+                //         ]);
+                        
+                //         if ($emailSent) {
+                //             // Set cache 1 jam agar tidak kirim email berulang untuk rill
+                //             // Yii::$app->cache->set($cacheKey, true, 3600);
+                //             Yii::info("ROP notification email sent for barang_id: {$barangId}", __METHOD__);
+                //         }
+                //     } else {
+                //         Yii::info("ROP email skipped (already sent) for barang_id: {$barangId}", __METHOD__);
+                //     }
+                // }
             }
             
             Yii::info("Stock ROP updated for barang_id: {$barangId}, new stock: {$stockBarang}", __METHOD__);

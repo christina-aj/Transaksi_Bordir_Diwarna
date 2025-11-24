@@ -1,6 +1,7 @@
 <?php
 
 use app\models\Pemesanan;
+use app\models\Gudang;
 use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
@@ -77,6 +78,30 @@ use yii\widgets\ActiveForm;
                                 'class' => 'form-control cek-barang-input',
                                 'data-id' => $model->pesandetail_id,
                             ]);
+                        },
+                    ],
+
+                    [
+                        'attribute' => 'area_gudang',
+                        'label' => 'Diterima Di Gudang :',
+                        'format' => 'raw',
+                        'value' => function ($model) {
+                            // Jika langsung_pakai = 1, area gudang tidak diperlukan
+                            if ($model->langsung_pakai == 1) {
+                                return Html::tag('span', 'Langsung Pakai', ['class' => 'badge badge-info']);
+                            }
+                            
+                            // Dropdown untuk memilih area gudang (1-4)
+                            return Html::dropDownList(
+                                "PemesananDetail[{$model->pesandetail_id}][area_gudang]",
+                                2, // default Area 2
+                                Gudang::getAreaOptions(),
+                                [
+                                    'class' => 'form-control',
+                                    'prompt' => 'Pilih Area',
+                                    'data-id' => $model->pesandetail_id,
+                                ]
+                            );
                         },
                     ],
 

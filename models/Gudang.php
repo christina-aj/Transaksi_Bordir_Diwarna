@@ -231,10 +231,11 @@ class Gudang extends \yii\db\ActiveRecord
     public function getAreaLabel()
     {
         $labels = [
-            1 => 'Area 1',
-            2 => 'Area 2',
-            3 => 'Area 3',
-            4 => 'Area 4',
+            1 => 'Depan',
+            2 => 'Bawah Tangga',
+            3 => 'Lantai Dua',
+            4 => 'Area Produksi',
+            5 => 'Garasi (Barang Jadi)',
         ];
         return isset($labels[$this->area_gudang]) ? $labels[$this->area_gudang] : 'Unknown';
     }
@@ -245,10 +246,11 @@ class Gudang extends \yii\db\ActiveRecord
     public static function getAreaOptions()
     {
         return [
-            1 => 'Area 1',
-            2 => 'Area 2',
-            3 => 'Area 3',
-            4 => 'Area 4',
+            1 => 'Depan',
+            2 => 'Bawah Tangga',
+            3 => 'Lantai Dua',
+            4 => 'Area Produksi',
+            5 => 'Garasi (Barang Jadi)',
         ];
     }
 

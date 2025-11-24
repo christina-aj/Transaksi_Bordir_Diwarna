@@ -442,6 +442,9 @@ class PemesananController extends BaseController
 
             $transaction = Yii::$app->db->beginTransaction();
             try {
+                // Simpan area_gudang ke session untuk digunakan di actionVerify
+                $areaGudangData = [];
+
                 foreach ($detailsData as $id => $attributes) {
                     $detailModel = PesanDetail::findOne($id);
                     if ($detailModel) {
@@ -449,6 +452,11 @@ class PemesananController extends BaseController
                         $detailModel->qty_terima = $attributes['qty_terima'] ?? $detailModel->qty_terima;
                         $detailModel->catatan = $attributes['catatan'] ?? $detailModel->catatan;
                         $detailModel->is_correct = isset($attributes['is_correct']) ? 1 : 0;
+
+                        // Simpan area_gudang ke array (tidak disimpan ke database PesanDetail)
+                        if (isset($attributes['area_gudang'])) {
+                            $areaGudangData[$id] = $attributes['area_gudang'];
+                        }
 
                         if (!$detailModel->validate() || !$detailModel->save(false)) {
                             Yii::$app->session->setFlash('error', "Error pada detail ID {$id}: " . json_encode($detailModel->getErrors()));
@@ -459,6 +467,9 @@ class PemesananController extends BaseController
                         throw new \Exception("Detail Pemesanan dengan ID {$id} tidak ditemukan.");
                     }
                 }
+                // Simpan area_gudang data ke session
+                Yii::$app->session->set("area_gudang_{$pemesanan_id}", $areaGudangData);
+                
                 $transaction->commit();
 
                 Yii::$app->session->setFlash('success', 'Pemesanan detail berhasil diperbarui.');
@@ -675,6 +686,10 @@ class PemesananController extends BaseController
         // Ambil semua pembelianDetail yang terkait dengan pembelian ini
         $pemesananDetails = PesanDetail::findAll(['pemesanan_id' => $pemesanan_id]);
 
+        // Ambil area_gudang data dari session
+        $areaGudangData = Yii::$app->session->get("area_gudang_{$pemesanan_id}", []);
+
+
         // Cek apakah semua is_correct == 1
         $allCorrect = true;
         foreach ($pemesananDetails as $detail) {
@@ -697,11 +712,14 @@ class PemesananController extends BaseController
                         $gudang->tanggal = date('Y-m-d'); // Sesuaikan format tanggal jika diperlukan
                         $gudang->barang_id = $detail->barang_id; // Sesuaikan dengan barang_id terkait
                         $gudang->user_id = Yii::$app->user->id; // Mengambil ID user yang saat ini sedang login
+
                         if ($detail->langsung_pakai == 1) {
                             $gudang->quantity_awal = $this->getCurrentStock($detail->barang_id); // Dapatkan quantity awal
                             $gudang->quantity_masuk = $detail->qty_terima; // Sesuaikan dengan jumlah quantity masuk
                             $gudang->quantity_keluar = $detail->qty_terima; // Misalnya, tidak ada quantity keluar pada saat ini
                             $gudang->quantity_akhir = $gudang->quantity_awal + $gudang->quantity_masuk - $gudang->quantity_keluar;
+                            $gudang->kode = 3; //area produksi
+
                             $stock = new Gudang();
                             $stock->tanggal = date('Y-m-d');
                             $stock->barang_id = $detail->barang_id;
@@ -711,19 +729,25 @@ class PemesananController extends BaseController
                             $stock->quantity_keluar = 0; // Misalnya, tidak ada quantity keluar pada saat ini
                             $stock->quantity_akhir = $stock->quantity_awal + $stock->quantity_masuk;
                             $stock->kode = 2;
-                            $stock->area_gudang = null;
+                            $stock->area_gudang = 3; //area produksi
+                            $stock->catatan = 'Barang Langsung Pakai';
                             $stock->created_at = date('Y-m-d H:i:s');
                             $stock->update_at = date('Y-m-d H:i:s');
                             if (!$stock->save(false)) {
                                 Yii::$app->session->setFlash('error', 'Gagal menyimpan data stok Produksi untuk barang ID: ' . $detail->barang_id);
                             }
                         } else {
+                            // Ambil area_gudang dari session, default Area 2 jika tidak ada
+                            $areaGudang = isset($areaGudangData[$detail->pesandetail_id]) 
+                                ? $areaGudangData[$detail->pesandetail_id] 
+                                : 2; // Default Area 2 (bawah tangga)
+                        
                             $gudang->quantity_awal = $this->getCurrentStock($detail->barang_id); // Dapatkan quantity awal
                             $gudang->quantity_masuk = $detail->qty_terima; // Sesuaikan dengan jumlah quantity masuk
                             $gudang->quantity_keluar = 0; // Sesuaikan dengan jumlah quantity masuk
                             $gudang->quantity_akhir = $gudang->quantity_awal + $gudang->quantity_masuk;
                             $gudang->kode = 1;
-                            $gudang->area_gudang = 2;
+                            $gudang->area_gudang = $areaGudang;;
                         }
                         $gudang->catatan = 'Verifikasi pemesanan ID: ' . $pemesanan_id; // Catatan tambahan
                         $gudang->created_at = date('Y-m-d H:i:s');

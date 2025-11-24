@@ -42,7 +42,8 @@ $DataPerhitunganUrl = Url::to(['/data-perhitungan/index']);
 $ForecastUrl = Url::to(['/forecast/index']);
 $EoqRopUrl = Url::to(['/eoq-rop/index']);
 $StockRopUrl = Url::to(['/stock-rop/index']);
-
+$LaporanStokGudangUrl = Url::to(['/laporan-barang/stok-gudang']);
+$LaporanRingkasanMutasiUrl = Url::to(['/laporan-barang/ringkasan-mutasi']);
 
 
 $typographyUrl = Url::to(['site/typography']);
@@ -51,6 +52,7 @@ $iconsUrl = Url::to(['site/icons']);
 $loginUrl = Url::to(['site/login']);
 $registerUrl = Url::to(['site/register']);
 $samplePageUrl = Url::to(['site/sample-page']);
+
 ?>
 
 <nav class="pc-sidebar">
@@ -176,6 +178,7 @@ $samplePageUrl = Url::to(['site/sample-page']);
                             <!-- <li class="pc-item"><a class="pc-link" href="<?= $DataPerhitunganUrl ?>">Data Perhitungan</a></li> -->
                             <li class="pc-item"><a class="pc-link" href="<?= $ForecastUrl ?>">Forecasting</a></li>
                             <li class="pc-item"><a class="pc-link" href="<?= $EoqRopUrl ?>">EOQ ROP</a></li>
+                            <li class="pc-item"><a class="pc-link" href="<?= $StockRopUrl ?>">Laporan Stok ROP</a></li>
 
                         </ul>
                     </li>
@@ -186,6 +189,21 @@ $samplePageUrl = Url::to(['site/sample-page']);
                             <span class="pc-mtext">Unit</span>
                         </a>
                     </li> -->
+
+                    <li class="pc-item pc-hasmenu">
+                        <a href="#!" class="pc-link"><span class="pc-micon">
+                                <i class="fi fi-ts-ballot-check"></i> </span><span class="pc-mtext">Report</span><span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
+                        <ul class="pc-submenu">
+                            <li class="pc-item"><a class="pc-link" href="<?= $LaporanStokGudangUrl ?>">Laporan Stok Gudang</a></li>
+                            <li class="pc-item"><a class="pc-link" href="<?= $LaporanRingkasanMutasiUrl ?>">Laporan Ringkasan Mutasi</a></li>
+                            <li class="pc-item"><a class="pc-link" href="<?= $laproUrl ?>">Laporan Produksi</a></li>
+                            <li class="pc-item"><a class="pc-link" href="<?= $lapagreUrl ?>">Laporan Agregat</a></li>
+                            <li class="pc-item"><a class="pc-link" href="<?= $lapkelUrl ?>">Laporan Keluar</a></li>
+                            <li class="pc-item"><a class="pc-link" href="<?= $JenisUrl ?>">Jenis</a></li>
+                            <li class="pc-item"><a class="pc-link" href="<?= $BarangProUrl ?>">Barang Produksi</a></li>
+                            <li class="pc-item"><a class="pc-link" href="<?= $NotaUrl ?>">Nota</a></li>
+                        </ul>
+                    </li>
 
                     <li class="pc-item">
                         <a href="<?= $MesinUrl ?>" class="pc-link">
@@ -198,22 +216,6 @@ $samplePageUrl = Url::to(['site/sample-page']);
                             <span class="pc-micon"><i class="fi fi-ts-calendar-shift-swap"></i></span>
                             <span class="pc-mtext">Shift</span>
                         </a>
-                    </li>
-
-
-                    <li class="pc-item pc-hasmenu">
-                        <a href="#!" class="pc-link"><span class="pc-micon">
-                                <i class="fi fi-ts-ballot-check"></i> </span><span class="pc-mtext">Report</span><span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
-                        <ul class="pc-submenu">
-                            <li class="pc-item"><a class="pc-link" href="<?= $StockRopUrl ?>">Laporan Stok Gudang</a></li>
-                            <li class="pc-item"><a class="pc-link" href="<?= $RiwayatPenjualanUrl ?>">Riwayat Penjualan</a></li>
-                            <li class="pc-item"><a class="pc-link" href="<?= $laproUrl ?>">Laporan Produksi</a></li>
-                            <li class="pc-item"><a class="pc-link" href="<?= $lapagreUrl ?>">Laporan Agregat</a></li>
-                            <li class="pc-item"><a class="pc-link" href="<?= $lapkelUrl ?>">Laporan Keluar</a></li>
-                            <li class="pc-item"><a class="pc-link" href="<?= $JenisUrl ?>">Jenis</a></li>
-                            <li class="pc-item"><a class="pc-link" href="<?= $BarangProUrl ?>">Barang Produksi</a></li>
-                            <li class="pc-item"><a class="pc-link" href="<?= $NotaUrl ?>">Nota</a></li>
-                        </ul>
                     </li>
 
                     <li class="pc-item">

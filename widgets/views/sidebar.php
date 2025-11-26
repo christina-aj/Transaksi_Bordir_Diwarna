@@ -44,6 +44,7 @@ $EoqRopUrl = Url::to(['/eoq-rop/index']);
 $StockRopUrl = Url::to(['/stock-rop/index']);
 $LaporanStokGudangUrl = Url::to(['/laporan-barang/stok-gudang']);
 $LaporanRingkasanMutasiUrl = Url::to(['/laporan-barang/ringkasan-mutasi']);
+$LaporanKartuStokUrl  = Url::to(['/laporan-barang/kartu-stok']);
 
 
 $typographyUrl = Url::to(['site/typography']);
@@ -196,6 +197,7 @@ $samplePageUrl = Url::to(['site/sample-page']);
                         <ul class="pc-submenu">
                             <li class="pc-item"><a class="pc-link" href="<?= $LaporanStokGudangUrl ?>">Laporan Stok Gudang</a></li>
                             <li class="pc-item"><a class="pc-link" href="<?= $LaporanRingkasanMutasiUrl ?>">Laporan Ringkasan Mutasi</a></li>
+                            <li class="pc-item"><a class="pc-link" href="<?= $LaporanKartuStokUrl ?>">Laporan Kartu Stok</a></li>
                             <li class="pc-item"><a class="pc-link" href="<?= $laproUrl ?>">Laporan Produksi</a></li>
                             <li class="pc-item"><a class="pc-link" href="<?= $lapagreUrl ?>">Laporan Agregat</a></li>
                             <li class="pc-item"><a class="pc-link" href="<?= $lapkelUrl ?>">Laporan Keluar</a></li>

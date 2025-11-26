@@ -41,7 +41,7 @@ $this->title = 'Update Quantity - ' . $modelPenggunaan->getFormattedGunaId();
                 'action' => ['update-qty', 'penggunaan_id' => $modelPenggunaan->penggunaan_id],
                 'method' => 'post',
                 'options' => [
-                    'onsubmit' => 'console.log("Form submitting with data:", new FormData(this)); return true;'
+                    'onsubmit' => 'return prepareFormSubmit();'
                 ]
             ]); ?>
             
@@ -55,7 +55,7 @@ $this->title = 'Update Quantity - ' . $modelPenggunaan->getFormattedGunaId();
                                         <strong><?= $detail->barang->kode_barang ?> - <?= $detail->barang->nama_barang ?></strong>
                                     </div>
                                     <div class="col-md-2">
-                                        <span class="badge bg-info">Diminta: <?= $detail->jumlah_digunakan ?></span>
+                                        <span class="badge bg-info">Diminta: <?= $detail->jumlah_digunakan ?> Kg</span>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="stock-info">
@@ -90,9 +90,9 @@ $this->title = 'Update Quantity - ' . $modelPenggunaan->getFormattedGunaId();
                                             <i class="fas fa-plus"></i> Tambah Area
                                         </button>
                                         <span class="ms-3">
-                                            <strong>Total Dipilih: </strong>
+                                            <strong>Total Diberikan: </strong>
                                             <span class="total-selected" data-index="<?= $index ?>">0</span> / 
-                                            <span class="total-required"><?= $detail->jumlah_digunakan ?></span>
+                                            <span class="total-required"><?= $detail->jumlah_digunakan ?> Kg</span>
                                         </span>
                                     </div>
                                 </div>
@@ -169,9 +169,20 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // Quantity change
+    // Quantity change - support comma AND dot input
     document.addEventListener('input', function(e) {
         if (e.target.classList.contains('area-quantity')) {
+            let value = e.target.value;
+            
+            // Validate decimal format (max 2 decimal places)
+            // Allow both comma and dot as decimal separator
+            const regex = /^\d*[,.]?\d{0,2}$/;
+            if (!regex.test(value)) {
+                e.target.value = e.target.dataset.previousValue || '';
+                return;
+            }
+            
+            e.target.dataset.previousValue = e.target.value;
             updateTotalSelected();
             validateMaxQuantity(e.target);
             validateForm();
@@ -209,10 +220,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <input type="number" 
+                    <input type="text" 
                            name="details[${detailIndex}][areas][${areaRowCounter}][quantity]"
                            class="form-control area-quantity" 
-                           placeholder="Jumlah" min="1" max="0" required>
+                           placeholder="cnth: 8 atau 8,5 atau 8.5" 
+                           data-max="0" 
+                           required>
+                    <small class="form-text text-muted">Gunakan koma atau titik untuk desimal (8,5 atau 8.5)</small>
                 </div>
                 <div class="col-md-3">
                     <span class="form-control-plaintext">
@@ -263,23 +277,24 @@ document.addEventListener('DOMContentLoaded', function() {
         const selectedOption = selectElement.selectedOptions[0];
         
         if (selectedOption) {
-            const maxStock = selectedOption.dataset.max || 0;
-            quantityInput.max = maxStock;
+            const maxStock = parseFloat(selectedOption.dataset.max) || 0;
+            quantityInput.dataset.max = maxStock;
             maxSpan.textContent = maxStock;
             
             // Reset quantity if it exceeds new max
-            if (quantityInput.value > maxStock) {
-                quantityInput.value = maxStock;
+            const currentValue = parseFloat(quantityInput.value.replace(',', '.')) || 0;
+            if (currentValue > maxStock) {
+                quantityInput.value = maxStock.toString().replace('.', ',');
             }
         }
     }
     
     function validateMaxQuantity(quantityInput) {
-        const max = parseInt(quantityInput.max);
-        const value = parseInt(quantityInput.value);
+        const max = parseFloat(quantityInput.dataset.max) || 0;
+        const value = parseFloat(quantityInput.value.replace(',', '.')) || 0;
         
         if (value > max) {
-            quantityInput.value = max;
+            quantityInput.value = max.toString().replace('.', ',');
             alert('Jumlah tidak boleh melebihi stock yang tersedia: ' + max);
         }
     }
@@ -293,10 +308,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 let total = 0;
                 quantityInputs.forEach(input => {
-                    total += parseInt(input.value) || 0;
+                    const value = parseFloat(input.value.replace(',', '.')) || 0;
+                    total += value;
                 });
                 
-                element.textContent = total;
+                element.textContent = total.toFixed(2).replace('.', ',');
             }
         });
     }
@@ -307,16 +323,27 @@ document.addEventListener('DOMContentLoaded', function() {
         
         detailItems.forEach(item => {
             const index = item.dataset.index;
-            const requiredQty = parseInt(item.querySelector('.total-required').textContent);
-            const selectedQty = parseInt(item.querySelector('.total-selected').textContent);
+            const requiredQty = parseFloat(item.querySelector('.total-required').textContent);
+            const selectedQtyText = item.querySelector('.total-selected').textContent;
+            const selectedQty = parseFloat(selectedQtyText.replace(',', '.'));
             
-            if (selectedQty !== requiredQty) {
+            // Allow small tolerance for floating point comparison
+            if (Math.abs(selectedQty - requiredQty) > 0.01) {
                 isValid = false;
             }
         });
         
         document.getElementById('submit-btn').disabled = !isValid;
     }
+    
+    // Prepare form for submission - convert comma to dot
+    window.prepareFormSubmit = function() {
+        const quantityInputs = document.querySelectorAll('.area-quantity');
+        quantityInputs.forEach(input => {
+            input.value = input.value.replace(',', '.');
+        });
+        return true;
+    };
     
     // Initialize first area for each detail
     <?php foreach ($modelDetails as $index => $detail): ?>
@@ -345,4 +372,5 @@ document.addEventListener('DOMContentLoaded', function() {
     font-weight: bold;
     color: #007bff;
 }
+
 </style>

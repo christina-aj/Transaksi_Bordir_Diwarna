@@ -287,6 +287,8 @@ class PermintaanPelangganController extends Controller
             Yii::$app->session->setFlash('success', 
                 "Berhasil memfinalkan $totalPermintaan permintaan dengan total $totalItem item dari bulan $namaBulanLalu ke Riwayat Penjualan!"
             );
+
+            return $this->redirect(['index']);
             
             // Redirect dengan parameter done=1 untuk set session flag
             // return $this->redirect(['index', 'done' => 1, 'test_mode' => $isTestMode ? 1 : null]);

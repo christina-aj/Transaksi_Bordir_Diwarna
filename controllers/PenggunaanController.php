@@ -200,8 +200,8 @@ class PenggunaanController extends Controller
                         $barang = Barang::findOne($modelDetail->barang_id);
                         $modelDetail->penggunaan_id = $penggunaan_id;
 
-                        $jumlahGram = $modelDetail->jumlah_digunakan ?? 0;
-                        $modelDetail->jumlah_digunakan = $jumlahGram / 1000;
+                        // $jumlahGram = $modelDetail->jumlah_digunakan ?? 0;
+                        // $modelDetail->jumlah_digunakan = $jumlahGram / 1000;
 
                         $modelDetail->created_at = date('Y-m-d H:i:s');
                         $modelDetail->gudang_id = null; // FK ke record gudang yang akan dikurangi
@@ -257,8 +257,7 @@ class PenggunaanController extends Controller
         if (Yii::$app->request->method === 'POST') {
             $modelPenggunaan->load(Yii::$app->request->post());
 
-            // Ambil data detail dari POST (SAMA SEPERTI PEMESANAN)
-            $detailData = Yii::$app->request->post('PenggunaanDetail', []); // NAMA HARUS SAMA DENGAN JS
+            $detailData = Yii::$app->request->post('PenggunaanDetail', []); 
             $isValid = $modelPenggunaan->validate();
 
             // Loop untuk update detail yang ada
@@ -266,8 +265,9 @@ class PenggunaanController extends Controller
                 if (isset($detailData[$index])) {
                     $modelDetail->barang_id = $detailData[$index]['barang_id'] ?? $modelDetail->barang_id;
                     
-                    $jumlahGram = $detailData[$index]['jumlah_digunakan'] ?? $modelDetail->jumlah_digunakan * 1000;
-                    $modelDetail->jumlah_digunakan = $jumlahGram / 1000;
+                    // $jumlahGram = $detailData[$index]['jumlah_digunakan'] ?? $modelDetail->jumlah_digunakan * 1000;
+                    // $modelDetail->jumlah_digunakan = $jumlahGram / 1000;
+                    $modelDetail->jumlah_digunakan = $detailData[$index]['jumlah_digunakan'] ?? $modelDetail->jumlah_digunakan;
                     
                     $modelDetail->catatan = $detailData[$index]['catatan'] ?? '';
                     $isValid = $modelDetail->validate() && $isValid;
@@ -282,8 +282,9 @@ class PenggunaanController extends Controller
                     $newDetail->penggunaan_id = $modelPenggunaan->penggunaan_id;
                     $newDetail->barang_id = $data['barang_id'] ?? null;
                     
-                    $jumlahGram = $data['jumlah_digunakan'] ?? 0;
-                    $newDetail->jumlah_digunakan = $jumlahGram / 1000;
+                    // $jumlahGram = $data['jumlah_digunakan'] ?? 0;
+                    // $newDetail->jumlah_digunakan = $jumlahGram / 1000;
+                    $newDetail->jumlah_digunakan = $data['jumlah_digunakan'] ?? 0;
                     
                     $newDetail->catatan = $data['catatan'] ?? '';
                     $newDetails[] = $newDetail;
@@ -568,9 +569,10 @@ class PenggunaanController extends Controller
             foreach ($stocks as $stock) {
                 // Ambil hanya record terbaru per area
                 if (!in_array($stock->area_gudang, $processedAreas)) {
+                    // PENTING: Stock sudah dalam GRAM, langsung pakai
                     $areaStock[$stock->area_gudang] = [
                         'id_gudang' => $stock->id_gudang,
-                        'quantity_akhir' => $stock->quantity_akhir,
+                        'quantity_akhir' => $stock->quantity_akhir, // SUDAH GRAM
                         'tanggal' => $stock->tanggal
                     ];
                     $processedAreas[] = $stock->area_gudang;
@@ -590,28 +592,28 @@ class PenggunaanController extends Controller
                 
                 foreach ($detailsData as $index => $detailData) {
                     $originalBarangId = $detailData['barang_id'];
-
-                    $originalQuantityGram = $detailData['jumlah_digunakan'];
-                    $originalQuantity = $originalQuantityGram / 1000;
+                    
+                    // SEMUA SUDAH DALAM GRAM, tidak perlu konversi!
+                    $originalQuantity = floatval($detailData['jumlah_digunakan']); // GRAM
                     
                     $catatan = $detailData['catatan'] ?? '';
                     $areas = $detailData['areas'] ?? [];
                     
-                    // Validasi total quantity dengan konversi ke KG
-                    $totalSelectedGram = array_sum(array_column($areas, 'quantity'));
-                    $totalSelected = $totalSelectedGram / 1000;
+                    // Validasi total quantity (SEMUA DALAM GRAM)
+                    $totalSelected = 0;
+                    foreach ($areas as $areaData) {
+                        $totalSelected += floatval($areaData['quantity']); // GRAM
+                    }
                     
                     // Gunakan toleransi untuk floating point comparison
                     if (abs($totalSelected - $originalQuantity) > 0.001) {
-                        throw new \Exception("Total quantity tidak sesuai untuk barang ID: {$originalBarangId}. Expected: {$originalQuantity} kg, Got: {$totalSelected} kg");
+                        throw new \Exception("Total quantity tidak sesuai untuk barang ID: {$originalBarangId}. Expected: {$originalQuantity} gram, Got: {$totalSelected} gram");
                     }
                     
                     // Buat detail baru per area
                     foreach ($areas as $areaIndex => $areaData) {
                         $areaGudang = $areaData['area_gudang'];
-                        
-                        $quantityGram = $areaData['quantity'];
-                        $quantity = $quantityGram / 1000;
+                        $quantity = floatval($areaData['quantity']); // SUDAH GRAM
                         
                         if ($quantity <= 0) {
                             continue;
@@ -623,7 +625,7 @@ class PenggunaanController extends Controller
                         $newDetail->barang_id = $originalBarangId;
                         $newDetail->kode_barang = Barang::findOne($originalBarangId)->kode_barang;
                         $newDetail->nama_barang = Barang::findOne($originalBarangId)->nama_barang;
-                        $newDetail->jumlah_digunakan = $quantity; //  Sudah dalam KG
+                        $newDetail->jumlah_digunakan = $quantity; // SIMPAN DALAM GRAM
                         $newDetail->area_gudang = $areaGudang;
                         $newDetail->catatan = $catatan;
                         $newDetail->created_at = date('Y-m-d H:i:s');

@@ -100,7 +100,7 @@ $samplePageUrl = Url::to(['site/sample-page']);
                             <li class="pc-item"><a class="pc-link" href="<?= $BarangUrl ?>">List Bahan Baku</a></li>
                             <!-- <li class="pc-item"><a class="pc-link" href="#!">List Barang Jadi</a></li> -->
                             <li class="pc-item"><a class="pc-link" href="<?= $BarangProUrl ?>">List Barang Jadi</a></li>
-                            <li class="pc-item"><a class="pc-link" href="<?= $BomUrl ?>">BOM Barang</a></li>
+                            <!-- <li class="pc-item"><a class="pc-link" href="<?= $BomUrl ?>">BOM Barang</a></li> -->
 
                         </ul>
                     </li>

@@ -28,8 +28,9 @@ class Barangproduksi extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['kode_barang_produksi', 'nama', 'nama_jenis', 'deskripsi','ukuran'], 'required'],
+            [['kode_barang_produksi', 'nama', 'nama_jenis','ukuran'], 'required'],
             [['deskripsi'], 'string'],
+            [['deskripsi'], 'default', 'value' => null],
             [['nama', 'nama_jenis'], 'string', 'max' => 200],
         ];
     }
@@ -48,4 +49,9 @@ class Barangproduksi extends \yii\db\ActiveRecord
             'deskripsi' => 'Deskripsi',
         ];
     }
-}
+
+    public function getBomDetails()
+    {
+        return $this->hasMany(BomDetail::class, ['barang_produksi_id' => 'barang_produksi_id']);
+    }
+    }

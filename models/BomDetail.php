@@ -35,10 +35,11 @@ class BomDetail extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['BOM_barang_id'], 'required'],
-            [['BOM_barang_id', 'barang_id'], 'integer'],
-            [['qty_BOM'], 'number', 'min' => 0.001, 'max' => 1000], // ← Float/number
+            [['barang_produksi_id'], 'required'],
+            [['BOM_barang_id', 'barang_produksi_id', 'barang_id'], 'integer'],
+            [['qty_BOM'], 'number', 'min' => 0], // ← Float/number
             [['catatan'], 'string', 'max' => 255],
+            [['BOM_barang_id'], 'default', 'value' => NULL],
             [['barang_id'], 'exist', 'skipOnError' => true, 'targetClass' => Barang::class, 'targetAttribute' => ['barang_id' => 'barang_id']],
             [['BOM_barang_id'], 'exist', 'skipOnError' => true, 'targetClass' => BomBarang::class, 'targetAttribute' => ['BOM_barang_id' => 'BOM_barang_id']],
             [['qty_BOM'], 'required', 'message' => 'Jumlah harus diisi'],
@@ -53,6 +54,7 @@ class BomDetail extends \yii\db\ActiveRecord
         return [
             'BOM_detail_id' => 'BOM Detail ID',
             'BOM_barang_id' => 'BOM Barang ID',
+            'barang_produksi_id' => 'Barang Produksi ID',
             'barang_id' => 'Bahan Baku',
             'qty_BOM' => 'Jumlah (KG)',
             'catatan' => 'Catatan',

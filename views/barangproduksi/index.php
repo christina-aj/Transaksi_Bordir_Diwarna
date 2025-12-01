@@ -43,14 +43,35 @@ $this->params['breadcrumbs'][] = $this->title;
             // 'barang_produksi_id',
             'kode_barang_produksi',
             'nama',
-            'nama_jenis',
+            // 'nama_jenis',
             'ukuran',
             'deskripsi:ntext',
+            // [
+            //     'class' => ActionColumn::className(),
+            //     'urlCreator' => function ($action, Barangproduksi $model, $key, $index, $column) {
+            //         return Url::toRoute([$action, 'barang_produksi_id' => $model->barang_produksi_id]);
+            //      }
+            // ],
             [
-                'class' => ActionColumn::className(),
-                'urlCreator' => function ($action, Barangproduksi $model, $key, $index, $column) {
-                    return Url::toRoute([$action, 'barang_produksi_id' => $model->barang_produksi_id]);
-                 }
+                'class' => 'yii\grid\ActionColumn',
+                'template' => '{view-data}{delete}',
+                'buttons' => [
+                    'view-data' => function ($url, $model) {
+                        return Html::a('<i class="fas fa-eye"></i> Lihat BOM', ['barangproduksi/view', 'barang_produksi_id' => $model->barang_produksi_id], [
+                            'class' => 'btn btn-primary btn-sm me-1',
+                        ]);
+                    },
+                    'delete' => function ($url, $model) {
+                        return Html::a('<i class="fas fa-trash"></i>', ['delete', 'barang_produksi_id' => $model->barang_produksi_id], [
+                            'class' => 'btn btn-danger btn-sm',
+                            'title' => 'Delete',
+                            'data' => [
+                                'confirm' => 'Are you sure you want to delete this item?',
+                                'method' => 'post',
+                            ],
+                        ]);
+                    },
+                ],
             ],
         ],
     ]); ?>

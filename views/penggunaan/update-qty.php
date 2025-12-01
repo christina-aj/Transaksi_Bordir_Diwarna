@@ -55,7 +55,7 @@ $this->title = 'Update Quantity - ' . $modelPenggunaan->getFormattedGunaId();
                                         <strong><?= $detail->barang->kode_barang ?> - <?= $detail->barang->nama_barang ?></strong>
                                     </div>
                                     <div class="col-md-2">
-                                        <span class="badge bg-info">Diminta: <?= $detail->jumlah_digunakan ?> Kg</span>
+                                        <span class="badge bg-info">Diminta: <?= $detail->jumlah_digunakan ?> gram</span>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="stock-info">
@@ -65,12 +65,12 @@ $this->title = 'Update Quantity - ' . $modelPenggunaan->getFormattedGunaId();
                                             $totalStock = array_sum(array_column($barangStock, 'quantity_akhir'));
                                             ?>
                                             <span class="badge <?= $totalStock >= $detail->jumlah_digunakan ? 'bg-success' : 'bg-danger' ?>">
-                                                Total: <?= $totalStock ?>
+                                                Total: <?= $totalStock ?> gram
                                             </span>
                                             
                                             <?php foreach ($barangStock as $area => $stock): ?>
                                                 <span class="badge bg-secondary ms-1">
-                                                    Area <?= $area ?>: <?= $stock['quantity_akhir'] ?>
+                                                    Area <?= $area ?>: <?= $stock['quantity_akhir'] ?> gram
                                                 </span>
                                             <?php endforeach; ?>
                                         </div>
@@ -92,7 +92,7 @@ $this->title = 'Update Quantity - ' . $modelPenggunaan->getFormattedGunaId();
                                         <span class="ms-3">
                                             <strong>Total Diberikan: </strong>
                                             <span class="total-selected" data-index="<?= $index ?>">0</span> / 
-                                            <span class="total-required"><?= $detail->jumlah_digunakan ?> Kg</span>
+                                            <span class="total-required"><?= $detail->jumlah_digunakan ?> gram</span>
                                         </span>
                                     </div>
                                 </div>
@@ -137,7 +137,7 @@ $this->title = 'Update Quantity - ' . $modelPenggunaan->getFormattedGunaId();
 document.addEventListener('DOMContentLoaded', function() {
     let areaRowCounter = 0;
     
-    // Data stock per area dari PHP
+    // Data stock per area dari PHP (SUDAH DALAM GRAM)
     const stockData = <?= json_encode($stockPerArea) ?>;
     
     // Area names mapping
@@ -174,9 +174,8 @@ document.addEventListener('DOMContentLoaded', function() {
         if (e.target.classList.contains('area-quantity')) {
             let value = e.target.value;
             
-            // Validate decimal format (max 2 decimal places)
-            // Allow both comma and dot as decimal separator
-            const regex = /^\d*[,.]?\d{0,2}$/;
+            // Validate decimal format
+            const regex = /^\d*[,.]?\d*$/;
             if (!regex.test(value)) {
                 e.target.value = e.target.dataset.previousValue || '';
                 return;
@@ -214,7 +213,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <option value="">Pilih Area</option>
                         ${availableAreas.map(area => 
                             `<option value="${area.id}" data-max="${area.stock}">
-                                ${area.name} (Stock: ${area.stock})
+                                ${area.name} (Stock: ${area.stock} gram)
                             </option>`
                         ).join('')}
                     </select>
@@ -223,14 +222,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     <input type="text" 
                            name="details[${detailIndex}][areas][${areaRowCounter}][quantity]"
                            class="form-control area-quantity" 
-                           placeholder="cnth: 8 atau 8,5 atau 8.5" 
+                           placeholder="500 atau 500,5" 
                            data-max="0" 
                            required>
-                    <small class="form-text text-muted">Gunakan koma atau titik untuk desimal (8,5 atau 8.5)</small>
+                    <small class="form-text text-muted">dalam gram (misal: 500 atau 500,5)</small>
                 </div>
                 <div class="col-md-3">
                     <span class="form-control-plaintext">
-                        Max: <span class="max-quantity">0</span>
+                        Max: <span class="max-quantity">0</span> gram
                     </span>
                 </div>
                 <div class="col-md-2">
@@ -284,7 +283,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Reset quantity if it exceeds new max
             const currentValue = parseFloat(quantityInput.value.replace(',', '.')) || 0;
             if (currentValue > maxStock) {
-                quantityInput.value = maxStock.toString().replace('.', ',');
+                quantityInput.value = maxStock;
             }
         }
     }
@@ -294,8 +293,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const value = parseFloat(quantityInput.value.replace(',', '.')) || 0;
         
         if (value > max) {
-            quantityInput.value = max.toString().replace('.', ',');
-            alert('Jumlah tidak boleh melebihi stock yang tersedia: ' + max);
+            quantityInput.value = max;
+            alert('Jumlah tidak boleh melebihi stock yang tersedia: ' + max + ' gram');
         }
     }
     
@@ -312,7 +311,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     total += value;
                 });
                 
-                element.textContent = total.toFixed(2).replace('.', ',');
+                element.textContent = total;
             }
         });
     }
@@ -323,12 +322,13 @@ document.addEventListener('DOMContentLoaded', function() {
         
         detailItems.forEach(item => {
             const index = item.dataset.index;
-            const requiredQty = parseFloat(item.querySelector('.total-required').textContent);
+            const requiredQtyText = item.querySelector('.total-required').textContent;
+            const requiredQty = parseFloat(requiredQtyText.replace(' gram', '').replace(',', '.'));
             const selectedQtyText = item.querySelector('.total-selected').textContent;
             const selectedQty = parseFloat(selectedQtyText.replace(',', '.'));
             
-            // Allow small tolerance for floating point comparison
-            if (Math.abs(selectedQty - requiredQty) > 0.01) {
+            // Exact match required - no tolerance
+            if (selectedQty !== requiredQty) {
                 isValid = false;
             }
         });
@@ -372,5 +372,4 @@ document.addEventListener('DOMContentLoaded', function() {
     font-weight: bold;
     color: #007bff;
 }
-
 </style>

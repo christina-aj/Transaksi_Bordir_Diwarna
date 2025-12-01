@@ -1,6 +1,6 @@
 -- --------------------------------------------------------
 -- Host:                         127.0.0.1
--- Server version:               8.0.30 - MySQL Community Server - GPL
+-- Server version:               10.4.32-MariaDB - mariadb.org binary distribution
 -- Server OS:                    Win64
 -- HeidiSQL Version:             12.1.0.6537
 -- --------------------------------------------------------
@@ -16,30 +16,30 @@
 
 
 -- Dumping database structure for inventaris_web
-CREATE DATABASE IF NOT EXISTS `inventaris_web` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+CREATE DATABASE IF NOT EXISTS `inventaris_web` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci */;
 USE `inventaris_web`;
 
 -- Dumping structure for table inventaris_web.barang
 CREATE TABLE IF NOT EXISTS `barang` (
-  `barang_id` int NOT NULL AUTO_INCREMENT,
-  `supplier_id` int DEFAULT '1',
-  `kode_barang` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `nama_barang` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `barang_id` int(11) NOT NULL AUTO_INCREMENT,
+  `supplier_id` int(11) DEFAULT 1,
+  `kode_barang` varchar(255) NOT NULL,
+  `nama_barang` varchar(255) NOT NULL,
   `angka` float NOT NULL,
-  `unit_id` int NOT NULL,
-  `tipe` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `kategori_barang` tinyint NOT NULL DEFAULT '1' COMMENT '1=fastmoving, 2=slowmoving, 3=alat',
-  `warna` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `biaya_simpan_bulan` int NOT NULL DEFAULT '0',
-  `safety_stock` int NOT NULL DEFAULT '0',
+  `unit_id` int(11) NOT NULL,
+  `tipe` varchar(255) NOT NULL,
+  `kategori_barang` tinyint(2) NOT NULL DEFAULT 1 COMMENT '1=fastmoving, 2=slowmoving, 3=alat',
+  `warna` varchar(255) DEFAULT NULL,
+  `biaya_simpan_bulan` int(11) NOT NULL DEFAULT 0,
+  `safety_stock` int(11) NOT NULL DEFAULT 0,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
-  `jenis_barang` tinyint NOT NULL DEFAULT '1' COMMENT '1=mentah, 2=setjadi, 3=jadi, 4=noncomsum',
+  `jenis_barang` tinyint(4) NOT NULL DEFAULT 1 COMMENT '1=mentah, 2=setjadi, 3=jadi, 4=noncomsum',
   PRIMARY KEY (`barang_id`),
   KEY `unit_id` (`unit_id`),
   KEY `supplier_id` (`supplier_id`),
-  CONSTRAINT `barang_ibfk_1` FOREIGN KEY (`unit_id`) REFERENCES `unit` (`unit_id`),
-  CONSTRAINT `FK_barang_supplier` FOREIGN KEY (`supplier_id`) REFERENCES `supplier` (`supplier_id`)
+  CONSTRAINT `FK_barang_supplier` FOREIGN KEY (`supplier_id`) REFERENCES `supplier` (`supplier_id`),
+  CONSTRAINT `barang_ibfk_1` FOREIGN KEY (`unit_id`) REFERENCES `unit` (`unit_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=50 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Dumping data for table inventaris_web.barang: ~17 rows (approximately)
@@ -65,14 +65,14 @@ INSERT INTO `barang` (`barang_id`, `supplier_id`, `kode_barang`, `nama_barang`, 
 
 -- Dumping structure for table inventaris_web.barangproduksi
 CREATE TABLE IF NOT EXISTS `barangproduksi` (
-  `barang_produksi_id` int NOT NULL AUTO_INCREMENT,
-  `kode_barang_produksi` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'P',
-  `nama` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `nama_jenis` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `ukuran` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `deskripsi` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `barang_produksi_id` int(11) NOT NULL AUTO_INCREMENT,
+  `kode_barang_produksi` varchar(255) NOT NULL DEFAULT 'P',
+  `nama` varchar(200) NOT NULL,
+  `nama_jenis` varchar(200) NOT NULL,
+  `ukuran` varchar(255) DEFAULT NULL,
+  `deskripsi` text DEFAULT NULL,
   PRIMARY KEY (`barang_produksi_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Dumping data for table inventaris_web.barangproduksi: ~8 rows (approximately)
 DELETE FROM `barangproduksi`;
@@ -88,10 +88,10 @@ INSERT INTO `barangproduksi` (`barang_produksi_id`, `kode_barang_produksi`, `nam
 
 -- Dumping structure for table inventaris_web.barang_custom_pelanggan
 CREATE TABLE IF NOT EXISTS `barang_custom_pelanggan` (
-  `barang_custom_pelanggan_id` int NOT NULL AUTO_INCREMENT,
-  `pelanggan_id` int NOT NULL,
-  `kode_barang_custom` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '',
-  `nama_barang_custom` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '',
+  `barang_custom_pelanggan_id` int(11) NOT NULL AUTO_INCREMENT,
+  `pelanggan_id` int(11) NOT NULL,
+  `kode_barang_custom` varchar(255) NOT NULL DEFAULT '',
+  `nama_barang_custom` varchar(255) NOT NULL DEFAULT '',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`barang_custom_pelanggan_id`),
@@ -102,8 +102,8 @@ CREATE TABLE IF NOT EXISTS `barang_custom_pelanggan` (
 -- Dumping data for table inventaris_web.barang_custom_pelanggan: ~8 rows (approximately)
 DELETE FROM `barang_custom_pelanggan`;
 INSERT INTO `barang_custom_pelanggan` (`barang_custom_pelanggan_id`, `pelanggan_id`, `kode_barang_custom`, `nama_barang_custom`, `created_at`, `updated_at`) VALUES
-	(6, 1, 'BC-001', 'TK Pelita Kasih 21-22 HTM', '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
-	(7, 1, 'BC-003', 'TK Pelita Kasih 21-22 PTH', '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
+	(6, 1, 'BC-001', 'TK Pelita Kasih 21-22 HTM', '0000-00-00 00:00:00', '2025-11-30 18:20:32'),
+	(7, 1, 'BC-003', 'TK Pelita Kasih 21-22 PTH', '0000-00-00 00:00:00', '2025-11-30 18:20:32'),
 	(9, 2, 'BC-002', 'Harapan 25-26 PTH', '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
 	(10, 2, 'BC-004', 'Harapan 25-26 HTM', NULL, NULL),
 	(11, 3, 'BC-005', 'SDK Petrus 25-26 PTH', '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
@@ -113,33 +113,32 @@ INSERT INTO `barang_custom_pelanggan` (`barang_custom_pelanggan_id`, `pelanggan_
 
 -- Dumping structure for table inventaris_web.bom_barang
 CREATE TABLE IF NOT EXISTS `bom_barang` (
-  `BOM_barang_id` int NOT NULL AUTO_INCREMENT,
-  `barang_produksi_id` int DEFAULT NULL,
-  `total_bahan_baku` int DEFAULT NULL,
+  `BOM_barang_id` int(11) NOT NULL AUTO_INCREMENT,
+  `barang_produksi_id` int(11) DEFAULT NULL,
+  `total_bahan_baku` int(11) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`BOM_barang_id`),
   KEY `barang_produksi_id` (`barang_produksi_id`),
   CONSTRAINT `FK__barangproduksi` FOREIGN KEY (`barang_produksi_id`) REFERENCES `barangproduksi` (`barang_produksi_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table inventaris_web.bom_barang: ~7 rows (approximately)
+-- Dumping data for table inventaris_web.bom_barang: ~6 rows (approximately)
 DELETE FROM `bom_barang`;
 INSERT INTO `bom_barang` (`BOM_barang_id`, `barang_produksi_id`, `total_bahan_baku`, `created_at`, `updated_at`) VALUES
-	(1, 10, 2, '2025-10-10 03:39:57', '2025-10-23 07:48:55'),
+	(1, 10, 2, '2025-10-10 03:39:57', '2025-11-27 08:21:43'),
 	(2, 7, 2, '2025-10-12 18:53:41', '2025-10-12 11:54:15'),
 	(6, 6, 2, '2025-10-19 09:32:40', '2025-10-19 02:33:07'),
 	(12, 11, 2, '2025-11-16 17:46:21', '2025-11-16 10:47:55'),
-	(13, 8, 2, '2025-11-21 04:53:39', NULL),
-	(14, 9, 1, '2025-11-22 09:59:15', '2025-11-22 02:59:34'),
-	(15, 7, 1, '2025-11-22 10:08:07', '2025-11-22 03:08:25');
+	(14, 8, 2, '2025-11-21 03:36:56', NULL),
+	(15, 8, 2, '2025-11-21 03:44:43', '2025-11-20 21:05:22');
 
 -- Dumping structure for table inventaris_web.bom_custom
 CREATE TABLE IF NOT EXISTS `bom_custom` (
-  `BOM_custom_id` int NOT NULL AUTO_INCREMENT,
-  `barang_custom_pelanggan_id` int NOT NULL,
-  `barang_id` int NOT NULL,
-  `qty_per_unit` float NOT NULL DEFAULT '0',
+  `BOM_custom_id` int(11) NOT NULL AUTO_INCREMENT,
+  `barang_custom_pelanggan_id` int(11) NOT NULL,
+  `barang_id` int(11) NOT NULL,
+  `qty_per_unit` float NOT NULL DEFAULT 0,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`BOM_custom_id`) USING BTREE,
@@ -147,58 +146,59 @@ CREATE TABLE IF NOT EXISTS `bom_custom` (
   KEY `barang_custom_pelanggan` (`barang_custom_pelanggan_id`),
   CONSTRAINT `FK_bom_custom_barang` FOREIGN KEY (`barang_id`) REFERENCES `barang` (`barang_id`),
   CONSTRAINT `FK_bom_custom_barang_custom_pelanggan` FOREIGN KEY (`barang_custom_pelanggan_id`) REFERENCES `barang_custom_pelanggan` (`barang_custom_pelanggan_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Dumping data for table inventaris_web.bom_custom: ~8 rows (approximately)
 DELETE FROM `bom_custom`;
 INSERT INTO `bom_custom` (`BOM_custom_id`, `barang_custom_pelanggan_id`, `barang_id`, `qty_per_unit`, `created_at`, `updated_at`) VALUES
-	(4, 6, 4, 3, '2025-10-23 13:24:14', '2025-10-23 13:24:14'),
-	(5, 7, 25, 1, '2025-10-23 13:24:14', '2025-10-23 13:24:14'),
 	(7, 9, 9, 40, '2025-11-12 11:58:42', '2025-11-12 11:58:42'),
 	(8, 9, 4, 5, '2025-11-12 11:58:42', '2025-11-12 11:58:42'),
 	(9, 11, 46, 1, '2025-11-14 17:40:53', '2025-11-14 17:40:53'),
 	(10, 12, 47, 1, '2025-11-14 17:40:53', '2025-11-14 17:40:53'),
 	(11, 15, 46, 1, '2025-11-14 17:43:57', '2025-11-14 17:43:57'),
-	(12, 16, 47, 1, '2025-11-14 17:43:57', '2025-11-14 17:43:57');
+	(12, 16, 47, 1, '2025-11-14 17:43:57', '2025-11-14 17:43:57'),
+	(15, 6, 46, 1, '2025-11-30 18:20:32', '2025-11-30 18:20:32'),
+	(16, 7, 25, 1, '2025-11-30 18:20:32', '2025-11-30 18:20:32');
 
 -- Dumping structure for table inventaris_web.bom_detail
 CREATE TABLE IF NOT EXISTS `bom_detail` (
-  `BOM_detail_id` int NOT NULL AUTO_INCREMENT,
-  `BOM_barang_id` int NOT NULL DEFAULT '0',
-  `barang_id` int DEFAULT NULL,
+  `BOM_detail_id` int(11) NOT NULL AUTO_INCREMENT,
+  `barang_produksi_id` int(11) NOT NULL,
+  `BOM_barang_id` int(11) DEFAULT NULL,
+  `barang_id` int(11) DEFAULT NULL,
   `qty_BOM` float DEFAULT NULL,
-  `catatan` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `catatan` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`BOM_detail_id`),
   KEY `barang_id` (`barang_id`),
   KEY `BOM_barang_id` (`BOM_barang_id`),
+  KEY `barang_produksi_id` (`barang_produksi_id`),
   CONSTRAINT `FK__barang` FOREIGN KEY (`barang_id`) REFERENCES `barang` (`barang_id`),
+  CONSTRAINT `FK_bom_detail_barangproduksi` FOREIGN KEY (`barang_produksi_id`) REFERENCES `barangproduksi` (`barang_produksi_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `FK_bom_detail_bom_barang` FOREIGN KEY (`BOM_barang_id`) REFERENCES `bom_barang` (`BOM_barang_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table inventaris_web.bom_detail: ~12 rows (approximately)
+-- Dumping data for table inventaris_web.bom_detail: ~10 rows (approximately)
 DELETE FROM `bom_detail`;
-INSERT INTO `bom_detail` (`BOM_detail_id`, `BOM_barang_id`, `barang_id`, `qty_BOM`, `catatan`) VALUES
-	(1, 1, 11, 1, 'tes'),
-	(2, 1, 4, 2, ''),
-	(3, 2, 1, 5, 't'),
-	(4, 2, 9, 7, 'd'),
-	(5, 6, 1, 1, 'a'),
-	(6, 6, 11, 2, 's'),
-	(7, 12, 46, 0.025, ''),
-	(8, 12, 47, 0.025, ''),
-	(9, 13, 46, 0.025, NULL),
-	(10, 13, 47, 0.01, NULL),
-	(11, 14, 46, 0.03, ''),
-	(12, 15, 47, 0.03, 'tes gram');
+INSERT INTO `bom_detail` (`BOM_detail_id`, `barang_produksi_id`, `BOM_barang_id`, `barang_id`, `qty_BOM`, `catatan`) VALUES
+	(1, 10, 1, 11, 0.001, 'tes'),
+	(2, 10, 1, 4, 0.002, ''),
+	(3, 7, 2, 1, 5, 't'),
+	(4, 7, 2, 9, 7, 'd'),
+	(5, 6, 6, 1, 1, 'a'),
+	(6, 6, 6, 11, 2, 's'),
+	(7, 11, 12, 46, 0.025, ''),
+	(8, 11, 12, 47, 0.025, ''),
+	(9, 8, 14, 46, 0.025, NULL),
+	(10, 8, 14, 47, 0.01, NULL);
 
 -- Dumping structure for table inventaris_web.data_perhitungan
 CREATE TABLE IF NOT EXISTS `data_perhitungan` (
-  `data_perhitungan_id` int NOT NULL AUTO_INCREMENT,
-  `barang_id` int NOT NULL,
+  `data_perhitungan_id` int(11) NOT NULL AUTO_INCREMENT,
+  `barang_id` int(11) NOT NULL,
   `biaya_pesan` float NOT NULL,
   `biaya_simpan` float NOT NULL,
   `safety_stock` float NOT NULL,
-  `lead_time_rerata` int NOT NULL DEFAULT '0',
+  `lead_time_rerata` int(11) NOT NULL DEFAULT 0,
   `periode_mulasi` date NOT NULL,
   `periode_selesai` date DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
@@ -211,8 +211,8 @@ DELETE FROM `data_perhitungan`;
 
 -- Dumping structure for table inventaris_web.detail_gudang
 CREATE TABLE IF NOT EXISTS `detail_gudang` (
-  `detailGudang_id` int NOT NULL AUTO_INCREMENT,
-  `nama_area_gudang` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '',
+  `detailGudang_id` int(11) NOT NULL AUTO_INCREMENT,
+  `nama_area_gudang` varchar(50) NOT NULL DEFAULT '',
   PRIMARY KEY (`detailGudang_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -221,68 +221,68 @@ DELETE FROM `detail_gudang`;
 
 -- Dumping structure for table inventaris_web.eoq_rop
 CREATE TABLE IF NOT EXISTS `eoq_rop` (
-  `EOQ_ROP_id` int NOT NULL AUTO_INCREMENT,
-  `barang_id` int NOT NULL,
-  `biaya_pesan_snapshot` float NOT NULL DEFAULT '0',
-  `biaya_simpan_snapshot` float NOT NULL DEFAULT '0',
-  `safety_stock_snapshot` float NOT NULL DEFAULT '0',
-  `lead_time_snapshot` int NOT NULL,
-  `demand_snapshot` float NOT NULL DEFAULT '0',
-  `total_biaya_persediaan` float NOT NULL DEFAULT '0',
+  `EOQ_ROP_id` int(11) NOT NULL AUTO_INCREMENT,
+  `barang_id` int(11) NOT NULL,
+  `biaya_pesan_snapshot` float NOT NULL DEFAULT 0,
+  `biaya_simpan_snapshot` float NOT NULL DEFAULT 0,
+  `safety_stock_snapshot` float NOT NULL DEFAULT 0,
+  `lead_time_snapshot` int(11) NOT NULL,
+  `demand_snapshot` float NOT NULL DEFAULT 0,
+  `total_biaya_persediaan` float NOT NULL DEFAULT 0,
   `hasil_eoq` float DEFAULT NULL,
   `hasil_rop` float DEFAULT NULL,
-  `periode` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `periode` varchar(20) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`EOQ_ROP_id`),
   KEY `barang_id` (`barang_id`),
   CONSTRAINT `FK_eoq_rop_barang` FOREIGN KEY (`barang_id`) REFERENCES `barang` (`barang_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=65 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=69 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Dumping data for table inventaris_web.eoq_rop: ~4 rows (approximately)
 DELETE FROM `eoq_rop`;
 INSERT INTO `eoq_rop` (`EOQ_ROP_id`, `barang_id`, `biaya_pesan_snapshot`, `biaya_simpan_snapshot`, `safety_stock_snapshot`, `lead_time_snapshot`, `demand_snapshot`, `total_biaya_persediaan`, `hasil_eoq`, `hasil_rop`, `periode`, `created_at`) VALUES
-	(61, 46, 25000, 2000, 20, 1, 405.425, 201352, 100.68, 23.38, '202511-202602', '2025-11-17 19:01:04'),
-	(62, 47, 20000, 2000, 20, 2, 405.425, 180094, 90.05, 26.76, '202511-202602', '2025-11-17 19:01:05'),
-	(63, 1, 12000, 2500, 20, 3, 0, 0, 40, 20, '202511-202602', '2025-11-17 19:01:05'),
-	(64, 4, 15000, 5000, 10, 3, 0, 0, 20, 10, '202511-202602', '2025-11-17 19:01:05');
+	(65, 46, 25000, 2000, 20, 1, 405.425, 201352, 100.68, 23.38, '202511-202602', '2025-11-19 21:41:30'),
+	(66, 47, 20000, 2000, 20, 2, 405.425, 180094, 90.05, 26.76, '202511-202602', '2025-11-19 21:41:30'),
+	(67, 1, 12000, 2500, 20, 3, 0, 0, 40, 20, '202511-202602', '2025-11-19 21:41:30'),
+	(68, 4, 15000, 5000, 10, 3, 0, 0, 20, 10, '202511-202602', '2025-11-19 21:41:30');
 
 -- Dumping structure for table inventaris_web.eoq_rop_history
 CREATE TABLE IF NOT EXISTS `eoq_rop_history` (
-  `eoq_rop_history_id` int NOT NULL AUTO_INCREMENT,
-  `barang_id` int NOT NULL,
-  `biaya_pesan_snapshot` float DEFAULT '0',
-  `biaya_simpan_snapshot` float DEFAULT '0',
-  `safety_stock_snapshot` float DEFAULT '0',
-  `lead_time_snapshot` int DEFAULT NULL,
-  `demand_snapshot` float DEFAULT '0',
-  `total_biaya_persediaan` float DEFAULT '0',
+  `eoq_rop_history_id` int(11) NOT NULL AUTO_INCREMENT,
+  `barang_id` int(11) NOT NULL,
+  `biaya_pesan_snapshot` float DEFAULT 0,
+  `biaya_simpan_snapshot` float DEFAULT 0,
+  `safety_stock_snapshot` float DEFAULT 0,
+  `lead_time_snapshot` int(11) DEFAULT NULL,
+  `demand_snapshot` float DEFAULT 0,
+  `total_biaya_persediaan` float DEFAULT 0,
   `hasil_eoq` float DEFAULT NULL,
   `hasil_rop` float DEFAULT NULL,
-  `periode` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `periode` varchar(20) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`eoq_rop_history_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Dumping data for table inventaris_web.eoq_rop_history: ~4 rows (approximately)
 DELETE FROM `eoq_rop_history`;
 INSERT INTO `eoq_rop_history` (`eoq_rop_history_id`, `barang_id`, `biaya_pesan_snapshot`, `biaya_simpan_snapshot`, `safety_stock_snapshot`, `lead_time_snapshot`, `demand_snapshot`, `total_biaya_persediaan`, `hasil_eoq`, `hasil_rop`, `periode`, `created_at`) VALUES
-	(17, 46, 25000, 2000, 20, 1, 405.425, 201352, 100.68, 23.38, '202511-202602', '2025-11-17 19:01:05'),
-	(18, 47, 20000, 2000, 20, 2, 405.425, 180094, 90.05, 26.76, '202511-202602', '2025-11-17 19:01:05'),
-	(19, 1, 12000, 2500, 20, 3, 0, 0, 40, 20, '202511-202602', '2025-11-17 19:01:05'),
-	(20, 4, 15000, 5000, 10, 3, 0, 0, 20, 10, '202511-202602', '2025-11-17 19:01:05');
+	(21, 46, 25000, 2000, 20, 1, 405.425, 201352, 100.68, 23.38, '202511-202602', '2025-11-19 21:41:30'),
+	(22, 47, 20000, 2000, 20, 2, 405.425, 180094, 90.05, 26.76, '202511-202602', '2025-11-19 21:41:30'),
+	(23, 1, 12000, 2500, 20, 3, 0, 0, 40, 20, '202511-202602', '2025-11-19 21:41:30'),
+	(24, 4, 15000, 5000, 10, 3, 0, 0, 20, 10, '202511-202602', '2025-11-19 21:41:30');
 
 -- Dumping structure for table inventaris_web.forecast
 CREATE TABLE IF NOT EXISTS `forecast` (
-  `forecast_id` int NOT NULL AUTO_INCREMENT,
-  `barang_produksi_id` int DEFAULT NULL,
-  `barang_custom_pelanggan_id` int DEFAULT NULL,
-  `periode_forecast` varchar(7) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '0',
-  `nilai_alpha` float NOT NULL DEFAULT '0',
-  `nilai_beta` float NOT NULL DEFAULT '0',
-  `nilai_gamma` float NOT NULL DEFAULT '0',
-  `mape_test` float NOT NULL DEFAULT '0',
-  `hasil_forecast` int NOT NULL DEFAULT '0',
-  `seasonal_period` int NOT NULL DEFAULT '0',
+  `forecast_id` int(11) NOT NULL AUTO_INCREMENT,
+  `barang_produksi_id` int(11) DEFAULT NULL,
+  `barang_custom_pelanggan_id` int(11) DEFAULT NULL,
+  `periode_forecast` varchar(7) NOT NULL DEFAULT '0',
+  `nilai_alpha` float NOT NULL DEFAULT 0,
+  `nilai_beta` float NOT NULL DEFAULT 0,
+  `nilai_gamma` float NOT NULL DEFAULT 0,
+  `mape_test` float NOT NULL DEFAULT 0,
+  `hasil_forecast` int(11) NOT NULL DEFAULT 0,
+  `seasonal_period` int(11) NOT NULL DEFAULT 0,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`forecast_id`),
@@ -290,64 +290,64 @@ CREATE TABLE IF NOT EXISTS `forecast` (
   KEY `barang_custom_pelanggan_id` (`barang_custom_pelanggan_id`),
   CONSTRAINT `FK_forecast_barang_custom_pelanggan` FOREIGN KEY (`barang_custom_pelanggan_id`) REFERENCES `barang_custom_pelanggan` (`barang_custom_pelanggan_id`),
   CONSTRAINT `FK_forecast_barangproduksi` FOREIGN KEY (`barang_produksi_id`) REFERENCES `barangproduksi` (`barang_produksi_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=197 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=201 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Dumping data for table inventaris_web.forecast: ~4 rows (approximately)
 DELETE FROM `forecast`;
 INSERT INTO `forecast` (`forecast_id`, `barang_produksi_id`, `barang_custom_pelanggan_id`, `periode_forecast`, `nilai_alpha`, `nilai_beta`, `nilai_gamma`, `mape_test`, `hasil_forecast`, `seasonal_period`, `created_at`, `updated_at`) VALUES
-	(193, NULL, NULL, '202511', 0.05, 0.05, 0.05, 6.28, 4606, 12, '2025-11-17 19:35:53', NULL),
-	(194, NULL, NULL, '202512', 0.05, 0.05, 0.05, 6.28, 4179, 12, '2025-11-17 19:35:53', NULL),
-	(195, NULL, NULL, '202601', 0.05, 0.05, 0.05, 6.28, 3463, 12, '2025-11-17 19:35:53', NULL),
-	(196, NULL, NULL, '202602', 0.05, 0.05, 0.05, 6.28, 3969, 12, '2025-11-17 19:35:53', NULL);
+	(197, NULL, NULL, '202511', 0.05, 0.05, 0.05, 6.28, 4606, 12, '2025-11-19 21:40:37', NULL),
+	(198, NULL, NULL, '202512', 0.05, 0.05, 0.05, 6.28, 4179, 12, '2025-11-19 21:40:38', NULL),
+	(199, NULL, NULL, '202601', 0.05, 0.05, 0.05, 6.28, 3463, 12, '2025-11-19 21:40:38', NULL),
+	(200, NULL, NULL, '202602', 0.05, 0.05, 0.05, 6.28, 3969, 12, '2025-11-19 21:40:38', NULL);
 
 -- Dumping structure for table inventaris_web.forecast_history
 CREATE TABLE IF NOT EXISTS `forecast_history` (
-  `forecast_history_id` int NOT NULL AUTO_INCREMENT,
-  `barang_produksi_id` int NOT NULL,
-  `periode_forecast` varchar(7) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '0',
+  `forecast_history_id` int(11) NOT NULL AUTO_INCREMENT,
+  `barang_produksi_id` int(11) NOT NULL,
+  `periode_forecast` varchar(7) NOT NULL DEFAULT '0',
   `nilai_alpha` float NOT NULL,
   `nilai_beta` float NOT NULL,
   `nilai_gamma` float NOT NULL,
   `mape_test` float NOT NULL,
-  `hasil_forecast` int NOT NULL,
-  `seasonal_period` int NOT NULL,
-  `data_aktual` int DEFAULT NULL,
-  `selisih` int DEFAULT NULL,
+  `hasil_forecast` int(11) NOT NULL,
+  `seasonal_period` int(11) NOT NULL,
+  `data_aktual` int(11) DEFAULT NULL,
+  `selisih` int(11) DEFAULT NULL,
   `tanggal_dibuat` date DEFAULT NULL,
   PRIMARY KEY (`forecast_history_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=162 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=166 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Dumping data for table inventaris_web.forecast_history: ~4 rows (approximately)
 DELETE FROM `forecast_history`;
 INSERT INTO `forecast_history` (`forecast_history_id`, `barang_produksi_id`, `periode_forecast`, `nilai_alpha`, `nilai_beta`, `nilai_gamma`, `mape_test`, `hasil_forecast`, `seasonal_period`, `data_aktual`, `selisih`, `tanggal_dibuat`) VALUES
-	(158, 0, '202511', 0.05, 0.05, 0.05, 6.28, 4606, 12, NULL, NULL, '2025-11-18'),
-	(159, 0, '202512', 0.05, 0.05, 0.05, 6.28, 4179, 12, NULL, NULL, '2025-11-18'),
-	(160, 0, '202601', 0.05, 0.05, 0.05, 6.28, 3463, 12, NULL, NULL, '2025-11-18'),
-	(161, 0, '202602', 0.05, 0.05, 0.05, 6.28, 3969, 12, NULL, NULL, '2025-11-18');
+	(162, 0, '202511', 0.05, 0.05, 0.05, 6.28, 4606, 12, NULL, NULL, '2025-11-20'),
+	(163, 0, '202512', 0.05, 0.05, 0.05, 6.28, 4179, 12, NULL, NULL, '2025-11-20'),
+	(164, 0, '202601', 0.05, 0.05, 0.05, 6.28, 3463, 12, NULL, NULL, '2025-11-20'),
+	(165, 0, '202602', 0.05, 0.05, 0.05, 6.28, 3969, 12, NULL, NULL, '2025-11-20');
 
 -- Dumping structure for table inventaris_web.gudang
 CREATE TABLE IF NOT EXISTS `gudang` (
-  `id_gudang` int NOT NULL AUTO_INCREMENT,
+  `id_gudang` int(11) NOT NULL AUTO_INCREMENT,
   `tanggal` date NOT NULL,
-  `barang_id` int NOT NULL,
-  `user_id` int NOT NULL,
+  `barang_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
   `quantity_awal` float NOT NULL,
   `quantity_masuk` float NOT NULL,
   `quantity_keluar` float NOT NULL,
   `quantity_akhir` float NOT NULL,
-  `catatan` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `catatan` varchar(255) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `update_at` timestamp NULL DEFAULT NULL,
-  `kode` tinyint NOT NULL DEFAULT '1',
-  `area_gudang` int NOT NULL DEFAULT '1' COMMENT '1 = depan, 2= belakang, 3=atas, 4=garasiseberang, 5=areaproduksi',
+  `kode` tinyint(4) NOT NULL DEFAULT 1,
+  `area_gudang` int(11) NOT NULL DEFAULT 1 COMMENT '1 = depan, 2= belakang, 3=atas, 4=garasiseberang, 5=areaproduksi',
   PRIMARY KEY (`id_gudang`),
   KEY `barang_id` (`barang_id`),
   KEY `user_id` (`user_id`),
   CONSTRAINT `gudang_ibfk_1` FOREIGN KEY (`barang_id`) REFERENCES `barang` (`barang_id`),
   CONSTRAINT `gudang_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=262 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=310 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table inventaris_web.gudang: ~70 rows (approximately)
+-- Dumping data for table inventaris_web.gudang: ~116 rows (approximately)
 DELETE FROM `gudang`;
 INSERT INTO `gudang` (`id_gudang`, `tanggal`, `barang_id`, `user_id`, `quantity_awal`, `quantity_masuk`, `quantity_keluar`, `quantity_akhir`, `catatan`, `created_at`, `update_at`, `kode`, `area_gudang`) VALUES
 	(67, '2024-11-09', 14, 1, 0, 15, 15, 0, 'Verifikasi pemesanan ID: 274', '2024-11-09 08:18:40', '2024-11-09 08:18:40', 1, 1),
@@ -419,13 +419,59 @@ INSERT INTO `gudang` (`id_gudang`, `tanggal`, `barang_id`, `user_id`, `quantity_
 	(258, '2025-10-27', 4, 1, 2, 6, 6, 2, 'Verifikasi pemesanan ID: 373', '2025-10-27 20:19:14', '2025-10-27 20:19:14', 1, 1),
 	(259, '2025-10-27', 4, 1, 17, 6, 0, 23, NULL, '2025-10-27 20:24:37', '2025-10-27 20:24:37', 2, 1),
 	(260, '2025-10-27', 4, 1, 23, 6, 6, 23, 'Verifikasi pemesanan ID: 374', '2025-10-27 20:24:37', '2025-10-27 20:24:37', 1, 1),
-	(261, '2025-11-22', 47, 1, 0, 90, 0, 90, 'Verifikasi pemesanan ID: 384', '2025-11-22 09:56:05', '2025-11-22 09:56:05', 1, 2);
+	(261, '2025-11-21', 47, 1, 0, 90, 0, 90, 'Verifikasi pemesanan ID: 383', '2025-11-21 04:13:42', '2025-11-21 04:13:42', 1, 2),
+	(262, '2025-11-21', 46, 1, 0, 101, 0, 101, 'Verifikasi pemesanan ID: 385', '2025-11-21 04:15:13', '2025-11-21 04:15:13', 1, 2),
+	(263, '2025-11-21', 46, 1, 101, 0, 12, 89, 'Digunakan Produksi ID: 70', '2025-11-21 04:16:37', '2025-11-21 04:16:37', 1, 2),
+	(264, '2025-11-21', 46, 1, 0, 12, 0, 12, 'Transfer dari Gudang - Penggunaan ID: 70', '2025-11-21 04:16:37', '2025-11-21 04:16:37', 2, 5),
+	(265, '2025-11-21', 47, 1, 90, 0, 5, 85, 'Digunakan Produksi ID: 70', '2025-11-21 04:16:38', '2025-11-21 04:16:38', 1, 2),
+	(266, '2025-11-21', 47, 1, 0, 5, 0, 5, 'Transfer dari Gudang - Penggunaan ID: 70', '2025-11-21 04:16:38', '2025-11-21 04:16:38', 2, 5),
+	(267, '2025-11-22', 46, 1, 89, 101, 0, 190, 'Verifikasi pemesanan ID: 390', '2025-11-22 07:17:04', '2025-11-22 07:17:04', 1, 2),
+	(269, '2025-11-22', 46, 1, 190, 0, 5, 185, 'Digunakan Produksi ID: 72', '2025-11-22 07:38:15', '2025-11-22 07:38:15', 1, 2),
+	(270, '2025-11-22', 46, 1, 12, 5, 0, 17, 'Transfer dari Gudang - Penggunaan ID: 72', '2025-11-22 07:38:15', '2025-11-22 07:38:15', 2, 5),
+	(271, '2025-11-22', 47, 1, 85, 0, 5, 80, 'Digunakan Produksi ID: 73', '2025-11-22 07:39:32', '2025-11-22 07:39:32', 1, 2),
+	(272, '2025-11-22', 47, 1, 5, 5, 0, 10, 'Transfer dari Gudang - Penggunaan ID: 73', '2025-11-22 07:39:32', '2025-11-22 07:39:32', 2, 5),
+	(273, '2025-11-24', 1, 1, 46, 10, 0, 56, 'Verifikasi pemesanan ID: 391', '2025-11-24 07:52:29', '2025-11-24 07:52:29', 1, 1),
+	(274, '2025-11-25', 46, 1, 185, 0, 0.001, 184.999, 'Digunakan Produksi ID: 79', '2025-11-25 04:00:10', '2025-11-25 04:00:10', 1, 2),
+	(275, '2025-11-25', 46, 1, 17, 0.001, 0, 17.001, 'Transfer dari Gudang - Penggunaan ID: 79', '2025-11-25 04:00:10', '2025-11-25 04:00:10', 2, 5),
+	(276, '2025-11-25', 46, 1, 184.999, 0, 0.001, 184.998, 'Digunakan Produksi ID: 80', '2025-11-25 04:01:15', '2025-11-25 04:01:15', 1, 2),
+	(277, '2025-11-25', 46, 1, 17.001, 0.001, 0, 17.002, 'Transfer dari Gudang - Penggunaan ID: 80', '2025-11-25 04:01:15', '2025-11-25 04:01:15', 2, 5),
+	(278, '2025-11-25', 47, 1, 80, 0, 0.001, 79.999, 'Digunakan Produksi ID: 80', '2025-11-25 04:01:15', '2025-11-25 04:01:15', 1, 2),
+	(279, '2025-11-25', 47, 1, 10, 0.001, 0, 10.001, 'Transfer dari Gudang - Penggunaan ID: 80', '2025-11-25 04:01:15', '2025-11-25 04:01:15', 2, 5),
+	(280, '2025-11-25', 46, 1, 184.998, 0, 50, 134.998, '', '2025-11-25 04:02:28', '2025-11-25 04:02:28', 1, 2),
+	(282, '2025-11-25', 47, 1, 79.999, 0, 60, 19.999, '', '2025-11-25 04:04:14', '2025-11-25 04:04:48', 1, 2),
+	(283, '2025-11-25', 47, 1, 19.999, 90, 0, 109.999, 'Verifikasi pemesanan ID: 392', '2025-11-25 04:06:53', '2025-11-25 04:06:53', 1, 2),
+	(284, '2025-11-26', 46, 1, 134.998, 0, 0.012, 134.986, 'Digunakan Produksi ID: 82', '2025-11-26 06:39:25', '2025-11-26 06:39:25', 1, 2),
+	(285, '2025-11-26', 46, 1, 17.002, 0.012, 0, 17.014, 'Transfer dari Gudang - Penggunaan ID: 82', '2025-11-26 06:39:25', '2025-11-26 06:39:25', 2, 5),
+	(286, '2025-11-26', 47, 1, 109.999, 0, 0.005, 109.994, 'Digunakan Produksi ID: 82', '2025-11-26 06:39:25', '2025-11-26 06:39:25', 1, 2),
+	(287, '2025-11-26', 47, 1, 10.001, 0.005, 0, 10.006, 'Transfer dari Gudang - Penggunaan ID: 82', '2025-11-26 06:39:25', '2025-11-26 06:39:25', 2, 5),
+	(288, '2025-11-26', 46, 1, 134.986, 0, 0.0125, 134.973, 'Digunakan Produksi ID: 78', '2025-11-26 07:20:48', '2025-11-26 07:20:48', 1, 2),
+	(289, '2025-11-26', 46, 1, 17.014, 0.0125, 0, 17.0265, 'Transfer dari Gudang - Penggunaan ID: 78', '2025-11-26 07:20:48', '2025-11-26 07:20:48', 2, 5),
+	(290, '2025-11-26', 47, 1, 109.994, 0, 0.005, 109.989, 'Digunakan Produksi ID: 78', '2025-11-26 07:20:48', '2025-11-26 07:20:48', 1, 2),
+	(291, '2025-11-26', 47, 1, 10.006, 0.005, 0, 10.011, 'Transfer dari Gudang - Penggunaan ID: 78', '2025-11-26 07:20:48', '2025-11-26 07:20:48', 2, 5),
+	(292, '2025-11-29', 46, 1, 134.973, 0, 0.000025, 134.973, 'Digunakan Produksi ID: 84', '2025-11-29 10:49:48', '2025-11-29 10:49:48', 1, 2),
+	(293, '2025-11-29', 46, 1, 17.0265, 0.000025, 0, 17.0265, 'Transfer dari Gudang - Penggunaan ID: 84', '2025-11-29 10:49:48', '2025-11-29 10:49:48', 2, 5),
+	(294, '2025-11-29', 46, 1, 134.973, 0, 0.000025, 134.973, 'Digunakan Produksi ID: 85', '2025-11-29 10:50:22', '2025-11-29 10:50:22', 1, 2),
+	(295, '2025-11-29', 46, 1, 17.0265, 0.000025, 0, 17.0265, 'Transfer dari Gudang - Penggunaan ID: 85', '2025-11-29 10:50:22', '2025-11-29 10:50:22', 2, 5),
+	(296, '2025-11-29', 47, 1, 109.989, 0, 0.000025, 109.989, 'Digunakan Produksi ID: 86', '2025-11-29 11:02:11', '2025-11-29 11:02:11', 1, 2),
+	(297, '2025-11-29', 47, 1, 10.011, 0.000025, 0, 10.011, 'Transfer dari Gudang - Penggunaan ID: 86', '2025-11-29 11:02:11', '2025-11-29 11:02:11', 2, 5),
+	(298, '2025-11-29', 46, 1, 134.973, 0, 0.00125, 134.972, 'Digunakan Produksi ID: 88', '2025-11-29 11:06:32', '2025-11-29 11:06:32', 1, 2),
+	(299, '2025-11-29', 46, 1, 17.0265, 0.00125, 0, 17.0278, 'Transfer dari Gudang - Penggunaan ID: 88', '2025-11-29 11:06:32', '2025-11-29 11:06:32', 2, 5),
+	(300, '2025-11-29', 47, 1, 109.989, 0, 0.0005, 109.989, 'Digunakan Produksi ID: 88', '2025-11-29 11:06:32', '2025-11-29 11:06:32', 1, 2),
+	(301, '2025-11-29', 47, 1, 10.011, 0.0005, 0, 10.0115, 'Transfer dari Gudang - Penggunaan ID: 88', '2025-11-29 11:06:32', '2025-11-29 11:06:32', 2, 5),
+	(302, '2025-12-01', 46, 1, 134.972, 0, 0.000125, 134.972, 'Digunakan Produksi ID: 95', '2025-12-01 02:08:11', '2025-12-01 02:08:11', 1, 2),
+	(303, '2025-12-01', 46, 1, 17.0278, 0.000125, 0, 17.0279, 'Transfer dari Gudang - Penggunaan ID: 95', '2025-12-01 02:08:11', '2025-12-01 02:08:11', 2, 5),
+	(304, '2025-12-01', 47, 1, 109.989, 0, 0.00005, 109.989, 'Digunakan Produksi ID: 95', '2025-12-01 02:08:12', '2025-12-01 02:08:12', 1, 2),
+	(305, '2025-12-01', 47, 1, 10.0115, 0.00005, 0, 10.0115, 'Transfer dari Gudang - Penggunaan ID: 95', '2025-12-01 02:08:12', '2025-12-01 02:08:12', 2, 5),
+	(306, '2025-12-01', 46, 1, 134.972, 0, 0.125, 134.847, 'Digunakan Produksi ID: 96', '2025-12-01 02:13:24', '2025-12-01 02:13:24', 1, 2),
+	(307, '2025-12-01', 46, 1, 17.0279, 0.125, 0, 17.1529, 'Transfer dari Gudang - Penggunaan ID: 96', '2025-12-01 02:13:24', '2025-12-01 02:13:24', 2, 5),
+	(308, '2025-12-01', 47, 1, 109.989, 0, 0.05, 109.939, 'Digunakan Produksi ID: 96', '2025-12-01 02:13:24', '2025-12-01 02:13:24', 1, 2),
+	(309, '2025-12-01', 47, 1, 10.0115, 0.05, 0, 10.0615, 'Transfer dari Gudang - Penggunaan ID: 96', '2025-12-01 02:13:24', '2025-12-01 02:13:24', 2, 5);
 
 -- Dumping structure for table inventaris_web.jenis
 CREATE TABLE IF NOT EXISTS `jenis` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `nama_jenis` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `deskripsi` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `nama_jenis` varchar(200) NOT NULL,
+  `deskripsi` text NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -439,17 +485,17 @@ INSERT INTO `jenis` (`id`, `nama_jenis`, `deskripsi`) VALUES
 
 -- Dumping structure for table inventaris_web.laporanproduksi
 CREATE TABLE IF NOT EXISTS `laporanproduksi` (
-  `laporan_id` int NOT NULL AUTO_INCREMENT,
-  `mesin_id` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `shift_id` int NOT NULL,
+  `laporan_id` int(11) NOT NULL AUTO_INCREMENT,
+  `mesin_id` varchar(100) NOT NULL,
+  `shift_id` int(11) NOT NULL,
   `tanggal_kerja` date NOT NULL,
-  `nama_kerjaan` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `vs` int DEFAULT NULL,
-  `stitch` int DEFAULT NULL,
-  `kuantitas` int NOT NULL,
-  `bs` int NOT NULL,
-  `berat` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `nama_barang` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `nama_kerjaan` varchar(200) NOT NULL,
+  `vs` int(11) DEFAULT NULL,
+  `stitch` int(11) DEFAULT NULL,
+  `kuantitas` int(11) NOT NULL,
+  `bs` int(11) NOT NULL,
+  `berat` varchar(200) DEFAULT NULL,
+  `nama_barang` varchar(200) NOT NULL,
   PRIMARY KEY (`laporan_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -464,12 +510,12 @@ INSERT INTO `laporanproduksi` (`laporan_id`, `mesin_id`, `shift_id`, `tanggal_ke
 
 -- Dumping structure for table inventaris_web.laporan_keluar
 CREATE TABLE IF NOT EXISTS `laporan_keluar` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `nama` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `barang` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `qty` int NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `nama` varchar(200) NOT NULL,
+  `barang` varchar(200) NOT NULL,
+  `qty` int(11) NOT NULL,
   `tanggal` date NOT NULL,
-  `catatan` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `catatan` text NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -478,27 +524,28 @@ DELETE FROM `laporan_keluar`;
 
 -- Dumping structure for table inventaris_web.master_pelanggan
 CREATE TABLE IF NOT EXISTS `master_pelanggan` (
-  `pelanggan_id` int NOT NULL AUTO_INCREMENT,
-  `kode_pelanggan` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '',
-  `nama_pelanggan` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '',
+  `pelanggan_id` int(11) NOT NULL AUTO_INCREMENT,
+  `kode_pelanggan` varchar(255) NOT NULL DEFAULT '',
+  `nama_pelanggan` varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`pelanggan_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table inventaris_web.master_pelanggan: ~5 rows (approximately)
+-- Dumping data for table inventaris_web.master_pelanggan: ~6 rows (approximately)
 DELETE FROM `master_pelanggan`;
 INSERT INTO `master_pelanggan` (`pelanggan_id`, `kode_pelanggan`, `nama_pelanggan`) VALUES
 	(1, 'P-01', 'TK Pelita Kasih'),
 	(2, 'P-03', 'SMA Harapan'),
 	(3, 'P-04', 'SDK Petrus'),
 	(4, 'P-05', 'SDN Ambulu'),
-	(5, 'P-Umum', 'Pelanggan Umum');
+	(5, 'P-Umum', 'Pelanggan Umum'),
+	(6, 'test', 'tessss');
 
 -- Dumping structure for table inventaris_web.mesin
 CREATE TABLE IF NOT EXISTS `mesin` (
-  `mesin_id` int NOT NULL AUTO_INCREMENT,
-  `nama` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `kategori` enum('1','2') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `deskripsi` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `mesin_id` int(11) NOT NULL AUTO_INCREMENT,
+  `nama` varchar(200) NOT NULL,
+  `kategori` enum('1','2') NOT NULL,
+  `deskripsi` text NOT NULL,
   PRIMARY KEY (`mesin_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -510,14 +557,14 @@ INSERT INTO `mesin` (`mesin_id`, `nama`, `kategori`, `deskripsi`) VALUES
 
 -- Dumping structure for table inventaris_web.nota
 CREATE TABLE IF NOT EXISTS `nota` (
-  `nota_id` int NOT NULL AUTO_INCREMENT,
-  `nama_konsumen` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `nota_id` int(11) NOT NULL AUTO_INCREMENT,
+  `nama_konsumen` varchar(200) NOT NULL,
   `tanggal` date NOT NULL,
-  `barang` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `harga` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `qty` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `total_qty` int NOT NULL,
-  `total_harga` int NOT NULL,
+  `barang` varchar(255) NOT NULL,
+  `harga` varchar(255) NOT NULL,
+  `qty` varchar(255) NOT NULL,
+  `total_qty` int(11) NOT NULL,
+  `total_harga` int(11) NOT NULL,
   PRIMARY KEY (`nota_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -528,17 +575,17 @@ INSERT INTO `nota` (`nota_id`, `nama_konsumen`, `tanggal`, `barang`, `harga`, `q
 
 -- Dumping structure for table inventaris_web.pembelian
 CREATE TABLE IF NOT EXISTS `pembelian` (
-  `pembelian_id` int NOT NULL AUTO_INCREMENT,
-  `pemesanan_id` int NOT NULL,
-  `user_id` int DEFAULT NULL,
+  `pembelian_id` int(11) NOT NULL AUTO_INCREMENT,
+  `pemesanan_id` int(11) NOT NULL,
+  `user_id` int(11) DEFAULT NULL,
   `total_biaya` float NOT NULL,
   PRIMARY KEY (`pembelian_id`),
   KEY `user_id` (`user_id`) USING BTREE,
   KEY `pemesanan_id` (`pemesanan_id`),
   CONSTRAINT `pembelian_ibfk_3` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=294 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=302 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table inventaris_web.pembelian: ~37 rows (approximately)
+-- Dumping data for table inventaris_web.pembelian: ~42 rows (approximately)
 DELETE FROM `pembelian`;
 INSERT INTO `pembelian` (`pembelian_id`, `pemesanan_id`, `user_id`, `total_biaya`) VALUES
 	(217, 308, 1, 510000),
@@ -576,28 +623,33 @@ INSERT INTO `pembelian` (`pembelian_id`, `pemesanan_id`, `user_id`, `total_biaya
 	(283, 374, 1, 300000),
 	(286, 377, 1, 0),
 	(291, 382, 1, 0),
-	(292, 383, 1, 0),
-	(293, 384, 1, 4500000);
+	(292, 383, 1, 4500000),
+	(294, 385, 1, 4545000),
+	(296, 387, 1, 0),
+	(298, 389, 1, 0),
+	(299, 390, 1, 5555000),
+	(300, 391, 1, 350000),
+	(301, 392, 1, 4500000);
 
 -- Dumping structure for table inventaris_web.pembelian_detail
 CREATE TABLE IF NOT EXISTS `pembelian_detail` (
-  `belidetail_id` int NOT NULL AUTO_INCREMENT,
-  `pembelian_id` int NOT NULL,
-  `pesandetail_id` int NOT NULL,
+  `belidetail_id` int(11) NOT NULL AUTO_INCREMENT,
+  `pembelian_id` int(11) NOT NULL,
+  `pesandetail_id` int(11) NOT NULL,
   `cek_barang` decimal(10,0) NOT NULL,
   `total_biaya` decimal(10,0) NOT NULL,
-  `supplier_id` int NOT NULL,
-  `catatan` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `is_correct` tinyint NOT NULL,
+  `supplier_id` int(11) NOT NULL,
+  `catatan` varchar(255) DEFAULT NULL,
+  `is_correct` tinyint(4) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`belidetail_id`),
   KEY `pembelian_id` (`pembelian_id`) USING BTREE,
   KEY `pesandetail_id` (`pesandetail_id`),
   KEY `supplier_id` (`supplier_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=230 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=235 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table inventaris_web.pembelian_detail: ~27 rows (approximately)
+-- Dumping data for table inventaris_web.pembelian_detail: ~31 rows (approximately)
 DELETE FROM `pembelian_detail`;
 INSERT INTO `pembelian_detail` (`belidetail_id`, `pembelian_id`, `pesandetail_id`, `cek_barang`, `total_biaya`, `supplier_id`, `catatan`, `is_correct`, `created_at`, `updated_at`) VALUES
 	(203, 217, 272, 15000, 210000, 1, NULL, 1, '2024-12-11 10:00:34', NULL),
@@ -626,17 +678,21 @@ INSERT INTO `pembelian_detail` (`belidetail_id`, `pembelian_id`, `pesandetail_id
 	(226, 283, 295, 50000, 300000, 2, NULL, 1, '2025-10-27 13:20:23', NULL),
 	(227, 286, 296, 0, 0, 0, NULL, 0, '2025-10-27 13:35:48', NULL),
 	(228, 291, 297, 0, 0, 0, NULL, 0, '2025-10-28 21:22:21', NULL),
-	(229, 293, 298, 50000, 4500000, 3, NULL, 1, '2025-11-22 02:55:10', NULL);
+	(229, 292, 298, 50000, 4500000, 2, NULL, 1, '2025-11-20 21:10:54', NULL),
+	(230, 294, 299, 45000, 4545000, 10, NULL, 1, '2025-11-20 21:14:21', NULL),
+	(232, 299, 304, 55000, 5555000, 2, NULL, 1, '2025-11-21 23:51:28', NULL),
+	(233, 300, 305, 35000, 350000, 3, NULL, 1, '2025-11-24 00:13:04', NULL),
+	(234, 301, 306, 50000, 4500000, 3, NULL, 1, '2025-11-24 21:05:20', NULL);
 
 -- Dumping structure for table inventaris_web.pemesanan
 CREATE TABLE IF NOT EXISTS `pemesanan` (
-  `pemesanan_id` int NOT NULL AUTO_INCREMENT,
-  `user_id` int NOT NULL,
-  `permintaan_id` int DEFAULT NULL,
-  `stock_rop_id` int DEFAULT NULL,
+  `pemesanan_id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
+  `permintaan_id` int(11) DEFAULT NULL,
+  `stock_rop_id` int(11) DEFAULT NULL,
   `tanggal` date NOT NULL,
   `total_item` float NOT NULL,
-  `status` tinyint NOT NULL DEFAULT '0',
+  `status` tinyint(4) NOT NULL DEFAULT 0,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`pemesanan_id`),
@@ -646,9 +702,9 @@ CREATE TABLE IF NOT EXISTS `pemesanan` (
   CONSTRAINT `FK_pemesanan_permintaan_pelanggan` FOREIGN KEY (`permintaan_id`) REFERENCES `permintaan_pelanggan` (`permintaan_id`),
   CONSTRAINT `FK_pemesanan_stock_rop` FOREIGN KEY (`stock_rop_id`) REFERENCES `stock_rop` (`stock_rop_id`),
   CONSTRAINT `pemesanan_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=385 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=393 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table inventaris_web.pemesanan: ~25 rows (approximately)
+-- Dumping data for table inventaris_web.pemesanan: ~29 rows (approximately)
 DELETE FROM `pemesanan`;
 INSERT INTO `pemesanan` (`pemesanan_id`, `user_id`, `permintaan_id`, `stock_rop_id`, `tanggal`, `total_item`, `status`, `created_at`, `updated_at`) VALUES
 	(308, 1, NULL, NULL, '2024-12-11', 3, 2, '2024-12-11 16:59:56', '2024-12-11 17:03:28'),
@@ -674,16 +730,20 @@ INSERT INTO `pemesanan` (`pemesanan_id`, `user_id`, `permintaan_id`, `stock_rop_
 	(353, 1, NULL, NULL, '2025-10-11', 2, 0, '2025-10-11 09:18:45', '2025-10-11 09:19:33'),
 	(355, 1, NULL, NULL, '2025-10-14', 0, 0, '2025-10-14 19:18:35', '2025-10-14 19:18:35'),
 	(361, 1, NULL, NULL, '2025-10-25', 2, 2, '2025-10-25 07:14:48', '2025-10-25 07:16:45'),
-	(383, 1, NULL, 72, '2025-11-22', 0, 0, '2025-11-22 08:38:48', '2025-11-22 08:38:48'),
-	(384, 1, NULL, 72, '2025-11-22', 1, 2, '2025-11-22 09:55:04', '2025-11-22 09:56:05');
+	(383, 1, NULL, 76, '2025-11-21', 1, 2, '2025-11-21 04:10:46', '2025-11-21 04:13:42'),
+	(385, 1, NULL, 75, '2025-11-21', 1, 2, '2025-11-21 04:14:15', '2025-11-21 04:15:13'),
+	(387, 1, NULL, 75, '2025-11-22', 1, 0, '2025-11-22 06:38:11', '2025-11-22 06:38:16'),
+	(390, 1, NULL, 75, '2025-11-22', 1, 2, '2025-11-22 06:51:22', '2025-11-22 07:17:04'),
+	(391, 1, NULL, NULL, '2025-11-24', 1, 2, '2025-11-24 07:12:32', '2025-11-24 07:52:29'),
+	(392, 1, NULL, 76, '2025-11-25', 1, 2, '2025-11-25 04:05:10', '2025-11-25 04:06:53');
 
 -- Dumping structure for table inventaris_web.penggunaan
 CREATE TABLE IF NOT EXISTS `penggunaan` (
-  `penggunaan_id` int NOT NULL AUTO_INCREMENT,
-  `permintaan_id` int DEFAULT NULL,
-  `user_id` int NOT NULL,
-  `total_item_penggunaan` int NOT NULL,
-  `status_penggunaan` int NOT NULL DEFAULT '0' COMMENT '0 = pending, 1 =approve',
+  `penggunaan_id` int(11) NOT NULL AUTO_INCREMENT,
+  `permintaan_id` int(11) DEFAULT NULL,
+  `user_id` int(11) NOT NULL,
+  `total_item_penggunaan` int(11) NOT NULL,
+  `status_penggunaan` int(11) NOT NULL DEFAULT 0 COMMENT '0 = pending, 1 =approve',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   `tanggal` date NOT NULL,
@@ -692,9 +752,9 @@ CREATE TABLE IF NOT EXISTS `penggunaan` (
   KEY `permintaan_id` (`permintaan_id`),
   CONSTRAINT `FK_penggunaan_permintaan_pelanggan` FOREIGN KEY (`permintaan_id`) REFERENCES `permintaan_pelanggan` (`permintaan_id`),
   CONSTRAINT `FK_penggunaan_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=76 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=97 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table inventaris_web.penggunaan: ~19 rows (approximately)
+-- Dumping data for table inventaris_web.penggunaan: ~33 rows (approximately)
 DELETE FROM `penggunaan`;
 INSERT INTO `penggunaan` (`penggunaan_id`, `permintaan_id`, `user_id`, `total_item_penggunaan`, `status_penggunaan`, `created_at`, `updated_at`, `tanggal`) VALUES
 	(34, NULL, 1, 1, 1, '2025-09-27 04:18:40', '2025-09-28 15:49:33', '2025-09-27'),
@@ -713,18 +773,32 @@ INSERT INTO `penggunaan` (`penggunaan_id`, `permintaan_id`, `user_id`, `total_it
 	(55, NULL, 1, 0, 0, '2025-10-25 06:50:07', '2025-10-25 06:50:07', '2025-10-25'),
 	(56, NULL, 1, 0, 0, '2025-10-25 06:51:36', '2025-10-25 06:51:36', '2025-10-25'),
 	(65, 9, 1, 2, 1, '2025-10-25 07:46:30', '2025-10-25 07:46:57', '2025-10-25'),
-	(69, NULL, 1, 1, 0, '2025-11-22 10:06:46', '2025-11-22 10:07:03', '2025-11-22'),
-	(72, NULL, 1, 1, 0, '2025-11-22 10:22:01', '2025-11-22 10:23:04', '2025-11-22'),
-	(75, 12, 1, 1, 0, '2025-11-22 10:28:39', '2025-11-22 10:28:48', '2025-11-22');
+	(70, 15, 1, 2, 1, '2025-11-21 04:07:38', '2025-11-21 04:16:38', '2025-11-21'),
+	(71, NULL, 1, 0, 0, '2025-11-21 18:48:22', '2025-11-21 18:48:22', '2025-11-22'),
+	(72, NULL, 1, 1, 1, '2025-11-22 07:34:46', '2025-11-22 07:38:15', '2025-11-22'),
+	(73, NULL, 1, 1, 1, '2025-11-22 07:39:01', '2025-11-22 07:39:32', '2025-11-22'),
+	(77, 17, 1, 1, 0, '2025-11-25 03:52:56', '2025-11-25 03:53:18', '2025-11-25'),
+	(78, 18, 1, 2, 1, '2025-11-25 03:54:47', '2025-11-26 07:20:48', '2025-11-25'),
+	(79, NULL, 1, 1, 1, '2025-11-25 03:59:01', '2025-11-25 04:00:10', '2025-11-25'),
+	(80, NULL, 1, 2, 1, '2025-11-25 04:00:40', '2025-11-25 04:01:15', '2025-11-25'),
+	(82, 18, 1, 2, 1, '2025-11-26 06:38:58', '2025-11-26 06:39:25', '2025-11-26'),
+	(84, NULL, 1, 1, 1, '2025-11-29 09:42:48', '2025-11-29 10:49:48', '2025-11-29'),
+	(85, NULL, 1, 1, 1, '2025-11-29 10:50:00', '2025-11-29 10:50:22', '2025-11-29'),
+	(86, NULL, 1, 1, 1, '2025-11-29 10:52:17', '2025-11-29 11:02:11', '2025-11-29'),
+	(88, 19, 1, 2, 1, '2025-11-29 11:06:07', '2025-11-29 11:06:32', '2025-11-29'),
+	(89, NULL, 1, 1, 0, '2025-11-29 11:08:56', '2025-11-29 11:09:13', '2025-11-29'),
+	(90, 17, 1, 1, 0, '2025-12-01 01:33:57', '2025-12-01 01:34:08', '2025-12-01'),
+	(91, 20, 1, 0, 0, '2025-12-01 01:35:32', '2025-12-01 01:35:32', '2025-12-01'),
+	(96, 20, 1, 2, 1, '2025-12-01 02:12:50', '2025-12-01 02:13:24', '2025-12-01');
 
 -- Dumping structure for table inventaris_web.penggunaan_detail
 CREATE TABLE IF NOT EXISTS `penggunaan_detail` (
-  `gunadetail_id` int NOT NULL AUTO_INCREMENT,
-  `penggunaan_id` int NOT NULL,
-  `barang_id` int NOT NULL,
-  `id_gudang` int DEFAULT NULL,
-  `jumlah_digunakan` float NOT NULL DEFAULT '0',
-  `catatan` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `gunadetail_id` int(11) NOT NULL AUTO_INCREMENT,
+  `penggunaan_id` int(11) NOT NULL,
+  `barang_id` int(11) NOT NULL,
+  `id_gudang` int(11) DEFAULT NULL,
+  `jumlah_digunakan` float NOT NULL DEFAULT 0,
+  `catatan` varchar(255) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`gunadetail_id`),
@@ -734,9 +808,9 @@ CREATE TABLE IF NOT EXISTS `penggunaan_detail` (
   CONSTRAINT `FK_penggunaan_detail_barang` FOREIGN KEY (`barang_id`) REFERENCES `barang` (`barang_id`),
   CONSTRAINT `FK_penggunaan_detail_gudang` FOREIGN KEY (`id_gudang`) REFERENCES `gudang` (`id_gudang`),
   CONSTRAINT `FK_penggunaan_detail_penggunaan` FOREIGN KEY (`penggunaan_id`) REFERENCES `penggunaan` (`penggunaan_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=50 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=91 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table inventaris_web.penggunaan_detail: ~19 rows (approximately)
+-- Dumping data for table inventaris_web.penggunaan_detail: ~37 rows (approximately)
 DELETE FROM `penggunaan_detail`;
 INSERT INTO `penggunaan_detail` (`gunadetail_id`, `penggunaan_id`, `barang_id`, `id_gudang`, `jumlah_digunakan`, `catatan`, `created_at`, `updated_at`) VALUES
 	(6, 35, 1, NULL, 5, 'dafds', '2025-09-27 06:48:44', '2025-09-27 06:48:44'),
@@ -755,18 +829,36 @@ INSERT INTO `penggunaan_detail` (`gunadetail_id`, `penggunaan_id`, `barang_id`, 
 	(38, 45, 11, NULL, 3, 's', '2025-10-23 15:01:51', '2025-10-23 15:01:51'),
 	(45, 65, 1, 252, 20, 'Digunakan Untuk Permintaan : PP-009', '2025-10-25 07:46:56', '2025-10-25 07:46:56'),
 	(46, 65, 9, 251, 28, 'Digunakan Untuk Permintaan : PP-009', '2025-10-25 07:46:56', '2025-10-25 07:46:56'),
-	(47, 69, 46, NULL, 25, 'tes', '2025-11-22 10:07:03', '2025-11-22 10:07:03'),
-	(48, 72, 46, NULL, 0.03, NULL, '2025-11-22 10:23:04', '2025-11-22 10:23:04'),
-	(49, 75, 46, NULL, 18, 'Digunakan Untuk Permintaan : PP-012', '2025-11-22 10:28:48', '2025-11-22 10:28:48');
+	(49, 70, 46, 262, 12, 'Digunakan Untuk Permintaan : PP-015', '2025-11-21 04:16:37', '2025-11-21 04:16:37'),
+	(50, 70, 47, 261, 5, 'Digunakan Untuk Permintaan : PP-015', '2025-11-21 04:16:37', '2025-11-21 04:16:38'),
+	(53, 72, 46, 267, 5, 'test', '2025-11-22 07:38:15', '2025-11-22 07:38:15'),
+	(55, 73, 47, 265, 5, 'tes lgi', '2025-11-22 07:39:32', '2025-11-22 07:39:32'),
+	(56, 77, 4, NULL, 500, 'Digunakan Untuk Permintaan : PP-017', '2025-11-25 03:53:18', '2025-11-25 03:53:18'),
+	(60, 79, 46, 269, 0.001, 'tes', '2025-11-25 04:00:10', '2025-11-25 04:00:10'),
+	(63, 80, 46, 274, 0.001, NULL, '2025-11-25 04:01:15', '2025-11-25 04:01:15'),
+	(64, 80, 47, 271, 0.001, NULL, '2025-11-25 04:01:15', '2025-11-25 04:01:15'),
+	(67, 82, 46, 280, 0.012, 'Digunakan Untuk Permintaan : PP-018', '2025-11-26 06:39:25', '2025-11-26 06:39:25'),
+	(68, 82, 47, 283, 0.005, 'Digunakan Untuk Permintaan : PP-018', '2025-11-26 06:39:25', '2025-11-26 06:39:25'),
+	(69, 78, 46, 284, 0.0125, 'Digunakan Untuk Permintaan : PP-018', '2025-11-26 07:20:48', '2025-11-26 07:20:48'),
+	(70, 78, 47, 286, 0.005, 'Digunakan Untuk Permintaan : PP-018', '2025-11-26 07:20:48', '2025-11-26 07:20:48'),
+	(72, 84, 46, 288, 0.000025, 's', '2025-11-29 10:49:48', '2025-11-29 10:49:48'),
+	(74, 85, 46, 292, 0.000025, NULL, '2025-11-29 10:50:22', '2025-11-29 10:50:22'),
+	(76, 86, 47, 290, 0.000025, NULL, '2025-11-29 11:02:11', '2025-11-29 11:02:11'),
+	(79, 88, 46, 294, 0.00125, 'Digunakan Untuk Permintaan : PP-019', '2025-11-29 11:06:32', '2025-11-29 11:06:32'),
+	(80, 88, 47, 296, 0.0005, 'Digunakan Untuk Permintaan : PP-019', '2025-11-29 11:06:32', '2025-11-29 11:06:32'),
+	(81, 89, 47, NULL, 25, NULL, '2025-11-29 11:09:13', '2025-11-29 11:09:13'),
+	(82, 90, 46, NULL, 500000, 'Digunakan Untuk Permintaan : PP-017', '2025-12-01 01:34:08', '2025-12-01 01:34:08'),
+	(89, 96, 46, 302, 0.125, 'Digunakan Untuk Permintaan : PP-020', '2025-12-01 02:13:24', '2025-12-01 02:13:24'),
+	(90, 96, 47, 304, 0.05, 'Digunakan Untuk Permintaan : PP-020', '2025-12-01 02:13:24', '2025-12-01 02:13:24');
 
 -- Dumping structure for table inventaris_web.permintaan_detail
 CREATE TABLE IF NOT EXISTS `permintaan_detail` (
-  `permintaan_detail_id` int NOT NULL AUTO_INCREMENT,
-  `permintaan_id` int NOT NULL,
-  `barang_produksi_id` int DEFAULT NULL,
-  `barang_custom_pelanggan_id` int DEFAULT NULL,
-  `qty_permintaan` int DEFAULT NULL,
-  `catatan` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `permintaan_detail_id` int(11) NOT NULL AUTO_INCREMENT,
+  `permintaan_id` int(11) NOT NULL,
+  `barang_produksi_id` int(11) DEFAULT NULL,
+  `barang_custom_pelanggan_id` int(11) DEFAULT NULL,
+  `qty_permintaan` int(11) DEFAULT NULL,
+  `catatan` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`permintaan_detail_id`) USING BTREE,
   KEY `barang_produksi_id` (`barang_produksi_id`),
   KEY `barang_custom_pelanggan_id` (`barang_custom_pelanggan_id`),
@@ -774,55 +866,66 @@ CREATE TABLE IF NOT EXISTS `permintaan_detail` (
   CONSTRAINT `FK_detail_permintaan_barangproduksi` FOREIGN KEY (`barang_produksi_id`) REFERENCES `barangproduksi` (`barang_produksi_id`),
   CONSTRAINT `FK_permintaan_detail_barang_custom_pelanggan` FOREIGN KEY (`barang_custom_pelanggan_id`) REFERENCES `barang_custom_pelanggan` (`barang_custom_pelanggan_id`),
   CONSTRAINT `FK_permintaan_detail_permintaan_pelanggan` FOREIGN KEY (`permintaan_id`) REFERENCES `permintaan_pelanggan` (`permintaan_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table inventaris_web.permintaan_detail: ~6 rows (approximately)
+-- Dumping data for table inventaris_web.permintaan_detail: ~12 rows (approximately)
 DELETE FROM `permintaan_detail`;
 INSERT INTO `permintaan_detail` (`permintaan_detail_id`, `permintaan_id`, `barang_produksi_id`, `barang_custom_pelanggan_id`, `qty_permintaan`, `catatan`) VALUES
-	(11, 7, NULL, 6, 50, ''),
-	(12, 8, NULL, 6, 1, ''),
 	(13, 9, 7, NULL, 4, 'd'),
 	(18, 5, NULL, 6, 2, 'ev'),
 	(20, 11, 7, NULL, 2, 'tes'),
-	(21, 12, 9, NULL, 600, '');
+	(21, 12, 9, NULL, 600, ''),
+	(24, 13, NULL, 6, 700, NULL),
+	(25, 14, NULL, 6, 650, NULL),
+	(27, 15, 8, NULL, 500, 'tes'),
+	(28, 16, NULL, 6, 500, ''),
+	(29, 17, NULL, 6, 500, ''),
+	(30, 18, 8, NULL, 500, ''),
+	(31, 19, 8, NULL, 50, ''),
+	(32, 20, 8, NULL, 5, '');
 
 -- Dumping structure for table inventaris_web.permintaan_pelanggan
 CREATE TABLE IF NOT EXISTS `permintaan_pelanggan` (
-  `permintaan_id` int NOT NULL AUTO_INCREMENT,
-  `pelanggan_id` int DEFAULT NULL,
-  `kode_permintaan` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `tipe_pelanggan` tinyint NOT NULL DEFAULT '1' COMMENT '1=custom, 2=polos',
-  `total_item_permintaan` int DEFAULT NULL,
+  `permintaan_id` int(11) NOT NULL AUTO_INCREMENT,
+  `pelanggan_id` int(11) DEFAULT NULL,
+  `kode_permintaan` varchar(255) NOT NULL,
+  `tipe_pelanggan` tinyint(4) NOT NULL DEFAULT 1 COMMENT '1=custom, 2=polos',
+  `total_item_permintaan` int(11) DEFAULT NULL,
   `tanggal_permintaan` date NOT NULL,
-  `status_permintaan` tinyint NOT NULL COMMENT '0 pending, 1 on progress, 2 complete',
+  `status_permintaan` tinyint(4) NOT NULL COMMENT '0 pending, 1 on progress, 2 complete, 3 archive',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`permintaan_id`) USING BTREE,
   KEY `pelanggan_id` (`pelanggan_id`),
   CONSTRAINT `FK_permintaan_penjualan_master_pelanggan` FOREIGN KEY (`pelanggan_id`) REFERENCES `master_pelanggan` (`pelanggan_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table inventaris_web.permintaan_pelanggan: ~7 rows (approximately)
+-- Dumping data for table inventaris_web.permintaan_pelanggan: ~12 rows (approximately)
 DELETE FROM `permintaan_pelanggan`;
 INSERT INTO `permintaan_pelanggan` (`permintaan_id`, `pelanggan_id`, `kode_permintaan`, `tipe_pelanggan`, `total_item_permintaan`, `tanggal_permintaan`, `status_permintaan`, `created_at`, `updated_at`) VALUES
 	(5, 1, 'PP-005', 1, 1, '2025-10-20', 3, '0000-00-00 00:00:00', '2025-11-08 17:54:26'),
-	(6, 1, 'PP-006', 1, 1, '2025-10-14', 0, '0000-00-00 00:00:00', '2025-10-25 08:50:38'),
-	(7, 1, 'PP-007', 1, 1, '2025-10-22', 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
-	(8, 1, 'PP-008', 1, 1, '2025-10-25', 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
-	(9, 1, 'PP-009', 2, 1, '2025-10-25', 1, '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
+	(9, 1, 'PP-009', 2, 1, '2025-10-25', 3, '0000-00-00 00:00:00', '2025-11-25 03:58:02'),
 	(11, 1, 'PP-010', 2, 1, '2025-10-28', 3, '2025-10-27 20:42:00', '2025-11-08 17:54:26'),
-	(12, 5, 'PP-012', 2, 1, '2025-11-15', 0, '2025-11-15 00:45:18', '2025-11-15 00:45:18');
+	(12, 5, 'PP-012', 2, 1, '2025-11-15', 2, '2025-11-15 00:45:18', '2025-11-15 00:45:18'),
+	(13, 1, 'PP-007', 1, 1, '2025-10-20', 3, '2025-10-27 20:42:00', '2025-11-21 02:46:56'),
+	(14, 1, 'PP-015', 1, 1, '2025-10-19', 3, '2025-11-21 02:56:00', '2025-11-21 03:01:50'),
+	(15, 2, 'PP-015', 2, 1, '2025-10-15', 3, '2025-11-21 03:34:35', '2025-11-21 04:21:49'),
+	(16, 1, 'PP-016', 1, 1, '2025-11-22', 0, '2025-11-22 16:31:23', '2025-11-22 16:31:23'),
+	(17, 1, 'PP-017', 1, 1, '2025-10-16', 0, '2025-11-25 03:52:47', '2025-11-25 03:52:47'),
+	(18, 1, 'PP-018', 2, 1, '2025-10-08', 3, '2025-11-25 03:54:44', '2025-11-26 06:39:44'),
+	(19, 1, 'PP-019', 2, 1, '2025-11-29', 1, '2025-11-29 11:06:05', '2025-11-29 11:06:32'),
+	(20, 1, 'PP-020', 2, 1, '2025-12-01', 1, '2025-12-01 01:35:30', '2025-12-01 02:13:24');
 
 -- Dumping structure for table inventaris_web.pesan_detail
 CREATE TABLE IF NOT EXISTS `pesan_detail` (
-  `pesandetail_id` int NOT NULL AUTO_INCREMENT,
-  `pemesanan_id` int NOT NULL,
-  `barang_id` int NOT NULL,
+  `pesandetail_id` int(11) NOT NULL AUTO_INCREMENT,
+  `pemesanan_id` int(11) NOT NULL,
+  `barang_id` int(11) NOT NULL,
   `qty` float NOT NULL,
   `qty_terima` float DEFAULT NULL,
-  `catatan` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `langsung_pakai` tinyint NOT NULL DEFAULT '0',
-  `is_correct` tinyint NOT NULL DEFAULT '0',
+  `catatan` varchar(255) DEFAULT NULL,
+  `langsung_pakai` tinyint(4) NOT NULL DEFAULT 0,
+  `is_correct` tinyint(4) NOT NULL DEFAULT 0,
   `created_at` timestamp NULL DEFAULT NULL,
   `update_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`pesandetail_id`),
@@ -830,9 +933,9 @@ CREATE TABLE IF NOT EXISTS `pesan_detail` (
   KEY `barang_id` (`barang_id`),
   CONSTRAINT `pesan_detail_ibfk_1` FOREIGN KEY (`pemesanan_id`) REFERENCES `pemesanan` (`pemesanan_id`),
   CONSTRAINT `pesan_detail_ibfk_2` FOREIGN KEY (`barang_id`) REFERENCES `barang` (`barang_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=299 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=307 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table inventaris_web.pesan_detail: ~23 rows (approximately)
+-- Dumping data for table inventaris_web.pesan_detail: ~27 rows (approximately)
 DELETE FROM `pesan_detail`;
 INSERT INTO `pesan_detail` (`pesandetail_id`, `pemesanan_id`, `barang_id`, `qty`, `qty_terima`, `catatan`, `langsung_pakai`, `is_correct`, `created_at`, `update_at`) VALUES
 	(272, 308, 1, 14, 14, '', 1, 1, '2024-12-11 17:00:34', '2024-12-11 17:03:26'),
@@ -857,11 +960,15 @@ INSERT INTO `pesan_detail` (`pesandetail_id`, `pemesanan_id`, `barang_id`, `qty`
 	(291, 353, 9, 2, 0, 'f', 0, 0, '2025-10-11 09:19:33', '2025-10-11 09:19:33'),
 	(292, 361, 9, 50, 50, 'buat test', 0, 1, '2025-10-25 07:15:20', '2025-10-25 07:16:41'),
 	(293, 361, 1, 50, 50, 'buat test', 0, 1, '2025-10-25 07:15:20', '2025-10-25 07:16:41'),
-	(298, 384, 47, 90, 90, 'Pemesanan berdasarkan ROP periode Nov 2025 - Feb 2026 (Stock: 0, ROP: 27)', 0, 1, '2025-11-22 09:55:10', '2025-11-22 09:56:03');
+	(298, 383, 47, 90, 90, 'Pemesanan berdasarkan ROP periode Nov 2025 - Feb 2026 (Stock: 0, ROP: 27)', 0, 1, '2025-11-21 04:10:54', '2025-11-21 04:13:39'),
+	(299, 385, 46, 101, 101, 'Pemesanan berdasarkan ROP periode Nov 2025 - Feb 2026 (Stock: 0, ROP: 23)', 0, 1, '2025-11-21 04:14:21', '2025-11-21 04:15:10'),
+	(304, 390, 46, 101, 101, 'Pemesanan berdasarkan ROP periode Nov 2025 - Feb 2026 (Stock: 0, ROP: 23)', 0, 1, '2025-11-22 06:51:28', '2025-11-22 07:16:59'),
+	(305, 391, 1, 10, 10, 'testing', 0, 1, '2025-11-24 07:13:04', '2025-11-24 07:51:11'),
+	(306, 392, 47, 90, 90, 'Pemesanan berdasarkan ROP periode Nov 2025 - Feb 2026 (Stock: 20, ROP: 27)', 0, 1, '2025-11-25 04:05:19', '2025-11-25 04:06:49');
 
 -- Dumping structure for table inventaris_web.report
 CREATE TABLE IF NOT EXISTS `report` (
-  `report_id` int NOT NULL,
+  `report_id` int(11) NOT NULL,
   PRIMARY KEY (`report_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -870,11 +977,11 @@ DELETE FROM `report`;
 
 -- Dumping structure for table inventaris_web.riwayat_penjualan
 CREATE TABLE IF NOT EXISTS `riwayat_penjualan` (
-  `riwayat_penjualan_id` int NOT NULL AUTO_INCREMENT,
-  `barang_produksi_id` int DEFAULT NULL,
-  `barang_custom_pelanggan_id` int DEFAULT NULL,
-  `qty_penjualan` int NOT NULL,
-  `bulan_periode` varchar(7) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `riwayat_penjualan_id` int(11) NOT NULL AUTO_INCREMENT,
+  `barang_produksi_id` int(11) DEFAULT NULL,
+  `barang_custom_pelanggan_id` int(11) DEFAULT NULL,
+  `qty_penjualan` int(11) NOT NULL,
+  `bulan_periode` varchar(7) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`riwayat_penjualan_id`),
@@ -882,9 +989,9 @@ CREATE TABLE IF NOT EXISTS `riwayat_penjualan` (
   KEY `barang_custom_pelanggan_id` (`barang_custom_pelanggan_id`),
   CONSTRAINT `FK_riwayat_penjualan_barang_custom_pelanggan` FOREIGN KEY (`barang_custom_pelanggan_id`) REFERENCES `barang_custom_pelanggan` (`barang_custom_pelanggan_id`),
   CONSTRAINT `FK_riwayat_penjualan_barangproduksi` FOREIGN KEY (`barang_produksi_id`) REFERENCES `barangproduksi` (`barang_produksi_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=449 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=454 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table inventaris_web.riwayat_penjualan: ~102 rows (approximately)
+-- Dumping data for table inventaris_web.riwayat_penjualan: ~107 rows (approximately)
 DELETE FROM `riwayat_penjualan`;
 INSERT INTO `riwayat_penjualan` (`riwayat_penjualan_id`, `barang_produksi_id`, `barang_custom_pelanggan_id`, `qty_penjualan`, `bulan_periode`, `created_at`, `updated_at`) VALUES
 	(346, NULL, 6, 1676, '202301', NULL, NULL),
@@ -988,12 +1095,17 @@ INSERT INTO `riwayat_penjualan` (`riwayat_penjualan_id`, `barang_produksi_id`, `
 	(444, 9, NULL, 758, '202509', NULL, NULL),
 	(445, NULL, 6, 2243, '202510', NULL, NULL),
 	(446, NULL, 9, 1744, '202510', NULL, NULL),
-	(447, 9, NULL, 996, '202510', NULL, NULL);
+	(447, 9, NULL, 996, '202510', NULL, NULL),
+	(449, NULL, 6, 700, '202510', '2025-11-20 19:46:56', NULL),
+	(450, NULL, 6, 650, '202510', '2025-11-20 20:01:50', NULL),
+	(451, 8, NULL, 500, '202510', '2025-11-20 21:21:49', NULL),
+	(452, 7, NULL, 4, '202510', '2025-11-24 20:58:02', NULL),
+	(453, 8, NULL, 500, '202510', '2025-11-25 23:39:44', NULL);
 
 -- Dumping structure for table inventaris_web.role
 CREATE TABLE IF NOT EXISTS `role` (
-  `id_role` int NOT NULL AUTO_INCREMENT,
-  `nama` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `id_role` int(11) NOT NULL AUTO_INCREMENT,
+  `nama` varchar(200) NOT NULL,
   PRIMARY KEY (`id_role`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -1008,17 +1120,17 @@ INSERT INTO `role` (`id_role`, `nama`) VALUES
 
 -- Dumping structure for table inventaris_web.shift
 CREATE TABLE IF NOT EXISTS `shift` (
-  `shift_id` int NOT NULL AUTO_INCREMENT,
+  `shift_id` int(11) NOT NULL AUTO_INCREMENT,
   `tanggal` date NOT NULL,
-  `user_id` int NOT NULL,
-  `shift` enum('1','2') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `shift` enum('1','2') NOT NULL,
   `waktu_kerja` decimal(4,2) NOT NULL,
-  `nama_operator` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `nama_operator` varchar(200) NOT NULL,
   `mulai_istirahat` time NOT NULL,
   `selesai_istirahat` time NOT NULL,
-  `kendala` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `ganti_benang` int DEFAULT NULL,
-  `ganti_kain` int DEFAULT NULL,
+  `kendala` text NOT NULL,
+  `ganti_benang` int(11) DEFAULT NULL,
+  `ganti_kain` int(11) DEFAULT NULL,
   PRIMARY KEY (`shift_id`),
   KEY `user_id` (`user_id`) USING BTREE,
   CONSTRAINT `shift_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`)
@@ -1033,10 +1145,10 @@ INSERT INTO `shift` (`shift_id`, `tanggal`, `user_id`, `shift`, `waktu_kerja`, `
 
 -- Dumping structure for table inventaris_web.stock
 CREATE TABLE IF NOT EXISTS `stock` (
-  `stock_id` int NOT NULL AUTO_INCREMENT,
+  `stock_id` int(11) NOT NULL AUTO_INCREMENT,
   `tambah_stock` date NOT NULL,
-  `barang_id` int NOT NULL,
-  `user_id` int NOT NULL,
+  `barang_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
   `quantity_awal` float NOT NULL,
   `quantity_masuk` float NOT NULL,
   `quantity_keluar` float NOT NULL,
@@ -1074,35 +1186,35 @@ INSERT INTO `stock` (`stock_id`, `tambah_stock`, `barang_id`, `user_id`, `quanti
 
 -- Dumping structure for table inventaris_web.stock_rop
 CREATE TABLE IF NOT EXISTS `stock_rop` (
-  `stock_rop_id` int NOT NULL AUTO_INCREMENT,
-  `barang_id` int NOT NULL,
-  `periode` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `stock_barang` int DEFAULT NULL,
-  `safety_stock` int DEFAULT NULL,
-  `jumlah_eoq` int DEFAULT NULL,
-  `jumlah_rop` int DEFAULT NULL,
-  `pesan_barang` tinyint DEFAULT '0' COMMENT '0=tidak, 1=ya',
+  `stock_rop_id` int(11) NOT NULL AUTO_INCREMENT,
+  `barang_id` int(11) NOT NULL,
+  `periode` varchar(20) DEFAULT NULL,
+  `stock_barang` int(11) DEFAULT NULL,
+  `safety_stock` int(11) DEFAULT NULL,
+  `jumlah_eoq` int(11) DEFAULT NULL,
+  `jumlah_rop` int(11) DEFAULT NULL,
+  `pesan_barang` tinyint(4) DEFAULT 0 COMMENT '0=tidak, 1=ya',
   PRIMARY KEY (`stock_rop_id`),
   KEY `barang_id` (`barang_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=73 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=77 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Dumping data for table inventaris_web.stock_rop: ~4 rows (approximately)
 DELETE FROM `stock_rop`;
 INSERT INTO `stock_rop` (`stock_rop_id`, `barang_id`, `periode`, `stock_barang`, `safety_stock`, `jumlah_eoq`, `jumlah_rop`, `pesan_barang`) VALUES
-	(69, 1, '202511-202602', 62, 20, 40, 20, 0),
-	(70, 4, '202511-202602', 26, 10, 20, 10, 0),
-	(71, 46, '202511-202602', 0, 20, 101, 23, 0),
-	(72, 47, '202511-202602', 90, 20, 90, 27, 0);
+	(73, 1, '202511-202602', 102, 20, 40, 20, 0),
+	(74, 4, '202511-202602', 26, 10, 20, 10, 0),
+	(75, 46, '202511-202602', 134, 20, 101, 23, 0),
+	(76, 47, '202511-202602', 109, 20, 90, 27, 0);
 
 -- Dumping structure for table inventaris_web.supplier
 CREATE TABLE IF NOT EXISTS `supplier` (
-  `supplier_id` int NOT NULL AUTO_INCREMENT,
-  `nama` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `notelfon` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `alamat` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `kota` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `kodepos` int NOT NULL,
-  `lead_time` int NOT NULL,
+  `supplier_id` int(11) NOT NULL AUTO_INCREMENT,
+  `nama` varchar(200) NOT NULL,
+  `notelfon` varchar(200) NOT NULL,
+  `alamat` varchar(200) NOT NULL,
+  `kota` varchar(200) NOT NULL,
+  `kodepos` int(11) NOT NULL,
+  `lead_time` int(11) NOT NULL,
   PRIMARY KEY (`supplier_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -1124,9 +1236,9 @@ INSERT INTO `supplier` (`supplier_id`, `nama`, `notelfon`, `alamat`, `kota`, `ko
 
 -- Dumping structure for table inventaris_web.supplier_barang
 CREATE TABLE IF NOT EXISTS `supplier_barang` (
-  `supplier_barang_id` int NOT NULL AUTO_INCREMENT,
-  `barang_id` int NOT NULL,
-  `total_supplier_barang` int NOT NULL,
+  `supplier_barang_id` int(11) NOT NULL AUTO_INCREMENT,
+  `barang_id` int(11) NOT NULL,
+  `total_supplier_barang` int(11) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`supplier_barang_id`) USING BTREE,
@@ -1142,18 +1254,18 @@ INSERT INTO `supplier_barang` (`supplier_barang_id`, `barang_id`, `total_supplie
 	(17, 11, 2, '2025-10-19 09:47:58', '2025-10-19 03:18:41'),
 	(18, 4, 3, '2025-10-19 09:48:31', '2025-10-19 02:48:31'),
 	(23, 1, 1, '2025-10-19 16:59:53', '2025-10-19 09:59:53'),
-	(24, 46, 1, '2025-11-16 18:47:55', '2025-11-16 11:47:55'),
-	(25, 47, 1, '2025-11-16 18:48:16', '2025-11-16 11:48:16');
+	(24, 46, 2, '2025-11-16 18:47:55', '2025-11-21 23:31:46'),
+	(25, 47, 2, '2025-11-16 18:48:16', '2025-11-21 23:30:49');
 
 -- Dumping structure for table inventaris_web.supplier_barang_detail
 CREATE TABLE IF NOT EXISTS `supplier_barang_detail` (
-  `supplier_barang_detail_id` int NOT NULL AUTO_INCREMENT,
-  `supplier_barang_id` int NOT NULL,
-  `supplier_id` int NOT NULL,
+  `supplier_barang_detail_id` int(11) NOT NULL AUTO_INCREMENT,
+  `supplier_barang_id` int(11) NOT NULL,
+  `supplier_id` int(11) NOT NULL,
   `lead_time` float NOT NULL,
-  `harga_per_kg` float NOT NULL DEFAULT '0',
-  `biaya_pesan` float NOT NULL DEFAULT '0',
-  `supp_utama` tinyint(1) NOT NULL DEFAULT '0' COMMENT '0 = bukan, 1 = utama',
+  `harga_per_kg` float NOT NULL DEFAULT 0,
+  `biaya_pesan` float NOT NULL DEFAULT 0,
+  `supp_utama` tinyint(1) NOT NULL DEFAULT 0 COMMENT '0 = bukan, 1 = utama',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`supplier_barang_detail_id`),
@@ -1161,9 +1273,9 @@ CREATE TABLE IF NOT EXISTS `supplier_barang_detail` (
   KEY `supplier_id` (`supplier_id`),
   CONSTRAINT `FK_supplier_barang_detail_supplier` FOREIGN KEY (`supplier_id`) REFERENCES `supplier` (`supplier_id`),
   CONSTRAINT `FK_supplier_barang_detail_supplier_barang` FOREIGN KEY (`supplier_barang_id`) REFERENCES `supplier_barang` (`supplier_barang_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table inventaris_web.supplier_barang_detail: ~10 rows (approximately)
+-- Dumping data for table inventaris_web.supplier_barang_detail: ~12 rows (approximately)
 DELETE FROM `supplier_barang_detail`;
 INSERT INTO `supplier_barang_detail` (`supplier_barang_detail_id`, `supplier_barang_id`, `supplier_id`, `lead_time`, `harga_per_kg`, `biaya_pesan`, `supp_utama`, `created_at`, `updated_at`) VALUES
 	(1, 16, 9, 3, 55000, 10000, 0, NULL, NULL),
@@ -1175,12 +1287,14 @@ INSERT INTO `supplier_barang_detail` (`supplier_barang_detail_id`, `supplier_bar
 	(7, 18, 3, 3, 45000, 15000, 0, NULL, NULL),
 	(10, 23, 3, 3, 35000, 12000, 1, NULL, NULL),
 	(11, 24, 2, 1, 55000, 25000, 1, NULL, NULL),
-	(12, 25, 3, 2, 50000, 20000, 1, NULL, NULL);
+	(12, 25, 3, 2, 50000, 20000, 1, NULL, NULL),
+	(13, 25, 2, 3, 45000, 2500, 0, NULL, NULL),
+	(14, 24, 3, 2, 48000, 20000, 0, NULL, NULL);
 
 -- Dumping structure for table inventaris_web.unit
 CREATE TABLE IF NOT EXISTS `unit` (
-  `unit_id` int NOT NULL AUTO_INCREMENT,
-  `satuan` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `unit_id` int(11) NOT NULL AUTO_INCREMENT,
+  `satuan` varchar(11) NOT NULL,
   PRIMARY KEY (`unit_id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -1198,12 +1312,12 @@ INSERT INTO `unit` (`unit_id`, `satuan`) VALUES
 
 -- Dumping structure for table inventaris_web.user
 CREATE TABLE IF NOT EXISTS `user` (
-  `user_id` int NOT NULL AUTO_INCREMENT,
-  `id_role` int NOT NULL,
-  `nama_pengguna` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `email` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `kata_sandi` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `dibuat_pada` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `user_id` int(11) NOT NULL AUTO_INCREMENT,
+  `id_role` int(11) NOT NULL,
+  `nama_pengguna` varchar(200) NOT NULL,
+  `email` varchar(200) NOT NULL,
+  `kata_sandi` varchar(200) NOT NULL,
+  `dibuat_pada` datetime NOT NULL DEFAULT current_timestamp(),
   `diperbarui_pada` datetime DEFAULT NULL,
   PRIMARY KEY (`user_id`),
   KEY `id_role` (`id_role`),

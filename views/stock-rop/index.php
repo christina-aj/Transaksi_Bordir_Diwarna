@@ -14,6 +14,11 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="card-header d-flex justify-content-between align-items-center">
             <h1><?= Html::encode($this->title) ?></h1>
             <div>
+                <?= Html::a('<i class="fas fa-file-pdf"></i> Download PDF', ['stock-rop-pdf'], [
+                    'class' => 'btn btn-danger me-2',
+                    'target' => '_blank',
+                    'title' => 'Download PDF'
+                ]) ?>
                 <?= Html::a('<i class="fas fa-sync-alt"></i> Generate Data', ['generate'], [
                     'class' => 'btn btn-primary me-2',
                     'data' => [

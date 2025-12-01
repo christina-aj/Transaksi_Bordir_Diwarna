@@ -10,6 +10,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\data\ActiveDataProvider;
+use kartik\mpdf\Pdf;
 
 class StockRopController extends Controller
 {
@@ -304,4 +305,49 @@ class StockRopController extends Controller
             return false;
         }
     }
+
+    /**
+     * Download PDF Laporan Stock ROP
+     */
+    public function actionStockRopPdf()
+    {
+        $query = StockRop::find()
+            ->with(['barang.unit'])
+            ->orderBy(['periode' => SORT_DESC, 'stock_rop_id' => SORT_DESC])
+            ->all();
+
+        $content = $this->renderPartial('_stock-rop-pdf', [
+            'stockRopData' => $query,
+        ]);
+
+        $pdf = new Pdf([
+            'mode' => Pdf::MODE_UTF8,
+            'format' => Pdf::FORMAT_A4,
+            'orientation' => Pdf::ORIENT_LANDSCAPE,
+            'destination' => Pdf::DEST_BROWSER,
+            'content' => $content,
+            'cssInline' => '
+                body { font-family: Arial, sans-serif; font-size: 10px; }
+                .table { width: 100%; border-collapse: collapse; font-size: 9px; }
+                .table th, .table td { border: 1px solid #ddd; padding: 5px; }
+                .table th { background-color: #4CAF50; color: white; text-align: center; font-weight: bold; }
+                .text-center { text-align: center; }
+                .text-right { text-align: right; }
+                h2 { color: #000000; margin-bottom: 5px; text-align: center; }
+                h3 { color: #666; margin-bottom: 15px; text-align: center; font-size: 12px; }
+                .badge-success { background-color: #28a745; color: white; padding: 3px 8px; border-radius: 3px; font-size: 8px; }
+                .badge-warning { background-color: #ffc107; color: #000; padding: 3px 8px; border-radius: 3px; font-size: 8px; }
+                .badge-danger { background-color: #dc3545; color: white; padding: 3px 8px; border-radius: 3px; font-size: 8px; }
+            ',
+            'options' => ['title' => 'Laporan Stock ROP'],
+            'methods' => [
+                'SetHeader' => ['Laporan Stock ROP - ' . date('d/m/Y H:i')],
+                'SetFooter' => ['Halaman {PAGENO} dari {nbpg}'],
+            ],
+            'filename' => 'Laporan_Stock_ROP_' . date('YmdHis') . '.pdf',
+        ]);
+
+        return $pdf->render();
+    }
+
 }
